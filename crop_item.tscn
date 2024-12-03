@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://bkivlkirrx6u8"]
+
+[ext_resource type="Texture2D" uid="uid://bo5oinxbn65rw" path="res://assets/tu.jpg" id="1_stl1w"]
+[ext_resource type="Script" path="res://SMY_ProgressBar.gd" id="2_1n4xp"]
+
+[node name="CropItem" type="Button"]
+custom_minimum_size = Vector2(100, 100)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="background" type="Sprite2D" parent="."]
+position = Vector2(50.15, 49.975)
+scale = Vector2(0.147923, 0.156084)
+texture = ExtResource("1_stl1w")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+layout_mode = 2
+offset_top = 86.0
+offset_right = 495.0
+offset_bottom = 159.0
+scale = Vector2(0.2, 0.2)
+theme_override_font_sizes/font_size = 50
+script = ExtResource("2_1n4xp")
+
+[node name="crop_sprite" type="AnimatedSprite2D" parent="."]
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+offset_right = 250.0
+offset_bottom = 55.0
+scale = Vector2(0.4, 0.4)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 40
+text = "[普通-超萝卜]"
+horizontal_alignment = 1
+vertical_alignment = 1

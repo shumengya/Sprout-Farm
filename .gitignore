@@ -1,0 +1,14 @@
+# Godot-specific files
+.import/
+.godot/
+.mono/
+export.cfg
+export_presets.cfg
+
+# System-specific files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.vscode/
+.idea/
