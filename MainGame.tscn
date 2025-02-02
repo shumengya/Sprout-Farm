@@ -1,0 +1,343 @@
+[gd_scene load_steps=11 format=3 uid="uid://dgh61dttaas5a"]
+
+[ext_resource type="Script" path="res://MainGame.gd" id="1_v3yaj"]
+[ext_resource type="Texture2D" uid="uid://cbjtfrej7iq3x" path="res://assets/background2.jpg" id="2_psm5w"]
+[ext_resource type="PackedScene" uid="uid://bkivlkirrx6u8" path="res://crop_item.tscn" id="3_isiom"]
+[ext_resource type="PackedScene" uid="uid://ffw2vjwnwvew" path="res://components/ToastShow.tscn" id="4_7kdbl"]
+[ext_resource type="Texture2D" uid="uid://b7yavo67sf4v7" path="res://assets/GUI/green_bar.tres" id="5_vtsi2"]
+[ext_resource type="Texture2D" uid="uid://d0h1s3wrx45a7" path="res://assets/GUI/white_blue_bar.tres" id="6_0sxhs"]
+[ext_resource type="Texture2D" uid="uid://bc0rsd5x4pxhn" path="res://assets/GUI/orange_bar.tres" id="7_2f3e4"]
+[ext_resource type="Texture2D" uid="uid://beckne13egl8u" path="res://assets/GUI/pink_bar.tres" id="8_qyoht"]
+[ext_resource type="Texture2D" uid="uid://bh73krj8mnojv" path="res://assets/GUI/black_blue_bar.tres" id="9_tunh0"]
+[ext_resource type="Texture2D" uid="uid://b73vvxnp31xs4" path="res://assets/GUI/red_bar.tres" id="10_duo33"]
+
+[node name="main" type="Node"]
+script = ExtResource("1_v3yaj")
+
+[node name="background" type="Sprite2D" parent="."]
+position = Vector2(590, 344)
+scale = Vector2(0.658482, 0.666992)
+texture = ExtResource("2_psm5w")
+
+[node name="ItemList" type="ItemList" parent="."]
+visible = false
+offset_left = 80.0
+offset_top = 156.0
+offset_right = 1050.0
+offset_bottom = 606.0
+scale = Vector2(1.02983, 1.02983)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 20
+allow_reselect = true
+allow_rmb_select = true
+auto_height = true
+max_columns = 100
+same_column_width = true
+fixed_column_width = 100
+icon_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="."]
+custom_minimum_size = Vector2(100, 100)
+offset_top = 143.0
+offset_right = 100.0
+offset_bottom = 243.0
+columns = 10
+
+[node name="CropItem" parent="." instance=ExtResource("3_isiom")]
+offset_left = -538.0
+offset_top = 37.0
+offset_right = -438.0
+offset_bottom = 137.0
+
+[node name="CropList" type="ItemList" parent="."]
+visible = false
+custom_minimum_size = Vector2(100, 100)
+offset_left = 1.0
+offset_top = 41.0
+offset_right = 1152.0
+offset_bottom = 141.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 20
+allow_reselect = true
+allow_rmb_select = true
+max_columns = 8
+same_column_width = true
+fixed_column_width = 222
+icon_mode = 0
+
+[node name="ToastShow" parent="." instance=ExtResource("4_7kdbl")]
+visible = false
+offset_top = 580.0
+offset_bottom = 603.0
+
+[node name="ToastShow2" parent="." instance=ExtResource("4_7kdbl")]
+visible = false
+offset_left = 1.0
+offset_top = 41.0
+offset_right = 65.0
+offset_bottom = 64.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+offset_left = 1.0
+offset_top = 42.0
+offset_right = 2065.0
+offset_bottom = 244.0
+scale = Vector2(0.5, 0.5)
+horizontal_scroll_mode = 0
+
+[node name="Crop_GridContainer" type="GridContainer" parent="ScrollContainer"]
+layout_mode = 2
+columns = 5
+
+[node name="Copy_Nodes" type="Node2D" parent="."]
+position = Vector2(-1000, 0)
+
+[node name="Green" type="Button" parent="Copy_Nodes"]
+offset_left = 1.0
+offset_top = 42.0
+offset_right = 409.0
+offset_bottom = 138.0
+theme_override_font_sizes/font_size = 40
+text = "普通"
+icon = ExtResource("5_vtsi2")
+icon_alignment = 1
+
+[node name="White_Blue" type="Button" parent="Copy_Nodes"]
+offset_left = -5.0
+offset_top = 148.0
+offset_right = 403.0
+offset_bottom = 244.0
+theme_override_font_sizes/font_size = 40
+text = "稀有"
+icon = ExtResource("6_0sxhs")
+icon_alignment = 1
+
+[node name="Orange" type="Button" parent="Copy_Nodes"]
+offset_left = -6.0
+offset_top = 252.0
+offset_right = 402.0
+offset_bottom = 348.0
+theme_override_font_sizes/font_size = 40
+text = "优良"
+icon = ExtResource("7_2f3e4")
+icon_alignment = 1
+
+[node name="Pink" type="Button" parent="Copy_Nodes"]
+offset_left = -16.0
+offset_top = 362.0
+offset_right = 392.0
+offset_bottom = 458.0
+theme_override_font_sizes/font_size = 40
+text = "史诗"
+icon = ExtResource("8_qyoht")
+icon_alignment = 1
+
+[node name="Black_Blue" type="Button" parent="Copy_Nodes"]
+offset_left = -5.0
+offset_top = 481.0
+offset_right = 403.0
+offset_bottom = 577.0
+theme_override_font_sizes/font_size = 40
+text = "传奇"
+icon = ExtResource("9_tunh0")
+icon_alignment = 1
+
+[node name="Red" type="Button" parent="Copy_Nodes"]
+offset_left = 7.0
+offset_top = 596.0
+offset_right = 415.0
+offset_bottom = 692.0
+theme_override_font_sizes/font_size = 40
+text = "神话"
+icon = ExtResource("10_duo33")
+icon_alignment = 1
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
+
+[node name="GUI" type="Node2D" parent="."]
+
+[node name="level" type="Label" parent="GUI"]
+offset_left = 632.0
+offset_right = 773.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 20
+text = "等级：100"
+
+[node name="experience" type="Label" parent="GUI"]
+offset_left = 334.0
+offset_right = 475.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 20
+text = "经验：999"
+
+[node name="LoginPanel" type="Panel" parent="GUI"]
+offset_left = 379.0
+offset_top = 156.0
+offset_right = 765.0
+offset_bottom = 444.0
+
+[node name="VBox" type="VBoxContainer" parent="GUI/LoginPanel"]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 386.0
+offset_bottom = 286.0
+
+[node name="Title" type="Label" parent="GUI/LoginPanel/VBox"]
+layout_mode = 2
+text = "登录/注册面板"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="GUI/LoginPanel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GUI/LoginPanel/VBox/HBox"]
+layout_mode = 2
+text = "账号"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="username_input" type="LineEdit" parent="GUI/LoginPanel/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "请输入QQ号..."
+metadata/_edit_use_anchors_ = true
+
+[node name="HBox2" type="HBoxContainer" parent="GUI/LoginPanel/VBox"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="GUI/LoginPanel/VBox/HBox2"]
+layout_mode = 2
+text = "密码"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="password_input" type="LineEdit" parent="GUI/LoginPanel/VBox/HBox2"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "请输入密码..."
+
+[node name="Title3" type="Label" parent="GUI/LoginPanel/VBox"]
+layout_mode = 2
+text = "以下为注册填写内容"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBox5" type="HBoxContainer" parent="GUI/LoginPanel/VBox"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="GUI/LoginPanel/VBox/HBox5"]
+layout_mode = 2
+text = "密码[选填]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="password_input2" type="LineEdit" parent="GUI/LoginPanel/VBox/HBox5"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "请再次输入密码（登录不需要）..."
+
+[node name="HBox3" type="HBoxContainer" parent="GUI/LoginPanel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="GUI/LoginPanel/VBox/HBox3"]
+layout_mode = 2
+text = "名称[选填]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="farmname_input" type="LineEdit" parent="GUI/LoginPanel/VBox/HBox3"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "请输入您的农场名称（登录不需要）..."
+metadata/_edit_use_anchors_ = true
+
+[node name="HBox4" type="HBoxContainer" parent="GUI/LoginPanel/VBox"]
+layout_mode = 2
+
+[node name="login_button" type="Button" parent="GUI/LoginPanel/VBox/HBox4"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "登录"
+
+[node name="register_button" type="Button" parent="GUI/LoginPanel/VBox/HBox4"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "注册"
+
+[node name="Title2" type="Label" parent="GUI/LoginPanel/VBox"]
+layout_mode = 2
+text = "注意：账号请输入您的QQ号，方便匹配QQ好友，
+账号，密码请不要和您的QQ密码相同，防止信息泄露"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="tip" type="Label" parent="GUI"]
+offset_left = 878.0
+offset_right = 1150.0
+offset_bottom = 42.0
+theme_override_colors/font_color = Color(1, 0, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "游戏自动保存剩余【10】秒"
+
+[node name="money" type="Label" parent="GUI"]
+offset_left = 1.0
+offset_right = 142.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 20
+text = "钱币：999"
+
+[node name="Land_Panel" type="PanelContainer" parent="GUI"]
+visible = false
+offset_right = 556.0
+offset_bottom = 58.0
+
+[node name="VBox" type="VBoxContainer" parent="GUI/Land_Panel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="GUI/Land_Panel/VBox"]
+layout_mode = 2
+text = "土地面板"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="GUI/Land_Panel/VBox"]
+layout_mode = 2
+
+[node name="Dig_button" type="Button" parent="GUI/Land_Panel/VBox/HBox"]
+layout_mode = 2
+text = "开垦"
+
+[node name="Description" type="Label" parent="GUI/Land_Panel/VBox/HBox"]
+layout_mode = 2
+text = "土地需要开垦才能种植，开垦所需费用随玩家已开垦土地数量增多而增多"
+
+[node name="HBox2" type="HBoxContainer" parent="GUI/Land_Panel/VBox"]
+visible = false
+layout_mode = 2
+
+[node name="Button" type="Button" parent="GUI/Land_Panel/VBox/HBox2"]
+layout_mode = 2
+text = "升级"
+
+[node name="Description" type="Label" parent="GUI/Land_Panel/VBox/HBox2"]
+layout_mode = 2
+text = "升级描述"
+
+[node name="HBox3" type="HBoxContainer" parent="GUI/Land_Panel/VBox"]
+visible = false
+layout_mode = 2
+
+[node name="Button" type="Button" parent="GUI/Land_Panel/VBox/HBox3"]
+layout_mode = 2
+text = "恢复"
+
+[node name="Description" type="Label" parent="GUI/Land_Panel/VBox/HBox3"]
+layout_mode = 2
+text = "恢复描述"
+
+[connection signal="pressed" from="GUI/LoginPanel/VBox/HBox4/login_button" to="." method="_on_login_button_pressed"]
+[connection signal="pressed" from="GUI/LoginPanel/VBox/HBox4/register_button" to="." method="_on_register_button_pressed"]
+[connection signal="pressed" from="GUI/Land_Panel/VBox/HBox/Dig_button" to="." method="_on_dig_button_pressed"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ffw2vjwnwvew"]
 
-[ext_resource type="Script" path="res://ToastShow.gd" id="1_0rpwy"]
+[ext_resource type="Script" path="res://components/ToastShow.gd" id="1_0rpwy"]
 
 [node name="ToastShow" type="PanelContainer"]
 offset_left = 469.0

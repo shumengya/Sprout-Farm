@@ -4,15 +4,17 @@ extends Node
 @onready var grid_container = $GridContainer  # 农场地块的 GridContainer
 @onready var crop_item = $CropItem
 @onready var crop_list = $CropList  # 作物选择的 ItemList
-@onready var show_money = $money  # 显示当前剩余的钱
-@onready var show_experience = $experience  # 显示当前玩家的经验
-@onready var show_level = $level  # 显示当前玩家的等级
+
+@onready var show_money = $GUI/money  # 显示当前剩余的钱
+@onready var show_experience = $GUI/experience  # 显示当前玩家的经验
+@onready var show_level = $GUI/level  # 显示当前玩家的等级
+@onready var tip = $GUI/tip 	#显示保存相关
 
 @onready var toast = $ToastShow
 @onready var toast2 = $ToastShow2
 
-@onready var land_panel = $Land_Panel
-@onready var dig_button = $Land_Panel/VBox/HBox/Dig_button
+@onready var land_panel = $GUI/Land_Panel
+@onready var dig_button = $GUI/Land_Panel/VBox/HBox/Dig_button
 @onready var crop_grid_container = $ScrollContainer/Crop_GridContainer
 #Thread
 @onready var green_bar = $Copy_Nodes/Green				#普通
@@ -24,21 +26,21 @@ extends Node
 
 #----------------网络联机部分--------------------------
 #用户登录账号，用QQ号代替
-@onready var username_input = $LoginPanel/VBox/HBox/username_input
+@onready var username_input = $GUI/LoginPanel/VBox/HBox/username_input
 #用户登录密码
-@onready var password_input = $LoginPanel/VBox/HBox2/password_input
+@onready var password_input = $GUI/LoginPanel/VBox/HBox2/password_input
 #注册账号时二次确认密码
-@onready var password_input_2 = $LoginPanel/VBox/HBox5/password_input2
+@onready var password_input_2 = $GUI/LoginPanel/VBox/HBox5/password_input2
 #登录按钮
-@onready var login_button = $LoginPanel/VBox/HBox4/login_button
+@onready var login_button = $GUI/LoginPanel/VBox/HBox4/login_button
 #注册按钮
-@onready var register_button = $LoginPanel/VBox/HBox4/register_button
+@onready var register_button = $GUI/LoginPanel/VBox/HBox4/register_button
 #农场名称
-@onready var farmname_input = $LoginPanel/VBox/HBox3/farmname_input
+@onready var farmname_input = $GUI/LoginPanel/VBox/HBox3/farmname_input
 #登录注册面板
-@onready var login_panel = $LoginPanel
+@onready var login_panel = $GUI/LoginPanel
 #----------------网络联机部分--------------------------
-@onready var tip = $tip
+
 
 @onready var http_request = $HTTPRequest
 
@@ -919,6 +921,8 @@ func load_game_from_server():
 	send_request("login", HTTPClient.METHOD_POST, login_data)
 	pass
 
+
+#-------------http传输的两个关键方法-----------------
 func send_request(endpoint: String, method: int, data: Dictionary = {}):
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
@@ -983,7 +987,9 @@ func _on_request_completed(result, response_code, headers, body):
 
 	else:
 		print("JSON 解析错误: ", json.get_error_message())
+#-------------http传输的两个关键方法-----------------
 
+#是否为有效QQ号
 func is_valid_qq_number(qq_number: String) -> bool:
 	# QQ号的标准格式是5到12位的数字
 	var qq_regex = RegEx.new()
