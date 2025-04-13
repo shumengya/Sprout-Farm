@@ -1,22 +1,35 @@
 extends PanelContainer
 
-@onready var label = $Label
-var display_time = 4.0  # 显示的时间（秒）
-var fade_duration = 1.0  # 渐隐时间（秒）
+@export var display_time = 4.0
+@export var fade_duration = 1.0
+
+var label: Label  # 显式声明类型
+
+func _ready():
+	# 确保获取Label节点
+	label = find_child("Label") as Label
+	if not label:
+		push_error("找不到Label子节点！请检查场景结构")
+
+func setup(text: String, color: Color, duration: float, fade: float):
+	display_time = duration
+	fade_duration = fade
+	# 确保添加到场景树
+	Engine.get_main_loop().root.add_child(self)
+	Toast(text, color)
 
 func Toast(text: String, text_color: Color = Color.WHITE):
+	if !label:
+		return
+	
 	label.text = text
 	label.modulate = text_color
 	show()
-	modulate.a = 1  # 确保初始透明度为 1
-	await get_tree().create_timer(display_time).timeout  # 等待显示时间
-	await fade_out()  # 开始渐隐
-
-func fade_out() -> void:
-	var fade_step = 1.0 / (fade_duration / 60)  # 每帧减少的透明度
-	while modulate.a > 0:
-		modulate.a -= fade_step
-		if modulate.a < 0:
-			modulate.a = 0
-		await get_tree().create_timer(0).timeout  # 等待下一帧
-	hide()  # 完全透明时隐藏面板
+	modulate.a = 1
+	
+	await get_tree().create_timer(display_time).timeout
+	
+	var tween = create_tween()
+	tween.tween_property(self, "modulate:a", 0.0, fade_duration)
+	await tween.finished
+	queue_free()
