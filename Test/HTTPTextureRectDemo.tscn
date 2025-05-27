@@ -1,0 +1,76 @@
+[gd_scene load_steps=3 format=3 uid="uid://dyh0q82ytbk3v"]
+
+[ext_resource type="Script" uid="uid://cgylg6qxwg1f0" path="res://Test/HTTPTextureRectDemo.gd" id="1_vgcbi"]
+[ext_resource type="Script" uid="uid://0d2j5m6j2ema" path="res://Components/HTTPTextureRect.gd" id="2_pujh8"]
+
+[node name="HTTPTextureRectDemo" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vgcbi")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "HTTP图像加载演示"
+horizontal_alignment = 1
+
+[node name="ImageContainer" type="CenterContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HTTPTextureRect" type="TextureRect" parent="VBoxContainer/ImageContainer"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+stretch_mode = 5
+script = ExtResource("2_pujh8")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="URLLabel" type="Label" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "URL:"
+
+[node name="URLInput" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+placeholder_text = "输入HTTP图像URL"
+
+[node name="LoadURLButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "加载图像"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="QQLabel" type="Label" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "QQ号:"
+
+[node name="QQInput" type="LineEdit" parent="VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+placeholder_text = "输入QQ号"
+
+[node name="LoadQQButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "加载QQ头像"
+
+[node name="StatusLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "状态: 等待加载"
+horizontal_alignment = 1

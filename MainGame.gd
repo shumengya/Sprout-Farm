@@ -1,254 +1,346 @@
 extends Node
 
 # 变量定义
-@onready var grid_container = $GridContainer  # 农场地块的 GridContainer
-@onready var crop_item = $CropItem
-@onready var crop_list = $CropList  # 作物选择的 ItemList
-
-@onready var show_money = $GUI/money  # 显示当前剩余的钱
-@onready var show_experience = $GUI/experience  # 显示当前玩家的经验
-@onready var show_level = $GUI/level  # 显示当前玩家的等级
-@onready var tip = $GUI/tip 	#显示保存相关
+@onready var grid_container : GridContainer = $GridContainer  # 农场地块的 GridContainer
+@onready var crop_item : Button = $CopyNodes/CropItem
 
 
-@onready var land_panel = $GUI/Land_Panel
-@onready var dig_button = $GUI/Land_Panel/VBox/HBox/Dig_button
-@onready var crop_grid_container = $ScrollContainer/Crop_GridContainer
+@onready var show_money : Label =   $UI/GUI/HBox/money				# 显示当前剩余的钱
+@onready var show_experience : Label = $UI/GUI/HBox/experience  	# 显示当前玩家的经验
+@onready var show_level : Label =   $UI/GUI/HBox/level				# 显示当前玩家的等级
+@onready var show_tip : Label =  $UI/GUI/HBox/tip					# 显示小提示
+@onready var show_player_name : Label =  $UI/GUI/HBox2/player_name	# 显示玩家昵称
+@onready var show_farm_name : Label = $UI/GUI/HBox2/farm_name		# 显示农场名称
+@onready var show_status_label : Label = $UI/GUI/HBox2/StatusLabel	# 显示与服务器连接状态
 
-@onready var green_bar = $Copy_Nodes/Green				#普通
-@onready var white_blue_bar = $Copy_Nodes/White_Blue	#稀有
-@onready var orange_bar = $Copy_Nodes/Orange			#优良
-@onready var pink_bar = $Copy_Nodes/Pink				#史诗
-@onready var black_blue_bar = $Copy_Nodes/Black_Blue	#传奇
-@onready var red_bar = $Copy_Nodes/Red					#神圣
+@onready var network_status_label :Label = get_node("/root/main/UI/TCPNetworkManager/StatusLabel")
+@onready var network_manager = get_node("/root/main/UI/TCPNetworkManager")
 
-#----------------网络联机部分--------------------------
-#用户登录账号，用QQ号代替
-@onready var username_input = $GUI/LoginPanel/VBox/HBox/username_input
-#用户登录密码
-@onready var password_input = $GUI/LoginPanel/VBox/HBox2/password_input
-#注册账号时二次确认密码
-@onready var password_input_2 = $GUI/LoginPanel/VBox/HBox5/password_input2
-#登录按钮
-@onready var login_button = $GUI/LoginPanel/VBox/HBox4/login_button
-#注册按钮
-@onready var register_button = $GUI/LoginPanel/VBox/HBox4/register_button
-#农场名称
-@onready var farmname_input = $GUI/LoginPanel/VBox/HBox3/farmname_input
-#登录注册面板
-@onready var login_panel = $GUI/LoginPanel
-#----------------网络联机部分--------------------------
+#种子商店格子
+@onready var crop_grid_container : GridContainer = $UI/CropStorePanel/ScrollContainer/Crop_Grid
+#玩家背包格子
+@onready var player_bag_grid_container : GridContainer = $UI/PlayerBagPanel/ScrollContainer/Bag_Grid
+#作物品质按钮
+@onready var green_bar : Button = $CopyNodes/GreenCrop				#普通
+@onready var white_blue_bar : Button = $CopyNodes/WhiteBlueCrop		#稀有
+@onready var orange_bar : Button = $CopyNodes/OrangeCrop			#优良
+@onready var pink_bar : Button = $CopyNodes/PinkCrop				#史诗
+@onready var black_blue_bar : Button = $CopyNodes/BlackBlueCrop		#传奇
+@onready var red_bar : Button = $CopyNodes/RedCrop					#神圣
 
+#各种面板
+@onready var land_panel : Panel = $UI/LandPanel#地块面板
+@onready var login_panel : PanelContainer = $UI/LoginPanel#登录注册面板
+@onready var crop_store_panel : Panel = $UI/CropStorePanel#种子商店面板
+@onready var player_bag_panel : Panel = $UI/PlayerBagPanel#玩家背包面板
+@onready var TCPNerworkManager : Panel = $UI/TCPNetworkManager#网络管理器
+@onready var player_ranking_panel : Panel = $UI/PlayerRankingPanel#玩家排行榜面板
 
-@onready var http_request = $HTTPRequest
+@onready var return_my_farm_button: Button = $UI/GUI/VBox/ReturnMyFarmButton
 
 var money: int = 500  # 默认每个人初始为100元
 var experience: float = 0.0  # 初始每个玩家的经验为0
 var grow_speed: float = 1  # 作物生长速度
 var level: int = 1  # 初始玩家等级为1
-var farm_lots = []  # 用于保存每个地块的状态
-
-var dig_index = 0
-var dig_money = 1000
-var climate_death_timer = 0
-
-var blink_speed: float = 1  # 每秒闪烁的次数
-var is_blink_on: bool = false  # 是否闪烁状态
-var blink_counter: float = 0.0  # 计数器，用于控制闪烁
+var dig_money : int = 1000 #开垦费用
 
 
-#农作物种类JSON
-var can_planted_crop = {
-	#玩家点击空地块时可以种植的作物
-	#品质有 普通，优良，稀有，史诗，传奇,品质会影响作物的颜色 
-	#耐候性：种植的过程中可能会死亡
-	#等级：需要玩家达到相应等级才能种植
-	#经验：收获时可以获得的经验,经验到达某一程度，玩家会升等级
-	#基础作物
-	# 基础作物
-	"测试作物": {"花费": 1, "生长时间": 3, "收益": 9999, "品质": "普通", "描述": "测试作物", "耐候性": 10, "等级": 1, "经验": 999},  # 1分钟
-
-	"小麦": {"花费": 120, "生长时间": 120, "收益": 100, "品质": "普通", "描述": "基础作物，品质较低，适合新手种植", "耐候性": 10, "等级": 1, "经验": 10},  # 1分钟
-	"稻谷": {"花费": 100, "生长时间": 240, "收益": 120, "品质": "普通", "描述": "适合大规模种植的基础作物", "耐候性": 10, "等级": 1, "经验": 10},  # 2分钟
-	"玉米": {"花费": 70, "生长时间": 600, "收益": 90, "品质": "普通", "描述": "营养丰富的优良作物，适合稍有经验的玩家", "耐候性": 15, "等级": 2, "经验": 15},  # 5分钟
-	"土豆": {"花费": 75, "生长时间": 360, "收益": 90, "品质": "普通", "描述": "容易种植的耐寒作物", "耐候性": 12, "等级": 1, "经验": 10},  # 3分钟
-	"胡萝卜": {"花费": 60, "生长时间": 480, "收益": 80, "品质": "普通", "描述": "适合新手的健康作物", "耐候性": 12, "等级": 1, "经验": 10},  # 4分钟
-	# 中级作物
-	"草莓": {"花费": 120, "生长时间": 960, "收益": 150, "品质": "优良", "描述": "营养丰富的果实，收益不错", "耐候性": 14, "等级": 2, "经验": 20},  # 8分钟
-	"番茄": {"花费": 100, "生长时间": 720, "收益": 130, "品质": "优良", "描述": "常见作物，适合小规模种植", "耐候性": 12, "等级": 2, "经验": 15},  # 6分钟
-	"大豆": {"花费": 90, "生长时间": 840, "收益": 110, "品质": "优良", "描述": "富含蛋白质的基础作物", "耐候性": 11, "等级": 2, "经验": 12},  # 7分钟
-	# 高级作物
-	"蓝莓": {"花费": 150, "生长时间": 1200, "收益": 200, "品质": "稀有", "描述": "较为稀有的作物，市场价值较高", "耐候性": 18, "等级": 3, "经验": 25},  # 10分钟
-	"洋葱": {"花费": 85, "生长时间": 600, "收益": 105, "品质": "稀有", "描述": "烹饪常用的作物，适合中级种植", "耐候性": 10, "等级": 2, "经验": 10},  # 5分钟
-	"南瓜": {"花费": 180, "生长时间": 1440, "收益": 250, "品质": "稀有", "描述": "秋季收获的高收益作物", "耐候性": 20, "等级": 4, "经验": 30},  # 12分钟
-	"葡萄": {"花费": 200, "生长时间": 1200, "收益": 300, "品质": "稀有", "描述": "需要特殊管理的高收益作物", "耐候性": 15, "等级": 4, "经验": 35},  # 10分钟
-	"柿子": {"花费": 160, "生长时间": 1080, "收益": 240, "品质": "稀有", "描述": "富含营养的秋季作物", "耐候性": 18, "等级": 3, "经验": 28},  # 9分钟
-	"花椰菜": {"花费": 130, "生长时间": 960, "收益": 170, "品质": "稀有", "描述": "耐寒的高品质作物，适合经验丰富的玩家", "耐候性": 17, "等级": 3, "经验": 22},  # 8分钟
-	"芦笋": {"花费": 200, "生长时间": 1560, "收益": 280, "品质": "稀有", "描述": "市场需求量高的稀有作物", "耐候性": 15, "等级": 4, "经验": 30},  # 13分钟
-	# 史诗作物
-	"香草": {"花费": 250, "生长时间": 1800, "收益": 400, "品质": "史诗", "描述": "非常稀有且收益极高的作物", "耐候性": 22, "等级": 5, "经验": 40},  # 15分钟
-	"西瓜": {"花费": 240, "生长时间": 2400, "收益": 420, "品质": "史诗", "描述": "夏季丰产的高价值作物", "耐候性": 21, "等级": 5, "经验": 45},  # 20分钟
-	"甜菜": {"花费": 220, "生长时间": 2160, "收益": 350, "品质": "史诗", "描述": "营养丰富的根茎作物，收益较高", "耐候性": 20, "等级": 5, "经验": 38},  # 18分钟
-	"甘蔗": {"花费": 260, "生长时间": 3000, "收益": 450, "品质": "史诗", "描述": "需要充足水源的高价值作物", "耐候性": 18, "等级": 5, "经验": 50},  # 25分钟
-	# 传奇作物
-	"龙果": {"花费": 400, "生长时间": 4800, "收益": 600, "品质": "传奇", "描述": "极为稀有的热带作物，产量和价值都极高", "耐候性": 25, "等级": 6, "经验": 60},  # 40分钟
-	"松露": {"花费": 500, "生长时间": 7200, "收益": 700, "品质": "传奇", "描述": "极其珍贵的地下作物，市场价格极高", "耐候性": 23, "等级": 7, "经验": 80},  # 60分钟
-	"人参": {"花费": 450, "生长时间": 6600, "收益": 650, "品质": "传奇", "描述": "需要耐心等待的珍贵药材", "耐候性": 22, "等级": 6, "经验": 75},  # 55分钟
-	"金橘": {"花费": 420, "生长时间": 4800, "收益": 620, "品质": "传奇", "描述": "少见的耐寒果树，市场需求量极大", "耐候性": 26, "等级": 7, "经验": 70}   # 40分钟
-	};
-
-var selected_lot_index = -1  # 当前被选择的地块索引
-#电脑版本地游戏保存路径
-var game_path = "C:/Users/shumengya/Desktop/smyfarm/"
-var save_time = 10
-
+#临时变量
+var user_name : String = ""
+var user_password : String = ""
+var farmname : String = ""
+var login_data : Dictionary = {}
+var data : Dictionary = {}
+var buttons : Array = []
 # 使用 _process 计时器实现作物生长机制
 var update_timer: float = 0.0
 var update_interval: float = 1.0  
-var start_game = false
+var start_game : bool = false
+# 玩家背包数据
+var player_bag : Array = []  
+#农作物种类JSON
+var can_planted_crop : Dictionary = {}
+# 当前被选择的地块索引
+var selected_lot_index : int = -1  
+var farm_lots : Array = []  # 用于保存每个地块的状态
+var dig_index : int = 0
+var climate_death_timer : int = 0
 
-var user_name = ""
-var user_password = ""
-var farmname = ""
-var login_data = {}
+# 访问模式相关变量
+var is_visiting_mode : bool = false  # 是否处于访问模式
+var original_player_data : Dictionary = {}  # 保存原始玩家数据
+var visited_player_data : Dictionary = {}  # 被访问玩家的数据
 
-var data = null
-
-var buttons = []
-
-
+# 作物图片缓存
+var crop_textures_cache : Dictionary = {}  # 缓存已加载的作物图片
+var crop_frame_counts : Dictionary = {}  # 记录每种作物的帧数
 
 
 
-
-
-##方法分类->Godot自带方法和自定义方法
 #-------------Godot自带方法-----------------
+func _on_quit_button_pressed():
+	player_bag_panel.hide()
+	pass 
+
+
 # 准备阶段
 func _ready():
 	_update_ui()
-	_init_crop_list2()
-	Toast.show("快去偷其他人的菜吧！", Color.GREEN,5.0,1.0)
-	# 初始化农场地块
-	_init_farm_lots(40)
-	_update_farm_lots()
+	_create_farm_buttons() # 创建地块按钮
+	_update_farm_lots_state() # 初始更新地块状态
+	
+	# 预加载默认作物图片
+	_preload_common_crop_textures()
+	
+	# 先尝试加载本地数据进行快速初始化
+	_load_local_crop_data()
+	
+	# 初始化玩家背包UI
+	player_bag_panel.init_player_bag()
+	# 初始化商店
+	crop_store_panel.init_store()
+	
+	# 隐藏面板
+	crop_store_panel.hide()
+	player_bag_panel.hide()
+	
+	# 启动后稍等片刻尝试从服务器获取最新数据
+	var timer = get_tree().create_timer(0.5)
+	await timer.timeout
+	_try_load_from_server()
 
-	crop_grid_container.hide()
-
+#每时每刻都更新
 func _physics_process(delta):
+	#1秒计时器
 	update_timer += delta
-
 	if update_timer >= update_interval:
 		update_timer = 0.0  # 重置计时器
+		#同步网络管理器的状态
+		show_status_label.text = network_status_label.text
+		show_status_label.modulate = network_status_label.modulate
+		
 		if start_game == true:
-			_update_save_time()
-			_update_farm_lots()
+			_update_farm_lots_state() # 更新地块状态，不重新创建UI
+			
+			#访客模式处理
+			if is_visiting_mode:
+				return_my_farm_button.show()
+				pass
+			else:
+				return_my_farm_button.hide()
+				pass
 			pass
 
-		
-		for i in range(len(farm_lots)):
-			var lot = farm_lots[i]
-			if lot["is_planted"]:
-				lot["grow_time"] += grow_speed * update_interval
-				_update_blinking(lot)
 
-func _on_dig_button_pressed():
-	if money < dig_money:
-		print("金钱不足，无法开垦" )
-		Toast.show("金钱不足，无法开垦", Color.RED)
+# 处理服务器作物更新消息
+func _handle_crop_update(update_data):
+	# 检查是否是访问模式的更新
+	var is_visiting_update = update_data.get("is_visiting", false)
+	var visited_player = update_data.get("visited_player", "")
+	
+	if is_visiting_update and is_visiting_mode:
+		# 访问模式下的更新，更新被访问玩家的农场数据
+		farm_lots = update_data["farm_lots"]
+		print("收到访问模式下的作物更新，被访问玩家：", visited_player)
+	elif not is_visiting_update and not is_visiting_mode:
+		# 正常模式下的更新，更新自己的农场数据
+		farm_lots = update_data["farm_lots"]
+		print("收到自己农场的作物更新")
 	else:
-		money -= dig_money
-		farm_lots[dig_index]["is_diged"] = true
-		land_panel.hide()
-	_update_ui()
-	_update_farm_lots()
-	pass 
-
-# 添加按键触发保存和加载的功能
-func _input(event):
-	if event.is_action_pressed("ui_save"):  # 需要在输入设置中定义这个动作
-		_save_game()
-	elif event.is_action_pressed("ui_load"):  # 需要在输入设置中定义这个动作
-		_load_game()
-	
-#这里处理登录逻辑，如果用户没有账号，直接注册一个新的
-func _on_login_button_pressed():
-
-	user_name = username_input.text.strip_edges()  # 修剪前后的空格
-	user_password = password_input.text.strip_edges()
-	farmname = farmname_input.text.strip_edges()
-	
-	login_data = {
-		"user_name": user_name,
-		"user_password": user_password
-	}
-
-	if user_name == "" or user_password == "":
-		print("用户名或密码不能为空！")
-		return  
-	
-	send_request("login", HTTPClient.METHOD_POST, login_data)
-
-func _on_register_button_pressed():
-	user_name = username_input.text.strip_edges()  
-	user_password = password_input.text.strip_edges()
-	
-	var user_password_2 = password_input_2.text.strip_edges()
-	farmname = farmname_input.text.strip_edges()
-	#压缩后成一坨大便了
-	var	init_player_data = {"experience":0,"farm_lots":[{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":3},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":3},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":3},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":3},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":3},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":5},{"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":5}],"farm_name":farmname,"level":0,"money":1000,"user_name":user_name,"user_password":user_password}
-
-	if user_name == "" or user_password == "":
-		print("用户名或密码不能为空！")
-		return  
-	if farmname == "":
-		print("农场名称不能为空！")
-		return 
-	if user_password != user_password_2:
-		print("前后密码不相同！")
-		return 
-		
-	if is_valid_qq_number(user_name) == false:
+		# 状态不匹配，忽略更新
+		print("忽略不匹配的作物更新，当前访问模式：", is_visiting_mode, "，更新类型：", is_visiting_update)
 		return
+	
+	# 更新UI显示
+	_update_farm_lots_state()
+
+
+# 处理玩家动作到服务端响应消息
+func _handle_action_response(response_data):
+	var action_type = response_data.get("action_type", "")
+	var success = response_data.get("success", false)
+	var message = response_data.get("message", "")
+	var updated_data = response_data.get("updated_data", {})
+	
+	match action_type:
+		"harvest_crop":
+			if success:
+				# 更新玩家数据
+				if updated_data.has("money"):
+					money = updated_data["money"]
+				if updated_data.has("experience"):
+					experience = updated_data["experience"]
+				if updated_data.has("level"):
+					level = updated_data["level"]
+				
+				# 更新UI
+				_update_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+				
+		"plant_crop":
+			if success:
+				# 更新玩家背包
+				if updated_data.has("player_bag"):
+					player_bag = updated_data["player_bag"]
+				
+				# 更新玩家背包UI
+				player_bag_panel.update_player_bag_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+				
+		"buy_seed":
+			if success:
+				# 更新玩家数据
+				if updated_data.has("money"):
+					money = updated_data["money"]
+				if updated_data.has("player_bag"):
+					player_bag = updated_data["player_bag"]
+				
+				# 更新UI
+				_update_ui()
+				player_bag_panel.update_player_bag_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+
+		"dig_ground":
+			if success:
+				# 更新玩家数据
+				if updated_data.has("money"):
+					money = updated_data["money"]
+				if updated_data.has("farm_lots"):
+					farm_lots = updated_data["farm_lots"]
+				
+				# 更新UI
+				_update_ui()
+				_update_farm_lots_state()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+
+# 处理玩家排行榜响应
+func _handle_player_rankings_response(data):
+	if player_ranking_panel and player_ranking_panel.has_method("_handle_player_rankings_response"):
+		player_ranking_panel._handle_player_rankings_response(data)
+
+# 处理玩家游玩时间响应
+func _handle_play_time_response(data):
+	# 如果需要在主游戏中处理游玩时间，可以在这里添加代码
+	# 目前只是将响应转发给排行榜面板
+	if player_ranking_panel and player_ranking_panel.has_method("handle_play_time_response"):
+		player_ranking_panel.handle_play_time_response(data)
+
+# 处理访问玩家响应
+func _handle_visit_player_response(data):
+	var success = data.get("success", false)
+	var message = data.get("message", "")
+	
+	if success:
+		var target_player_data = data.get("player_data", {})
 		
-	send_request("register", HTTPClient.METHOD_POST, init_player_data)
-	pass 
+		# 保存当前玩家数据
+		if not is_visiting_mode:
+			original_player_data = {
+				"user_name": user_name,
+				"player_name": show_player_name.text.replace("玩家昵称：", ""),
+				"farm_name": show_farm_name.text.replace("农场名称：", ""),
+				"level": level,
+				"money": money,
+				"experience": experience,
+				"farm_lots": farm_lots.duplicate(true),
+				"player_bag": player_bag.duplicate(true)
+			}
+		
+		# 切换到访问模式
+		is_visiting_mode = true
+		visited_player_data = target_player_data
+		
+		# 更新显示数据
+		money = target_player_data.get("money", 0)
+		experience = target_player_data.get("experience", 0)
+		level = target_player_data.get("level", 1)
+		farm_lots = target_player_data.get("farm_lots", [])
+		player_bag = target_player_data.get("player_bag", [])
+		
+		# 更新UI显示
+		show_player_name.text = "玩家昵称：" + target_player_data.get("player_name", "未知")
+		show_farm_name.text = "农场名称：" + target_player_data.get("farm_name", "未知农场")
+		show_tip.text = "访问模式"
+		show_tip.modulate = Color.ORANGE
+		
+		_update_ui()
+		
+		# 重新创建地块按钮以显示被访问玩家的农场
+		_create_farm_buttons()
+		_update_farm_lots_state()
+		
+		# 更新背包UI
+		if player_bag_panel and player_bag_panel.has_method("update_player_bag_ui"):
+			player_bag_panel.update_player_bag_ui()
+		
+		# 隐藏排行榜面板
+		if player_ranking_panel:
+			player_ranking_panel.hide()
+		
+		Toast.show("正在访问 " + target_player_data.get("player_name", "未知") + " 的农场", Color.CYAN)
+		print("成功进入访问模式，访问玩家：", target_player_data.get("player_name", "未知"))
+	else:
+		Toast.show("访问失败：" + message, Color.RED)
+		print("访问玩家失败：", message)
+
+# 处理返回自己农场响应
+func _handle_return_my_farm_response(data):
+	var success = data.get("success", false)
+	var message = data.get("message", "")
+	
+	if success:
+		var player_data = data.get("player_data", {})
+		
+		# 恢复玩家数据
+		money = player_data.get("money", 500)
+		experience = player_data.get("experience", 0)
+		level = player_data.get("level", 1)
+		farm_lots = player_data.get("farm_lots", [])
+		player_bag = player_data.get("player_bag", [])
+		
+		# 恢复UI显示
+		show_player_name.text = "玩家昵称：" + player_data.get("player_name", "未知")
+		show_farm_name.text = "农场名称：" + player_data.get("farm_name", "我的农场")
+		show_tip.text = "欢迎回到自己的农场"
+		show_tip.modulate = Color.WHITE
+		
+		# 退出访问模式
+		is_visiting_mode = false
+		visited_player_data.clear()
+		original_player_data.clear()
+		
+		# 更新UI
+		_update_ui()
+		
+		# 重新创建地块按钮以显示自己的农场
+		_create_farm_buttons()
+		_update_farm_lots_state()
+		
+		# 更新背包UI
+		if player_bag_panel and player_bag_panel.has_method("update_player_bag_ui"):
+			player_bag_panel.update_player_bag_ui()
+		
+		Toast.show("已返回自己的农场", Color.GREEN)
+		print("成功返回自己的农场")
+	else:
+		Toast.show("返回农场失败：" + message, Color.RED)
+		print("返回农场失败：", message)
 
 #-------------Godot自带方法-----------------
 
 
 
 #-------------自定义方法-----------------
-# 保存玩家数据到node.js后端
-func save_game_to_server():
-	var player_data = {
-		"user_name":user_name,
-		"user_password":user_password,
-		"farm_name":farmname,
-		"money": money,
-		"experience": experience,
-		"level": level,
-		"farm_lots": farm_lots
-		}
-		
-	send_request("save", HTTPClient.METHOD_POST, player_data)
-	pass
 
-# 加载玩家数据从node.js后端
-func load_game_from_server():
-	send_request("login", HTTPClient.METHOD_POST, login_data)
-	pass
-
-#更新保存玩家数据的时间倒计时
-func _update_save_time():
-	tip.text = "游戏自动保存剩余【"+str(save_time)+"】秒"
-	save_time -= 1
-	if save_time < 0:
-		_save_game()
-		save_time = 10
-		pass
-	pass
-
+#创建作物按钮
 func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
 	# 根据品质选择相应的进度条
 	var button = null
@@ -256,158 +348,90 @@ func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
 		"普通":
 			button = green_bar.duplicate()
 		"优良":
-			button = white_blue_bar.duplicate()
-		"稀有":
 			button = orange_bar.duplicate()
+		"稀有":
+			button = white_blue_bar.duplicate()
 		"史诗":
 			button = pink_bar.duplicate()
 		"传奇":
 			button = black_blue_bar.duplicate()
+		_:  # 默认情况
+			button = green_bar.duplicate()
 
-	# 添加按钮事件
-	button.connect("pressed", Callable(self, "_on_crop_selected").bind(crop_name))
-	button.text = str(crop_name)
+	# 确保按钮可见并可点击
+	button.visible = true
+	button.disabled = false
+	button.focus_mode = Control.FOCUS_ALL
+	
+	# 设置按钮文本
+	button.text = str(crop_quality + "-" + crop_name)
+	
+	# 如果按钮有标题标签，设置标题
+	if button.has_node("Title"):
+		button.get_node("Title").text = crop_quality
+	
 	return button
 
-#地块闪烁代码-已废弃
-func _update_blinking(lot: Dictionary):
-	if lot["grow_time"] >= lot["max_grow_time"]:
-		lot["grow_time"] = lot["max_grow_time"]
-		blink_counter += blink_speed * update_interval
-		is_blink_on = int(blink_counter) % 2 == 0
-	else:
-		is_blink_on = false
-		blink_counter = 0.0
-
-# 写入 TXT 文件	
-func write_txt_file(file_path: String, text: String, append: bool = false) -> void:
-	var file
-	if append == true:
-		file = FileAccess.open(file_path, FileAccess.READ_WRITE)  # 追加模式
-		if file:
-			file.seek_end()  # 移动光标到文件末尾
-	else:
-		file = FileAccess.open(file_path, FileAccess.WRITE)  # 覆盖模式
-	if file:
-		file.store_string(text)
-		file.close()
-		Toast.show("游戏已保存！", Color.GREEN)
-	else:
-		print("写入文件时打开失败: ", file_path)
-		Toast.show("写入文件时打开失败！", Color.RED)
-		
-# 读取 TXT 文件
-func read_txt_file(file_path: String) -> String:
-	var file = FileAccess.open(file_path, FileAccess.READ)
-	if file:
-		var text = file.get_as_text()
-		file.close()
-		return text
-	else:
-		print("打开文件失败: ", file_path)
-		return "false"
-		
-#生成随机数-用于作物随机死亡
-func random_probability(probability: float) -> bool:
-	# 确保传入的概率值在 0 到 1 之间
-	if probability*0.001 < 0.0 or probability*0.001 > 1.0:
-		print("概率值必须在 0 和 1 之间")
-		return false
+# 打开商店按钮处理函数 
+func _on_open_store_button_pressed():
+	# 如果处于访问模式，不允许打开商店
+	if is_visiting_mode:
+		Toast.show("访问模式下无法使用商店", Color.ORANGE)
+		return
 	
-	# 生成一个 0 到 1 之间的随机数
-	var random_value = randf()
-	
-	# 如果随机数小于等于概率值，则返回 true
-	return random_value <= (probability*0.001)
+	# 确保商店面板已初始化
+	crop_store_panel.init_store()
+	# 显示商店面板
+	crop_store_panel.show()
+	# 确保在最前面显示
+	crop_store_panel.move_to_front() 
+	pass
 
-# 保存游戏数据
-func _save_game():
-	## 创建一个字典来保存游戏状态
-	#var save_data = {
-		#"user_name":username_input.text,
-		#"user_password":password_input.text,
-		#"farm_name":farmname_input.text,
-		#"money": money,
-		#"experience": experience,
-		#"level": level,
-		#"farm_lots": farm_lots
-		#}
-	#write_txt_file(game_path+username_input.text+".txt", str(save_data), false)
-	## 将字典写入文件
-	save_game_to_server()
 
-# 加载游戏数据
-func _load_game():
-	
-	## 从本地读取字典
-	#var save_data = JSON.parse_string(read_txt_file(game_path+username_input.text+".txt"))
-	#money = save_data["money"]
-	#experience = save_data["experience"]
-	#level = save_data["level"]
-	#farm_lots = save_data["farm_lots"]
 
-	load_game_from_server()
-
-	Toast.show("游戏已加载！", Color.GREEN)
-	_update_ui()
-	_update_farm_lots()
-	_init_crop_list2()
-
-# 初始化农场地块
-func _init_farm_lots(num_lots):
-	for i in range(num_lots):
-		farm_lots.append({
-			"is_diged": false,		# 是否开垦	
-			"is_planted": false,    # 是否种植
-			"is_dead": false,    	# 是否作物已死亡
-			"crop_type": "",        # 作物类型
-			"grow_time": 0,         # 生长时间
-			"max_grow_time": 5      # 作物需要的最大生长时间（假设5秒成熟）
-
-		})
-
-# 初始化作物选择列表
-func _init_crop_list2():
-	# 清空已有的作物按钮
-	for child in crop_grid_container.get_children():
-		child.queue_free()
-	
-	# 遍历可种植的作物
-	for crop_name in can_planted_crop:
-		var crop = can_planted_crop[crop_name]
-		
-		# 只显示当前等级可以种植的作物
-		if crop["等级"] <= level:
-			var level_btn = _create_crop_button(crop_name, crop["品质"])
-			crop_grid_container.add_child(level_btn)
-
-# 更新农场地块状态到 GridContainer
-func _update_farm_lots():  # 每一秒更新一次状态
+# 初始化农场地块按钮 - 只在游戏开始时调用一次
+func _create_farm_buttons():
 	# 清空当前显示的地块
 	for child in grid_container.get_children():
 		child.queue_free()
+		
+	# 创建所有地块按钮
+	for i in range(len(farm_lots)):
+		var button = crop_item.duplicate()
+		button.name = "FarmLot_" + str(i)
+		
+		# 根据是否处于访问模式连接不同的事件
+		if is_visiting_mode:
+			# 访问模式下，点击地块只显示提示信息
+			button.connect("pressed", Callable(self, "_on_visit_item_selected").bind(i))
+		else:
+			# 正常模式下，连接正常的地块操作
+			button.connect("pressed", Callable(self, "_on_item_selected").bind(i))
+		
+		grid_container.add_child(button)
 
+
+# 更新农场地块状态到 GridContainer 更新现有按钮的状态
+func _update_farm_lots_state():
 	var digged_count = 0  # 统计已开垦地块的数量
 
 	for i in range(len(farm_lots)):
+		if i >= grid_container.get_child_count():
+			break # 防止越界
+			
 		var lot = farm_lots[i]
-		var button = crop_item.duplicate()
+		var button = grid_container.get_child(i)
 		var label = button.get_node("Label")
 		var progressbar = button.get_node("ProgressBar")
+
+		# 更新作物图片
+		_update_lot_crop_sprite(button, lot)
 
 		if lot["is_diged"]:
 			digged_count += 1  # 增加已开垦地块计数
 			if lot["is_planted"]:
-				# 寒冷环境配置，作物随机概率死亡
-				climate_death_timer += 1
-				if climate_death_timer >= 60:
-					if random_probability(can_planted_crop[lot["crop_type"]]["耐候性"]):
-						lot["is_dead"] = true
-					climate_death_timer = 0
-
 				# 如果作物已死亡
 				if lot["is_dead"]:
-					print("[" + farm_lots[i]["crop_type"] + "]" + "已死亡！")
 					label.modulate = Color.NAVY_BLUE
 					label.text = "[" + farm_lots[i]["crop_type"] + "已死亡" + "]"
 				else:
@@ -417,148 +441,104 @@ func _update_farm_lots():  # 每一秒更新一次状态
 					# 根据品质显示颜色
 					match can_planted_crop[crop_name]["品质"]:
 						"普通":
-							label.modulate = Color.GAINSBORO
+							label.modulate = Color.HONEYDEW#白色
 						"优良":
-							label.modulate = Color.DODGER_BLUE
+							label.modulate = Color.DODGER_BLUE#深蓝色
 						"稀有":
-							label.modulate = Color.PURPLE
+							label.modulate = Color.HOT_PINK#品红色
 						"史诗":
-							label.modulate = Color.YELLOW
+							label.modulate = Color.YELLOW#黄色
 						"传奇":
-							label.modulate = Color.ORANGE_RED
+							label.modulate = Color.ORANGE_RED#红色
 
 					progressbar.show()
 					progressbar.max_value = int(lot["max_grow_time"])
-					progressbar.set_target_value(int(lot["grow_time"]))
+					progressbar.value = int(lot["grow_time"]) # 直接设置值，不使用动画
 			else:
 				# 已开垦但未种植的地块显示为空地
-				label.modulate = Color.GREEN
+				label.modulate = Color.GREEN#绿色
 				label.text = "[" + "空地" + "]"
 				progressbar.hide()
+
 		else:
 			# 未开垦的地块
-			label.modulate = Color.WEB_GRAY
+			label.modulate = Color.WEB_GRAY#深褐色
 			label.text = "[" + "未开垦" + "]"
 			progressbar.hide()
 
-		# 连接按钮点击事件
-		button.connect("pressed", Callable(self, "_on_item_selected").bind(i))
-		grid_container.add_child(button)
-
 	# 根据已开垦地块数量更新 dig_money
 	dig_money = digged_count * 1000
-	dig_button.text = "开垦" + "[" + str(dig_money) + "]"
+
+
+# 仅在加载游戏或特定情况下完全刷新地块 - 用于与服务器同步时
+func _refresh_farm_lots():
+	_create_farm_buttons()
+	_update_farm_lots_state()
 
 
 # 更新玩家信息显示
 func _update_ui():
 	show_money.text = "当前金钱：" + str(money) + " 元"
-	show_money.modulate = Color.ORANGE
 	show_experience.text = "当前经验：" + str(experience) + " 点"
-	show_experience.modulate = Color.GREEN
 	show_level.text = "当前等级：" + str(level) + " 级"
-	show_level.modulate = Color.DODGER_BLUE
+
 
 # 处理地块点击事件
 func _on_item_selected(index):
+	# 如果处于访问模式，不允许操作
+	if is_visiting_mode:
+		Toast.show("访问模式下无法操作地块", Color.ORANGE)
+		return
+	
+	land_panel.show()
+	land_panel.selected_lot_index = index
+	selected_lot_index = index
+
+# 处理访问模式下的地块点击事件
+func _on_visit_item_selected(index):
+	# 显示被访问玩家的地块信息
 	var lot = farm_lots[index]
+	var info_text = ""
+	
 	if lot["is_diged"]:
 		if lot["is_planted"]:
 			if lot["is_dead"]:
-				print(lot["crop_type"]+"已被铲除")
-				root_out_crop(index)
-				pass
+				info_text = "地块 " + str(index + 1) + ": " + lot["crop_type"] + " (已死亡)"
 			else:
-				_harvest_crop(index)
-				pass
-			pass
+				var crop_name = lot["crop_type"]
+				var progress = float(lot["grow_time"]) / float(lot["max_grow_time"]) * 100.0
+				var quality = "未知品质"
+				
+				# 获取作物品质
+				if can_planted_crop.has(crop_name):
+					quality = can_planted_crop[crop_name]["品质"]
+				
+				if lot["grow_time"] >= lot["max_grow_time"]:
+					info_text = "地块 " + str(index + 1) + ": " + quality + "-" + crop_name + " (已成熟)"
+				else:
+					info_text = "地块 " + str(index + 1) + ": " + quality + "-" + crop_name + " (成熟度: " + str(int(progress)) + "%)"
 		else:
-			# 记录选中的地块索引，显示作物选择列表
-			selected_lot_index = index
-			double_click_close(crop_grid_container)
-			pass		
-		pass
-	else :
-		double_click_close(land_panel)
-		dig_index = index
-		pass
-
-#双击切换UI事件-比如按一下打开再按一下关闭
-func double_click_close(node):
-	if node.visible == false:
-		node.show()
-		pass
-	else :
-		node.hide()
-		pass
-	pass
-
-# 处理作物选择事件
-func _on_crop_selected(crop_index):
-	print(crop_index)
-	#var crop_name = crop_list.get_item_text(crop_index).split(" (")[0]
-	var crop_name = crop_index
+			info_text = "地块 " + str(index + 1) + ": 空地 (已开垦)"
+	else:
+		info_text = "地块 " + str(index + 1) + ": 未开垦"
 	
-	if selected_lot_index != -1:
-		_plant_crop(selected_lot_index, crop_name)
-		selected_lot_index = -1
-		
-		#crop_list.hide()  # 种植完成后隐藏作物选择列表
-		crop_grid_container.hide()
+	Toast.show(info_text, Color.CYAN)
+	print("查看地块信息: ", info_text)
 
-# 种植作物
-func _plant_crop(index, crop_name):
-	var crop = can_planted_crop[crop_name]
-	if money < crop["花费"]:
-		print("金钱不足，无法种植 " + crop_name)
-		Toast.show("金钱不足，无法种植 " + crop_name, Color.RED)
-		return
-
-	money -= crop["花费"]
-	farm_lots[index]["is_planted"] = true
-	farm_lots[index]["crop_type"] = crop_name
-	farm_lots[index]["grow_time"] = 0
-	farm_lots[index]["max_grow_time"] = crop["生长时间"]
-
-	print("在地块[[" + str(index) + "]种植了[" + crop_name + "]")
-	Toast.show("在地块[[" + str(index) + "]种植了[" + crop_name + "]", Color.GREEN)
-	Toast.show(
-	"名称:"+crop_name+"\n"+
-	"花费:"+str(crop["花费"])+"\n"+
-	"成熟时间:"+str(crop["生长时间"])+"\n"+
-	"收益:"+str(crop["收益"])+"\n"+
-	"品质:"+str(crop["品质"])+"\n"+
-	"描述:"+str(crop["描述"])+"\n"+
-	"耐候性:"+str(crop["耐候性"])+"\n"+
-	"种植等级:"+str(crop["等级"])+"\n"+
-	"获得经验:"+str(crop["经验"])+"\n"
-	, Color.ORANGE)
-
-	_update_ui()
-	_update_farm_lots()
 
 # 收获作物
 func _harvest_crop(index):
 	var lot = farm_lots[index]
 	if lot["grow_time"] >= lot["max_grow_time"]:
-		var crop = can_planted_crop[lot["crop_type"]]
-		money += crop["收益"]+crop["花费"]
-		experience += crop["经验"]
-		Toast.show("从地块[" + str(index) + "]收获了[" + lot["crop_type"] + "]作物", Color.YELLOW)
-		print("从地块[" + str(index) + "]收获了[" + lot["crop_type"] + "]作物")
-
-		lot["is_planted"] = false
-		lot["crop_type"] = ""
-		lot["grow_time"] = 0
-
-		_check_level_up()
-		_update_ui()
-		_update_farm_lots()
+		# 发送收获请求到服务器
+		if network_manager and network_manager.sendHarvestCrop(index):
+			pass
 	else:
-		print("作物还未成熟")
+		#print("作物还未成熟")
 		Toast.show("作物还未成熟", Color.RED)
 
-#铲除作物-好像还未实现这个功能
+
+#铲除已死亡作物
 func root_out_crop(index):
 	var lot = farm_lots[index]
 	lot["is_planted"] = false
@@ -567,8 +547,9 @@ func root_out_crop(index):
 	lot["crop_type"] = ""
 	_check_level_up()
 	_update_ui()
-	_update_farm_lots()
+	_update_farm_lots_state()
 	pass
+
 
 # 检查玩家是否可以升级
 func _check_level_up():
@@ -576,87 +557,362 @@ func _check_level_up():
 	if experience >= level_up_experience:
 		level += 1
 		experience -= level_up_experience
-		print("恭喜！你升到了等级 ", level)
+		#print("恭喜！你升到了等级 ", level)
 		Toast.show("恭喜！你升到了" + str(level) + "级 ", Color.SKY_BLUE)
-		_init_crop_list2()
+		crop_store_panel.init_store()
 
-#-------------http传输的两个关键方法-----------------
-func send_request(endpoint: String, method: int, data: Dictionary = {}):
-	var http_request = HTTPRequest.new()
-	add_child(http_request)
-	http_request.request_completed.connect(self._on_request_completed)
 
-	var json_body = JSON.stringify(data)
-	var headers = ["Content-Type: application/json"]
-	var error = http_request.request("http://localhost:3000/" + endpoint, headers, method, json_body)
-	if error != OK:
-		push_error("请求失败: %s" % str(error))
+
+
+#-------------自定义方法----------------
+
+
+func _on_player_ranking_button_pressed() -> void:
+	player_ranking_panel.show()
+	pass 
+	
+func _on_return_my_farm_button_pressed() -> void:
+	# 如果当前处于访问模式，返回自己的农场
+	if is_visiting_mode:
+		return_to_my_farm()
 	else:
-		#print("请求已发送: ", endpoint, json_body)
-		pass
-func _on_request_completed(result, response_code, headers, body):
-	var response_text = body.get_string_from_utf8()
-	#print("返回 code: %d" % response_code)
-	#print("返回 body: %s" % response_text)
+		# 如果不在访问模式，这个按钮可能用于其他功能或者不做任何操作
+		print("当前已在自己的农场")
+
+# 返回自己的农场
+func return_to_my_farm():
+	if not is_visiting_mode:
+		return
+	
+	# 发送返回自己农场的请求到服务器
+	if network_manager and network_manager.has_method("sendReturnMyFarm"):
+		var success = network_manager.sendReturnMyFarm()
+		if success:
+			Toast.show("正在返回自己的农场...", Color.YELLOW)
+			print("已发送返回自己农场的请求")
+		else:
+			Toast.show("网络未连接，无法返回农场", Color.RED)
+			print("发送返回农场请求失败，网络未连接")
+	else:
+		Toast.show("网络管理器不可用", Color.RED)
+		print("网络管理器不可用")
+
+# 从服务器获取作物数据
+func _load_crop_data():
+	var network_manager = get_node("/root/main/UI/TCPNerworkManager")
+	if network_manager and network_manager.is_connected_to_server():
+		# 从服务器请求作物数据
+		print("正在从服务器获取作物数据...")
+		network_manager.sendGetCropData()
+	else:
+		# 如果无法连接服务器，尝试加载本地数据
+		print("无法连接服务器，尝试加载本地作物数据...")
+		_load_local_crop_data()
+
+# 尝试从服务器加载最新数据
+func _try_load_from_server():
+
+	if network_manager and network_manager.is_connected_to_server():
+		# 从服务器请求最新作物数据
+		print("尝试从服务器获取最新作物数据...")
+		network_manager.sendGetCropData()
+	else:
+		print("服务器未连接，使用当前作物数据")
+
+# 处理服务器作物数据响应
+func _handle_crop_data_response(response_data):
+	var success = response_data.get("success", false)
+	
+	if success:
+		var crop_data = response_data.get("crop_data", {})
+		if crop_data:
+			# 保存到本地文件
+			_save_crop_data_to_local(crop_data)
+			# 设置全局变量
+			can_planted_crop = crop_data
+			print("作物数据已从服务器更新")
+			
+			# 重新初始化商店和背包UI，因为现在有了作物数据
+			_refresh_ui_after_crop_data_loaded()
+		else:
+			print("服务器返回的作物数据为空")
+			_load_local_crop_data()
+	else:
+		var message = response_data.get("message", "未知错误")
+		print("从服务器获取作物数据失败：", message)
+		_load_local_crop_data()
+
+# 从本地文件加载作物数据（备用方案）
+func _load_local_crop_data():
+	# 优先尝试加载用户目录下的缓存文件
+	var file = FileAccess.open("user://crop_data.json", FileAccess.READ)
+	if file:
+		var json_text = file.get_as_text()
+		file.close()
+		
+		var json = JSON.new()
+		var parse_result = json.parse(json_text)
+		if parse_result == OK:
+			can_planted_crop = json.get_data()
+			print("已加载本地缓存的作物数据")
+			_refresh_ui_after_crop_data_loaded()
+			return
+		else:
+			print("本地缓存作物数据JSON解析错误：", json.get_error_message())
+	
+	# 如果缓存文件不存在或解析失败，加载默认数据
+	file = FileAccess.open("res://Data/crop_data.json", FileAccess.READ)
+	if not file:
+		print("无法读取默认作物数据文件！")
+		return
+		
+	var json_text = file.get_as_text()
+	file.close()
 	
 	var json = JSON.new()
-	var parse_result = json.parse(response_text)
-	
-	if parse_result == OK:
-		var parsed_data = json.get_data()
-		data = parsed_data  # 将解析后的数据赋值给 data
-		#print("解析成功: ", data)
+	var parse_result = json.parse(json_text)
+	if parse_result != OK:
+		print("默认作物数据JSON解析错误：", json.get_error_message())
+		return
 		
-		if data["message"] == "登录成功":
-			print("登录成功")
-			if data.has("data"):
-				var user_data = data["data"]
-				#print("用户数据: ", user_data)
-				experience = user_data.get("experience", 0)
-				farm_lots = user_data.get("farm_lots", [])
-				level = user_data.get("level", 1)
-				money = user_data.get("money", 0)
-				farmname_input.text = user_data.get("farm_name", 0)
-				start_game = true
-				login_panel.hide()
-				# 确保在更新数据后调用 UI 更新函数
-				_update_ui()
-				_update_farm_lots()
-				
-				
-		elif data["message"] == "密码错误":
-			printerr("密码错误")
-			pass
-		elif data["message"] == "服务器错误":
-			if data.has("error"):
-				printerr("服务器错误"+str(data["error"]))
-			pass
-		elif data["message"] == "用户不存在":
-			printerr("用户不存在")
-		elif data["message"] == "注册成功":
-			print("注册成功")
-			{"user_name": user_name,"user_password": user_password}
-			send_request("login", HTTPClient.METHOD_POST, {"user_name": user_name,"user_password": user_password})
-		elif data["message"] == "用户名已存在":
-			printerr("用户名已存在")
-			
+	can_planted_crop = json.get_data()
+	print("已加载默认作物数据")
+	_refresh_ui_after_crop_data_loaded()
 
-
-	else:
-		print("JSON 解析错误: ", json.get_error_message())
-#-------------http传输的两个关键方法-----------------
-
-#是否为有效QQ号
-func is_valid_qq_number(qq_number: String) -> bool:
-	# QQ号的标准格式是5到12位的数字
-	var qq_regex = RegEx.new()
-	var pattern = r"^\d{5,12}$"
+# 作物数据加载后刷新UI
+func _refresh_ui_after_crop_data_loaded():
+	# 重新初始化商店和背包UI，因为现在有了作物数据
+	if crop_store_panel and crop_store_panel.has_method("init_store"):
+		crop_store_panel.init_store()
+		print("商店已根据作物数据重新初始化")
 	
-	var error = qq_regex.compile(pattern)
-	if error != OK:
-		print("格式错误，请输入正确的QQ号码！")
-		return false
+	if player_bag_panel and player_bag_panel.has_method("init_player_bag"):
+		player_bag_panel.init_player_bag()
+		print("背包已根据作物数据重新初始化")
 
-	return qq_regex.search(qq_number) != null
+# 保存作物数据到本地文件
+func _save_crop_data_to_local(crop_data):
+	var file = FileAccess.open("user://crop_data.json", FileAccess.WRITE)
+	if not file:
+		print("无法创建本地作物数据缓存文件！")
+		return
+		
+	var json_string = JSON.stringify(crop_data, "\t")
+	file.store_string(json_string)
+	file.close()
+	print("作物数据已保存到本地缓存")
 
-#-------------自定义方法-----------------
+# 加载作物图片序列帧
+func _load_crop_textures(crop_name: String) -> Array:
+	"""
+	加载指定作物的所有序列帧图片
+	返回图片数组，如果作物不存在则返回默认图片
+	"""
+	if crop_textures_cache.has(crop_name):
+		return crop_textures_cache[crop_name]
+	
+	var textures = []
+	var crop_path = "res://assets/作物/" + crop_name + "/"
+	var default_path = "res://assets/作物/默认/"
+	
+	# 检查作物文件夹是否存在
+	if DirAccess.dir_exists_absolute(crop_path):
+		# 尝试加载作物的序列帧（从0开始）
+		var frame_index = 0
+		while true:
+			var texture_path = crop_path + str(frame_index) + ".png"
+			if ResourceLoader.exists(texture_path):
+				var texture = load(texture_path)
+				if texture:
+					textures.append(texture)
+					frame_index += 1
+				else:
+					break
+			else:
+				break
+		
+		if textures.size() > 0:
+			print("成功加载作物 ", crop_name, " 的 ", textures.size(), " 帧图片")
+		else:
+			print("作物 ", crop_name, " 文件夹存在但没有找到有效图片，使用默认图片")
+			textures = _load_default_textures()
+	else:
+		print("作物 ", crop_name, " 的文件夹不存在，使用默认图片")
+		textures = _load_default_textures()
+	
+	# 缓存结果
+	crop_textures_cache[crop_name] = textures
+	crop_frame_counts[crop_name] = textures.size()
+	
+	return textures
+
+# 加载默认图片
+func _load_default_textures() -> Array:
+	"""
+	加载默认作物图片
+	"""
+	if crop_textures_cache.has("默认"):
+		return crop_textures_cache["默认"]
+	
+	var textures = []
+	var default_path = "res://assets/作物/默认/"
+	
+	# 尝试加载默认图片序列帧
+	var frame_index = 0
+	while true:
+		var texture_path = default_path + str(frame_index) + ".png"
+		if ResourceLoader.exists(texture_path):
+			var texture = load(texture_path)
+			if texture:
+				textures.append(texture)
+				frame_index += 1
+			else:
+				break
+		else:
+			break
+	
+	# 如果没有找到序列帧，尝试加载单个默认图片
+	if textures.size() == 0:
+		var single_texture_path = default_path + "0.png"
+		if ResourceLoader.exists(single_texture_path):
+			var texture = load(single_texture_path)
+			if texture:
+				textures.append(texture)
+	
+	# 缓存默认图片
+	crop_textures_cache["默认"] = textures
+	crop_frame_counts["默认"] = textures.size()
+	
+	print("加载了 ", textures.size(), " 个默认作物图片")
+	return textures
+
+# 根据生长进度获取对应的作物图片
+func _get_crop_texture_by_progress(crop_name: String, progress: float) -> Texture2D:
+	"""
+	根据作物名称和生长进度获取对应的图片
+	progress: 0.0 到 1.0 的生长进度
+	"""
+	var textures = _load_crop_textures(crop_name)
+	
+	if textures.size() == 0:
+		return null
+	
+	if textures.size() == 1:
+		return textures[0]
+	
+	# 根据进度计算应该显示的帧
+	var frame_index = int(progress * (textures.size() - 1))
+	frame_index = clamp(frame_index, 0, textures.size() - 1)
+	
+	return textures[frame_index]
+
+# 更新地块的作物图片
+func _update_lot_crop_sprite(button: Button, lot_data: Dictionary):
+	"""
+	更新单个地块按钮的作物图片
+	"""
+	var crop_sprite = button.get_node("crop_sprite")
+	
+	if not lot_data["is_diged"]:
+		# 未开垦的地块，隐藏作物图片
+		crop_sprite.visible = false
+		return
+	
+	if not lot_data["is_planted"] or lot_data["crop_type"] == "":
+		# 空地，隐藏作物图片
+		crop_sprite.visible = false
+		return
+	
+	# 有作物的地块
+	crop_sprite.visible = true
+	
+	var crop_name = lot_data["crop_type"]
+	var grow_time = float(lot_data["grow_time"])
+	var max_grow_time = float(lot_data["max_grow_time"])
+	var is_dead = lot_data.get("is_dead", false)
+	
+	# 计算生长进度
+	var progress = 0.0
+	if max_grow_time > 0:
+		progress = grow_time / max_grow_time
+		progress = clamp(progress, 0.0, 1.0)
+	
+	# 如果作物死亡，显示最后一帧并调整颜色
+	if is_dead:
+		var texture = _get_crop_texture_by_progress(crop_name, 1.0)  # 使用最后一帧
+		if texture:
+			crop_sprite.texture = texture
+			crop_sprite.modulate = Color(0.5, 0.5, 0.5, 0.8)  # 变暗表示死亡
+		else:
+			crop_sprite.visible = false
+	else:
+		# 正常作物，恢复正常颜色
+		crop_sprite.modulate = Color.WHITE
+		
+		# 获取对应的图片
+		var texture = _get_crop_texture_by_progress(crop_name, progress)
+		
+		if texture:
+			crop_sprite.texture = texture
+		else:
+			print("无法获取作物 ", crop_name, " 的图片")
+			crop_sprite.visible = false
+
+# 预加载常用作物图片
+func _preload_common_crop_textures():
+	"""
+	预加载一些常用的作物图片，提高游戏性能
+	"""
+	print("开始预加载作物图片...")
+	
+	# 首先加载默认图片
+	_load_default_textures()
+	
+	# 预加载一些常见作物（可以根据实际情况调整）
+	var common_crops = ["草莓", "胡萝卜", "土豆", "玉米", "小麦", "番茄"]
+	
+	for crop_name in common_crops:
+		_load_crop_textures(crop_name)
+	
+	print("作物图片预加载完成，已缓存 ", crop_textures_cache.size(), " 种作物")
+
+# 清理作物图片缓存
+func _clear_crop_textures_cache():
+	"""
+	清理作物图片缓存，释放内存
+	"""
+	crop_textures_cache.clear()
+	crop_frame_counts.clear()
+	print("作物图片缓存已清理")
+
+# 获取作物图片缓存信息
+func _get_crop_cache_info() -> String:
+	"""
+	获取当前作物图片缓存的信息
+	"""
+	var info = "作物图片缓存信息:\n"
+	for crop_name in crop_textures_cache.keys():
+		var frame_count = crop_frame_counts.get(crop_name, 0)
+		info += "- " + crop_name + ": " + str(frame_count) + " 帧\n"
+	return info
+
+# 调试：打印作物图片缓存信息
+func _debug_print_crop_cache():
+	"""
+	调试用：打印当前作物图片缓存信息
+	"""
+	print(_get_crop_cache_info())
+
+# 调试：强制刷新所有地块的作物图片
+func _debug_refresh_all_crop_sprites():
+	"""
+	调试用：强制刷新所有地块的作物图片
+	"""
+	print("强制刷新所有地块的作物图片...")
+	for i in range(len(farm_lots)):
+		if i >= grid_container.get_child_count():
+			break
+		var button = grid_container.get_child(i)
+		var lot = farm_lots[i]
+		_update_lot_crop_sprite(button, lot)
+	print("作物图片刷新完成")

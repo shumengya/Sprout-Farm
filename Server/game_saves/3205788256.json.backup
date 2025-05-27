@@ -1,0 +1,370 @@
+{
+  "experience": 508,
+  "farm_lots": [
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "花椰菜",
+      "grow_time": 960,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 960
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 4800
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 1200
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 4800
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 2400
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 120
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 720
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 2400
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 1200
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 1800
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 600
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 480
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 960
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 960
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 5
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 2400
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 3
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 960
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 960
+    }
+  ],
+  "player_bag": [
+    {
+      "count": 18,
+      "name": "测试作物",
+      "quality": "普通"
+    },
+    {
+      "count": 253,
+      "name": "金橘",
+      "quality": "传奇"
+    },
+    {
+      "name": "胡萝卜",
+      "quality": "普通",
+      "count": 17
+    },
+    {
+      "name": "花椰菜",
+      "quality": "稀有",
+      "count": 11
+    },
+    {
+      "name": "芦笋",
+      "quality": "稀有",
+      "count": 8
+    },
+    {
+      "name": "草莓",
+      "quality": "优良",
+      "count": 4
+    },
+    {
+      "name": "香草",
+      "quality": "史诗",
+      "count": 3
+    }
+  ],
+  "farm_name": "树萌芽の大农场",
+  "player_name": "树萌芽",
+  "level": 36,
+  "money": 40013,
+  "last_login_time": "2025年05月24日11时51分35秒",
+  "total_login_time": "100时33分38秒",
+  "user_name": "3205788256",
+  "user_password": "tyh@19900420"
+}

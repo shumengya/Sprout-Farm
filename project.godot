@@ -13,20 +13,26 @@ config_version=5
 config/name="萌芽农场"
 config/description="一款支持多人联机的农场游戏"
 run/main_scene="res://MainGame.tscn"
-config/features=PackedStringArray("4.3", "Mobile")
+config/features=PackedStringArray("4.4", "Mobile")
 config/icon="res://assets/logo2.png"
 
 [autoload]
 
-Toast="*res://components/toast.gd"
+GlobalFunctions="*res://GlobalScript/GlobalFunctions.gd"
+Toast="*res://GlobalScript/Toast.gd"
+GlobalVariables="*res://GlobalScript/GlobalVariables.gd"
 
 [display]
 
-window/size/resizable=false
+window/size/viewport_width=1400
+window/size/viewport_height=720
 window/stretch/mode="viewport"
-window/stretch/aspect="ignore"
 window/per_pixel_transparency/allowed=true
 window/vsync/vsync_mode=0
+
+[dotnet]
+
+project/assembly_name="萌芽农场"
 
 [input]
 
@@ -44,3 +50,4 @@ ui_load={
 [rendering]
 
 renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true

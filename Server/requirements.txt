@@ -1,0 +1,4 @@
+# Game Server Dependencies
+colorama>=0.4.6    # For colored terminal output
+# Email Requirements
+# Standard library dependencies are not listed (socket, threading, json, etc.) 

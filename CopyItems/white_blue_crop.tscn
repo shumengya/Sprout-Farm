@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3 uid="uid://dagh3u5med30i"]
+
+[ext_resource type="Script" uid="uid://c6ylh1o2kgqth" path="res://CopyItems/item_crop.gd" id="1_nfqts"]
+
+[node name="WhiteBlueCrop" type="Button"]
+custom_minimum_size = Vector2(400, 400)
+offset_right = 400.0
+offset_bottom = 400.0
+scale = Vector2(0.3, 0.3)
+theme_override_font_sizes/font_size = 1
+icon_alignment = 1
+script = ExtResource("1_nfqts")
+
+[node name="CropImage" type="Sprite2D" parent="."]
+position = Vector2(199.569, 201.043)
+scale = Vector2(0.260977, 0.259058)
+
+[node name="Title" type="Label" parent="."]
+modulate = Color(0.111013, 0.795686, 0.959948, 1)
+layout_mode = 0
+offset_right = 400.0
+offset_bottom = 55.0
+theme_override_font_sizes/font_size = 50
+text = "普通"
+horizontal_alignment = 1

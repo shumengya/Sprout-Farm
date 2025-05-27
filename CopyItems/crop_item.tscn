@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=3 uid="uid://bkivlkirrx6u8"]
+
+[ext_resource type="Texture2D" uid="uid://c4l0qn0p4yav8" path="res://assets/tu3.png" id="1_bns1c"]
+[ext_resource type="Script" uid="uid://xh5tr5co5kfu" path="res://GUI/SMY_ProgressBar.gd" id="2_1n4xp"]
+[ext_resource type="Texture2D" uid="uid://kdhowrc6av4g" path="res://assets/作物/默认/0.png" id="2_bns1c"]
+
+[node name="CropItem" type="Button"]
+self_modulate = Color(1, 1, 1, 0.435294)
+custom_minimum_size = Vector2(100, 100)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ground_sprite" type="Sprite2D" parent="."]
+position = Vector2(50, 63)
+scale = Vector2(0.130329, 0.130329)
+texture = ExtResource("1_bns1c")
+
+[node name="crop_sprite" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(50, 36)
+scale = Vector2(0.0660772, 0.0660772)
+texture = ExtResource("2_bns1c")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+layout_mode = 2
+offset_top = 86.0
+offset_right = 495.0
+offset_bottom = 159.0
+scale = Vector2(0.2, 0.2)
+theme_override_font_sizes/font_size = 50
+script = ExtResource("2_1n4xp")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+offset_right = 250.0
+offset_bottom = 42.0
+scale = Vector2(0.4, 0.4)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "[普通-胡萝卜]"
+horizontal_alignment = 1
+vertical_alignment = 1

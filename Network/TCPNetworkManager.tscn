@@ -1,0 +1,69 @@
+[gd_scene load_steps=2 format=3 uid="uid://cpxiaqh0y6a5d"]
+
+[ext_resource type="Script" uid="uid://q1f3tubmdsrk" path="res://Network/TCPNetworkManager.gd" id="1_tfd57"]
+
+[node name="TCPNetworkManager" type="Panel"]
+script = ExtResource("1_tfd57")
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 142.0
+offset_right = 401.0
+offset_bottom = 647.0
+horizontal_scroll_mode = 0
+
+[node name="ResponseLabel" type="Label" parent="Scroll"]
+custom_minimum_size = Vector2(400, 500)
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "回应"
+autowrap_mode = 3
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_right = 400.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 30
+text = "TCP网络调试面板"
+horizontal_alignment = 1
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 400.0
+offset_bottom = 647.0
+color = Color(0.104753, 0.146763, 0.23013, 0.427451)
+
+[node name="StatusLabel" type="Label" parent="."]
+layout_mode = 0
+offset_top = 100.0
+offset_right = 120.0
+offset_bottom = 142.0
+theme_override_font_sizes/font_size = 30
+text = "连接状态"
+
+[node name="MessageInput" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 136.0
+offset_top = 50.0
+offset_right = 400.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 30
+
+[node name="SendButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 50.0
+offset_right = 136.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 30
+text = "发送"
+
+[node name="ConnectionButton" type="Button" parent="."]
+layout_mode = 0
+offset_top = 50.0
+offset_right = 68.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 30
+text = "连接"
