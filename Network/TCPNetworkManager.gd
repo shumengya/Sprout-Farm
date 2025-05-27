@@ -17,9 +17,9 @@ var client: TCPClient = TCPClient.new()
 
 # 服务器配置 - 支持多个服务器地址
 var server_configs = [
-	#{"host": "127.0.0.1", "port": 4040, "name": "本地服务器"},
+	{"host": "127.0.0.1", "port": 4040, "name": "本地服务器"},
 	#{"host": "192.168.1.110", "port": 4040, "name": "局域网服务器"},
-	{"host": "47.108.90.0", "port": 4040, "name": "公网服务器"}#成都内网穿透
+	#{"host": "47.108.90.0", "port": 4040, "name": "公网服务器"}#成都内网穿透
 ]
 
 var current_server_index = 0
@@ -94,9 +94,6 @@ func _on_data_received(data):
 				"ping":	
 					return
 				"response":
-					# 显示服务器响应
-					if data.has("original"):
-						var original = data.get("original", {})
 					return
 				"login_response":
 					# 处理登录响应
@@ -196,7 +193,8 @@ func sendLoginInfo(username, password):
 	client.send_data({
 		"type": "login",
 		"username": username,
-		"password": password
+		"password": password,
+		"client_version": main_game.client_version
 	})
 
 #发送注册信息
@@ -207,7 +205,8 @@ func sendRegisterInfo(username, password, farmname, player_name="", verification
 		"password": password,
 		"farm_name": farmname,
 		"player_name": player_name,
-		"verification_code": verification_code
+		"verification_code": verification_code,
+		"client_version": main_game.client_version
 	})
 
 #发送收获作物信息
@@ -242,6 +241,18 @@ func sendDigGround(lot_index):
 		
 	client.send_data({
 		"type": "dig_ground",
+		"lot_index": lot_index,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送铲除作物信息
+func sendRemoveCrop(lot_index):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "remove_crop",
 		"lot_index": lot_index,
 		"timestamp": Time.get_unix_time_from_system()
 	})
@@ -343,6 +354,42 @@ func sendReturnMyFarm():
 		
 	client.send_data({
 		"type": "return_my_farm",
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送浇水作物信息
+func sendWaterCrop(lot_index):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "water_crop",
+		"lot_index": lot_index,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送施肥作物信息
+func sendFertilizeCrop(lot_index):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "fertilize_crop",
+		"lot_index": lot_index,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送升级土地信息
+func sendUpgradeLand(lot_index):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "upgrade_land",
+		"lot_index": lot_index,
 		"timestamp": Time.get_unix_time_from_system()
 	})
 	return true

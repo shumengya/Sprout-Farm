@@ -11,6 +11,7 @@ offset_bottom = 82.0
 layout_mode = 2
 
 [node name="SerialNumber" type="Label" parent="HBox"]
+visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "1."

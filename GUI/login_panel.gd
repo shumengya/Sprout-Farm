@@ -24,7 +24,7 @@ extends PanelContainer
 #状态提示标签
 @onready var status_label : Label = $VBox/status_label
 
-# 记住密码选项（如果UI中有CheckBox的话）
+# 记住密码选项
 var remember_password : bool = true  # 默认记住密码
 
 # 引用主场景和全局函数
@@ -45,6 +45,9 @@ func _ready():
 	
 	# 加载保存的登录信息
 	_load_login_info()
+	
+	# 显示客户端版本号
+	_display_version_info()
 
 # 处理登录按钮点击
 func _on_login_button_pressed():
@@ -86,7 +89,6 @@ func _on_login_button_pressed():
 	# 更新主游戏数据
 	main_game.user_name = user_name
 	main_game.user_password = user_password
-	main_game.farmname = farmname
 	
 	# 5秒后重新启用按钮（如果没有收到响应）
 	await get_tree().create_timer(5.0).timeout
@@ -156,6 +158,12 @@ func _on_register_button_pressed():
 	var player_name = playername_input.text.strip_edges()
 	var verification_code = verificationcode_input.text.strip_edges()
 	
+	# 检查密码格式（只允许数字和字母）
+	if not is_valid_password(user_password):
+		status_label.text = "密码只能包含数字和字母！"
+		status_label.modulate = Color.RED
+		return
+	
 	if user_name == "" or user_password == "":
 		status_label.text = "用户名或密码不能为空！"
 		status_label.modulate = Color.RED
@@ -178,7 +186,7 @@ func _on_register_button_pressed():
 		status_label.text = "请输入验证码！"
 		status_label.modulate = Color.RED
 		return
-	
+		
 	# 检查网络连接状态
 	if !tcp_network_manager.client.is_client_connected():
 		status_label.text = "未连接到服务器，正在尝试连接..."
@@ -248,6 +256,12 @@ func is_valid_qq_number(qq_number: String) -> bool:
 
 	return qq_regex.search(qq_number) != null
 
+# 添加密码验证函数
+func is_valid_password(password: String) -> bool:
+	# 使用正则表达式检查是否只包含数字和字母
+	var pattern = r"^[a-zA-Z0-9]+$"
+	return password.match(pattern) != null
+
 # 处理登录响应
 func _on_login_response_received(success: bool, message: String, user_data: Dictionary):
 	# 启用按钮
@@ -262,7 +276,8 @@ func _on_login_response_received(success: bool, message: String, user_data: Dict
 		main_game.farm_lots = user_data.get("farm_lots", [])
 		main_game.level = user_data.get("level", 1)
 		main_game.money = user_data.get("money", 0)
-		main_game.farmname = user_data.get("farm_name", "")
+		main_game.show_farm_name.text = "农场名称："+user_data.get("farm_name", "")
+		main_game.show_player_name.text = "玩家昵称："+user_data.get("player_name", "")
 		farmname_input.text = user_data.get("farm_name", "")
 		
 		# 加载玩家背包数据
@@ -431,3 +446,10 @@ func get_saved_username() -> String:
 			return login_data.get("user_name", "")
 	
 	return ""
+
+# 显示版本信息
+func _display_version_info():
+	# 在状态标签中显示客户端版本信息
+	if status_label.text == "欢迎使用萌芽农场" or status_label.text == "连接状态":
+		status_label.text = "萌芽农场 v" + main_game.client_version + " - 欢迎使用"
+		status_label.modulate = Color.CYAN

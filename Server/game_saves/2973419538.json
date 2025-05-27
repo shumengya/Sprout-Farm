@@ -1,20 +1,20 @@
 {
-  "experience": 0,
-  "level": 1,
-  "money": 1000,
-  "farm_name": "农场",
-  "user_name": "shumengya",
-  "player_name": "玩家昵称",
-  "user_password": "0123456789",
-  "last_login_time": "2025年12时09分35秒",
-  "total_login_time": "0时0分0秒",
+  "experience": 899,
+  "level": 2,
+  "money": 5026,
+  "farm_name": "niuma",
+  "user_name": "2973419538",
+  "player_name": "niuma",
+  "user_password": "247896",
+  "last_login_time": "2025年05月27日15时45分58秒",
+  "total_login_time": "0时2分5秒",
   "farm_lots": [
-      {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":3,"已浇水":false,"已施肥":false,"土地等级":0},
-      {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":3,"已浇水":false,"已施肥":false,"土地等级":0},
-      {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":3,"已浇水":false,"已施肥":false,"土地等级":0},
-      {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":3,"已浇水":false,"已施肥":false,"土地等级":0},
-      {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":true,"is_planted":false,"max_grow_time":3,"已浇水":false,"已施肥":false,"土地等级":0},
-      {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5,"已浇水":false,"已施肥":false,"土地等级":0},
+      {"crop_type":"小麦","grow_time":120,"is_dead":false,"is_diged":true,"is_planted":true,"max_grow_time":120,"已浇水":false,"已施肥":false,"土地等级":0},
+      {"crop_type":"胡萝卜","grow_time":480,"is_dead":false,"is_diged":true,"is_planted":true,"max_grow_time":480,"已浇水":false,"已施肥":false,"土地等级":0},
+      {"crop_type":"小麦","grow_time":120,"is_dead":false,"is_diged":true,"is_planted":true,"max_grow_time":120,"已浇水":false,"已施肥":false,"土地等级":0},
+      {"crop_type":"土豆","grow_time":360,"is_dead":false,"is_diged":true,"is_planted":true,"max_grow_time":360,"已浇水":false,"已施肥":false,"土地等级":0},
+      {"crop_type":"稻谷","grow_time":240,"is_dead":false,"is_diged":true,"is_planted":true,"max_grow_time":240,"已浇水":false,"已施肥":false,"土地等级":0},
+      {"crop_type":"小麦","grow_time":120,"is_dead":false,"is_diged":true,"is_planted":true,"max_grow_time":120,"已浇水":false,"已施肥":false,"土地等级":0},
       {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5,"已浇水":false,"已施肥":false,"土地等级":0},
       {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5,"已浇水":false,"已施肥":false,"土地等级":0},
       {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5,"已浇水":false,"已施肥":false,"土地等级":0},
@@ -60,5 +60,9 @@
       {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5,"已浇水":false,"已施肥":false,"土地等级":0},
       {"crop_type":"","grow_time":0,"is_dead":false,"is_diged":false,"is_planted":false,"max_grow_time":5,"已浇水":false,"已施肥":false,"土地等级":0}
     ],
-  "player_bag": []
+  "player_bag": [
+      {"name":"测试作物","quality":"普通","count":3},
+      {"name":"稻谷","quality":"普通","count":3},
+      {"name":"土豆","quality":"普通","count":1}
+    ]
 }

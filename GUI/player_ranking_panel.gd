@@ -104,7 +104,3 @@ func _on_refresh_button_pressed():
 # 退出按钮点击
 func _on_quit_button_pressed():
 	self.hide()
-
-# 添加到main.gd中调用
-func _handle_player_rankings_response(data):
-	handle_player_rankings_response(data)

@@ -15,7 +15,7 @@ func setup(text: String, color: Color, duration: float, fade: float):
 	display_time = duration
 	fade_duration = fade
 	# 确保添加到场景树
-	Engine.get_main_loop().root.add_child(self)
+	Engine.get_main_loop().root.get_node("main/UI").add_child(self)
 	Toast(text, color)
 
 func Toast(text: String, text_color: Color = Color.WHITE):

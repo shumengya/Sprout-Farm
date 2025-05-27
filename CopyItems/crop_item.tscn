@@ -30,7 +30,7 @@ scale = Vector2(0.2, 0.2)
 theme_override_font_sizes/font_size = 50
 script = ExtResource("2_1n4xp")
 
-[node name="Label" type="Label" parent="."]
+[node name="crop_name" type="Label" parent="."]
 layout_mode = 2
 offset_right = 250.0
 offset_bottom = 42.0
@@ -38,5 +38,18 @@ scale = Vector2(0.4, 0.4)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
 text = "[普通-胡萝卜]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="status_label" type="Label" parent="."]
+modulate = Color(0.721569, 1, 1, 1)
+layout_mode = 2
+offset_top = 17.0
+offset_right = 500.0
+offset_bottom = 86.0
+scale = Vector2(0.2, 0.2)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 50
+text = "已浇水 已施肥 等级:1"
 horizontal_alignment = 1
 vertical_alignment = 1

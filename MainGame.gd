@@ -12,14 +12,13 @@ extends Node
 @onready var show_player_name : Label =  $UI/GUI/HBox2/player_name	# 显示玩家昵称
 @onready var show_farm_name : Label = $UI/GUI/HBox2/farm_name		# 显示农场名称
 @onready var show_status_label : Label = $UI/GUI/HBox2/StatusLabel	# 显示与服务器连接状态
-
 @onready var network_status_label :Label = get_node("/root/main/UI/TCPNetworkManager/StatusLabel")
-@onready var network_manager = get_node("/root/main/UI/TCPNetworkManager")
+@onready var return_my_farm_button: Button = $UI/GUI/VBox/ReturnMyFarmButton
 
-#种子商店格子
-@onready var crop_grid_container : GridContainer = $UI/CropStorePanel/ScrollContainer/Crop_Grid
-#玩家背包格子
-@onready var player_bag_grid_container : GridContainer = $UI/PlayerBagPanel/ScrollContainer/Bag_Grid
+
+@onready var crop_grid_container : GridContainer = $UI/CropStorePanel/ScrollContainer/Crop_Grid #种子商店格子
+@onready var player_bag_grid_container : GridContainer = $UI/PlayerBagPanel/ScrollContainer/Bag_Grid #玩家背包格子
+
 #作物品质按钮
 @onready var green_bar : Button = $CopyNodes/GreenCrop				#普通
 @onready var white_blue_bar : Button = $CopyNodes/WhiteBlueCrop		#稀有
@@ -33,10 +32,10 @@ extends Node
 @onready var login_panel : PanelContainer = $UI/LoginPanel#登录注册面板
 @onready var crop_store_panel : Panel = $UI/CropStorePanel#种子商店面板
 @onready var player_bag_panel : Panel = $UI/PlayerBagPanel#玩家背包面板
-@onready var TCPNerworkManager : Panel = $UI/TCPNetworkManager#网络管理器
+@onready var network_manager : Panel = $UI/TCPNetworkManager#网络管理器
 @onready var player_ranking_panel : Panel = $UI/PlayerRankingPanel#玩家排行榜面板
 
-@onready var return_my_farm_button: Button = $UI/GUI/VBox/ReturnMyFarmButton
+
 
 var money: int = 500  # 默认每个人初始为100元
 var experience: float = 0.0  # 初始每个玩家的经验为0
@@ -48,7 +47,6 @@ var dig_money : int = 1000 #开垦费用
 #临时变量
 var user_name : String = ""
 var user_password : String = ""
-var farmname : String = ""
 var login_data : Dictionary = {}
 var data : Dictionary = {}
 var buttons : Array = []
@@ -75,16 +73,13 @@ var visited_player_data : Dictionary = {}  # 被访问玩家的数据
 var crop_textures_cache : Dictionary = {}  # 缓存已加载的作物图片
 var crop_frame_counts : Dictionary = {}  # 记录每种作物的帧数
 
+const client_version :String = "1.0.1" #记录客户端版本
 
-
-#-------------Godot自带方法-----------------
-func _on_quit_button_pressed():
-	player_bag_panel.hide()
-	pass 
 
 
 # 准备阶段
 func _ready():
+	print("萌芽农场客户端 v" + client_version + " 启动")
 	_update_ui()
 	_create_farm_buttons() # 创建地块按钮
 	_update_farm_lots_state() # 初始更新地块状态
@@ -105,8 +100,7 @@ func _ready():
 	player_bag_panel.hide()
 	
 	# 启动后稍等片刻尝试从服务器获取最新数据
-	var timer = get_tree().create_timer(0.5)
-	await timer.timeout
+	await get_tree().create_timer(0.5).timeout
 	_try_load_from_server()
 
 #每时每刻都更新
@@ -115,8 +109,9 @@ func _physics_process(delta):
 	update_timer += delta
 	if update_timer >= update_interval:
 		update_timer = 0.0  # 重置计时器
+		
 		#同步网络管理器的状态
-		show_status_label.text = network_status_label.text
+		show_status_label.text = "服务器状态："+network_status_label.text
 		show_status_label.modulate = network_status_label.modulate
 		
 		if start_game == true:
@@ -131,21 +126,47 @@ func _physics_process(delta):
 				pass
 			pass
 
+func _on_open_store_button_pressed():
+	# 如果处于访问模式，不允许打开商店
+	if is_visiting_mode:
+		Toast.show("访问模式下无法使用商店", Color.ORANGE)
+		return
+	
+	# 确保商店面板已初始化
+	crop_store_panel.init_store()
+	# 显示商店面板
+	crop_store_panel.show()
+	# 确保在最前面显示
+	crop_store_panel.move_to_front() 
+	pass
+
+func _on_player_ranking_button_pressed() -> void:
+	player_ranking_panel.show()
+	pass 
+	
+func _on_return_my_farm_button_pressed() -> void:
+	# 如果当前处于访问模式，返回自己的农场
+	if is_visiting_mode:
+		return_to_my_farm()
+	else:
+		# 如果不在访问模式，这个按钮可能用于其他功能或者不做任何操作
+		print("当前已在自己的农场")
+
+
+
+
 
 # 处理服务器作物更新消息
 func _handle_crop_update(update_data):
 	# 检查是否是访问模式的更新
 	var is_visiting_update = update_data.get("is_visiting", false)
-	var visited_player = update_data.get("visited_player", "")
 	
 	if is_visiting_update and is_visiting_mode:
 		# 访问模式下的更新，更新被访问玩家的农场数据
 		farm_lots = update_data["farm_lots"]
-		print("收到访问模式下的作物更新，被访问玩家：", visited_player)
 	elif not is_visiting_update and not is_visiting_mode:
 		# 正常模式下的更新，更新自己的农场数据
 		farm_lots = update_data["farm_lots"]
-		print("收到自己农场的作物更新")
 	else:
 		# 状态不匹配，忽略更新
 		print("忽略不匹配的作物更新，当前访问模式：", is_visiting_mode, "，更新类型：", is_visiting_update)
@@ -220,18 +241,74 @@ func _handle_action_response(response_data):
 				Toast.show(message, Color.GREEN)
 			else:
 				Toast.show(message, Color.RED)
+				
+		"remove_crop":
+			if success:
+				# 更新玩家数据
+				if updated_data.has("money"):
+					money = updated_data["money"]
+				if updated_data.has("farm_lots"):
+					farm_lots = updated_data["farm_lots"]
+				
+				# 更新UI
+				_update_ui()
+				_update_farm_lots_state()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+
+		"water_crop":
+			if success:
+				# 更新玩家数据
+				if updated_data.has("money"):
+					money = updated_data["money"]
+				if updated_data.has("farm_lots"):
+					farm_lots = updated_data["farm_lots"]
+				
+				# 更新UI
+				_update_ui()
+				_update_farm_lots_state()
+				Toast.show(message, Color.CYAN)
+			else:
+				Toast.show(message, Color.RED)
+				
+		"fertilize_crop":
+			if success:
+				# 更新玩家数据
+				if updated_data.has("money"):
+					money = updated_data["money"]
+				if updated_data.has("farm_lots"):
+					farm_lots = updated_data["farm_lots"]
+				
+				# 更新UI
+				_update_ui()
+				_update_farm_lots_state()
+				Toast.show(message, Color.PURPLE)
+			else:
+				Toast.show(message, Color.RED)
+				
+		"upgrade_land":
+			if success:
+				# 更新玩家数据
+				if updated_data.has("money"):
+					money = updated_data["money"]
+				if updated_data.has("farm_lots"):
+					farm_lots = updated_data["farm_lots"]
+				
+				# 更新UI
+				_update_ui()
+				_update_farm_lots_state()
+				Toast.show(message, Color.GOLD)
+			else:
+				Toast.show(message, Color.RED)
 
 # 处理玩家排行榜响应
 func _handle_player_rankings_response(data):
-	if player_ranking_panel and player_ranking_panel.has_method("_handle_player_rankings_response"):
-		player_ranking_panel._handle_player_rankings_response(data)
+	player_ranking_panel.handle_player_rankings_response(data)
 
 # 处理玩家游玩时间响应
 func _handle_play_time_response(data):
-	# 如果需要在主游戏中处理游玩时间，可以在这里添加代码
-	# 目前只是将响应转发给排行榜面板
-	if player_ranking_panel and player_ranking_panel.has_method("handle_play_time_response"):
-		player_ranking_panel.handle_play_time_response(data)
+	player_ranking_panel.handle_play_time_response(data)
 
 # 处理访问玩家响应
 func _handle_visit_player_response(data):
@@ -334,11 +411,8 @@ func _handle_return_my_farm_response(data):
 		Toast.show("返回农场失败：" + message, Color.RED)
 		print("返回农场失败：", message)
 
-#-------------Godot自带方法-----------------
 
 
-
-#-------------自定义方法-----------------
 
 #创建作物按钮
 func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
@@ -371,21 +445,6 @@ func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
 		button.get_node("Title").text = crop_quality
 	
 	return button
-
-# 打开商店按钮处理函数 
-func _on_open_store_button_pressed():
-	# 如果处于访问模式，不允许打开商店
-	if is_visiting_mode:
-		Toast.show("访问模式下无法使用商店", Color.ORANGE)
-		return
-	
-	# 确保商店面板已初始化
-	crop_store_panel.init_store()
-	# 显示商店面板
-	crop_store_panel.show()
-	# 确保在最前面显示
-	crop_store_panel.move_to_front() 
-	pass
 
 
 
@@ -421,7 +480,8 @@ func _update_farm_lots_state():
 			
 		var lot = farm_lots[i]
 		var button = grid_container.get_child(i)
-		var label = button.get_node("Label")
+		var label = button.get_node("crop_name")
+		var status_label = button.get_node("status_label")
 		var progressbar = button.get_node("ProgressBar")
 
 		# 更新作物图片
@@ -437,7 +497,21 @@ func _update_farm_lots_state():
 				else:
 					# 正常生长逻辑
 					var crop_name = lot["crop_type"]
-					label.text = "[" + can_planted_crop[crop_name]["品质"] + "-" + lot["crop_type"] + "]"
+					label.text = "[" + can_planted_crop[crop_name]["品质"] + "-" + lot["crop_type"] +"]"
+					var status_text = ""
+					# 添加状态标识
+					var status_indicators = []
+					if lot.get("已浇水", false):
+						status_indicators.append("已浇水")#💧
+					if lot.get("已施肥", false):
+						status_indicators.append("已施肥")#🌱
+					if lot.get("土地等级", 0) >= 1:
+						status_indicators.append("等级:1")#⭐
+					
+					if status_indicators.size() > 0:
+						status_text += " " + " ".join(status_indicators)
+					status_label.text = status_text
+					
 					# 根据品质显示颜色
 					match can_planted_crop[crop_name]["品质"]:
 						"普通":
@@ -456,8 +530,13 @@ func _update_farm_lots_state():
 					progressbar.value = int(lot["grow_time"]) # 直接设置值，不使用动画
 			else:
 				# 已开垦但未种植的地块显示为空地
+				var land_text = "[空地"
+				if lot.get("土地等级", 0) >= 1:
+					status_label.text = "等级:1"
+				land_text += "]"
+				
 				label.modulate = Color.GREEN#绿色
-				label.text = "[" + "空地" + "]"
+				label.text = land_text
 				progressbar.hide()
 
 		else:
@@ -493,6 +572,9 @@ func _on_item_selected(index):
 	land_panel.show()
 	land_panel.selected_lot_index = index
 	selected_lot_index = index
+	# 更新按钮文本
+	if land_panel.has_method("_update_button_texts"):
+		land_panel._update_button_texts()
 
 # 处理访问模式下的地块点击事件
 func _on_visit_item_selected(index):
@@ -538,17 +620,7 @@ func _harvest_crop(index):
 		Toast.show("作物还未成熟", Color.RED)
 
 
-#铲除已死亡作物
-func root_out_crop(index):
-	var lot = farm_lots[index]
-	lot["is_planted"] = false
-	lot["grow_time"] = 0
-	Toast.show("从地块[" + str(index) + "]铲除了[" + lot["crop_type"] + "]作物", Color.YELLOW)
-	lot["crop_type"] = ""
-	_check_level_up()
-	_update_ui()
-	_update_farm_lots_state()
-	pass
+
 
 
 # 检查玩家是否可以升级
@@ -561,23 +633,6 @@ func _check_level_up():
 		Toast.show("恭喜！你升到了" + str(level) + "级 ", Color.SKY_BLUE)
 		crop_store_panel.init_store()
 
-
-
-
-#-------------自定义方法----------------
-
-
-func _on_player_ranking_button_pressed() -> void:
-	player_ranking_panel.show()
-	pass 
-	
-func _on_return_my_farm_button_pressed() -> void:
-	# 如果当前处于访问模式，返回自己的农场
-	if is_visiting_mode:
-		return_to_my_farm()
-	else:
-		# 如果不在访问模式，这个按钮可能用于其他功能或者不做任何操作
-		print("当前已在自己的农场")
 
 # 返回自己的农场
 func return_to_my_farm():

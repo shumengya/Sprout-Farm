@@ -3,7 +3,7 @@ extends Node
 
 const ToastScene = preload("res://components/ToastShow.tscn")
 
-static func show(text: String, 
+func show(text: String, 
 				color: Color = Color.WHITE,
 				duration: float = 3.0,
 				fade: float = 1.0) -> void:

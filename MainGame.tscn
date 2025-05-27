@@ -49,7 +49,7 @@ expand_mode = 2
 modulate = Color(1, 0.670588, 0.490196, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "树萌芽"
+text = "玩家昵称：树萌芽"
 
 [node name="farm_name_image" type="TextureRect" parent="UI/GUI/HBox2"]
 layout_mode = 2
@@ -60,7 +60,7 @@ expand_mode = 3
 modulate = Color(1, 0.858824, 0.623529, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "树萌芽的农场"
+text = "农场名称：树萌芽的农场"
 
 [node name="status_label_image" type="TextureRect" parent="UI/GUI/HBox2"]
 layout_mode = 2
@@ -304,7 +304,6 @@ text = "连接状态"
 horizontal_alignment = 1
 
 [node name="LandPanel" type="Panel" parent="UI"]
-visible = false
 offset_left = 475.0
 offset_top = 145.0
 offset_right = 991.0
@@ -344,53 +343,49 @@ columns = 5
 modulate = Color(1, 0.419608, 0.352941, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 20
 text = "开垦"
 
 [node name="Plant_Button" type="Button" parent="UI/LandPanel/Grid"]
 modulate = Color(1, 0.682353, 0, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 20
 text = "种植"
 
 [node name="Remove_Button" type="Button" parent="UI/LandPanel/Grid"]
-visible = false
 modulate = Color(1, 1, 0, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 20
 text = "铲除"
 
 [node name="Harvest_Button" type="Button" parent="UI/LandPanel/Grid"]
 modulate = Color(0.223529, 1, 0.290196, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 20
 text = "收获"
 
 [node name="Water_Button" type="Button" parent="UI/LandPanel/Grid"]
-visible = false
 modulate = Color(0, 1, 1, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 20
 text = "浇水"
 
 [node name="Fertilize_Button" type="Button" parent="UI/LandPanel/Grid"]
-visible = false
 modulate = Color(0.592157, 0.337255, 1, 1)
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 20
 text = "施肥"
 
 [node name="Upgrade_Button" type="Button" parent="UI/LandPanel/Grid"]
-visible = false
 modulate = Color(0.0784314, 0.470588, 1, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 20
 text = "升级"
 
 [node name="PlayerRankingPanel" type="Panel" parent="UI"]
@@ -741,4 +736,3 @@ bounds_max = Vector2(500, 500)
 [connection signal="pressed" from="UI/GUI/VBox/OpenStoreButton" to="." method="_on_open_store_button_pressed"]
 [connection signal="pressed" from="UI/GUI/VBox/PlayerRankingButton" to="." method="_on_player_ranking_button_pressed"]
 [connection signal="pressed" from="UI/CropStorePanel/QuitButton" to="." method="_on_quit_button_pressed"]
-[connection signal="pressed" from="UI/PlayerBagPanel/QuitButton" to="." method="_on_quit_button_pressed"]
