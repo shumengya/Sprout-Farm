@@ -1,0 +1,101 @@
+[gd_scene load_steps=2 format=3 uid="uid://bndf1e4sgdjr6"]
+
+[ext_resource type="Script" uid="uid://65e0rl31fx0i" path="res://GUI/LuckyDrawPanel.gd" id="1_dcmen"]
+
+[node name="LuckyDrawPanel" type="Panel"]
+offset_right = 600.0
+offset_bottom = 720.0
+script = ExtResource("1_dcmen")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_top = -1.0
+offset_right = 600.0
+offset_bottom = 58.0
+theme_override_colors/font_color = Color(0.624759, 0.8051, 0.828302, 1)
+theme_override_font_sizes/font_size = 35
+text = "幸运抽奖"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="."]
+modulate = Color(0.642982, 0.510828, 1, 1)
+layout_mode = 0
+offset_top = 419.0
+offset_right = 600.0
+offset_bottom = 468.0
+theme_override_font_sizes/font_size = 30
+text = "🎉获得奖励🎉"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(57, 57)
+layout_mode = 0
+offset_left = 543.0
+offset_top = 1.0
+offset_right = 600.0
+offset_bottom = 58.0
+theme_override_font_sizes/font_size = 35
+text = "X"
+
+[node name="LuckyDrawReward" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_top = 481.0
+offset_right = 600.0
+offset_bottom = 649.0
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+text = "+500 经验，+400 钱币，+5 普通-番茄种子，+1 传奇-火龙果种子 "
+horizontal_alignment = 1
+
+[node name="Grid" type="GridContainer" parent="."]
+layout_mode = 0
+offset_top = 58.0
+offset_right = 600.0
+offset_bottom = 419.0
+columns = 5
+
+[node name="RewardItem" type="RichTextLabel" parent="Grid"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+text = "+50钱币
++100经验
++4番茄种子
++3火龙果种子"
+horizontal_alignment = 1
+vertical_alignment = 1
+threaded = true
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_top = 649.0
+offset_right = 600.0
+offset_bottom = 719.0
+alignment = 1
+
+[node name="FiveLuckyDrawButton" type="Button" parent="HBox"]
+modulate = Color(0.623529, 1, 0.996078, 1)
+custom_minimum_size = Vector2(150, 70)
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "五连抽"
+
+[node name="TenLuckyDrawButton" type="Button" parent="HBox"]
+modulate = Color(0.690196, 1, 0.52549, 1)
+custom_minimum_size = Vector2(150, 70)
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "十连抽"
+
+[node name="LuckyDrawButton" type="Button" parent="HBox"]
+modulate = Color(1, 1, 0.52549, 1)
+custom_minimum_size = Vector2(150, 70)
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "抽奖"
+
+[connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="HBox/FiveLuckyDrawButton" to="." method="_on_five_lucky_draw_button_pressed"]
+[connection signal="pressed" from="HBox/TenLuckyDrawButton" to="." method="_on_ten_lucky_draw_button_pressed"]
+[connection signal="pressed" from="HBox/LuckyDrawButton" to="." method="_on_lucky_draw_button_pressed"]

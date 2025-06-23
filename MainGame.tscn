@@ -1,9 +1,8 @@
-[gd_scene load_steps=25 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=40 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://b4wi8yusmbbu8" path="res://assets/GUI/玩家昵称.png" id="2_ma1re"]
 [ext_resource type="Script" uid="uid://cka0r4g8tbf0" path="res://GUI/login_panel.gd" id="2_mi4js"]
-[ext_resource type="Texture2D" uid="uid://cbjtfrej7iq3x" path="res://assets/background2.jpg" id="2_psm5w"]
 [ext_resource type="Texture2D" uid="uid://clvhlo0mc3e7v" path="res://assets/GUI/农场名称.png" id="3_28psf"]
 [ext_resource type="Script" uid="uid://bljtkxil64h14" path="res://GUI/land_panel.gd" id="3_401ut"]
 [ext_resource type="PackedScene" uid="uid://bkivlkirrx6u8" path="res://CopyItems/crop_item.tscn" id="3_isiom"]
@@ -17,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://crd28qnymob7" path="res://GUI/player_ranking_item.tscn" id="5_yphxy"]
 [ext_resource type="PackedScene" uid="uid://forqk66f354p" path="res://CopyItems/orange_crop.tscn" id="6_0v7qb"]
 [ext_resource type="Texture2D" uid="uid://c6i00d35fnl12" path="res://assets/GUI/钱币.png" id="6_t0yo1"]
+[ext_resource type="Texture2D" uid="uid://mkqcp7mn2b0o" path="res://assets/GUI/点赞图标.png" id="6_uc6q1"]
 [ext_resource type="Texture2D" uid="uid://ckqy5yq2ltax6" path="res://assets/GUI/小提示.png" id="7_6brkw"]
 [ext_resource type="PackedScene" uid="uid://cpxiaqh0y6a5d" path="res://Network/TCPNetworkManager.tscn" id="7_401ut"]
 [ext_resource type="PackedScene" uid="uid://cmdoymcviv0ai" path="res://CopyItems/pink_crop.tscn" id="7_qtrx8"]
@@ -24,6 +24,27 @@
 [ext_resource type="PackedScene" uid="uid://d3ve4qeggsdqy" path="res://CopyItems/red_crop.tscn" id="8_led80"]
 [ext_resource type="PackedScene" uid="uid://dagh3u5med30i" path="res://CopyItems/white_blue_crop.tscn" id="9_mi4js"]
 [ext_resource type="Script" uid="uid://c7bxje0wvvgo4" path="res://game_camera.gd" id="10_o8l48"]
+[ext_resource type="Texture2D" uid="uid://bky1j7qmbnmlx" path="res://assets/GUI/玩家数图标.png" id="10_vygm6"]
+[ext_resource type="Texture2D" uid="uid://dr5gdk5ol2wbs" path="res://assets/土地面板图标/种植图标.png" id="12_n03md"]
+[ext_resource type="Texture2D" uid="uid://dpcxeffaqb7ui" path="res://assets/土地面板图标/开垦图标4.png" id="13_uc6q1"]
+[ext_resource type="Texture2D" uid="uid://d2gty44ikvair" path="res://assets/土地面板图标/铲除图标3.png" id="13_uhubb"]
+[ext_resource type="Texture2D" uid="uid://dqwfcpv8orlm7" path="res://assets/土地面板图标/收获图标2.png" id="14_uc6q1"]
+[ext_resource type="Texture2D" uid="uid://ba8ptjai2x5h7" path="res://assets/土地面板图标/浇水图标3.png" id="15_vygm6"]
+[ext_resource type="PackedScene" uid="uid://btp1h6hic2sin" path="res://GUI/AcceptDialog.tscn" id="16_0igvr"]
+[ext_resource type="Texture2D" uid="uid://2ul8g4qf1lif" path="res://assets/土地面板图标/施肥图标.png" id="16_2e153"]
+[ext_resource type="Script" uid="uid://dckw8dskfbnkp" path="res://background.gd" id="17_0igvr"]
+[ext_resource type="PackedScene" uid="uid://bndf1e4sgdjr6" path="res://GUI/LuckyDrawPanel.tscn" id="17_f21le"]
+[ext_resource type="PackedScene" uid="uid://smypui0vyso5" path="res://GUI/DailyCheckInPanel.tscn" id="18_m6fch"]
+[ext_resource type="Script" uid="uid://rlk8e51pibtm" path="res://GUI/OneClickPlantPanel.gd" id="18_n03md"]
+[ext_resource type="Texture2D" uid="uid://dg4o3wv1j0fx" path="res://assets/土地面板图标/升级图标2.png" id="19_uc6q1"]
+[ext_resource type="Script" uid="uid://ca2chgx5w3g1y" path="res://Components/GameBGMPlayer.gd" id="28_m6fch"]
+
+[sub_resource type="Environment" id="Environment_m6fch"]
+background_mode = 3
+ambient_light_energy = 0.0
+glow_enabled = true
+glow_bloom = 0.3
+glow_blend_mode = 0
 
 [node name="main" type="Node"]
 script = ExtResource("1_v3yaj")
@@ -34,116 +55,256 @@ script = ExtResource("1_v3yaj")
 layout_mode = 3
 anchors_preset = 0
 
-[node name="HBox2" type="HBoxContainer" parent="UI/GUI"]
+[node name="GameInfoHBox1" type="HBoxContainer" parent="UI/GUI"]
 layout_mode = 0
-offset_top = 55.0
-offset_right = 1400.0
-offset_bottom = 111.0
+offset_right = 243143.0
+offset_bottom = 35.0
 
-[node name="player_name_image" type="TextureRect" parent="UI/GUI/HBox2"]
-layout_mode = 2
-texture = ExtResource("2_ma1re")
-expand_mode = 2
-
-[node name="player_name" type="Label" parent="UI/GUI/HBox2"]
-modulate = Color(1, 0.670588, 0.490196, 1)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "玩家昵称：树萌芽"
-
-[node name="farm_name_image" type="TextureRect" parent="UI/GUI/HBox2"]
-layout_mode = 2
-texture = ExtResource("3_28psf")
-expand_mode = 3
-
-[node name="farm_name" type="Label" parent="UI/GUI/HBox2"]
-modulate = Color(1, 0.858824, 0.623529, 1)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "农场名称：树萌芽的农场"
-
-[node name="status_label_image" type="TextureRect" parent="UI/GUI/HBox2"]
-layout_mode = 2
-texture = ExtResource("8_cgwad")
-expand_mode = 2
-
-[node name="StatusLabel" type="Label" parent="UI/GUI/HBox2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "服务器状态：正在检测中"
-
-[node name="HBox" type="HBoxContainer" parent="UI/GUI"]
-layout_mode = 0
-offset_right = 1400.0
-offset_bottom = 56.0
-
-[node name="experience_image" type="TextureRect" parent="UI/GUI/HBox"]
+[node name="experience_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
 layout_mode = 2
 texture = ExtResource("4_a6adi")
 expand_mode = 2
 
-[node name="experience" type="Label" parent="UI/GUI/HBox"]
+[node name="experience" type="Label" parent="UI/GUI/GameInfoHBox1"]
 modulate = Color(0, 1, 0, 1)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 25
 text = "经验：999"
 
-[node name="level_image" type="TextureRect" parent="UI/GUI/HBox"]
+[node name="level_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
 layout_mode = 2
 texture = ExtResource("5_va67g")
 expand_mode = 2
 
-[node name="level" type="Label" parent="UI/GUI/HBox"]
+[node name="level" type="Label" parent="UI/GUI/GameInfoHBox1"]
 modulate = Color(0, 1, 1, 1)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 25
 text = "等级：100"
 
-[node name="money_image" type="TextureRect" parent="UI/GUI/HBox"]
+[node name="money_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
 layout_mode = 2
 texture = ExtResource("6_t0yo1")
 expand_mode = 2
 
-[node name="money" type="Label" parent="UI/GUI/HBox"]
+[node name="money" type="Label" parent="UI/GUI/GameInfoHBox1"]
 modulate = Color(1, 1, 0, 1)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 25
 text = "钱币：999"
 
-[node name="tip_image" type="TextureRect" parent="UI/GUI/HBox"]
+[node name="hungervalue_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
+layout_mode = 2
+texture = ExtResource("6_t0yo1")
+expand_mode = 2
+
+[node name="hunger_value" type="Label" parent="UI/GUI/GameInfoHBox1"]
+modulate = Color(0.88617, 0.748355, 0.764238, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "体力值：20"
+
+[node name="tip_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
 layout_mode = 2
 texture = ExtResource("7_6brkw")
 expand_mode = 2
 
-[node name="tip" type="Label" parent="UI/GUI/HBox"]
+[node name="tip" type="Label" parent="UI/GUI/GameInfoHBox1"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0, 1, 1)
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 25
 text = "游戏小提示"
 
-[node name="VBox" type="VBoxContainer" parent="UI/GUI"]
+[node name="like_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
+layout_mode = 2
+texture = ExtResource("6_uc6q1")
+expand_mode = 2
+
+[node name="like" type="Label" parent="UI/GUI/GameInfoHBox1"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.482353, 0.482353, 1)
+theme_override_font_sizes/font_size = 25
+text = "点赞数：0"
+
+[node name="GameInfoHBox2" type="HBoxContainer" parent="UI/GUI"]
 layout_mode = 0
-offset_left = 5.0
-offset_top = 522.0
-offset_right = 253.0
-offset_bottom = 719.0
+offset_top = 42.0
+offset_right = 1400.0
+offset_bottom = 77.0
+
+[node name="player_name_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+texture = ExtResource("2_ma1re")
+expand_mode = 2
+
+[node name="player_name" type="Label" parent="UI/GUI/GameInfoHBox2"]
+modulate = Color(1, 0.670588, 0.490196, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "玩家昵称：树萌芽"
+
+[node name="farm_name_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+texture = ExtResource("3_28psf")
+expand_mode = 3
+
+[node name="farm_name" type="Label" parent="UI/GUI/GameInfoHBox2"]
+modulate = Color(1, 0.858824, 0.623529, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "农场名称：树萌芽的农场"
+
+[node name="status_label_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+texture = ExtResource("8_cgwad")
+expand_mode = 2
+
+[node name="StatusLabel" type="Label" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "服务器状态：正在检测中"
+
+[node name="FPS_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+texture = ExtResource("7_6brkw")
+expand_mode = 2
+
+[node name="FPS" type="Label" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68755, 0.948041, 0, 1)
+theme_override_font_sizes/font_size = 25
+text = "FPS：0"
+
+[node name="onlineplayer_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+texture = ExtResource("10_vygm6")
+expand_mode = 2
+
+[node name="onlineplayer" type="Label" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.423529, 1, 0.533333, 1)
+theme_override_font_sizes/font_size = 25
+text = "检测中..."
+
+[node name="FarmVBox" type="VBoxContainer" parent="UI/GUI"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 454.0
+offset_right = 250.0
+offset_bottom = 785.0
+scale = Vector2(0.8, 0.8)
 alignment = 2
 
-[node name="ReturnMyFarmButton" type="Button" parent="UI/GUI/VBox"]
-visible = false
+[node name="PlayerBagButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(0.639216, 0.772549, 0.219608, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "返回我的农场"
+text = "玩家背包"
 
-[node name="OpenStoreButton" type="Button" parent="UI/GUI/VBox"]
+[node name="OneClickHarvestButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(0.841258, 0.700703, 0.325362, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "一键收获"
+
+[node name="OneClickPlantButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(0.513945, 0.818793, 3.85046e-07, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "一键种植"
+
+[node name="AddNewGroundButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(1, 0.803922, 0.729412, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "添加新土地"
+
+[node name="OpenStoreButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(1, 0.564706, 0.647059, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "种子商店"
 
-[node name="PlayerRankingButton" type="Button" parent="UI/GUI/VBox"]
+[node name="VisitVBox" type="VBoxContainer" parent="UI/GUI"]
+layout_mode = 0
+offset_left = 4.00002
+offset_top = 77.0001
+offset_right = 252.0
+offset_bottom = 207.0
+scale = Vector2(0.8, 0.8)
+alignment = 2
+
+[node name="LikeButton" type="Button" parent="UI/GUI/VisitVBox"]
+modulate = Color(0.992157, 0.482353, 0.482353, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "点赞"
+
+[node name="ReturnMyFarmButton" type="Button" parent="UI/GUI/VisitVBox"]
+modulate = Color(1, 1, 0.721569, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "返回我的农场"
+
+[node name="OtherVBox" type="VBoxContainer" parent="UI/GUI"]
+layout_mode = 0
+offset_left = 1198.0
+offset_top = 77.0
+offset_right = 1446.0
+offset_bottom = 408.0
+scale = Vector2(0.8, 0.8)
+alignment = 2
+
+[node name="NewPlayerGiftButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(1, 1, 0.447059, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "新手礼包"
+
+[node name="SettingButton" type="Button" parent="UI/GUI/OtherVBox"]
+visible = false
+modulate = Color(0.345098, 0.764706, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "设置"
+
+[node name="LuckyDrawButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.729412, 0.764706, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "幸运抽奖"
+
+[node name="PlayerRankingButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.717647, 1, 0.576471, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "玩家排行榜"
+
+[node name="DailyCheckInButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.807843, 1, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "每日签到"
+
+[node name="ReturnMainMenuButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.639216, 0.482353, 0.870588, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "返回主菜单"
+
+[node name="MyPetButton" type="Button" parent="UI/GUI/OtherVBox"]
+visible = false
+modulate = Color(0.992157, 0.482353, 0.870588, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "我的宠物"
+
+[node name="ScareCrowButton" type="Button" parent="UI/GUI/OtherVBox"]
+visible = false
+modulate = Color(0.937381, 0.612088, 0.36654, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "我的稻草人"
 
 [node name="LoginPanel" type="PanelContainer" parent="UI"]
 offset_left = 486.0
@@ -293,7 +454,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "注意：账号请直接使用您的QQ号，系统会直接向您的QQ
 邮箱发送一串验证码进行注册验证，密码请设置的复杂一
-点，以免被暴力破解"
+点，以免被暴力破解（"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -340,74 +501,207 @@ offset_bottom = 210.0
 columns = 5
 
 [node name="Dig_Button" type="Button" parent="UI/LandPanel/Grid"]
-modulate = Color(1, 0.419608, 0.352941, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 text = "开垦"
+icon = ExtResource("13_uc6q1")
+icon_alignment = 1
+expand_icon = true
 
 [node name="Plant_Button" type="Button" parent="UI/LandPanel/Grid"]
-modulate = Color(1, 0.682353, 0, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.760784, 0.533333, 0.160784, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 text = "种植"
+icon = ExtResource("12_n03md")
+icon_alignment = 1
+expand_icon = true
 
 [node name="Remove_Button" type="Button" parent="UI/LandPanel/Grid"]
-modulate = Color(1, 1, 0, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.870588, 0.870588, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 text = "铲除"
+icon = ExtResource("13_uhubb")
+icon_alignment = 1
+expand_icon = true
 
 [node name="Harvest_Button" type="Button" parent="UI/LandPanel/Grid"]
-modulate = Color(0.223529, 1, 0.290196, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.188235, 0.839216, 0.243137, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 text = "收获"
+icon = ExtResource("14_uc6q1")
+icon_alignment = 1
+expand_icon = true
 
 [node name="Water_Button" type="Button" parent="UI/LandPanel/Grid"]
-modulate = Color(0, 1, 1, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0.87451, 0.87451, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 text = "浇水"
+icon = ExtResource("15_vygm6")
+icon_alignment = 1
+expand_icon = true
 
 [node name="Fertilize_Button" type="Button" parent="UI/LandPanel/Grid"]
-modulate = Color(0.592157, 0.337255, 1, 1)
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.509804, 0.301961, 0.85098, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 text = "施肥"
+icon = ExtResource("16_2e153")
+icon_alignment = 1
+expand_icon = true
 
 [node name="Upgrade_Button" type="Button" parent="UI/LandPanel/Grid"]
-modulate = Color(0.0784314, 0.470588, 1, 1)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.0705882, 0.411765, 0.87451, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 text = "升级"
+icon = ExtResource("19_uc6q1")
+icon_alignment = 1
+expand_icon = true
+
+[node name="OneClickPlantPanel" type="Panel" parent="UI"]
+visible = false
+offset_left = 475.0
+offset_top = 145.0
+offset_right = 991.0
+offset_bottom = 616.0
+script = ExtResource("18_n03md")
+
+[node name="Quit_Button" type="Button" parent="UI/OneClickPlantPanel"]
+layout_mode = 0
+offset_left = 465.0
+offset_right = 515.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="Title" type="Label" parent="UI/OneClickPlantPanel"]
+self_modulate = Color(0.431373, 0.498039, 1, 1)
+layout_mode = 2
+offset_right = 516.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 30
+text = "一键种植面板"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Grid" type="GridContainer" parent="UI/OneClickPlantPanel"]
+layout_mode = 2
+offset_top = 46.0
+offset_right = 500.0
+offset_bottom = 210.0
+columns = 5
+
+[node name="FullScreenPlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "全屏种植"
+icon_alignment = 1
+expand_icon = true
+
+[node name="OneRowPlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.972549, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "行种植"
+icon_alignment = 1
+expand_icon = true
+
+[node name="OneColumnPlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "列种植"
+icon_alignment = 1
+expand_icon = true
+
+[node name="NineSquarePlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "九宫格
+种植"
+icon_alignment = 1
+expand_icon = true
+
+[node name="CrossPlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.54902, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "十字法
+种植"
+icon_alignment = 1
+expand_icon = true
 
 [node name="PlayerRankingPanel" type="Panel" parent="UI"]
 visible = false
-offset_right = 1400.0
+offset_left = 2.0
+offset_right = 1402.0
 offset_bottom = 720.0
 script = ExtResource("4_yphxy")
 
-[node name="Scroll" type="ScrollContainer" parent="UI/PlayerRankingPanel"]
-layout_mode = 2
-offset_top = 68.0
-offset_right = 1400.0
-offset_bottom = 720.0
-size_flags_vertical = 3
-
-[node name="PlayerList" type="VBoxContainer" parent="UI/PlayerRankingPanel/Scroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="player_ranking_item" parent="UI/PlayerRankingPanel/Scroll/PlayerList" instance=ExtResource("5_yphxy")]
-layout_mode = 2
+[node name="RegisterPlayerNum" type="Label" parent="UI/PlayerRankingPanel"]
+self_modulate = Color(1, 0.701961, 1, 1)
+layout_mode = 0
+offset_left = 864.0
+offset_right = 1014.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 30
+text = "注册人数："
 
 [node name="Title" type="RichTextLabel" parent="UI/PlayerRankingPanel"]
 layout_mode = 2
@@ -420,6 +714,34 @@ bbcode_enabled = true
 text = "玩家排行榜"
 horizontal_alignment = 1
 
+[node name="SearchLineEdit" type="LineEdit" parent="UI/PlayerRankingPanel"]
+layout_mode = 0
+offset_left = 143.0
+offset_top = 3.0
+offset_right = 426.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "输入要搜索的人"
+
+[node name="RefreshButton" type="Button" parent="UI/PlayerRankingPanel"]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 0
+offset_top = 3.0
+offset_right = 78.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "刷新"
+
+[node name="SearchButton" type="Button" parent="UI/PlayerRankingPanel"]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 0
+offset_left = 425.0
+offset_top = 3.0
+offset_right = 503.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "搜索"
+
 [node name="QuitButton" type="Button" parent="UI/PlayerRankingPanel"]
 custom_minimum_size = Vector2(55, 55)
 layout_mode = 0
@@ -430,21 +752,89 @@ offset_bottom = 60.0
 theme_override_font_sizes/font_size = 35
 text = "X"
 
-[node name="RefreshButton" type="Button" parent="UI/PlayerRankingPanel"]
-custom_minimum_size = Vector2(55, 55)
+[node name="FiterAndSortHBox" type="HBoxContainer" parent="UI/PlayerRankingPanel"]
 layout_mode = 0
-offset_left = 1.0
-offset_top = 3.0
-offset_right = 79.0
-offset_bottom = 60.0
-theme_override_font_sizes/font_size = 35
-text = "刷新"
+offset_top = 63.0
+offset_right = 1398.0
+offset_bottom = 120.0
+
+[node name="SortLabel" type="Label" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 30
+text = "排序："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoneySortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
+self_modulate = Color(1, 1, 0.321569, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "钱币"
+
+[node name="SeedSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
+self_modulate = Color(0.329412, 1, 0.345098, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "种子数"
+
+[node name="LevelSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
+self_modulate = Color(0, 1, 1, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "等级"
+
+[node name="OnlineTimeSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
+self_modulate = Color(0.784314, 0.733333, 0.521569, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "在线时长"
+
+[node name="LoginTimeSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
+self_modulate = Color(0.811765, 1, 0.811765, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "登录时间"
+
+[node name="LikeNumSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
+self_modulate = Color(1, 0.513726, 1, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点赞数"
+
+[node name="IsOnlineSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
+self_modulate = Color(0.691357, 0.691357, 0.691357, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "在线情况"
+
+[node name="Scroll" type="ScrollContainer" parent="UI/PlayerRankingPanel"]
+layout_mode = 2
+offset_top = 121.0
+offset_right = 1400.0
+offset_bottom = 720.0
+size_flags_vertical = 3
+
+[node name="PlayerList" type="VBoxContainer" parent="UI/PlayerRankingPanel/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="player_ranking_item" parent="UI/PlayerRankingPanel/Scroll/PlayerList" instance=ExtResource("5_yphxy")]
+layout_mode = 2
 
 [node name="CropStorePanel" type="Panel" parent="UI"]
 visible = false
-offset_left = 1.0
-offset_right = 1400.0
-offset_bottom = 720.0
+offset_top = -1.0
+offset_right = 1399.0
+offset_bottom = 719.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("3_qtrx8")
@@ -546,8 +936,8 @@ text = "X"
 
 [node name="PlayerBagPanel" type="Panel" parent="UI"]
 visible = false
-offset_left = 1.0
-offset_right = 1398.0
+self_modulate = Color(0.767349, 0.201783, 0, 1)
+offset_right = 1397.0
 offset_bottom = 720.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -655,17 +1045,37 @@ offset_right = 2.00012
 offset_bottom = 143.0
 scale = Vector2(0.7, 0.7)
 
+[node name="AcceptDialog" parent="UI" instance=ExtResource("16_0igvr")]
+visible = false
+
+[node name="LuckyDrawPanel" parent="UI" instance=ExtResource("17_f21le")]
+visible = false
+offset_left = 442.0
+offset_right = 1042.0
+
+[node name="DailyCheckInPanel" parent="UI" instance=ExtResource("18_m6fch")]
+visible = false
+offset_left = 442.0
+offset_top = 3.0
+offset_right = 1042.0
+offset_bottom = 723.0
+
 [node name="BackgroundUI" type="CanvasLayer" parent="."]
 layer = -1
 
-[node name="background" type="Sprite2D" parent="BackgroundUI"]
-modulate = Color(1, 1, 1, 0.372549)
+[node name="BackgroundSwitcher" type="Sprite2D" parent="BackgroundUI"]
+self_modulate = Color(0.5, 0.5, 0.5, 1)
 show_behind_parent = true
 z_index = -100
 z_as_relative = false
-position = Vector2(702.875, 360)
-scale = Vector2(0.779157, 0.703125)
-texture = ExtResource("2_psm5w")
+position = Vector2(703, 360)
+scale = Vector2(0.92, 0.92)
+script = ExtResource("17_0igvr")
+
+[node name="Background2" type="Sprite2D" parent="BackgroundUI/BackgroundSwitcher"]
+self_modulate = Color(0.5, 0.5, 0.5, 1)
+
+[node name="Timer" type="Timer" parent="BackgroundUI/BackgroundSwitcher"]
 
 [node name="GridContainer" type="GridContainer" parent="."]
 z_as_relative = false
@@ -732,7 +1142,28 @@ bounds_max = Vector2(500, 500)
 
 [node name="GameManager" type="Node" parent="."]
 
-[connection signal="pressed" from="UI/GUI/VBox/ReturnMyFarmButton" to="." method="_on_return_my_farm_button_pressed"]
-[connection signal="pressed" from="UI/GUI/VBox/OpenStoreButton" to="." method="_on_open_store_button_pressed"]
-[connection signal="pressed" from="UI/GUI/VBox/PlayerRankingButton" to="." method="_on_player_ranking_button_pressed"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_m6fch")
+
+[node name="GameBGMPlayer" type="Node" parent="."]
+script = ExtResource("28_m6fch")
+play_mode = 1
+music_files_list = Array[String](["res://assets/音乐/Anibli&RelaxingPianoMusic-StrollThroughtheSky.mp3", "res://assets/音乐/BanAM-Futatabi.mp3", "res://assets/音乐/MCMZebra-AlwaysandManyTimes.mp3", "res://assets/音乐/MicMusicbox-Ashitakasekki.mp3", "res://assets/音乐/Nemuネム-PromiseoftheWorld.mp3", "res://assets/音乐/α-WaveRelaxationHealingMusicLab-いつも何度でも[「千と千尋の神隠し」より][ピアノ].mp3", "res://assets/音乐/久石让-ふたたび.mp3", "res://assets/音乐/广桥真纪子-いのちの名前(生命之名).mp3", "res://assets/音乐/日本群星-PromiseoftheWorld.mp3"])
+
+[connection signal="pressed" from="UI/GUI/FarmVBox/PlayerBagButton" to="." method="_on_player_bag_button_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/OneClickHarvestButton" to="." method="_on_one_click_harvestbutton_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/OneClickPlantButton" to="." method="_on_one_click_plant_button_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/AddNewGroundButton" to="." method="_on_add_new_ground_button_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/OpenStoreButton" to="." method="_on_open_store_button_pressed"]
+[connection signal="pressed" from="UI/GUI/VisitVBox/LikeButton" to="." method="_on_like_button_pressed"]
+[connection signal="pressed" from="UI/GUI/VisitVBox/ReturnMyFarmButton" to="." method="_on_return_my_farm_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/NewPlayerGiftButton" to="." method="_on_new_player_gift_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/SettingButton" to="." method="_on_setting_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/LuckyDrawButton" to="." method="_on_lucky_draw_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/PlayerRankingButton" to="." method="_on_player_ranking_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/DailyCheckInButton" to="." method="_on_daily_check_in_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/ReturnMainMenuButton" to="." method="_on_return_main_menu_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/MyPetButton" to="." method="_on_my_pet_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/ScareCrowButton" to="." method="_on_my_pet_button_pressed"]
+[connection signal="pressed" from="UI/OneClickPlantPanel/Quit_Button" to="UI/OneClickPlantPanel" method="_on_quit_button_pressed"]
 [connection signal="pressed" from="UI/CropStorePanel/QuitButton" to="." method="_on_quit_button_pressed"]

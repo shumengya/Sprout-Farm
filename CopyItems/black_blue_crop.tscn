@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://cm1e72lhd7j7v"]
+[gd_scene load_steps=2 format=3 uid="uid://cm1e72lhd7j7v"]
 
 [ext_resource type="Script" uid="uid://c6ylh1o2kgqth" path="res://CopyItems/item_crop.gd" id="1_sgirt"]
-[ext_resource type="Texture2D" uid="uid://kdhowrc6av4g" path="res://assets/作物/默认/0.png" id="2_sgirt"]
 
 [node name="BlackBlueCrop" type="Button"]
 custom_minimum_size = Vector2(400, 400)
@@ -15,7 +14,6 @@ script = ExtResource("1_sgirt")
 [node name="CropImage" type="Sprite2D" parent="."]
 position = Vector2(199.569, 201.043)
 scale = Vector2(0.260977, 0.259058)
-texture = ExtResource("2_sgirt")
 
 [node name="Title" type="Label" parent="."]
 modulate = Color(0, 0.152941, 0.984314, 1)

@@ -12,8 +12,10 @@ config_version=5
 
 config/name="萌芽农场"
 config/description="一款支持多人联机的农场游戏"
-run/main_scene="res://MainGame.tscn"
+config/version="1.0.3"
+run/main_scene="uid://bypjb28h4ntdr"
 config/features=PackedStringArray("4.4", "Mobile")
+boot_splash/fullsize=false
 config/icon="res://assets/logo2.png"
 
 [autoload]
@@ -35,6 +37,27 @@ window/vsync/vsync_mode=0
 
 project/assembly_name="萌芽农场"
 
+[file_customization]
+
+folder_colors={
+"res://Components/": "orange",
+"res://CopyItems/": "yellow",
+"res://Data/": "green",
+"res://GUI/": "blue",
+"res://GlobalScript/": "teal",
+"res://Network/": "purple",
+"res://Server/": "pink",
+"res://Shader/": "gray",
+"res://assets/": "red"
+}
+
+[importer_defaults]
+
+texture={
+&"detect_3d/compress_to": 0,
+&"mipmaps/generate": true
+}
+
 [input]
 
 ui_save={
@@ -52,3 +75,5 @@ ui_load={
 
 renderer/rendering_method="mobile"
 textures/vram_compression/import_etc2_astc=true
+textures/webp_compression/compression_method=3
+viewport/hdr_2d=true

@@ -65,14 +65,16 @@ func _on_login_button_pressed():
 		status_label.text = "未连接到服务器，正在尝试连接..."
 		status_label.modulate = Color.YELLOW
 		# 尝试自动连接到服务器
-		tcp_network_manager._on_connection_button_pressed()
-		await get_tree().create_timer(1.0).timeout
+		tcp_network_manager.connect_to_current_server()
+		await get_tree().create_timer(2.0).timeout
 		
 		# 再次检查连接状态
 		if !tcp_network_manager.client.is_client_connected():
-			status_label.text = "连接服务器失败，请检查网络设置！"
-			status_label.modulate = Color.RED
-			return
+			status_label.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label.modulate = Color.YELLOW
+			# 等待自动服务器切换完成
+			await get_tree().create_timer(3.0).timeout
+			
 	
 	# 禁用按钮，防止重复点击
 	login_button.disabled = true
@@ -116,14 +118,16 @@ func _on_send_button_pressed():
 		status_label.text = "未连接到服务器，正在尝试连接..."
 		status_label.modulate = Color.YELLOW
 		# 尝试自动连接到服务器
-		tcp_network_manager._on_connection_button_pressed()
-		await get_tree().create_timer(1.0).timeout
+		tcp_network_manager.connect_to_current_server()
+		await get_tree().create_timer(2.0).timeout
 		
 		# 再次检查连接状态
 		if !tcp_network_manager.client.is_client_connected():
-			status_label.text = "连接服务器失败，请检查网络设置！"
-			status_label.modulate = Color.RED
-			return
+			status_label.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label.modulate = Color.YELLOW
+			# 等待自动服务器切换完成
+			await get_tree().create_timer(3.0).timeout
+			
 	
 	# 禁用按钮，防止重复点击
 	send_button.disabled = true
@@ -192,14 +196,16 @@ func _on_register_button_pressed():
 		status_label.text = "未连接到服务器，正在尝试连接..."
 		status_label.modulate = Color.YELLOW
 		# 尝试自动连接到服务器
-		tcp_network_manager._on_connection_button_pressed()
-		await get_tree().create_timer(1.0).timeout
+		tcp_network_manager.connect_to_current_server()
+		await get_tree().create_timer(2.0).timeout
 		
 		# 再次检查连接状态
 		if !tcp_network_manager.client.is_client_connected():
-			status_label.text = "连接服务器失败，请检查网络设置！"
-			status_label.modulate = Color.RED
-			return
+			status_label.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label.modulate = Color.YELLOW
+			# 等待自动服务器切换完成
+			await get_tree().create_timer(3.0).timeout
+			
 	
 	# 禁用按钮，防止重复点击
 	register_button.disabled = true
@@ -271,11 +277,15 @@ func _on_login_response_received(success: bool, message: String, user_data: Dict
 		status_label.text = "登录成功！正在加载游戏..."
 		status_label.modulate = Color.GREEN
 		
+		# 保存登录数据到主游戏
+		main_game.login_data = user_data.duplicate()
+		
 		# 更新主游戏数据
 		main_game.experience = user_data.get("experience", 0)
 		main_game.farm_lots = user_data.get("farm_lots", [])
 		main_game.level = user_data.get("level", 1)
 		main_game.money = user_data.get("money", 0)
+		main_game.stamina = user_data.get("体力值", 20)
 		main_game.show_farm_name.text = "农场名称："+user_data.get("farm_name", "")
 		main_game.show_player_name.text = "玩家昵称："+user_data.get("player_name", "")
 		farmname_input.text = user_data.get("farm_name", "")
@@ -293,6 +303,9 @@ func _on_login_response_received(success: bool, message: String, user_data: Dict
 		main_game._update_ui()
 		main_game._refresh_farm_lots()
 		player_bag_panel.update_player_bag_ui()
+		
+		# 调用主游戏的登录成功处理函数
+		main_game.handle_login_success(user_data)
 	else:
 		status_label.text = "登录失败：" + message
 		status_label.modulate = Color.RED

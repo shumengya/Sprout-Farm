@@ -1,55 +1,65 @@
-[gd_scene load_steps=4 format=3 uid="uid://bkivlkirrx6u8"]
+[gd_scene load_steps=7 format=3 uid="uid://bkivlkirrx6u8"]
 
-[ext_resource type="Texture2D" uid="uid://c4l0qn0p4yav8" path="res://assets/tu3.png" id="1_bns1c"]
+[ext_resource type="Texture2D" uid="uid://fibjlynv0vi2" path="res://assets/地块/土块1.png" id="1_bns1c"]
 [ext_resource type="Script" uid="uid://xh5tr5co5kfu" path="res://GUI/SMY_ProgressBar.gd" id="2_1n4xp"]
-[ext_resource type="Texture2D" uid="uid://kdhowrc6av4g" path="res://assets/作物/默认/0.png" id="2_bns1c"]
+[ext_resource type="Texture2D" uid="uid://cil2qobuc0chj" path="res://assets/作物/默认/0.webp" id="2_bns1c"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v46ok"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_s5pb0"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cyybs"]
 
 [node name="CropItem" type="Button"]
-self_modulate = Color(1, 1, 1, 0.435294)
+self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ground_sprite" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_v46ok")
 position = Vector2(50, 63)
-scale = Vector2(0.130329, 0.130329)
+scale = Vector2(0.135, 0.135)
 texture = ExtResource("1_bns1c")
 
 [node name="crop_sprite" type="Sprite2D" parent="."]
 visible = false
-position = Vector2(50, 36)
-scale = Vector2(0.0660772, 0.0660772)
+material = SubResource("ShaderMaterial_s5pb0")
+position = Vector2(50, 34)
+scale = Vector2(0.06, 0.06)
 texture = ExtResource("2_bns1c")
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
+material = SubResource("ShaderMaterial_cyybs")
 layout_mode = 2
-offset_top = 86.0
-offset_right = 495.0
-offset_bottom = 159.0
+offset_left = 23.0
+offset_top = 78.0
+offset_right = 328.0
+offset_bottom = 151.0
 scale = Vector2(0.2, 0.2)
 theme_override_font_sizes/font_size = 50
 script = ExtResource("2_1n4xp")
 
 [node name="crop_name" type="Label" parent="."]
+modulate = Color(2, 2, 2, 1)
 layout_mode = 2
+offset_top = -9.0
 offset_right = 250.0
-offset_bottom = 42.0
+offset_bottom = 33.0
 scale = Vector2(0.4, 0.4)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
-text = "[普通-胡萝卜]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="status_label" type="Label" parent="."]
 modulate = Color(0.721569, 1, 1, 1)
 layout_mode = 2
-offset_top = 17.0
+offset_top = 8.0
 offset_right = 500.0
-offset_bottom = 86.0
+offset_bottom = 77.0
 scale = Vector2(0.2, 0.2)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 50
-text = "已浇水 已施肥 等级:1"
 horizontal_alignment = 1
 vertical_alignment = 1

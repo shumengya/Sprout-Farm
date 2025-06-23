@@ -73,6 +73,10 @@ func init_store():
 	for crop_name in main_game.can_planted_crop:
 		var crop = main_game.can_planted_crop[crop_name]
 		
+		# 检查是否可以购买
+		if not crop.get("能否购买", true):
+			continue
+		
 		# 只显示当前等级可以种植的作物
 		if crop["等级"] <= main_game.level:
 			var store_btn = _create_store_button(crop_name, crop["品质"])
@@ -192,8 +196,6 @@ func _on_store_buy_pressed(crop_name: String):
 	
 	# 发送购买请求到服务器
 	if network_manager and network_manager.sendBuySeed(crop_name):
-		# 购买请求已发送，等待服务器响应
-		Toast.show("正在购买种子...", Color.YELLOW, 2.0, 1.0)
 		
 		# 将种子添加到背包
 		var found = false
@@ -252,6 +254,10 @@ func _apply_filter_and_sort():
 	var filtered_crops = []
 	for crop_name in main_game.can_planted_crop:
 		var crop = main_game.can_planted_crop[crop_name]
+		
+		# 检查是否可以购买
+		if not crop.get("能否购买", true):
+			continue
 		
 		# 检查等级和品质过滤
 		if crop["等级"] > main_game.level:
@@ -400,7 +406,7 @@ func _load_crop_textures(crop_name: String) -> Array:
 		# 尝试加载作物的序列帧（从0开始）
 		var frame_index = 0
 		while true:
-			var texture_path = crop_path + str(frame_index) + ".png"
+			var texture_path = crop_path + str(frame_index) + ".webp"
 			if ResourceLoader.exists(texture_path):
 				var texture = load(texture_path)
 				if texture:
@@ -440,7 +446,7 @@ func _load_default_textures() -> Array:
 	# 尝试加载默认图片序列帧
 	var frame_index = 0
 	while true:
-		var texture_path = default_path + str(frame_index) + ".png"
+		var texture_path = default_path + str(frame_index) + ".webp"
 		if ResourceLoader.exists(texture_path):
 			var texture = load(texture_path)
 			if texture:
@@ -453,7 +459,7 @@ func _load_default_textures() -> Array:
 	
 	# 如果没有找到序列帧，尝试加载单个默认图片
 	if textures.size() == 0:
-		var single_texture_path = default_path + "0.png"
+		var single_texture_path = default_path + "0.webp"
 		if ResourceLoader.exists(single_texture_path):
 			var texture = load(single_texture_path)
 			if texture:

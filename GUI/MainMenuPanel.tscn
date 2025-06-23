@@ -1,0 +1,268 @@
+[gd_scene load_steps=9 format=3 uid="uid://bypjb28h4ntdr"]
+
+[ext_resource type="Script" uid="uid://badqjgdfhg7vt" path="res://GUI/MainMenuPanel.gd" id="1_wpehy"]
+[ext_resource type="Texture2D" uid="uid://bhdqkhf0y2ply" path="res://assets/UI/背景1.jpg" id="2_fys16"]
+[ext_resource type="Script" path="res://GUI/GameSettingPanel.gd" id="2_n0pjj"]
+[ext_resource type="Texture2D" uid="uid://4kvddwqlodpg" path="res://assets/logo_title/logo1.png" id="3_sr106"]
+[ext_resource type="Script" path="res://GUI/GameAboutPanel.gd" id="3_y0inj"]
+[ext_resource type="Script" uid="uid://kj7v1uxk2i6h" path="res://GUI/GameUpdatePanel.gd" id="4_fys16"]
+[ext_resource type="Texture2D" uid="uid://b5of6puh4efui" path="res://assets/杂项/柚小青装饰品.png" id="5_eghpk"]
+[ext_resource type="Texture2D" uid="uid://cuuqapjbrsdy7" path="res://assets/UI/QQ群.jpg" id="5_y0inj"]
+
+[node name="MainMenuPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wpehy")
+
+[node name="Background" type="TextureRect" parent="."]
+self_modulate = Color(1, 1, 1, 0.34902)
+layout_mode = 0
+offset_left = -131.0
+offset_top = -24.0
+offset_right = 1568.0
+offset_bottom = 734.0
+texture = ExtResource("2_fys16")
+
+[node name="GUI" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GameLogo" type="TextureRect" parent="GUI"]
+layout_mode = 0
+offset_left = 450.0
+offset_top = -24.0
+offset_right = 1730.0
+offset_bottom = 696.0
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("3_sr106")
+stretch_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="GUI"]
+visible = false
+layout_mode = 0
+offset_right = 1398.0
+offset_bottom = 88.0
+theme_override_font_sizes/normal_font_size = 40
+bbcode_enabled = true
+text = "萌芽农场"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GameVersionLabel" type="Label" parent="GUI"]
+layout_mode = 0
+offset_top = 676.0
+offset_right = 188.0
+offset_bottom = 718.0
+theme_override_font_sizes/font_size = 30
+text = "版本号：v1.0.1"
+
+[node name="AddGroupLabel" type="Label" parent="GUI"]
+self_modulate = Color(1, 1, 0, 1)
+layout_mode = 0
+offset_left = 896.0
+offset_top = 205.0
+offset_right = 1226.0
+offset_bottom = 247.0
+theme_override_font_sizes/font_size = 30
+text = "加群获取最新开发动态！"
+
+[node name="QQGroupImage" type="TextureRect" parent="GUI/AddGroupLabel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 43.0
+offset_right = 952.0
+offset_bottom = 1229.0
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("5_y0inj")
+
+[node name="YouXiaoQing" type="TextureRect" parent="GUI/AddGroupLabel"]
+layout_mode = 0
+offset_left = 298.0
+offset_top = 82.0
+offset_right = 1233.0
+offset_bottom = 1268.0
+scale = Vector2(0.14, 0.14)
+texture = ExtResource("5_eghpk")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_top = 248.0
+offset_right = 1398.0
+offset_bottom = 720.0
+
+[node name="StartGameButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(168, 63)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 40
+text = "开始游戏"
+
+[node name="GameSettingButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(168, 63)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 40
+text = "设置"
+
+[node name="GameUpdateButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(168, 63)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 40
+text = "游戏更新"
+
+[node name="GameAboutButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(168, 63)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 40
+text = "关于"
+
+[node name="ExitButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(168, 63)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 40
+text = "退出游戏"
+
+[node name="GameSettingPanel" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_right = 1398.0
+offset_bottom = 720.0
+script = ExtResource("2_n0pjj")
+
+[node name="Title" type="Label" parent="GameSettingPanel"]
+layout_mode = 0
+offset_right = 1398.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 45
+text = "游戏设置"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="GameSettingPanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_left = 1340.0
+offset_right = 1400.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "X"
+
+[node name="Scroll" type="ScrollContainer" parent="GameSettingPanel"]
+layout_mode = 0
+offset_top = 80.0
+offset_right = 1400.0
+offset_bottom = 720.0
+
+[node name="Contents" type="RichTextLabel" parent="GameSettingPanel/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="GameAboutPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 1398.0
+offset_bottom = 720.0
+script = ExtResource("3_y0inj")
+
+[node name="Title" type="Label" parent="GameAboutPanel"]
+layout_mode = 0
+offset_right = 1398.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 45
+text = "关于"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="GameAboutPanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_left = 1340.0
+offset_right = 1400.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "X"
+
+[node name="Scroll" type="ScrollContainer" parent="GameAboutPanel"]
+layout_mode = 0
+offset_top = 80.0
+offset_right = 1400.0
+offset_bottom = 720.0
+
+[node name="Contents" type="RichTextLabel" parent="GameAboutPanel/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 30
+text = "玩法介绍：
+1.版本要匹配，服务器版本一直在更新，请及时下载最新版客户端，否者无法登录游戏
+2.游戏目前适配Windows和安卓平台，未来也会适配Linux桌面版，IOS应该会有吧...?
+3.电脑Windows平台按住wsad或者方向键可以移动视角，鼠标滚轮可以缩放视角；安卓则为拖动和双指缩放
+3.注册账号一定一定要用QQ号，目前游戏的所有登录服务都是围绕着腾讯QQ来验证，注册时会向您输入的QQ号对应的QQ邮箱发送一封注册邮件。
+4.不要一上来就把钱用完了（比如某某人一上来就十连抽）,可以去偷别人的菜
+
+致谢名单：
+虚空领主：（美术抠图）
+豆包：（万能的美术）"
+
+[node name="GameUpdatePanel" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_right = 1398.0
+offset_bottom = 720.0
+script = ExtResource("4_fys16")
+
+[node name="Scroll" type="ScrollContainer" parent="GameUpdatePanel"]
+layout_mode = 0
+offset_top = 80.0
+offset_right = 1400.0
+offset_bottom = 720.0
+
+[node name="Contents" type="RichTextLabel" parent="GameUpdatePanel/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+
+[node name="Title" type="Label" parent="GameUpdatePanel"]
+layout_mode = 0
+offset_right = 1398.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 45
+text = "游戏更新"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="GameUpdatePanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_left = 1340.0
+offset_right = 1400.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "X"
+
+[node name="RefreshButton" type="Button" parent="GameUpdatePanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_right = 78.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "刷新"
+
+[connection signal="pressed" from="VBox/StartGameButton" to="." method="_on_start_game_button_pressed"]
+[connection signal="pressed" from="VBox/GameSettingButton" to="." method="_on_game_setting_button_pressed"]
+[connection signal="pressed" from="VBox/GameUpdateButton" to="." method="_on_game_update_button_pressed"]
+[connection signal="pressed" from="VBox/GameAboutButton" to="." method="_on_game_about_button_pressed"]
+[connection signal="pressed" from="VBox/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="GameSettingPanel/QuitButton" to="GameSettingPanel" method="_on_quit_button_pressed"]
+[connection signal="pressed" from="GameAboutPanel/QuitButton" to="GameAboutPanel" method="_on_quit_button_pressed"]
+[connection signal="pressed" from="GameUpdatePanel/QuitButton" to="GameUpdatePanel" method="_on_quit_button_pressed"]

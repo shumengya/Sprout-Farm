@@ -60,13 +60,21 @@ text = "访问"
 layout_mode = 2
 
 [node name="LastLoginTime" type="Label" parent="HBox2"]
+modulate = Color(0.811765, 1, 0.811765, 1)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 20
 text = "最后在线：2025年12时09分35秒"
 
 [node name="OnlineTime" type="Label" parent="HBox2"]
+modulate = Color(0.784314, 0.733333, 0.521569, 1)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 20
 text = "累计在线时长：99时60分60秒"
+
+[node name="IsOnlineTime" type="Label" parent="HBox2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "正在检测中..."

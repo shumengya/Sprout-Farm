@@ -36,6 +36,11 @@ var current_filter_quality = ""
 var current_sort_key = ""
 var current_sort_ascending = true
 
+# 一键种植模式相关变量
+var is_planting_mode = false
+var planting_type = ""
+var one_click_plant_panel = null
+
 # 准备函数
 func _ready():
 	# 连接按钮信号
@@ -278,6 +283,16 @@ func _on_bag_seed_selected(crop_name):
 		Toast.show("访问模式下无法种植", Color.ORANGE, 2.0, 1.0)
 		return
 	
+	# 检查是否是一键种植模式
+	if is_planting_mode:
+		# 一键种植模式下，回调给一键种植面板
+		if one_click_plant_panel and one_click_plant_panel.has_method("on_crop_selected"):
+			one_click_plant_panel.on_crop_selected(crop_name, planting_type)
+		# 退出种植模式
+		_exit_planting_mode()
+		self.hide()
+		return
+	
 	# 从主场景获取当前选择的地块索引
 	selected_lot_index = main_game.selected_lot_index
 	
@@ -344,13 +359,28 @@ func _plant_crop_from_bag(index, crop_name, seed_index):
 	# 发送种植请求到服务器
 
 	if network_manager and network_manager.sendPlantCrop(index, crop_name):
-		# 种植请求已发送，等待服务器响应
-		Toast.show("正在发送种植请求", Color.YELLOW, 2.0, 1.0)
 		# 关闭背包面板
 		hide()
 
+# 设置种植模式
+func set_planting_mode(plant_type: String, plant_panel):
+	is_planting_mode = true
+	planting_type = plant_type
+	one_click_plant_panel = plant_panel
+	print("进入种植模式：", plant_type)
+
+# 退出种植模式
+func _exit_planting_mode():
+	is_planting_mode = false
+	planting_type = ""
+	one_click_plant_panel = null
+	print("退出种植模式")
+
 # 关闭面板
 func _on_quit_button_pressed():
+	# 退出种植模式（如果当前在种植模式下）
+	if is_planting_mode:
+		_exit_planting_mode()
 	self.hide()
 
 # 获取作物的最后一帧图片（用于背包显示）
@@ -389,7 +419,7 @@ func _load_crop_textures(crop_name: String) -> Array:
 		# 尝试加载作物的序列帧（从0开始）
 		var frame_index = 0
 		while true:
-			var texture_path = crop_path + str(frame_index) + ".png"
+			var texture_path = crop_path + str(frame_index) + ".webp"
 			if ResourceLoader.exists(texture_path):
 				var texture = load(texture_path)
 				if texture:
@@ -429,7 +459,7 @@ func _load_default_textures() -> Array:
 	# 尝试加载默认图片序列帧
 	var frame_index = 0
 	while true:
-		var texture_path = default_path + str(frame_index) + ".png"
+		var texture_path = default_path + str(frame_index) + ".webp"
 		if ResourceLoader.exists(texture_path):
 			var texture = load(texture_path)
 			if texture:
@@ -442,7 +472,7 @@ func _load_default_textures() -> Array:
 	
 	# 如果没有找到序列帧，尝试加载单个默认图片
 	if textures.size() == 0:
-		var single_texture_path = default_path + "0.png"
+		var single_texture_path = default_path + ".webp"
 		if ResourceLoader.exists(single_texture_path):
 			var texture = load(single_texture_path)
 			if texture:
