@@ -6,6 +6,7 @@ import glob
 import threading
 import datetime
 import re
+import random
 
 """
 萌芽农场TCP游戏服务器 - 代码结构说明
@@ -56,7 +57,8 @@ import re
 server_host: str = "0.0.0.0"
 server_port: int = 4040
 buffer_size: int = 4096
-server_version: str = "1.0.3"  # 记录服务端版本
+server_version: str = "1.0.5"
+
 
 
 # ============================================================================
@@ -67,7 +69,7 @@ class TCPGameServer(TCPServer):
     萌芽农场TCP游戏服务器
     """
     
-    #==========================初始化和生命周期管理==========================
+#==========================初始化和生命周期管理==========================
     #初始化操作
     def __init__(self, server_host=server_host, server_port=server_port, buffer_size=buffer_size):
         """初始化TCP游戏服务器"""
@@ -76,6 +78,7 @@ class TCPGameServer(TCPServer):
         # 基础数据存储
         self.user_data = {}  # 存储用户相关数据
         self.crop_timer = None  # 作物生长计时器
+        self.weed_timer = None  # 杂草生长计时器
         
         # 性能优化相关配置
         self._init_performance_settings()
@@ -85,6 +88,7 @@ class TCPGameServer(TCPServer):
         # 启动定时器
         self.start_crop_growth_timer()
         self.start_batch_save_timer()
+        self.start_weed_growth_timer()
     
     #初始化性能操作
     def _init_performance_settings(self):
@@ -97,6 +101,13 @@ class TCPGameServer(TCPServer):
         self.slow_update_interval = 10  # 慢速更新间隔（每10秒进行一次完整更新）
         self.active_players_cache = {}  # 活跃玩家缓存
         self.cache_expire_time = 300  # 缓存过期时间（5分钟）
+        
+        # 杂草生长相关配置
+        self.weed_check_interval = 86400  # 杂草检查间隔（24小时）
+        self.offline_threshold_days = 3  # 离线多少天后开始长杂草
+        self.max_weeds_per_check = 3  # 每次检查时最多长多少个杂草
+        self.weed_growth_probability = 0.3  # 每个空地长杂草的概率（30%）
+        self.last_weed_check_time = time.time()  # 上次检查杂草的时间
     
     #启动作物生长计时器
     def start_crop_growth_timer(self):
@@ -125,6 +136,23 @@ class TCPGameServer(TCPServer):
         batch_timer.daemon = True
         batch_timer.start()
     
+    #启动杂草生长计时器
+    def start_weed_growth_timer(self):
+        """启动杂草生长计时器，每天检查一次"""
+        try:
+            current_time = time.time()
+            # 检查是否到了杂草检查时间
+            if current_time - self.last_weed_check_time >= self.weed_check_interval:
+                self.check_and_grow_weeds()
+                self.last_weed_check_time = current_time
+        except Exception as e:
+            self.log('ERROR', f"杂草生长检查时出错: {str(e)}", 'SERVER')
+        
+        # 创建下一个杂草检查计时器（每小时检查一次是否到时间）
+        self.weed_timer = threading.Timer(3600, self.start_weed_growth_timer)  # 每小时检查一次
+        self.weed_timer.daemon = True
+        self.weed_timer.start()
+    
     #获取服务器统计信息
     def get_server_stats(self):
         """获取服务器统计信息"""
@@ -146,6 +174,12 @@ class TCPGameServer(TCPServer):
             self.crop_timer = None
             self.log('INFO', "作物生长计时器已停止", 'SERVER')
         
+        # 停止杂草生长计时器
+        if hasattr(self, 'weed_timer') and self.weed_timer:
+            self.weed_timer.cancel()
+            self.weed_timer = None
+            self.log('INFO', "杂草生长计时器已停止", 'SERVER')
+        
         # 强制保存所有缓存数据
         self.log('INFO', "正在保存所有玩家数据...", 'SERVER')
         saved_count = self.force_save_all_data()
@@ -157,8 +191,11 @@ class TCPGameServer(TCPServer):
         
         # 调用父类方法完成实际停止
         super().stop()
-    
-    #==========================客户端连接管理==========================
+#==========================初始化和生命周期管理==========================
+
+
+
+#==========================客户端连接管理==========================
     #移除客户端
     def _remove_client(self, client_id):
         """覆盖客户端移除方法，添加用户离开通知和数据保存"""
@@ -192,9 +229,12 @@ class TCPGameServer(TCPServer):
             self.log('INFO', f"用户 {username} 已离开游戏", 'SERVER')
         
         super()._remove_client(client_id)
-    
+#==========================客户端连接管理==========================
 
-    #==========================验证和检查方法==========================
+
+
+
+#==========================验证和检查方法==========================
     #检查用户是否已登录的通用方法
     def _check_user_logged_in(self, client_id, action_name, action_type=None):
         """检查用户是否已登录的通用方法"""
@@ -216,8 +256,11 @@ class TCPGameServer(TCPServer):
         
         return True, None
     
+#==========================验证和检查方法==========================
 
-    #==========================数据管理方法==========================
+
+
+#=================================数据管理方法====================================
     #加载玩家数据
     def load_player_data(self, account_id):
         """从缓存或文件加载玩家数据（优化版本）"""
@@ -336,7 +379,18 @@ class TCPGameServer(TCPServer):
         # 加载和更新玩家数据
         player_data = self.load_player_data(username)
         if player_data:
+            # 更新总游玩时间
             self._update_total_play_time(player_data, play_time_seconds)
+            
+            # 更新今日在线礼包累计时间
+            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            online_gift_data = player_data.get("online_gift", {})
+            
+            if current_date in online_gift_data:
+                today_data = online_gift_data[current_date]
+                today_data["total_online_time"] = today_data.get("total_online_time", 0.0) + play_time_seconds
+                player_data["online_gift"] = online_gift_data
+            
             self.save_player_data(username, player_data)
             self.log('INFO', f"用户 {username} 本次游玩时间: {play_time_seconds} 秒，总游玩时间: {player_data['total_login_time']}", 'SERVER')
     
@@ -360,7 +414,38 @@ class TCPGameServer(TCPServer):
             # 更新总游玩时间
             player_data["total_login_time"] = f"{new_hours}时{new_minutes}分{new_seconds}秒"
     
-    #==========================作物系统管理==========================
+    # 检查玩家是否享受新玩家注册奖励
+    def _is_new_player_bonus_active(self, player_data):
+        """检查玩家是否在新玩家奖励期内（注册后3天内享受10倍生长速度）"""
+        register_time_str = player_data.get("注册时间", "")
+        
+        # 如果没有注册时间或者是默认的老玩家时间，则不享受奖励
+        if not register_time_str or register_time_str == "2025年05月21日15时00分00秒":
+            return False
+        
+        try:
+            # 解析注册时间
+            register_time = datetime.datetime.strptime(register_time_str, "%Y年%m月%d日%H时%M分%S秒")
+            current_time = datetime.datetime.now()
+            
+            # 计算注册天数
+            time_diff = current_time - register_time
+            days_since_register = time_diff.total_seconds() / 86400  # 转换为天数
+            
+            # 3天内享受新玩家奖励
+            if days_since_register <= 3:
+                return True
+            else:
+                return False
+                
+        except ValueError as e:
+            self.log('WARNING', f"解析注册时间格式错误: {register_time_str}, 错误: {str(e)}", 'SERVER')
+            return False
+
+#=================================数据管理方法====================================
+
+
+#================================作物系统管理=========================================
     #优化的作物生长更新系统
     def update_crops_growth_optimized(self):
         """优化的作物生长更新系统"""
@@ -456,6 +541,10 @@ class TCPGameServer(TCPServer):
                 # 计算生长速度倍数
                 growth_multiplier = 1.0
                 
+                # 新玩家注册奖励：注册后3天内享受10倍生长速度
+                if self._is_new_player_bonus_active(player_data):
+                    growth_multiplier *= 10.0
+                    
                 # 土地等级影响 - 根据不同等级应用不同倍数
                 land_level = farm_lot.get("土地等级", 0)
                 land_speed_multipliers = {
@@ -467,17 +556,30 @@ class TCPGameServer(TCPServer):
                 }
                 growth_multiplier *= land_speed_multipliers.get(land_level, 1.0)
                 
-                # 施肥影响
+                # 施肥影响 - 支持不同类型的道具施肥
                 if farm_lot.get("已施肥", False) and "施肥时间" in farm_lot:
                     fertilize_time = farm_lot.get("施肥时间", 0)
                     current_time = time.time()
-                    if current_time - fertilize_time <= 600:  # 10分钟内
-                        growth_multiplier *= 2.0
+                    
+                    # 获取施肥类型和对应的持续时间、倍数
+                    fertilize_type = farm_lot.get("施肥类型", "普通施肥")
+                    fertilize_duration = farm_lot.get("施肥持续时间", 600)  # 默认10分钟
+                    fertilize_multiplier = farm_lot.get("施肥倍数", 2.0)  # 默认2倍速
+                    
+                    if current_time - fertilize_time <= fertilize_duration:
+                        # 施肥效果仍在有效期内
+                        growth_multiplier *= fertilize_multiplier
                     else:
-                        # 施肥效果过期
+                        # 施肥效果过期，清除施肥状态
                         farm_lot["已施肥"] = False
                         if "施肥时间" in farm_lot:
                             del farm_lot["施肥时间"]
+                        if "施肥类型" in farm_lot:
+                            del farm_lot["施肥类型"]
+                        if "施肥倍数" in farm_lot:
+                            del farm_lot["施肥倍数"]
+                        if "施肥持续时间" in farm_lot:
+                            del farm_lot["施肥持续时间"]
                 
                 # 应用生长速度倍数和时间补偿
                 growth_increase = int(growth_multiplier * time_multiplier)
@@ -538,7 +640,7 @@ class TCPGameServer(TCPServer):
             "is_visiting": False
         }
         self.send_data(client_id, update_message)
-
+#================================作物系统管理=========================================
 
 
 
@@ -570,6 +672,8 @@ class TCPGameServer(TCPServer):
             return self._handle_plant_crop(client_id, message)
         elif message_type == "buy_seed":#购买种子
             return self._handle_buy_seed(client_id, message)
+        elif message_type == "buy_item":#购买道具
+            return self._handle_buy_item(client_id, message)
         elif message_type == "dig_ground":#开垦土地
             return self._handle_dig_ground(client_id, message)
         elif message_type == "remove_crop":#铲除作物
@@ -578,6 +682,8 @@ class TCPGameServer(TCPServer):
             return self._handle_water_crop(client_id, message)
         elif message_type == "fertilize_crop":#施肥
             return self._handle_fertilize_crop(client_id, message)
+        elif message_type == "use_item":#使用道具
+            return self._handle_use_item(client_id, message)
         elif message_type == "upgrade_land":#升级土地
             return self._handle_upgrade_land(client_id, message)
         elif message_type == "buy_new_ground":#添加新的土地
@@ -591,7 +697,7 @@ class TCPGameServer(TCPServer):
         elif message_type == "update_play_time":#更新游玩时间
             return self._handle_update_play_time(client_id)
         elif message_type == "request_player_rankings":#请求玩家排行榜
-            return self._handle_player_rankings_request(client_id)
+            return self._handle_player_rankings_request(client_id, message)
         elif message_type == "request_crop_data":#请求作物数据
             return self._handle_crop_data_request(client_id)
         elif message_type == "visit_player":#拜访其他玩家农场
@@ -606,15 +712,25 @@ class TCPGameServer(TCPServer):
             return self._handle_lucky_draw_request(client_id, message)
         elif message_type == "claim_new_player_gift":#领取新手大礼包
             return self._handle_new_player_gift_request(client_id, message)
+        elif message_type == "get_online_gift_data":#获取在线礼包数据
+            return self._handle_get_online_gift_data_request(client_id, message)
+        elif message_type == "claim_online_gift":#领取在线礼包
+            return self._handle_claim_online_gift_request(client_id, message)
         elif message_type == "ping":#客户端ping请求
             return self._handle_ping_request(client_id, message)
+        elif message_type == "modify_account_info":#修改账号信息
+            return self._handle_modify_account_info_request(client_id, message)
+        elif message_type == "delete_account":#删除账号
+            return self._handle_delete_account_request(client_id, message)
+        elif message_type == "refresh_player_info":#刷新玩家信息
+            return self._handle_refresh_player_info_request(client_id, message)
         #---------------------------------------------------------------------------
 
         elif message_type == "message":#处理聊天消息（暂未实现）
             return self._handle_chat_message(client_id, message)
         else:
             return super()._handle_message(client_id, message)
-# ========================================================================
+# =======================服务端与客户端通信注册==========================================
 
 
 
@@ -683,6 +799,22 @@ class TCPGameServer(TCPServer):
             stamina_updated = self._check_and_update_stamina(player_data)
             if stamina_updated:
                 self.log('INFO', f"玩家 {username} 体力值已更新：{player_data.get('体力值', 20)}", 'SERVER')
+            
+            # 检查并更新已存在玩家的注册时间
+            self._check_and_update_register_time(player_data, username)
+            
+            # 初始化今日在线礼包数据
+            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            if "online_gift" not in player_data:
+                player_data["online_gift"] = {}
+            
+            online_gift_data = player_data["online_gift"]
+            if current_date not in online_gift_data:
+                online_gift_data[current_date] = {
+                    "start_time": time.time(),
+                    "claimed_gifts": {}
+                }
+                self.log('INFO', f"玩家 {username} 初始化今日在线礼包数据", 'SERVER')
             
             # 保存用户会话信息
             self.user_data[client_id] = {
@@ -814,6 +946,7 @@ class TCPGameServer(TCPServer):
                 "user_password": password,
                 "farm_name": farm_name or "我的农场",
                 "player_name": player_name or username,
+                "个人简介": "",  # 新增个人简介字段，默认为空
                 "experience": player_data.get("experience", 0),
                 "level": player_data.get("level", 1),
                 "money": player_data.get("money", 1000)
@@ -840,6 +973,9 @@ class TCPGameServer(TCPServer):
             time_str = current_time.strftime("%Y年%m月%d日%H时%M分%S秒")
             player_data["last_login_time"] = time_str
             
+            # 设置新玩家的注册时间（不同于模板中的默认时间）
+            player_data["注册时间"] = time_str
+            
             if "total_login_time" not in player_data:
                 player_data["total_login_time"] = "0时0分0秒"
             
@@ -848,13 +984,13 @@ class TCPGameServer(TCPServer):
             with open(file_path, 'w', encoding='utf-8') as file:
                 json.dump(player_data, file, indent=2, ensure_ascii=False)
                 
-            self.log('INFO', f"用户 {username} 注册成功", 'SERVER')
+            self.log('INFO', f"用户 {username} 注册成功，注册时间: {time_str}，享受3天新玩家10倍生长速度奖励", 'SERVER')
             
             # 返回成功响应
             return self.send_data(client_id, {
                 "type": "register_response",
                 "status": "success",
-                "message": "注册成功，请登录游戏"
+                "message": "注册成功，请登录游戏！新玩家享受3天10倍作物生长速度奖励"
             })
             
         except Exception as e:
@@ -1066,19 +1202,47 @@ class TCPGameServer(TCPServer):
         # 读取作物配置
         crop_data = self._load_crop_data()
         
-        # 获取作物收益和经验
+        # 获取作物类型和经验
         crop_type = lot["crop_type"]
+        
+        # 检查是否为杂草类型（杂草不能收获，只能铲除）
         if crop_type in crop_data:
-            crop_income = crop_data[crop_type].get("收益", 100) + crop_data[crop_type].get("花费", 0)
-            crop_exp = crop_data[crop_type].get("经验", 10)
+            crop_info = crop_data[crop_type]
+            is_weed = crop_info.get("是否杂草", False)
+            
+            if is_weed:
+                return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能收获，只能铲除！请使用铲除功能清理杂草。")
+            
+            crop_exp = crop_info.get("经验", 10)
+            
+            # 额外检查：如果作物收益为负数，也视为杂草
+            crop_income = crop_info.get("收益", 100) + crop_info.get("花费", 0)
+            if crop_income < 0:
+                return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能收获，只能铲除！请使用铲除功能清理杂草。")
         else:
-            # 默认收益
-            crop_income = 100
+            # 默认经验
             crop_exp = 10
         
-        # 更新玩家数据
-        player_data["money"] += crop_income
+        # 生成成熟物收获（1-5个）
+        import random
+        harvest_count = random.randint(1, 5)
+        crop_harvest = {
+            "name": crop_type,
+            "count": harvest_count
+        }
+        
+        # 10%概率获得1-2个该作物的种子
+        seed_reward = self._generate_harvest_seed_reward(crop_type)
+        
+        # 更新玩家经验（不再直接给钱）
         player_data["experience"] += crop_exp
+        
+        # 添加成熟物到作物仓库
+        self._add_crop_to_warehouse(player_data, crop_harvest)
+        
+        # 添加种子奖励到背包
+        if seed_reward:
+            self._add_seeds_to_bag(player_data, seed_reward)
         
         # 检查升级
         level_up_experience = 100 * player_data["level"]
@@ -1104,17 +1268,24 @@ class TCPGameServer(TCPServer):
         # 发送作物更新
         self._push_crop_update_to_player(username, player_data)
         
-        self.log('INFO', f"玩家 {username} 从地块 {lot_index} 收获了作物，获得 {crop_income} 金钱和 {crop_exp} 经验", 'SERVER')
+        # 构建消息
+        message = f"收获成功，获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验"
+        if seed_reward:
+            message += f"，额外获得 {seed_reward['name']} 种子 x{seed_reward['count']}"
+        
+        self.log('INFO', f"玩家 {username} 从地块 {lot_index} 收获了作物，获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验" + (f"，额外获得 {seed_reward['name']} 种子 x{seed_reward['count']}" if seed_reward else ""), 'SERVER')
         
         return self.send_data(client_id, {
             "type": "action_response",
             "action_type": "harvest_crop",
             "success": True,
-            "message": f"收获成功，获得 {crop_income} 金钱和 {crop_exp} 经验",
+            "message": message,
             "updated_data": {
                 "money": player_data["money"],
                 "experience": player_data["experience"],
-                "level": player_data["level"]
+                "level": player_data["level"],
+                "player_bag": player_data.get("player_bag", []),
+                "作物仓库": player_data.get("作物仓库", [])
             }
         })
     
@@ -1134,24 +1305,52 @@ class TCPGameServer(TCPServer):
         # 读取作物配置
         crop_data = self._load_crop_data()
         
-        # 获取作物收益和经验（偷菜获得的收益稍微少一些，比如80%）
+        # 获取作物类型和经验（偷菜获得的经验稍微少一些，比如50%）
         crop_type = target_lot["crop_type"]
+        
+        # 检查是否为杂草类型（杂草不能偷取，只能铲除）
         if crop_type in crop_data:
-            crop_income = int((crop_data[crop_type].get("收益", 100) + crop_data[crop_type].get("花费", 0)) * 0.8)  # 偷菜获得80%收益
-            crop_exp = int(crop_data[crop_type].get("经验", 10) * 0.5)  # 偷菜获得50%经验
+            crop_info = crop_data[crop_type]
+            is_weed = crop_info.get("是否杂草", False)
+            
+            if is_weed:
+                return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能偷取，只能铲除！这是杂草，没有收益价值。")
+            
+            crop_exp = int(crop_info.get("经验", 10) * 0.5)  # 偷菜获得50%经验
+            
+            # 额外检查：如果作物收益为负数，也视为杂草
+            crop_income = crop_info.get("收益", 100) + crop_info.get("花费", 0)
+            if crop_income < 0:
+                return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能偷取，只能铲除！这是杂草，没有收益价值。")
         else:
-            # 默认收益
-            crop_income = 80
+            # 默认经验
             crop_exp = 5
+        
+        # 生成成熟物收获（偷菜获得较少，1-3个）
+        import random
+        harvest_count = random.randint(1, 3)
+        crop_harvest = {
+            "name": crop_type,
+            "count": harvest_count
+        }
+        
+        # 10%概率获得1-2个该作物的种子（偷菜也有机会获得种子）
+        seed_reward = self._generate_harvest_seed_reward(crop_type)
         
         # 消耗当前玩家的体力值
         stamina_success, stamina_message = self._consume_stamina(current_player_data, stamina_cost, "偷菜")
         if not stamina_success:
             return self._send_action_error(client_id, "harvest_crop", stamina_message)
         
-        # 更新当前玩家数据（获得收益）
-        current_player_data["money"] += crop_income
+        # 更新当前玩家数据（获得经验）
         current_player_data["experience"] += crop_exp
+        
+        # 添加成熟物到作物仓库
+        self._add_crop_to_warehouse(current_player_data, crop_harvest)
+        
+        # 添加种子奖励到背包
+        if seed_reward:
+            self._add_seeds_to_bag(current_player_data, seed_reward)
         
         # 检查当前玩家升级
         level_up_experience = 100 * current_player_data["level"]
@@ -1178,23 +1377,254 @@ class TCPGameServer(TCPServer):
         # 向目标玩家推送作物更新（如果在线）
         self._push_crop_update_to_player(target_username, target_player_data)
         
-        self.log('INFO', f"玩家 {current_username} 偷了玩家 {target_username} 地块 {lot_index} 的作物，获得 {crop_income} 金钱和 {crop_exp} 经验", 'SERVER')
+        # 构建消息
+        message = f"偷菜成功！从 {target_username} 那里获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验，{stamina_message}"
+        if seed_reward:
+            message += f"，额外获得 {seed_reward['name']} 种子 x{seed_reward['count']}"
+        
+        self.log('INFO', f"玩家 {current_username} 偷了玩家 {target_username} 地块 {lot_index} 的作物，获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验" + (f"，额外获得 {seed_reward['name']} 种子 x{seed_reward['count']}" if seed_reward else ""), 'SERVER')
         
         return self.send_data(client_id, {
             "type": "action_response",
             "action_type": "harvest_crop",
             "success": True,
-            "message": f"偷菜成功！从 {target_username} 那里获得 {crop_income} 金钱和 {crop_exp} 经验，{stamina_message}",
+            "message": message,
             "updated_data": {
                 "money": current_player_data["money"],
                 "experience": current_player_data["experience"],
                 "level": current_player_data["level"],
-                "体力值": current_player_data["体力值"]
+                "体力值": current_player_data["体力值"],
+                "player_bag": current_player_data.get("player_bag", []),
+                "作物仓库": current_player_data.get("作物仓库", [])
             }
         })
+    
+    # 生成收获种子奖励（10%概率获得1-2个种子）
+    def _generate_harvest_seed_reward(self, crop_type):
+        """生成收获作物时的种子奖励"""
+        # 10%概率获得种子
+        if random.random() > 0.1:
+            return None
+        
+        # 随机获得1-2个种子
+        seed_count = random.randint(1, 2)
+        
+        return {
+            "name": crop_type,
+            "count": seed_count
+        }
+    
+    # 添加种子到玩家背包
+    def _add_seeds_to_bag(self, player_data, seed_reward):
+        """将种子奖励添加到玩家背包"""
+        if not seed_reward:
+            return
+        
+        seed_name = seed_reward["name"]
+        seed_count = seed_reward["count"]
+        
+        # 确保背包存在
+        if "player_bag" not in player_data:
+            player_data["player_bag"] = []
+        
+        # 查找背包中是否已有该种子
+        seed_found = False
+        for item in player_data["player_bag"]:
+            if item.get("name") == seed_name:
+                item["count"] += seed_count
+                seed_found = True
+                break
+        
+        # 如果背包中没有该种子，添加新条目
+        if not seed_found:
+            # 从作物数据获取品质信息
+            crop_data = self._load_crop_data()
+            quality = "普通"
+            if crop_data and seed_name in crop_data:
+                quality = crop_data[seed_name].get("品质", "普通")
+            
+            player_data["player_bag"].append({
+                "name": seed_name,
+                "quality": quality,
+                "count": seed_count
+            })
+    
+    def _add_crop_to_warehouse(self, player_data, crop_harvest):
+        """将成熟物添加到玩家作物仓库"""
+        if not crop_harvest:
+            return
+        
+        crop_name = crop_harvest["name"]
+        crop_count = crop_harvest["count"]
+        
+        # 确保作物仓库存在
+        if "作物仓库" not in player_data:
+            player_data["作物仓库"] = []
+        
+        # 查找仓库中是否已有该成熟物
+        crop_found = False
+        for item in player_data["作物仓库"]:
+            if item.get("name") == crop_name:
+                item["count"] += crop_count
+                crop_found = True
+                break
+        
+        # 如果仓库中没有该成熟物，添加新条目
+        if not crop_found:
+            # 从作物数据获取品质信息
+            crop_data = self._load_crop_data()
+            quality = "普通"
+            if crop_data and crop_name in crop_data:
+                quality = crop_data[crop_name].get("品质", "普通")
+            
+            player_data["作物仓库"].append({
+                "name": crop_name,
+                "quality": quality,
+                "count": crop_count
+            })
+
 #==========================收获作物处理==========================
 
 
+
+#==========================杂草生长处理==========================
+    def check_and_grow_weeds(self):
+        """检查所有玩家的离线时间，并在长时间离线玩家的空地上随机生长杂草"""
+        try:
+            self.log('INFO', "开始检查杂草生长...", 'SERVER')
+            current_time = time.time()
+            affected_players = 0
+            total_weeds_added = 0
+            
+            # 获取所有玩家存档文件
+            game_saves_dir = "game_saves"
+            if not os.path.exists(game_saves_dir):
+                return
+            
+            # 获取作物数据以验证杂草类型
+            crop_data = self._load_crop_data()
+            if not crop_data:
+                self.log('ERROR', "无法加载作物数据，跳过杂草检查", 'SERVER')
+                return
+            
+            # 可用的杂草类型（从作物数据中筛选标记为杂草的作物）
+            available_weeds = []
+            for crop_name, crop_info in crop_data.items():
+                if crop_info.get("是否杂草", False):
+                    available_weeds.append(crop_name)
+            
+            if not available_weeds:
+                self.log('WARNING', "没有找到可用的杂草类型，跳过杂草检查", 'SERVER')
+                return
+            
+            # 遍历所有玩家文件
+            for filename in os.listdir(game_saves_dir):
+                if not filename.endswith('.json'):
+                    continue
+                
+                account_id = filename[:-5]  # 移除.json后缀
+                
+                try:
+                    # 加载玩家数据
+                    player_data = self.load_player_data(account_id)
+                    if not player_data:
+                        continue
+                    
+                    # 检查玩家是否长时间离线
+                    if self._is_player_long_offline(player_data, current_time):
+                        # 为该玩家的空地生长杂草
+                        weeds_added = self._grow_weeds_for_player(player_data, account_id, available_weeds)
+                        if weeds_added > 0:
+                            affected_players += 1
+                            total_weeds_added += weeds_added
+                            # 保存玩家数据
+                            self.save_player_data(account_id, player_data)
+                            
+                except Exception as e:
+                    self.log('ERROR', f"处理玩家 {account_id} 的杂草生长时出错: {str(e)}", 'SERVER')
+                    continue
+            
+            self.log('INFO', f"杂草检查完成，共为 {affected_players} 个玩家的农场添加了 {total_weeds_added} 个杂草", 'SERVER')
+            
+        except Exception as e:
+            self.log('ERROR', f"杂草生长检查过程中出错: {str(e)}", 'SERVER')
+    
+    def _is_player_long_offline(self, player_data, current_time):
+        """检查玩家是否长时间离线"""
+        # 获取玩家最后登录时间
+        last_login_time_str = player_data.get("last_login_time", "")
+        if not last_login_time_str:
+            return False
+        
+        try:
+            # 解析最后登录时间戳
+            last_login_timestamp = self._parse_login_time_to_timestamp(last_login_time_str)
+            if last_login_timestamp is None:
+                return False
+            
+            # 计算离线天数
+            offline_seconds = current_time - last_login_timestamp
+            offline_days = offline_seconds / 86400  # 转换为天数
+            
+            return offline_days >= self.offline_threshold_days
+            
+        except Exception as e:
+            self.log('ERROR', f"解析玩家登录时间时出错: {str(e)}", 'SERVER')
+            return False
+    
+    def _grow_weeds_for_player(self, player_data, account_id, available_weeds):
+        """为指定玩家的空地生长杂草"""
+        import random
+        
+        farm_lots = player_data.get("farm_lots", [])
+        if not farm_lots:
+            return 0
+        
+        # 找到所有空的已开垦地块
+        empty_lots = []
+        for i, lot in enumerate(farm_lots):
+            if (lot.get("is_diged", False) and 
+                not lot.get("is_planted", False) and 
+                lot.get("crop_type", "") == ""):
+                empty_lots.append(i)
+        
+        if not empty_lots:
+            return 0
+        
+        # 随机选择要长杂草的地块数量
+        max_weeds = min(self.max_weeds_per_check, len(empty_lots))
+        weeds_to_add = random.randint(1, max_weeds)
+        
+        # 随机选择地块
+        selected_lots = random.sample(empty_lots, weeds_to_add)
+        weeds_added = 0
+        
+        crop_data = self._load_crop_data()
+        
+        for lot_index in selected_lots:
+            # 按概率决定是否在这个地块长杂草
+            if random.random() < self.weed_growth_probability:
+                # 随机选择杂草类型
+                weed_type = random.choice(available_weeds)
+                weed_info = crop_data.get(weed_type, {})
+                
+                # 在地块上种植杂草
+                lot = farm_lots[lot_index]
+                lot["is_planted"] = True
+                lot["crop_type"] = weed_type
+                lot["grow_time"] = weed_info.get("生长时间", 5)  # 杂草立即成熟
+                lot["max_grow_time"] = weed_info.get("生长时间", 5)
+                lot["已浇水"] = False
+                lot["已施肥"] = False
+                
+                weeds_added += 1
+        
+        if weeds_added > 0:
+            self.log('INFO', f"为玩家 {account_id} 的农场添加了 {weeds_added} 个杂草", 'SERVER')
+        
+        return weeds_added
+
+#==========================杂草生长处理==========================
 
 
 #==========================种植作物处理==========================
@@ -1381,6 +1811,101 @@ class TCPGameServer(TCPServer):
 
 
 
+#==========================购买道具处理==========================
+    #处理购买道具请求
+    def _handle_buy_item(self, client_id, message):
+        """处理购买道具请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "购买道具", "buy_item")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "buy_item")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        item_name = message.get("item_name", "")
+        item_cost = message.get("item_cost", 0)
+        
+        # 加载道具配置
+        item_config = self._load_item_config()
+        if not item_config:
+            return self._send_action_error(client_id, "buy_item", "服务器无法加载道具数据")
+        
+        # 检查道具是否存在
+        if item_name not in item_config:
+            return self._send_action_error(client_id, "buy_item", "该道具不存在")
+        
+        # 验证价格是否正确
+        actual_cost = item_config[item_name].get("花费", 0)
+        if item_cost != actual_cost:
+            return self._send_action_error(client_id, "buy_item", f"道具价格验证失败，实际价格为{actual_cost}元")
+        
+        # 处理购买
+        return self._process_item_purchase(client_id, player_data, username, item_name, item_config[item_name])
+    
+    #处理道具购买逻辑
+    def _process_item_purchase(self, client_id, player_data, username, item_name, item_info):
+        """处理道具购买逻辑"""
+        item_cost = item_info.get("花费", 0)
+        
+        # 检查玩家金钱
+        if player_data["money"] < item_cost:
+            return self._send_action_error(client_id, "buy_item", "金钱不足，无法购买此道具")
+        
+        # 扣除金钱
+        player_data["money"] -= item_cost
+        
+        # 将道具添加到道具背包
+        item_found = False
+        
+        # 确保道具背包存在
+        if "道具背包" not in player_data:
+            player_data["道具背包"] = []
+        
+        for item in player_data["道具背包"]:
+            if item.get("name") == item_name:
+                item["count"] += 1
+                item_found = True
+                break
+        
+        if not item_found:
+            player_data["道具背包"].append({
+                "name": item_name,
+                "count": 1
+            })
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 购买了道具 {item_name}，花费 {item_cost} 元", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "buy_item",
+            "success": True,
+            "message": f"成功购买 {item_name}",
+            "updated_data": {
+                "money": player_data["money"],
+                "道具背包": player_data["道具背包"]
+            }
+        })
+    
+    #加载道具配置数据
+    def _load_item_config(self):
+        """从item_config.json加载道具配置数据"""
+        try:
+            with open("config/item_config.json", 'r', encoding='utf-8') as file:
+                return json.load(file)
+        except Exception as e:
+            self.log('ERROR', f"无法加载道具数据: {str(e)}", 'SERVER')
+            return {}
+#==========================购买道具处理==========================
+
+
+
+
 #==========================开垦土地处理==========================
     #处理开垦土地请求
     def _handle_dig_ground(self, client_id, message):
@@ -1413,8 +1938,9 @@ class TCPGameServer(TCPServer):
     #辅助函数-处理土地开垦逻辑
     def _process_digging(self, client_id, player_data, username, lot, lot_index):
         """处理土地开垦逻辑"""
+        
         # 计算开垦费用 - 基于已开垦地块数量
-        digged_count = sum(1 for l in player_data["farm_lots"] if l.get("is_diged", False))
+        digged_count = sum(1 for l in player_data.get("farm_lots", []) if l.get("is_diged", False))
         dig_money = digged_count * 1000
         
         # 检查玩家金钱是否足够
@@ -1425,25 +1951,104 @@ class TCPGameServer(TCPServer):
         player_data["money"] -= dig_money
         lot["is_diged"] = True
         
+        # 生成开垦随机奖励
+        rewards = self._generate_dig_rewards()
+        
+        # 应用奖励
+        player_data["money"] += rewards["money"]
+        player_data["experience"] += rewards["experience"]
+        
+        # 添加种子到背包
+        if "player_bag" not in player_data:
+            player_data["player_bag"] = []
+        
+        for seed_name, quantity in rewards["seeds"].items():
+            # 查找是否已有该种子
+            found = False
+            for item in player_data["player_bag"]:
+                if item.get("name") == seed_name:
+                    item["count"] += quantity
+                    found = True
+                    break
+            
+            # 如果没有找到，添加新种子
+            if not found:
+                player_data["player_bag"].append({
+                    "name": seed_name,
+                    "count": quantity
+                })
+        
+        # 检查是否升级
+        self._check_level_up(player_data)
+        
         # 保存玩家数据
         self.save_player_data(username, player_data)
         
         # 发送作物更新
         self._push_crop_update_to_player(username, player_data)
         
-        self.log('INFO', f"玩家 {username} 成功开垦地块 {lot_index}，花费 {dig_money} 金钱", 'SERVER')
+        # 构建奖励消息
+        reward_message = f"获得 {rewards['money']} 金钱、{rewards['experience']} 经验"
+        if rewards["seeds"]:
+            seed_list = [f"{name} x{qty}" for name, qty in rewards["seeds"].items()]
+            reward_message += f"、种子：{', '.join(seed_list)}"
+        
+        self.log('INFO', f"玩家 {username} 成功开垦地块 {lot_index}，花费 {dig_money} 金钱，{reward_message}", 'SERVER')
         
         return self.send_data(client_id, {
             "type": "action_response",
             "action_type": "dig_ground",
             "success": True,
-            "message": f"成功开垦地块，花费 {dig_money} 金钱",
+            "message": f"成功开垦地块，花费 {dig_money} 金钱！{reward_message}",
             "updated_data": {
                 "money": player_data["money"],
-                "farm_lots": player_data["farm_lots"]
+                "experience": player_data["experience"],
+                "level": player_data["level"],
+                "farm_lots": player_data["farm_lots"],
+                "player_bag": player_data["player_bag"]
             }
         })
     
+    #辅助函数-生成开垦土地随机奖励
+    def _generate_dig_rewards(self):
+        """生成开垦土地的随机奖励"""
+        
+        rewards = {
+            "money": 0,
+            "experience": 0,
+            "seeds": {}
+        }
+        
+        # 随机金钱：200-500元
+        rewards["money"] = random.randint(200, 500)
+        
+        # 随机经验：300-600经验
+        rewards["experience"] = random.randint(300, 600)
+        
+        # 随机种子：0-3种种子
+        seed_types_count = random.randint(0, 3)
+        
+        if seed_types_count > 0:
+            # 获取作物数据
+            crop_data = self._load_crop_data()
+            if crop_data:
+                # 获取所有可购买的种子
+                all_seeds = []
+                for crop_name, crop_info in crop_data.items():
+                    if crop_info.get("能否购买", False):
+                        all_seeds.append(crop_name)
+                
+                if all_seeds:
+                    # 随机选择种子类型
+                    selected_seeds = random.sample(all_seeds, min(seed_types_count, len(all_seeds)))
+                    
+                    for seed_name in selected_seeds:
+                        # 每种种子1-3个
+                        quantity = random.randint(1, 3)
+                        rewards["seeds"][seed_name] = quantity
+        
+        return rewards
+
 #==========================开垦土地处理==========================
 
 
@@ -1576,16 +2181,8 @@ class TCPGameServer(TCPServer):
     #辅助函数-处理浇水逻辑
     def _process_watering(self, client_id, player_data, username, lot, lot_index):
         """处理浇水逻辑"""
-        # 浇水费用和体力值消耗
+        # 浇水费用
         water_cost = 50
-        stamina_cost = 1
-        
-        # 检查并更新体力值
-        self._check_and_update_stamina(player_data)
-        
-        # 检查体力值是否足够
-        if not self._check_stamina_sufficient(player_data, stamina_cost):
-            return self._send_action_error(client_id, "water_crop", f"体力值不足，浇水需要 {stamina_cost} 点体力，当前体力：{player_data.get('体力值', 0)}")
         
         # 检查玩家金钱是否足够
         if player_data["money"] < water_cost:
@@ -1613,10 +2210,12 @@ class TCPGameServer(TCPServer):
         # 执行浇水操作
         player_data["money"] -= water_cost
         
-        # 消耗体力值
-        stamina_success, stamina_message = self._consume_stamina(player_data, stamina_cost, "浇水")
-        if not stamina_success:
-            return self._send_action_error(client_id, "water_crop", stamina_message)
+        # 生成随机经验奖励（100-300）
+        experience_reward = random.randint(100, 300)
+        player_data["experience"] += experience_reward
+        
+        # 检查是否升级
+        self._check_level_up(player_data)
         
         # 计算浇水效果：增加1%的生长进度
         growth_increase = int(lot["max_grow_time"] * 0.01)  # 1%的生长时间
@@ -1641,9 +2240,9 @@ class TCPGameServer(TCPServer):
         crop_type = lot.get("crop_type", "未知作物")
         progress = (lot["grow_time"] / lot["max_grow_time"]) * 100
         
-        self.log('INFO', f"玩家 {username} 给地块 {lot_index} 的 {crop_type} 浇水，花费 {water_cost} 金钱，生长进度: {progress:.1f}%", 'SERVER')
+        self.log('INFO', f"玩家 {username} 给地块 {lot_index} 的 {crop_type} 浇水，花费 {water_cost} 金钱，获得 {experience_reward} 经验，生长进度: {progress:.1f}%", 'SERVER')
         
-        message = f"浇水成功！{crop_type} 生长了 {growth_increase} 秒，当前进度: {progress:.1f}%，{stamina_message}"
+        message = f"浇水成功！{crop_type} 生长了 {growth_increase} 秒，当前进度: {progress:.1f}%，获得 {experience_reward} 经验"
         if lot["grow_time"] >= lot["max_grow_time"]:
             message += "，作物已成熟！"
         
@@ -1654,7 +2253,8 @@ class TCPGameServer(TCPServer):
             "message": message,
             "updated_data": {
                 "money": player_data["money"],
-                "体力值": player_data["体力值"],
+                "experience": player_data["experience"],
+                "level": player_data["level"],
                 "farm_lots": player_data["farm_lots"]
             }
         })
@@ -1662,16 +2262,8 @@ class TCPGameServer(TCPServer):
     #处理访问模式浇水逻辑
     def _process_visiting_watering(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index):
         """处理访问模式浇水逻辑（花自己的钱，效果作用在目标玩家作物上）"""
-        # 浇水费用和体力值消耗
+        # 浇水费用
         water_cost = 50
-        stamina_cost = 1
-        
-        # 检查并更新当前玩家的体力值
-        self._check_and_update_stamina(current_player_data)
-        
-        # 检查体力值是否足够
-        if not self._check_stamina_sufficient(current_player_data, stamina_cost):
-            return self._send_action_error(client_id, "water_crop", f"体力值不足，帮助浇水需要 {stamina_cost} 点体力，当前体力：{current_player_data.get('体力值', 0)}")
         
         # 检查当前玩家金钱是否足够
         if current_player_data["money"] < water_cost:
@@ -1699,10 +2291,12 @@ class TCPGameServer(TCPServer):
         # 执行浇水操作：扣除当前玩家的钱
         current_player_data["money"] -= water_cost
         
-        # 消耗当前玩家的体力值
-        stamina_success, stamina_message = self._consume_stamina(current_player_data, stamina_cost, "帮助浇水")
-        if not stamina_success:
-            return self._send_action_error(client_id, "water_crop", stamina_message)
+        # 生成随机经验奖励（100-300）给当前玩家
+        experience_reward = random.randint(100, 300)
+        current_player_data["experience"] += experience_reward
+        
+        # 检查当前玩家是否升级
+        self._check_level_up(current_player_data)
         
         # 计算浇水效果：增加目标作物的生长进度
         growth_increase = int(target_lot["max_grow_time"] * 0.01)  # 1%的生长时间
@@ -1728,9 +2322,9 @@ class TCPGameServer(TCPServer):
         crop_type = target_lot.get("crop_type", "未知作物")
         progress = (target_lot["grow_time"] / target_lot["max_grow_time"]) * 100
         
-        self.log('INFO', f"玩家 {current_username} 帮助玩家 {target_username} 给地块 {lot_index} 的 {crop_type} 浇水，花费 {water_cost} 金钱，生长进度: {progress:.1f}%", 'SERVER')
+        self.log('INFO', f"玩家 {current_username} 帮助玩家 {target_username} 给地块 {lot_index} 的 {crop_type} 浇水，花费 {water_cost} 金钱，获得 {experience_reward} 经验，生长进度: {progress:.1f}%", 'SERVER')
         
-        message = f"帮助浇水成功！{target_username} 的 {crop_type} 生长了 {growth_increase} 秒，当前进度: {progress:.1f}%，{stamina_message}"
+        message = f"帮助浇水成功！{target_username} 的 {crop_type} 生长了 {growth_increase} 秒，当前进度: {progress:.1f}%，获得 {experience_reward} 经验"
         if target_lot["grow_time"] >= target_lot["max_grow_time"]:
             message += "，作物已成熟！"
         
@@ -1741,7 +2335,8 @@ class TCPGameServer(TCPServer):
             "message": message,
             "updated_data": {
                 "money": current_player_data["money"],
-                "体力值": current_player_data["体力值"]
+                "experience": current_player_data["experience"],
+                "level": current_player_data["level"]
             }
         })
     
@@ -1803,16 +2398,8 @@ class TCPGameServer(TCPServer):
     #辅助函数-处理访问模式施肥逻辑
     def _process_visiting_fertilizing(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index):
         """处理访问模式施肥逻辑（花自己的钱，效果作用在目标玩家作物上）"""
-        # 施肥费用和体力值消耗
+        # 施肥费用
         fertilize_cost = 150
-        stamina_cost = 1
-        
-        # 检查并更新当前玩家的体力值
-        self._check_and_update_stamina(current_player_data)
-        
-        # 检查体力值是否足够
-        if not self._check_stamina_sufficient(current_player_data, stamina_cost):
-            return self._send_action_error(client_id, "fertilize_crop", f"体力值不足，帮助施肥需要 {stamina_cost} 点体力，当前体力：{current_player_data.get('体力值', 0)}")
         
         # 检查当前玩家金钱是否足够
         if current_player_data["money"] < fertilize_cost:
@@ -1833,10 +2420,12 @@ class TCPGameServer(TCPServer):
         # 执行施肥操作：扣除当前玩家的钱
         current_player_data["money"] -= fertilize_cost
         
-        # 消耗当前玩家的体力值
-        stamina_success, stamina_message = self._consume_stamina(current_player_data, stamina_cost, "帮助施肥")
-        if not stamina_success:
-            return self._send_action_error(client_id, "fertilize_crop", stamina_message)
+        # 生成随机经验奖励（100-300）给当前玩家
+        experience_reward = random.randint(100, 300)
+        current_player_data["experience"] += experience_reward
+        
+        # 检查当前玩家是否升级
+        self._check_level_up(current_player_data)
         
         # 标记目标作物已施肥，施肥效果会在作物生长更新时生效
         target_lot["已施肥"] = True
@@ -1853,32 +2442,25 @@ class TCPGameServer(TCPServer):
         
         crop_type = target_lot.get("crop_type", "未知作物")
         
-        self.log('INFO', f"玩家 {current_username} 帮助玩家 {target_username} 给地块 {lot_index} 的 {crop_type} 施肥，花费 {fertilize_cost} 金钱", 'SERVER')
+        self.log('INFO', f"玩家 {current_username} 帮助玩家 {target_username} 给地块 {lot_index} 的 {crop_type} 施肥，花费 {fertilize_cost} 金钱，获得 {experience_reward} 经验", 'SERVER')
         
         return self.send_data(client_id, {
             "type": "action_response",
             "action_type": "fertilize_crop",
             "success": True,
-            "message": f"帮助施肥成功！{target_username} 的 {crop_type} 将在10分钟内以双倍速度生长，{stamina_message}",
+            "message": f"帮助施肥成功！{target_username} 的 {crop_type} 将在10分钟内以双倍速度生长，获得 {experience_reward} 经验",
             "updated_data": {
                 "money": current_player_data["money"],
-                "体力值": current_player_data["体力值"]
+                "experience": current_player_data["experience"],
+                "level": current_player_data["level"]
             }
         })
     
     #辅助函数-处理施肥逻辑
     def _process_fertilizing(self, client_id, player_data, username, lot, lot_index):
         """处理施肥逻辑"""
-        # 施肥费用和体力值消耗
+        # 施肥费用
         fertilize_cost = 150
-        stamina_cost = 1
-        
-        # 检查并更新体力值
-        self._check_and_update_stamina(player_data)
-        
-        # 检查体力值是否足够
-        if not self._check_stamina_sufficient(player_data, stamina_cost):
-            return self._send_action_error(client_id, "fertilize_crop", f"体力值不足，施肥需要 {stamina_cost} 点体力，当前体力：{player_data.get('体力值', 0)}")
         
         # 检查玩家金钱是否足够
         if player_data["money"] < fertilize_cost:
@@ -1899,10 +2481,12 @@ class TCPGameServer(TCPServer):
         # 执行施肥操作
         player_data["money"] -= fertilize_cost
         
-        # 消耗体力值
-        stamina_success, stamina_message = self._consume_stamina(player_data, stamina_cost, "施肥")
-        if not stamina_success:
-            return self._send_action_error(client_id, "fertilize_crop", stamina_message)
+        # 生成随机经验奖励（100-300）
+        experience_reward = random.randint(100, 300)
+        player_data["experience"] += experience_reward
+        
+        # 检查是否升级
+        self._check_level_up(player_data)
         
         # 标记已施肥，施肥效果会在作物生长更新时生效
         lot["已施肥"] = True
@@ -1918,22 +2502,897 @@ class TCPGameServer(TCPServer):
         
         crop_type = lot.get("crop_type", "未知作物")
         
-        self.log('INFO', f"玩家 {username} 给地块 {lot_index} 的 {crop_type} 施肥，花费 {fertilize_cost} 金钱", 'SERVER')
+        self.log('INFO', f"玩家 {username} 给地块 {lot_index} 的 {crop_type} 施肥，花费 {fertilize_cost} 金钱，获得 {experience_reward} 经验", 'SERVER')
         
         return self.send_data(client_id, {
             "type": "action_response",
             "action_type": "fertilize_crop",
             "success": True,
-            "message": f"施肥成功！{crop_type} 将在10分钟内以双倍速度生长，{stamina_message}",
+            "message": f"施肥成功！{crop_type} 将在10分钟内以双倍速度生长，获得 {experience_reward} 经验",
             "updated_data": {
                 "money": player_data["money"],
-                "体力值": player_data["体力值"],
+                "experience": player_data["experience"],
+                "level": player_data["level"],
                 "farm_lots": player_data["farm_lots"]
             }
         })
     
 #==========================施肥作物处理==========================
 
+
+
+
+#==========================道具使用处理==========================
+    def _handle_use_item(self, client_id, message):
+        """处理使用道具请求"""
+        print(f"调试：服务器收到道具使用请求")
+        print(f"  - client_id: {client_id}")
+        print(f"  - message: {message}")
+        
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "使用道具", "use_item")
+        if not logged_in:
+            print(f"错误：用户未登录")
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "use_item")
+        if not player_data:
+            print(f"错误：无法加载玩家数据")
+            return self.send_data(client_id, response)
+        
+        lot_index = message.get("lot_index", -1)
+        item_name = message.get("item_name", "")
+        use_type = message.get("use_type", "")
+        target_username = message.get("target_username", "")
+        
+        print(f"调试：解析参数")
+        print(f"  - username: {username}")
+        print(f"  - lot_index: {lot_index}")
+        print(f"  - item_name: {item_name}")
+        print(f"  - use_type: {use_type}")
+        print(f"  - target_username: {target_username}")
+        
+        # 验证参数
+        if not item_name:
+            return self._send_action_error(client_id, "use_item", "道具名称不能为空")
+        
+        if not use_type:
+            return self._send_action_error(client_id, "use_item", "使用类型不能为空")
+        
+        # 检查玩家是否拥有该道具
+        if not self._has_item_in_inventory(player_data, item_name):
+            return self._send_action_error(client_id, "use_item", f"您没有 {item_name}")
+        
+        # 确定操作目标
+        if target_username and target_username != username:
+            # 访问模式：对别人的作物使用道具
+            target_player_data = self.load_player_data(target_username)
+            if not target_player_data:
+                return self._send_action_error(client_id, "use_item", f"无法找到玩家 {target_username} 的数据")
+            
+            # 验证地块索引
+            if lot_index < 0 or lot_index >= len(target_player_data.get("farm_lots", [])):
+                return self._send_action_error(client_id, "use_item", "无效的地块索引")
+            
+            target_lot = target_player_data["farm_lots"][lot_index]
+            return self._process_item_use_visiting(client_id, player_data, username, target_player_data, target_username, target_lot, lot_index, item_name, use_type)
+        else:
+            # 正常模式：对自己的作物使用道具
+            if lot_index < 0 or lot_index >= len(player_data.get("farm_lots", [])):
+                return self._send_action_error(client_id, "use_item", "无效的地块索引")
+            
+            lot = player_data["farm_lots"][lot_index]
+            return self._process_item_use_normal(client_id, player_data, username, lot, lot_index, item_name, use_type)
+    
+    def _has_item_in_inventory(self, player_data, item_name):
+        """检查玩家是否拥有指定道具"""
+        item_bag = player_data.get("道具背包", [])
+        for item in item_bag:
+            if item.get("name", "") == item_name and item.get("count", 0) > 0:
+                return True
+        return False
+    
+    def _remove_item_from_inventory(self, player_data, item_name, count=1):
+        """从玩家道具背包中移除指定数量的道具"""
+        item_bag = player_data.get("道具背包", [])
+        for i, item in enumerate(item_bag):
+            if item.get("name", "") == item_name and item.get("count", 0) >= count:
+                item["count"] -= count
+                if item["count"] <= 0:
+                    item_bag.pop(i)
+                return True
+        return False
+    
+    def _process_item_use_normal(self, client_id, player_data, username, lot, lot_index, item_name, use_type):
+        """处理正常模式下的道具使用"""
+        # 检查地块状态
+        if not lot.get("is_planted", False) or not lot.get("crop_type", ""):
+            return self._send_action_error(client_id, "use_item", "此地块没有种植作物")
+        
+        # 检查作物是否已死亡
+        if lot.get("is_dead", False):
+            return self._send_action_error(client_id, "use_item", "死亡的作物无法使用道具")
+        
+        # 根据使用类型和道具名称执行不同逻辑
+        if use_type == "fertilize":
+            # 检查是否已经成熟（施肥道具需要检查）
+            if lot.get("grow_time", 0) >= lot.get("max_grow_time", 1):
+                return self._send_action_error(client_id, "use_item", "作物已经成熟，无需施肥")
+            return self._use_fertilizer_item(client_id, player_data, username, lot, lot_index, item_name)
+        elif use_type == "water":
+            # 检查是否已经成熟（浇水道具需要检查）
+            if lot.get("grow_time", 0) >= lot.get("max_grow_time", 1):
+                return self._send_action_error(client_id, "use_item", "作物已经成熟，无需浇水")
+            return self._use_watering_item(client_id, player_data, username, lot, lot_index, item_name)
+        elif use_type == "remove":
+            # 铲子可以清除任何作物，包括成熟的
+            return self._use_removal_item(client_id, player_data, username, lot, lot_index, item_name)
+        elif use_type == "weed_killer":
+            # 除草剂可以清除任何杂草，包括成熟的
+            return self._use_weed_killer_item(client_id, player_data, username, lot, lot_index, item_name)
+        elif use_type == "harvest":
+            # 采集道具只能对成熟的作物使用
+            if lot.get("grow_time", 0) < lot.get("max_grow_time", 1):
+                return self._send_action_error(client_id, "use_item", "作物还未成熟，无法使用采集道具")
+            return self._use_harvest_item(client_id, player_data, username, lot, lot_index, item_name)
+        else:
+            return self._send_action_error(client_id, "use_item", f"不支持的使用类型: {use_type}")
+    
+    def _process_item_use_visiting(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name, use_type):
+        """处理访问模式下的道具使用"""
+        # 检查地块状态
+        if not target_lot.get("is_planted", False) or not target_lot.get("crop_type", ""):
+            return self._send_action_error(client_id, "use_item", "此地块没有种植作物")
+        
+        # 检查作物是否已死亡
+        if target_lot.get("is_dead", False):
+            return self._send_action_error(client_id, "use_item", "死亡的作物无法使用道具")
+        
+        # 根据使用类型和道具名称执行不同逻辑
+        if use_type == "fertilize":
+            # 检查是否已经成熟（施肥道具需要检查）
+            if target_lot.get("grow_time", 0) >= target_lot.get("max_grow_time", 1):
+                return self._send_action_error(client_id, "use_item", "作物已经成熟，无需施肥")
+            return self._use_fertilizer_item_visiting(client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name)
+        elif use_type == "water":
+            # 检查是否已经成熟（浇水道具需要检查）
+            if target_lot.get("grow_time", 0) >= target_lot.get("max_grow_time", 1):
+                return self._send_action_error(client_id, "use_item", "作物已经成熟，无需浇水")
+            return self._use_watering_item_visiting(client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name)
+        elif use_type == "remove":
+            # 铲子可以清除任何作物，包括成熟的
+            return self._use_removal_item_visiting(client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name)
+        elif use_type == "weed_killer":
+            # 除草剂可以清除任何杂草，包括成熟的
+            return self._use_weed_killer_item_visiting(client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name)
+        elif use_type == "harvest":
+            # 采集道具只能对成熟的作物使用
+            if target_lot.get("grow_time", 0) < target_lot.get("max_grow_time", 1):
+                return self._send_action_error(client_id, "use_item", "作物还未成熟，无法使用采集道具")
+            return self._use_harvest_item_visiting(client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name)
+        else:
+            return self._send_action_error(client_id, "use_item", f"不支持的使用类型: {use_type}")
+    
+    def _use_fertilizer_item(self, client_id, player_data, username, lot, lot_index, item_name):
+        """使用施肥类道具"""
+        # 检查是否已经施过肥
+        if lot.get("已施肥", False):
+            return self._send_action_error(client_id, "use_item", "此作物已经施过肥了")
+        
+        # 移除道具
+        if not self._remove_item_from_inventory(player_data, item_name, 1):
+            return self._send_action_error(client_id, "use_item", f"移除道具 {item_name} 失败")
+        
+        # 生成随机经验奖励
+        experience_reward = random.randint(50, 150)
+        player_data["experience"] += experience_reward
+        
+        # 检查是否升级
+        self._check_level_up(player_data)
+        
+        # 根据道具类型设置不同的施肥效果
+        current_time = time.time()
+        
+        if item_name == "农家肥":
+            # 30分钟内2倍速生长
+            lot["已施肥"] = True
+            lot["施肥时间"] = current_time
+            lot["施肥类型"] = "农家肥"
+            lot["施肥倍数"] = 2.0
+            lot["施肥持续时间"] = 1800  # 30分钟
+            message = f"使用 {item_name} 成功！作物将在30分钟内以2倍速度生长"
+        elif item_name == "金坷垃":
+            # 5分钟内5倍速生长
+            lot["已施肥"] = True
+            lot["施肥时间"] = current_time
+            lot["施肥类型"] = "金坷垃"
+            lot["施肥倍数"] = 5.0
+            lot["施肥持续时间"] = 300  # 5分钟
+            message = f"使用 {item_name} 成功！作物将在5分钟内以5倍速度生长"
+        elif item_name == "生长素":
+            # 10分钟内3倍速生长
+            lot["已施肥"] = True
+            lot["施肥时间"] = current_time
+            lot["施肥类型"] = "生长素"
+            lot["施肥倍数"] = 3.0
+            lot["施肥持续时间"] = 600  # 10分钟
+            message = f"使用 {item_name} 成功！作物将在10分钟内以3倍速度生长"
+        else:
+            return self._send_action_error(client_id, "use_item", f"不支持的施肥道具: {item_name}")
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        # 发送作物更新
+        self._push_crop_update_to_player(username, player_data)
+        
+        crop_type = lot.get("crop_type", "未知作物")
+        self.log('INFO', f"玩家 {username} 对地块 {lot_index} 的 {crop_type} 使用了 {item_name}，获得 {experience_reward} 经验", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "use_item",
+            "success": True,
+            "message": f"{message}，获得 {experience_reward} 经验",
+            "updated_data": {
+                "experience": player_data["experience"],
+                "level": player_data["level"],
+                "farm_lots": player_data["farm_lots"],
+                "道具背包": player_data["道具背包"]
+            }
+        })
+    
+    def _use_watering_item(self, client_id, player_data, username, lot, lot_index, item_name):
+        """使用浇水类道具"""
+        # 移除道具
+        if not self._remove_item_from_inventory(player_data, item_name, 1):
+            return self._send_action_error(client_id, "use_item", f"移除道具 {item_name} 失败")
+        
+        # 生成随机经验奖励
+        experience_reward = random.randint(30, 100)
+        player_data["experience"] += experience_reward
+        
+        # 检查是否升级
+        self._check_level_up(player_data)
+        
+        # 根据道具类型计算浇水效果
+        if item_name == "水壶":
+            # 增加1%的生长进度
+            growth_increase = int(lot["max_grow_time"] * 0.01)
+            message = f"使用 {item_name} 成功！作物生长进度增加了1%"
+        elif item_name == "水桶":
+            # 增加2%的生长进度
+            growth_increase = int(lot["max_grow_time"] * 0.02)
+            message = f"使用 {item_name} 成功！作物生长进度增加了2%"
+        else:
+            return self._send_action_error(client_id, "use_item", f"不支持的浇水道具: {item_name}")
+        
+        if growth_increase < 1:
+            growth_increase = 1  # 至少增加1秒
+        
+        lot["grow_time"] += growth_increase
+        
+        # 确保不超过最大生长时间
+        if lot["grow_time"] > lot["max_grow_time"]:
+            lot["grow_time"] = lot["max_grow_time"]
+        
+        # 记录浇水时间戳
+        lot["浇水时间"] = time.time()
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        # 发送作物更新
+        self._push_crop_update_to_player(username, player_data)
+        
+        crop_type = lot.get("crop_type", "未知作物")
+        progress = (lot["grow_time"] / lot["max_grow_time"]) * 100
+        
+        self.log('INFO', f"玩家 {username} 对地块 {lot_index} 的 {crop_type} 使用了 {item_name}，生长进度: {progress:.1f}%，获得 {experience_reward} 经验", 'SERVER')
+        
+        final_message = f"{message}，当前进度: {progress:.1f}%，获得 {experience_reward} 经验"
+        if lot["grow_time"] >= lot["max_grow_time"]:
+            final_message += "，作物已成熟！"
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "use_item",
+            "success": True,
+            "message": final_message,
+            "updated_data": {
+                "experience": player_data["experience"],
+                "level": player_data["level"],
+                "farm_lots": player_data["farm_lots"],
+                "道具背包": player_data["道具背包"]
+            }
+        })
+    
+    def _use_fertilizer_item_visiting(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name):
+        """访问模式下使用施肥类道具"""
+        # 检查是否已经施过肥
+        if target_lot.get("已施肥", False):
+            return self._send_action_error(client_id, "use_item", "此作物已经施过肥了")
+        
+        # 移除当前玩家的道具
+        if not self._remove_item_from_inventory(current_player_data, item_name, 1):
+            return self._send_action_error(client_id, "use_item", f"移除道具 {item_name} 失败")
+        
+        # 生成随机经验奖励给当前玩家
+        experience_reward = random.randint(50, 150)
+        current_player_data["experience"] += experience_reward
+        
+        # 检查当前玩家是否升级
+        self._check_level_up(current_player_data)
+        
+        # 根据道具类型设置不同的施肥效果
+        current_time = time.time()
+        
+        if item_name == "农家肥":
+            # 30分钟内2倍速生长
+            target_lot["已施肥"] = True
+            target_lot["施肥时间"] = current_time
+            target_lot["施肥类型"] = "农家肥"
+            target_lot["施肥倍数"] = 2.0
+            target_lot["施肥持续时间"] = 1800  # 30分钟
+            message = f"帮助施肥成功！{target_username} 的作物将在30分钟内以2倍速度生长"
+        elif item_name == "金坷垃":
+            # 5分钟内5倍速生长
+            target_lot["已施肥"] = True
+            target_lot["施肥时间"] = current_time
+            target_lot["施肥类型"] = "金坷垃"
+            target_lot["施肥倍数"] = 5.0
+            target_lot["施肥持续时间"] = 300  # 5分钟
+            message = f"帮助施肥成功！{target_username} 的作物将在5分钟内以5倍速度生长"
+        elif item_name == "生长素":
+            # 10分钟内3倍速生长
+            target_lot["已施肥"] = True
+            target_lot["施肥时间"] = current_time
+            target_lot["施肥类型"] = "生长素"
+            target_lot["施肥倍数"] = 3.0
+            target_lot["施肥持续时间"] = 600  # 10分钟
+            message = f"帮助施肥成功！{target_username} 的作物将在10分钟内以3倍速度生长"
+        else:
+            return self._send_action_error(client_id, "use_item", f"不支持的施肥道具: {item_name}")
+        
+        # 保存两个玩家的数据
+        self.save_player_data(current_username, current_player_data)
+        self.save_player_data(target_username, target_player_data)
+        
+        # 向目标玩家推送作物更新
+        self._push_crop_update_to_player(target_username, target_player_data)
+        
+        crop_type = target_lot.get("crop_type", "未知作物")
+        self.log('INFO', f"玩家 {current_username} 帮助玩家 {target_username} 对地块 {lot_index} 的 {crop_type} 使用了 {item_name}，获得 {experience_reward} 经验", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "use_item",
+            "success": True,
+            "message": f"{message}，获得 {experience_reward} 经验",
+            "updated_data": {
+                "experience": current_player_data["experience"],
+                "level": current_player_data["level"],
+                "道具背包": current_player_data["道具背包"]
+            }
+        })
+    
+    def _use_watering_item_visiting(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name):
+        """访问模式下使用浇水类道具"""
+        # 移除当前玩家的道具
+        if not self._remove_item_from_inventory(current_player_data, item_name, 1):
+            return self._send_action_error(client_id, "use_item", f"移除道具 {item_name} 失败")
+        
+        # 生成随机经验奖励给当前玩家
+        experience_reward = random.randint(30, 100)
+        current_player_data["experience"] += experience_reward
+        
+        # 检查当前玩家是否升级
+        self._check_level_up(current_player_data)
+        
+        # 根据道具类型计算浇水效果
+        if item_name == "水壶":
+            # 增加1%的生长进度
+            growth_increase = int(target_lot["max_grow_time"] * 0.01)
+            message = f"帮助浇水成功！{target_username} 的作物生长进度增加了1%"
+        elif item_name == "水桶":
+            # 增加2%的生长进度
+            growth_increase = int(target_lot["max_grow_time"] * 0.02)
+            message = f"帮助浇水成功！{target_username} 的作物生长进度增加了2%"
+        else:
+            return self._send_action_error(client_id, "use_item", f"不支持的浇水道具: {item_name}")
+        
+        if growth_increase < 1:
+            growth_increase = 1  # 至少增加1秒
+        
+        target_lot["grow_time"] += growth_increase
+        
+        # 确保不超过最大生长时间
+        if target_lot["grow_time"] > target_lot["max_grow_time"]:
+            target_lot["grow_time"] = target_lot["max_grow_time"]
+        
+        # 记录浇水时间戳
+        target_lot["浇水时间"] = time.time()
+        
+        # 保存两个玩家的数据
+        self.save_player_data(current_username, current_player_data)
+        self.save_player_data(target_username, target_player_data)
+        
+        # 向目标玩家推送作物更新
+        self._push_crop_update_to_player(target_username, target_player_data)
+        
+        crop_type = target_lot.get("crop_type", "未知作物")
+        progress = (target_lot["grow_time"] / target_lot["max_grow_time"]) * 100
+        
+        self.log('INFO', f"玩家 {current_username} 帮助玩家 {target_username} 对地块 {lot_index} 的 {crop_type} 使用了 {item_name}，生长进度: {progress:.1f}%，获得 {experience_reward} 经验", 'SERVER')
+        
+        final_message = f"{message}，当前进度: {progress:.1f}%，获得 {experience_reward} 经验"
+        if target_lot["grow_time"] >= target_lot["max_grow_time"]:
+            final_message += "，作物已成熟！"
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "use_item",
+            "success": True,
+            "message": final_message,
+            "updated_data": {
+                "experience": current_player_data["experience"],
+                "level": current_player_data["level"],
+                "道具背包": current_player_data["道具背包"]
+            }
+        })
+    
+    def _use_removal_item(self, client_id, player_data, username, lot, lot_index, item_name):
+        """使用铲除类道具（铲子）"""
+        # 检查玩家是否有这个道具
+        if not self._has_item_in_inventory(player_data, item_name):
+            return self._send_action_error(client_id, "use_item", f"您没有 {item_name}")
+        
+        # 移除道具
+        if not self._remove_item_from_inventory(player_data, item_name, 1):
+            return self._send_action_error(client_id, "use_item", f"移除道具 {item_name} 失败")
+        
+        # 生成随机经验奖励
+        experience_reward = random.randint(20, 60)
+        player_data["experience"] += experience_reward
+        
+        # 检查是否升级
+        self._check_level_up(player_data)
+        
+        # 获取作物名称用于日志
+        crop_type = lot.get("crop_type", "未知作物")
+        
+        # 执行铲除操作
+        lot["is_planted"] = False
+        lot["crop_type"] = ""
+        lot["grow_time"] = 0
+        lot["is_dead"] = False  # 重置死亡状态
+        lot["已浇水"] = False  # 重置浇水状态
+        lot["已施肥"] = False  # 重置施肥状态
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        # 发送作物更新
+        self._push_crop_update_to_player(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 使用 {item_name} 铲除了地块 {lot_index} 的作物 {crop_type}，获得 {experience_reward} 经验", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "use_item",
+            "success": True,
+            "message": f"使用 {item_name} 成功铲除作物 {crop_type}，获得 {experience_reward} 经验",
+            "updated_data": {
+                "experience": player_data["experience"],
+                "level": player_data["level"],
+                "farm_lots": player_data["farm_lots"],
+                "道具背包": player_data["道具背包"]
+            }
+        })
+    
+    def _use_weed_killer_item(self, client_id, player_data, username, lot, lot_index, item_name):
+        """使用除草剂"""
+        # 检查是否为杂草
+        crop_type = lot.get("crop_type", "")
+        crop_data = self._load_crop_data()
+        
+        if not crop_data or crop_type not in crop_data:
+            return self._send_action_error(client_id, "use_item", f"未知的作物类型: {crop_type}")
+        
+        is_weed = crop_data[crop_type].get("是否杂草", False)
+        if not is_weed:
+            return self._send_action_error(client_id, "use_item", "除草剂只能用于清除杂草，此作物不是杂草")
+        
+        # 检查玩家是否有这个道具
+        if not self._has_item_in_inventory(player_data, item_name):
+            return self._send_action_error(client_id, "use_item", f"您没有 {item_name}")
+        
+        # 移除道具
+        if not self._remove_item_from_inventory(player_data, item_name, 1):
+            return self._send_action_error(client_id, "use_item", f"移除道具 {item_name} 失败")
+        
+        # 生成随机经验奖励
+        experience_reward = random.randint(15, 50)
+        player_data["experience"] += experience_reward
+        
+        # 检查是否升级
+        self._check_level_up(player_data)
+        
+        # 执行除草操作
+        lot["is_planted"] = False
+        lot["crop_type"] = ""
+        lot["grow_time"] = 0
+        lot["is_dead"] = False  # 重置死亡状态
+        lot["已浇水"] = False  # 重置浇水状态
+        lot["已施肥"] = False  # 重置施肥状态
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        # 发送作物更新
+        self._push_crop_update_to_player(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 使用 {item_name} 清除了地块 {lot_index} 的杂草 {crop_type}，获得 {experience_reward} 经验", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "use_item",
+            "success": True,
+            "message": f"使用 {item_name} 成功清除杂草 {crop_type}，获得 {experience_reward} 经验",
+            "updated_data": {
+                "experience": player_data["experience"],
+                "level": player_data["level"],
+                "farm_lots": player_data["farm_lots"],
+                "道具背包": player_data["道具背包"]
+            }
+        })
+    
+    def _use_removal_item_visiting(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name):
+        """访问模式下使用铲除道具"""
+        # 检查当前玩家是否有这个道具
+        if not self._has_item_in_inventory(current_player_data, item_name):
+            return self._send_action_error(client_id, "use_item", f"您没有 {item_name}")
+        
+        # 移除当前玩家的道具
+        if not self._remove_item_from_inventory(current_player_data, item_name, 1):
+            return self._send_action_error(client_id, "use_item", f"移除道具 {item_name} 失败")
+        
+        # 生成随机经验奖励给当前玩家
+        experience_reward = random.randint(20, 60)
+        current_player_data["experience"] += experience_reward
+        
+        # 检查当前玩家是否升级
+        self._check_level_up(current_player_data)
+        
+        # 获取作物名称用于日志
+        crop_type = target_lot.get("crop_type", "未知作物")
+        
+        # 执行铲除操作
+        target_lot["is_planted"] = False
+        target_lot["crop_type"] = ""
+        target_lot["grow_time"] = 0
+        target_lot["is_dead"] = False  # 重置死亡状态
+        target_lot["已浇水"] = False  # 重置浇水状态
+        target_lot["已施肥"] = False  # 重置施肥状态
+        
+        # 保存两个玩家的数据
+        self.save_player_data(current_username, current_player_data)
+        self.save_player_data(target_username, target_player_data)
+        
+        # 向目标玩家推送作物更新
+        self._push_crop_update_to_player(target_username, target_player_data)
+        
+        self.log('INFO', f"玩家 {current_username} 帮助玩家 {target_username} 使用 {item_name} 铲除了地块 {lot_index} 的作物 {crop_type}，获得 {experience_reward} 经验", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "use_item",
+            "success": True,
+            "message": f"帮助 {target_username} 铲除作物 {crop_type} 成功，获得 {experience_reward} 经验",
+            "updated_data": {
+                "experience": current_player_data["experience"],
+                "level": current_player_data["level"],
+                "道具背包": current_player_data["道具背包"]
+            }
+        })
+    
+    def _use_weed_killer_item_visiting(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name):
+        """访问模式下使用除草剂"""
+        # 检查是否为杂草
+        crop_type = target_lot.get("crop_type", "")
+        crop_data = self._load_crop_data()
+        
+        if not crop_data or crop_type not in crop_data:
+            return self._send_action_error(client_id, "use_item", f"未知的作物类型: {crop_type}")
+        
+        is_weed = crop_data[crop_type].get("是否杂草", False)
+        if not is_weed:
+            return self._send_action_error(client_id, "use_item", "除草剂只能用于清除杂草，此作物不是杂草")
+        
+        # 检查当前玩家是否有这个道具
+        if not self._has_item_in_inventory(current_player_data, item_name):
+            return self._send_action_error(client_id, "use_item", f"您没有 {item_name}")
+        
+        # 移除当前玩家的道具
+        if not self._remove_item_from_inventory(current_player_data, item_name, 1):
+            return self._send_action_error(client_id, "use_item", f"移除道具 {item_name} 失败")
+        
+        # 生成随机经验奖励给当前玩家
+        experience_reward = random.randint(15, 50)
+        current_player_data["experience"] += experience_reward
+        
+        # 检查当前玩家是否升级
+        self._check_level_up(current_player_data)
+        
+        # 执行除草操作
+        target_lot["is_planted"] = False
+        target_lot["crop_type"] = ""
+        target_lot["grow_time"] = 0
+        target_lot["is_dead"] = False  # 重置死亡状态
+        target_lot["已浇水"] = False  # 重置浇水状态
+        target_lot["已施肥"] = False  # 重置施肥状态
+        
+        # 保存两个玩家的数据
+        self.save_player_data(current_username, current_player_data)
+        self.save_player_data(target_username, target_player_data)
+        
+        # 向目标玩家推送作物更新
+        self._push_crop_update_to_player(target_username, target_player_data)
+        
+        self.log('INFO', f"玩家 {current_username} 帮助玩家 {target_username} 使用 {item_name} 清除了地块 {lot_index} 的杂草 {crop_type}，获得 {experience_reward} 经验", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "use_item",
+            "success": True,
+            "message": f"帮助 {target_username} 清除杂草 {crop_type} 成功，获得 {experience_reward} 经验",
+            "updated_data": {
+                "experience": current_player_data["experience"],
+                "level": current_player_data["level"],
+                "道具背包": current_player_data["道具背包"]
+            }
+        })
+    
+    def _use_harvest_item(self, client_id, player_data, username, lot, lot_index, item_name):
+        """使用采集道具（精准采集锄、时运锄）"""
+        # 移除道具
+        if not self._remove_item_from_inventory(player_data, item_name, 1):
+            return self._send_action_error(client_id, "use_item", f"移除道具 {item_name} 失败")
+        
+        # 读取作物配置
+        crop_data = self._load_crop_data()
+        
+        # 获取作物类型
+        crop_type = lot["crop_type"]
+        
+        # 检查是否为杂草类型（杂草不能用采集道具收获）
+        if crop_type in crop_data:
+            crop_info = crop_data[crop_type]
+            is_weed = crop_info.get("是否杂草", False)
+            
+            if is_weed:
+                return self._send_action_error(client_id, "use_item", f"{crop_type}不能使用采集道具收获，只能铲除！")
+            
+            crop_exp = crop_info.get("经验", 10)
+            
+            # 额外检查：如果作物收益为负数，也视为杂草
+            crop_income = crop_info.get("收益", 100) + crop_info.get("花费", 0)
+            if crop_income < 0:
+                return self._send_action_error(client_id, "use_item", f"{crop_type}不能使用采集道具收获，只能铲除！")
+        else:
+            # 默认经验
+            crop_exp = 10
+        
+        # 道具特殊效果
+        import random
+        
+        if item_name == "精准采集锄":
+            # 精准采集锄：收获数量正常（1-5个），但必定掉落种子
+            harvest_count = random.randint(1, 5)
+            # 100%概率获得2-4个该作物的种子
+            seed_reward = {
+                "name": crop_type + "种子",
+                "count": random.randint(2, 4)
+            }
+            message_suffix = "，精准采集锄确保了种子的获得"
+            
+        elif item_name == "时运锄":
+            # 时运锄：收获数量更多（3-8个），种子掉落率正常
+            harvest_count = random.randint(3, 8)
+            # 15%概率获得1-3个该作物的种子（稍微提高）
+            seed_reward = None
+            if random.random() < 0.15:
+                seed_reward = {
+                    "name": crop_type + "种子",
+                    "count": random.randint(1, 3)
+                }
+            message_suffix = "，时运锄增加了收获数量"
+            
+        else:
+            return self._send_action_error(client_id, "use_item", f"不支持的采集道具: {item_name}")
+        
+        # 生成采集奖励经验
+        experience_reward = random.randint(30, 80)
+        crop_exp += experience_reward
+        
+        # 创建收获物
+        crop_harvest = {
+            "name": crop_type,
+            "count": harvest_count
+        }
+        
+        # 更新玩家经验
+        player_data["experience"] += crop_exp
+        
+        # 检查是否升级
+        self._check_level_up(player_data)
+        
+        # 添加成熟物到作物仓库
+        self._add_crop_to_warehouse(player_data, crop_harvest)
+        
+        # 添加种子奖励到背包
+        if seed_reward:
+            self._add_seeds_to_bag(player_data, seed_reward)
+        
+        # 清理地块
+        lot["is_planted"] = False
+        lot["crop_type"] = ""
+        lot["grow_time"] = 0
+        lot["已浇水"] = False
+        lot["已施肥"] = False
+        
+        # 清除施肥时间戳
+        if "施肥时间" in lot:
+            del lot["施肥时间"]
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        # 发送作物更新
+        self._push_crop_update_to_player(username, player_data)
+        
+        # 构建消息
+        message = f"使用 {item_name} 收获成功，获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验{message_suffix}"
+        if seed_reward:
+            message += f"，额外获得 {seed_reward['name']} x{seed_reward['count']}"
+        
+        self.log('INFO', f"玩家 {username} 使用 {item_name} 从地块 {lot_index} 收获了作物，获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验" + (f"，额外获得 {seed_reward['name']} x{seed_reward['count']}" if seed_reward else ""), 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "use_item",
+            "success": True,
+            "message": message,
+            "updated_data": {
+                "experience": player_data["experience"],
+                "level": player_data["level"],
+                "player_bag": player_data.get("player_bag", []),
+                "作物仓库": player_data.get("作物仓库", []),
+                "道具背包": player_data.get("道具背包", [])
+            }
+        })
+    
+    def _use_harvest_item_visiting(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name):
+        """访问模式下使用采集道具"""
+        # 移除当前玩家的道具
+        if not self._remove_item_from_inventory(current_player_data, item_name, 1):
+            return self._send_action_error(client_id, "use_item", f"移除道具 {item_name} 失败")
+        
+        # 读取作物配置
+        crop_data = self._load_crop_data()
+        
+        # 获取作物类型
+        crop_type = target_lot["crop_type"]
+        
+        # 检查是否为杂草类型（杂草不能用采集道具收获）
+        if crop_type in crop_data:
+            crop_info = crop_data[crop_type]
+            is_weed = crop_info.get("是否杂草", False)
+            
+            if is_weed:
+                return self._send_action_error(client_id, "use_item", f"{crop_type}不能使用采集道具收获，只能铲除！")
+            
+            crop_exp = int(crop_info.get("经验", 10) * 0.7)  # 访问模式获得70%经验
+            
+            # 额外检查：如果作物收益为负数，也视为杂草
+            crop_income = crop_info.get("收益", 100) + crop_info.get("花费", 0)
+            if crop_income < 0:
+                return self._send_action_error(client_id, "use_item", f"{crop_type}不能使用采集道具收获，只能铲除！")
+        else:
+            # 默认经验
+            crop_exp = 7
+        
+        # 道具特殊效果（访问模式稍微降低效果）
+        import random
+        
+        if item_name == "精准采集锄":
+            # 精准采集锄：收获数量稍少（1-4个），但必定掉落种子
+            harvest_count = random.randint(1, 4)
+            # 100%概率获得1-3个该作物的种子
+            seed_reward = {
+                "name": crop_type + "种子",
+                "count": random.randint(1, 3)
+            }
+            message_suffix = "，精准采集锄确保了种子的获得"
+            
+        elif item_name == "时运锄":
+            # 时运锄：收获数量较多（2-6个），种子掉落率正常
+            harvest_count = random.randint(2, 6)
+            # 10%概率获得1-2个该作物的种子
+            seed_reward = None
+            if random.random() < 0.10:
+                seed_reward = {
+                    "name": crop_type + "种子",
+                    "count": random.randint(1, 2)
+                }
+            message_suffix = "，时运锄增加了收获数量"
+            
+        else:
+            return self._send_action_error(client_id, "use_item", f"不支持的采集道具: {item_name}")
+        
+        # 生成帮助采集奖励经验
+        experience_reward = random.randint(20, 60)
+        crop_exp += experience_reward
+        
+        # 创建收获物
+        crop_harvest = {
+            "name": crop_type,
+            "count": harvest_count
+        }
+        
+        # 更新当前玩家经验
+        current_player_data["experience"] += crop_exp
+        
+        # 检查当前玩家是否升级
+        self._check_level_up(current_player_data)
+        
+        # 收获物给当前玩家
+        self._add_crop_to_warehouse(current_player_data, crop_harvest)
+        
+        # 种子奖励给当前玩家
+        if seed_reward:
+            self._add_seeds_to_bag(current_player_data, seed_reward)
+        
+        # 清理目标玩家的地块
+        target_lot["is_planted"] = False
+        target_lot["crop_type"] = ""
+        target_lot["grow_time"] = 0
+        target_lot["已浇水"] = False
+        target_lot["已施肥"] = False
+        
+        # 清除施肥时间戳
+        if "施肥时间" in target_lot:
+            del target_lot["施肥时间"]
+        
+        # 保存两个玩家的数据
+        self.save_player_data(current_username, current_player_data)
+        self.save_player_data(target_username, target_player_data)
+        
+        # 向目标玩家推送作物更新（如果在线）
+        self._push_crop_update_to_player(target_username, target_player_data)
+        
+        # 构建消息
+        message = f"使用 {item_name} 帮助收获成功！从 {target_username} 那里获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验{message_suffix}"
+        if seed_reward:
+            message += f"，额外获得 {seed_reward['name']} x{seed_reward['count']}"
+        
+        self.log('INFO', f"玩家 {current_username} 使用 {item_name} 帮助玩家 {target_username} 收获地块 {lot_index} 的作物，获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验" + (f"，额外获得 {seed_reward['name']} x{seed_reward['count']}" if seed_reward else ""), 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "use_item",
+            "success": True,
+            "message": message,
+            "updated_data": {
+                "experience": current_player_data["experience"],
+                "level": current_player_data["level"],
+                "player_bag": current_player_data.get("player_bag", []),
+                "作物仓库": current_player_data.get("作物仓库", []),
+                "道具背包": current_player_data.get("道具背包", [])
+            }
+        })
+#==========================道具使用处理==========================
 
 
 
@@ -2261,6 +3720,16 @@ class TCPGameServer(TCPServer):
         current_stamina = player_data.get("体力值", 20)
         return current_stamina >= amount
     
+    def _check_and_update_register_time(self, player_data, username):
+        """检查并更新已存在玩家的注册时间"""
+        default_register_time = "2025年05月21日15时00分00秒"
+        
+        # 如果玩家没有注册时间字段，设为默认值（老玩家）
+        if "注册时间" not in player_data:
+            player_data["注册时间"] = default_register_time
+            self.save_player_data(username, player_data)
+            self.log('INFO', f"为已存在玩家 {username} 设置默认注册时间", 'SERVER')
+    
 #==========================玩家体力值处理==========================
 
 
@@ -2365,12 +3834,18 @@ class TCPGameServer(TCPServer):
 
 #==========================玩家排行榜处理==========================
     #处理获取玩家排行榜请求
-    def _handle_player_rankings_request(self, client_id):
+    def _handle_player_rankings_request(self, client_id, message):
         """处理获取玩家排行榜的请求"""
         # 检查用户是否已登录
         logged_in, response = self._check_user_logged_in(client_id, "获取玩家排行榜", "player_rankings")
         if not logged_in:
             return self.send_data(client_id, response)
+        
+        # 获取排序和筛选参数
+        sort_by = message.get("sort_by", "level")  # 排序字段：seed_count, level, online_time, login_time, like_num, money
+        sort_order = message.get("sort_order", "desc")  # 排序顺序：asc, desc
+        filter_online = message.get("filter_online", False)  # 是否只显示在线玩家
+        search_qq = message.get("search_qq", "")  # 搜索的QQ号
         
         # 获取所有玩家存档文件
         save_files = glob.glob(os.path.join("game_saves", "*.json"))
@@ -2383,6 +3858,10 @@ class TCPGameServer(TCPServer):
             try:
                 # 从文件名提取账号ID
                 account_id = os.path.basename(save_file).split('.')[0]
+                
+                # 如果有搜索条件，先检查是否匹配
+                if search_qq and search_qq not in account_id:
+                    continue
                 
                 # 加载玩家数据
                 with open(save_file, 'r', encoding='utf-8') as file:
@@ -2398,6 +3877,18 @@ class TCPGameServer(TCPServer):
                         for user_info in self.user_data.values()
                     )
                     
+                    # 如果筛选在线玩家，跳过离线玩家
+                    if filter_online and not is_online:
+                        continue
+                    
+                    # 解析总游玩时间为秒数（用于排序）
+                    total_time_str = player_data.get("total_login_time", "0时0分0秒")
+                    total_time_seconds = self._parse_time_to_seconds(total_time_str)
+                    
+                    # 解析最后登录时间为时间戳（用于排序）
+                    last_login_str = player_data.get("last_login_time", "未知")
+                    last_login_timestamp = self._parse_login_time_to_timestamp(last_login_str)
+                    
                     # 获取所需的玩家信息
                     player_info = {
                         "user_name": player_data.get("user_name", account_id),
@@ -2408,8 +3899,11 @@ class TCPGameServer(TCPServer):
                         "experience": player_data.get("experience", 0),
                         "体力值": player_data.get("体力值", 20),
                         "seed_count": seed_count,
-                        "last_login_time": player_data.get("last_login_time", "未知"),
-                        "total_login_time": player_data.get("total_login_time", "0时0分0秒"),
+                        "last_login_time": last_login_str,
+                        "last_login_timestamp": last_login_timestamp,
+                        "total_login_time": total_time_str,
+                        "total_time_seconds": total_time_seconds,
+                        "like_num": player_data.get("total_likes", 0),
                         "is_online": is_online
                     }
                     
@@ -2417,21 +3911,76 @@ class TCPGameServer(TCPServer):
             except Exception as e:
                 self.log('ERROR', f"读取玩家 {account_id} 的数据时出错: {str(e)}", 'SERVER')
         
-        # 按等级降序排序
-        players_data.sort(key=lambda x: x["level"], reverse=True)
+        # 根据排序参数进行排序
+        reverse_order = (sort_order == "desc")
+        
+        if sort_by == "seed_count":
+            players_data.sort(key=lambda x: x["seed_count"], reverse=reverse_order)
+        elif sort_by == "level":
+            players_data.sort(key=lambda x: x["level"], reverse=reverse_order)
+        elif sort_by == "online_time":
+            players_data.sort(key=lambda x: x["total_time_seconds"], reverse=reverse_order)
+        elif sort_by == "login_time":
+            players_data.sort(key=lambda x: x["last_login_timestamp"], reverse=reverse_order)
+        elif sort_by == "like_num":
+            players_data.sort(key=lambda x: x["like_num"], reverse=reverse_order)
+        elif sort_by == "money":
+            players_data.sort(key=lambda x: x["money"], reverse=reverse_order)
+        else:
+            # 默认按等级排序
+            players_data.sort(key=lambda x: x["level"], reverse=True)
         
         # 统计在线玩家数量
         online_count = sum(1 for player in players_data if player.get("is_online", False))
         
-        self.log('INFO', f"玩家 {self.user_data[client_id].get('username')} 请求玩家排行榜，返回 {len(players_data)} 个玩家数据，注册总人数：{total_registered_players}，在线人数：{online_count}", 'SERVER')
+        # 记录日志
+        search_info = f"，搜索QQ：{search_qq}" if search_qq else ""
+        filter_info = "，仅在线玩家" if filter_online else ""
+        sort_info = f"，按{sort_by}{'降序' if reverse_order else '升序'}排序"
+        
+        self.log('INFO', f"玩家 {self.user_data[client_id].get('username')} 请求玩家排行榜{search_info}{filter_info}{sort_info}，返回 {len(players_data)} 个玩家数据，注册总人数：{total_registered_players}，在线人数：{online_count}", 'SERVER')
         
         # 返回排行榜数据（包含注册总人数）
         return self.send_data(client_id, {
             "type": "player_rankings_response",
             "success": True,
             "players": players_data,
-            "total_registered_players": total_registered_players
+            "total_registered_players": total_registered_players,
+            "sort_by": sort_by,
+            "sort_order": sort_order,
+            "filter_online": filter_online,
+            "search_qq": search_qq
         })
+    
+    # 辅助函数：将时间字符串转换为秒数
+    def _parse_time_to_seconds(self, time_str):
+        """将时间字符串（如'1时30分45秒'）转换为总秒数"""
+        try:
+            import re
+            # 使用正则表达式提取时、分、秒
+            pattern = r'(\d+)时(\d+)分(\d+)秒'
+            match = re.match(pattern, time_str)
+            if match:
+                hours = int(match.group(1))
+                minutes = int(match.group(2))
+                seconds = int(match.group(3))
+                return hours * 3600 + minutes * 60 + seconds
+            return 0
+        except:
+            return 0
+    
+    # 辅助函数：将登录时间字符串转换为时间戳
+    def _parse_login_time_to_timestamp(self, login_time_str):
+        """将登录时间字符串转换为时间戳用于排序"""
+        try:
+            if login_time_str == "未知":
+                return 0
+            # 解析格式：2024年01月01日12时30分45秒
+            import datetime
+            dt = datetime.datetime.strptime(login_time_str, "%Y年%m月%d日%H时%M分%S秒")
+            return dt.timestamp()
+        except:
+            return 0
 #==========================玩家排行榜处理==========================
 
 
@@ -2498,6 +4047,8 @@ class TCPGameServer(TCPServer):
             "体力值": target_player_data.get("体力值", 20),
             "farm_lots": target_player_data.get("farm_lots", []),
             "player_bag": target_player_data.get("player_bag", []),
+            "作物仓库": target_player_data.get("作物仓库", []),
+            "道具背包": target_player_data.get("道具背包", []),
             "last_login_time": target_player_data.get("last_login_time", "未知"),
             "total_login_time": target_player_data.get("total_login_time", "0时0分0秒"),
             "total_likes": target_player_data.get("total_likes", 0)
@@ -2564,6 +4115,340 @@ class TCPGameServer(TCPServer):
 #==========================返回自己农场处理==========================
 
 
+
+
+#==========================在线礼包处理==========================
+    #处理获取在线礼包数据请求
+    def _handle_get_online_gift_data_request(self, client_id, message):
+        """处理获取在线礼包数据请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "获取在线礼包数据", "get_online_gift_data")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "get_online_gift_data")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        # 获取今日在线礼包数据
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        online_gift_data = player_data.get("online_gift", {})
+        
+        # 检查是否是新的一天，如果是则重置领取状态和在线时间
+        if current_date not in online_gift_data:
+            online_gift_data[current_date] = {
+                "total_online_time": 0.0,  # 累计在线时间（秒）
+                "last_login_time": time.time(),  # 最后登录时间
+                "claimed_gifts": {}
+            }
+            player_data["online_gift"] = online_gift_data
+            self.save_player_data(username, player_data)
+        
+        today_data = online_gift_data[current_date]
+        
+        # 更新在线时间 - 只有当前用户在线时才累加时间
+        current_time = time.time()
+        if client_id in self.user_data and self.user_data[client_id].get("logged_in", False):
+            # 计算本次登录的在线时间并累加
+            login_time = self.user_data[client_id].get("login_timestamp", current_time)
+            session_online_time = current_time - login_time
+            # 更新最后登录时间为当前时间，以便下次计算
+            today_data["last_login_time"] = current_time
+        else:
+            session_online_time = 0
+        
+        # 获取总在线时长
+        online_duration = today_data.get("total_online_time", 0.0) + session_online_time
+        
+        return self.send_data(client_id, {
+            "type": "online_gift_data_response",
+            "success": True,
+            "online_start_time": today_data.get("last_login_time", current_time),
+            "current_online_duration": online_duration,
+            "claimed_gifts": today_data.get("claimed_gifts", {})
+        })
+    
+    #处理领取在线礼包请求
+    def _handle_claim_online_gift_request(self, client_id, message):
+        """处理领取在线礼包请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "领取在线礼包", "claim_online_gift")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "claim_online_gift")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        gift_name = message.get("gift_name", "")
+        if not gift_name:
+            return self.send_data(client_id, {
+                "type": "claim_online_gift_response",
+                "success": False,
+                "message": "礼包名称不能为空"
+            })
+        
+        # 定义在线礼包配置
+        online_gift_config = {
+            "1分钟": {
+                "time_seconds": 60,
+                "rewards": {
+                    "money": 100,
+                    "experience": 50,
+                    "seeds": [{"name": "小麦", "count": 5}, {"name": "胡萝卜", "count": 3}]
+                }
+            },
+            "3分钟": {
+                "time_seconds": 180,
+                "rewards": {
+                    "money": 250,
+                    "experience": 150,
+                    "seeds": [{"name": "胡萝卜", "count": 5}, {"name": "玉米", "count": 3}]
+                }
+            },
+            "5分钟": {
+                "time_seconds": 300,
+                "rewards": {
+                    "money": 500,
+                    "experience": 250,
+                    "seeds": [{"name": "玉米", "count": 3}, {"name": "番茄", "count": 2}]
+                }
+            },
+            "10分钟": {
+                "time_seconds": 600,
+                "rewards": {
+                    "money": 500,
+                    "experience": 200,
+                    "seeds": [{"name": "玉米", "count": 3}, {"name": "番茄", "count": 2}]
+                }
+            },
+            "30分钟": {
+                "time_seconds": 1800,
+                "rewards": {
+                    "money": 1200,
+                    "experience": 500,
+                    "seeds": [{"name": "草莓", "count": 2}, {"name": "花椰菜", "count": 1}]
+                }
+            },
+            "1小时": {
+                "time_seconds": 3600,
+                "rewards": {
+                    "money": 2500,
+                    "experience": 1000,
+                    "seeds": [{"name": "葡萄", "count": 1}, {"name": "南瓜", "count": 1}, {"name": "咖啡豆", "count": 1}]
+                }
+            },
+            "3小时": {
+                "time_seconds": 10800,
+                "rewards": {
+                    "money": 6000,
+                    "experience": 2500,
+                    "seeds": [{"name": "人参", "count": 1}, {"name": "藏红花", "count": 1}]
+                }
+            },
+            "5小时": {
+                "time_seconds": 18000,
+                "rewards": {
+                    "money": 12000,
+                    "experience": 5000,
+                    "seeds": [{"name": "龙果", "count": 1}, {"name": "松露", "count": 1}, {"name": "月光草", "count": 1}]
+                }
+            }
+        }
+        
+        if gift_name not in online_gift_config:
+            return self.send_data(client_id, {
+                "type": "claim_online_gift_response",
+                "success": False,
+                "message": "无效的礼包名称"
+            })
+        
+        # 获取今日在线礼包数据
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        online_gift_data = player_data.get("online_gift", {})
+        
+        if current_date not in online_gift_data:
+            return self.send_data(client_id, {
+                "type": "claim_online_gift_response",
+                "success": False,
+                "message": "在线礼包数据异常，请重新登录"
+            })
+        
+        today_data = online_gift_data[current_date]
+        
+        # 检查是否已领取
+        if gift_name in today_data.get("claimed_gifts", {}):
+            return self.send_data(client_id, {
+                "type": "claim_online_gift_response",
+                "success": False,
+                "message": "该礼包今日已领取"
+            })
+        
+        # 更新当前在线时间并检查是否满足条件
+        current_time = time.time()
+        
+        # 计算本次登录的在线时间
+        if client_id in self.user_data and self.user_data[client_id].get("logged_in", False):
+            login_time = self.user_data[client_id].get("login_timestamp", current_time)
+            session_online_time = current_time - login_time
+            # 更新累计在线时间
+            today_data["total_online_time"] = today_data.get("total_online_time", 0.0) + session_online_time
+            # 重置登录时间
+            self.user_data[client_id]["login_timestamp"] = current_time
+        
+        online_duration = today_data.get("total_online_time", 0.0)
+        required_time = online_gift_config[gift_name]["time_seconds"]
+        
+        if online_duration < required_time:
+            return self.send_data(client_id, {
+                "type": "claim_online_gift_response",
+                "success": False,
+                "message": f"在线时间不足，还需要 {self._format_time(required_time - online_duration)}"
+            })
+        
+        # 发放奖励
+        rewards = online_gift_config[gift_name]["rewards"]
+        self._apply_online_gift_rewards(player_data, rewards)
+        
+        # 记录领取状态
+        if "claimed_gifts" not in today_data:
+            today_data["claimed_gifts"] = {}
+        today_data["claimed_gifts"][gift_name] = time.time()
+        
+        # 保存数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 领取在线礼包 {gift_name}，获得奖励: {rewards}", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "claim_online_gift_response",
+            "success": True,
+            "message": f"成功领取{gift_name}在线礼包！",
+            "gift_name": gift_name,
+            "rewards": rewards,
+            "updated_data": {
+                "money": player_data["money"],
+                "experience": player_data["experience"],
+                "level": player_data["level"],
+                "player_bag": player_data.get("player_bag", [])
+            }
+        })
+    
+    #发放在线礼包奖励
+    def _apply_online_gift_rewards(self, player_data, rewards):
+        """发放在线礼包奖励"""
+        # 发放金币
+        if "money" in rewards:
+            player_data["money"] = player_data.get("money", 0) + rewards["money"]
+        
+        # 发放经验
+        if "experience" in rewards:
+            old_experience = player_data.get("experience", 0)
+            player_data["experience"] = old_experience + rewards["experience"]
+            
+            # 检查是否升级
+            self._check_level_up(player_data)
+        
+        # 发放种子
+        if "seeds" in rewards:
+            player_bag = player_data.get("player_bag", [])
+            crop_data = self._load_crop_data()
+            
+            for seed_info in rewards["seeds"]:
+                seed_name = seed_info["name"]
+                seed_count = seed_info["count"]
+                
+                # 从作物数据中获取品质信息
+                quality = "普通"  # 默认品质
+                if crop_data and seed_name in crop_data:
+                    quality = crop_data[seed_name].get("品质", "普通")
+                
+                # 查找是否已有该种子
+                found = False
+                for item in player_bag:
+                    if item["name"] == seed_name:
+                        item["count"] += seed_count
+                        found = True
+                        break
+                
+                # 如果没有找到，添加新物品
+                if not found:
+                    player_bag.append({
+                        "name": seed_name,
+                        "count": seed_count,
+                        "type": "seed",
+                        "quality": quality
+                    })
+            
+            player_data["player_bag"] = player_bag
+    
+    #检查玩家是否升级
+    def _check_level_up(self, player_data):
+        """检查玩家是否升级"""
+        current_level = player_data.get("level", 1)
+        current_experience = player_data.get("experience", 0)
+        
+        # 计算升级所需经验 (每级需要的经验递增)
+        experience_needed = current_level * 100
+        
+        # 检查是否可以升级
+        while current_experience >= experience_needed:
+            current_level += 1
+            current_experience -= experience_needed
+            experience_needed = current_level * 100
+        
+        player_data["level"] = current_level
+        player_data["experience"] = current_experience
+    
+    #更新玩家今日在线时间
+    def _update_daily_online_time(self, client_id, player_data):
+        """更新玩家今日在线时间"""
+        if client_id not in self.user_data or not self.user_data[client_id].get("logged_in", False):
+            return
+        
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        online_gift_data = player_data.get("online_gift", {})
+        
+        # 确保今日数据存在
+        if current_date not in online_gift_data:
+            online_gift_data[current_date] = {
+                "total_online_time": 0.0,
+                "last_login_time": time.time(),
+                "claimed_gifts": {}
+            }
+            player_data["online_gift"] = online_gift_data
+        
+        today_data = online_gift_data[current_date]
+        current_time = time.time()
+        login_time = self.user_data[client_id].get("login_timestamp", current_time)
+        session_online_time = current_time - login_time
+        
+        # 更新累计在线时间
+        today_data["total_online_time"] = today_data.get("total_online_time", 0.0) + session_online_time
+        today_data["last_login_time"] = current_time
+        
+        # 重置用户登录时间戳
+        self.user_data[client_id]["login_timestamp"] = current_time
+        
+        return today_data["total_online_time"]
+
+    #格式化时间显示
+    def _format_time(self, seconds):
+        """格式化时间显示"""
+        hours = int(seconds // 3600)
+        minutes = int((seconds % 3600) // 60)
+        secs = int(seconds % 60)
+        
+        if hours > 0:
+            return f"{hours}小时{minutes}分钟{secs}秒"
+        elif minutes > 0:
+            return f"{minutes}分钟{secs}秒"
+        else:
+            return f"{secs}秒"
+
+#==========================在线礼包处理==========================
 
 
 #==========================PING延迟检测处理==========================
@@ -3636,6 +5521,203 @@ class TCPGameServer(TCPServer):
         }
 
 #==========================缓存数据处理==========================
+
+
+# ================================账户设置处理方法================================
+    def _handle_modify_account_info_request(self, client_id, message):
+        """处理修改账号信息请求"""
+        # 检查用户是否已登录
+        is_logged_in, error_response = self._check_user_logged_in(client_id, "修改账号信息")
+        if not is_logged_in:
+            return self._send_modify_account_error(client_id, error_response["message"])
+        
+        # 加载玩家数据
+        player_data, username, error_response = self._load_player_data_with_check(client_id, "modify_account_info")
+        if not player_data:
+            return self.send_data(client_id, error_response)
+        
+        # 获取新的信息
+        new_password = message.get("new_password", "").strip()
+        new_player_name = message.get("new_player_name", "").strip()
+        new_farm_name = message.get("new_farm_name", "").strip()
+        new_personal_profile = message.get("new_personal_profile", "").strip()
+        
+        # 验证输入
+        if not new_password:
+            return self._send_modify_account_error(client_id, "密码不能为空")
+        
+        if not new_player_name:
+            return self._send_modify_account_error(client_id, "玩家昵称不能为空")
+        
+        if not new_farm_name:
+            return self._send_modify_account_error(client_id, "农场名称不能为空")
+        
+        if len(new_password) < 6:
+            return self._send_modify_account_error(client_id, "密码长度至少6个字符")
+        
+        if len(new_player_name) > 20:
+            return self._send_modify_account_error(client_id, "玩家昵称不能超过20个字符")
+        
+        if len(new_farm_name) > 20:
+            return self._send_modify_account_error(client_id, "农场名称不能超过20个字符")
+        
+        if len(new_personal_profile) > 100:
+            return self._send_modify_account_error(client_id, "个人简介不能超过100个字符")
+        
+        try:
+            # 更新玩家数据
+            player_data["user_password"] = new_password
+            player_data["player_name"] = new_player_name
+            player_data["farm_name"] = new_farm_name
+            player_data["个人简介"] = new_personal_profile
+            
+            # 保存到缓存和文件
+            self.player_cache[username] = player_data
+            self.dirty_players.add(username)
+            
+            # 立即保存重要的账户信息
+            self.save_player_data_immediate(username)
+            
+            # 发送成功响应
+            self.send_data(client_id, {
+                "type": "modify_account_info_response",
+                "success": True,
+                "message": "账号信息修改成功",
+                "updated_data": {
+                    "user_password": new_password,
+                    "player_name": new_player_name,
+                    "farm_name": new_farm_name,
+                    "个人简介": new_personal_profile
+                }
+            })
+            
+            self.log('INFO', f"用户 {username} 修改账号信息成功", 'ACCOUNT')
+            
+        except Exception as e:
+            self.log('ERROR', f"修改账号信息时出错: {str(e)}", 'ACCOUNT')
+            return self._send_modify_account_error(client_id, "修改账号信息失败，请稍后重试")
+
+    def _handle_delete_account_request(self, client_id, message):
+        """处理删除账号请求"""
+        # 检查用户是否已登录
+        is_logged_in, error_response = self._check_user_logged_in(client_id, "删除账号")
+        if not is_logged_in:
+            return self._send_delete_account_error(client_id, error_response["message"])
+        
+        # 获取用户名
+        username = self.user_data[client_id]["username"]
+        
+        try:
+            # 删除玩家文件
+            file_path = os.path.join("game_saves", f"{username}.json")
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                self.log('INFO', f"已删除玩家文件: {file_path}", 'ACCOUNT')
+            
+            # 从缓存中删除
+            if username in self.player_cache:
+                del self.player_cache[username]
+            
+            if username in self.dirty_players:
+                self.dirty_players.discard(username)
+            
+            if username in self.active_players_cache:
+                del self.active_players_cache[username]
+            
+            # 清理用户数据
+            if client_id in self.user_data:
+                del self.user_data[client_id]
+            
+            # 发送成功响应
+            self.send_data(client_id, {
+                "type": "delete_account_response",
+                "success": True,
+                "message": "账号删除成功，即将返回主菜单"
+            })
+            
+            self.log('INFO', f"用户 {username} 账号删除成功", 'ACCOUNT')
+            
+            # 稍后断开连接
+            import threading
+            def delayed_disconnect():
+                import time
+                time.sleep(2)
+                self._remove_client(client_id)
+            
+            disconnect_thread = threading.Thread(target=delayed_disconnect)
+            disconnect_thread.daemon = True
+            disconnect_thread.start()
+            
+        except Exception as e:
+            self.log('ERROR', f"删除账号时出错: {str(e)}", 'ACCOUNT')
+            return self._send_delete_account_error(client_id, "删除账号失败，请稍后重试")
+
+    def _handle_refresh_player_info_request(self, client_id, message):
+        """处理刷新玩家信息请求"""
+        # 检查用户是否已登录
+        is_logged_in, error_response = self._check_user_logged_in(client_id, "刷新玩家信息")
+        if not is_logged_in:
+            return self._send_refresh_info_error(client_id, error_response["message"])
+        
+        # 获取用户名
+        username = self.user_data[client_id]["username"]
+        
+        try:
+            # 强制从文件重新加载最新数据
+            player_data = self._load_player_data_from_file(username)
+            if not player_data:
+                return self._send_refresh_info_error(client_id, "无法加载玩家数据")
+            
+            # 只发送账户相关信息，不发送农场数据等
+            account_info = {
+                "user_name": player_data.get("user_name", ""),
+                "user_password": player_data.get("user_password", ""),
+                "player_name": player_data.get("player_name", ""),
+                "farm_name": player_data.get("farm_name", ""),
+                "个人简介": player_data.get("个人简介", ""),
+                "level": player_data.get("level", 1),
+                "experience": player_data.get("experience", 0),
+                "money": player_data.get("money", 0)
+            }
+            
+            # 发送刷新后的账户信息
+            self.send_data(client_id, {
+                "type": "refresh_player_info_response",
+                "success": True,
+                "message": "玩家信息已刷新",
+                "account_info": account_info
+            })
+            
+            self.log('INFO', f"用户 {username} 刷新玩家信息成功", 'ACCOUNT')
+            
+        except Exception as e:
+            self.log('ERROR', f"刷新玩家信息时出错: {str(e)}", 'ACCOUNT')
+            return self._send_refresh_info_error(client_id, "刷新玩家信息失败，请稍后重试")
+
+    def _send_modify_account_error(self, client_id, message):
+        """发送修改账号信息错误响应"""
+        self.send_data(client_id, {
+            "type": "modify_account_info_response",
+            "success": False,
+            "message": message
+        })
+
+    def _send_delete_account_error(self, client_id, message):
+        """发送删除账号错误响应"""
+        self.send_data(client_id, {
+            "type": "delete_account_response",
+            "success": False,
+            "message": message
+        })
+
+    def _send_refresh_info_error(self, client_id, message):
+        """发送刷新信息错误响应"""
+        self.send_data(client_id, {
+            "type": "refresh_player_info_response",
+            "success": False,
+            "message": message
+        })
+# ================================账户设置处理方法================================
 
 # 主程序启动入口
 if __name__ == "__main__":

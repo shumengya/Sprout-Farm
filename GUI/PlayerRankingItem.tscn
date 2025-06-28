@@ -1,0 +1,87 @@
+[gd_scene load_steps=3 format=3 uid="uid://crd28qnymob7"]
+
+[ext_resource type="Texture2D" uid="uid://dsln1w1aqgf1k" path="res://assets/游戏UI/玩家默认头像.webp" id="1_sgoxp"]
+[ext_resource type="Script" uid="uid://0d2j5m6j2ema" path="res://Components/HTTPTextureRect.gd" id="2_ky0k8"]
+
+[node name="player_ranking_item" type="VBoxContainer"]
+offset_right = 1152.0
+offset_bottom = 82.0
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="SerialNumber" type="Label" parent="HBox"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "1."
+
+[node name="PlayerAvatar" type="TextureRect" parent="HBox"]
+layout_mode = 2
+texture = ExtResource("1_sgoxp")
+expand_mode = 3
+script = ExtResource("2_ky0k8")
+metadata/_custom_type_script = "uid://0d2j5m6j2ema"
+
+[node name="PlayerName" type="Label" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "树萌芽"
+
+[node name="PlayerMoney" type="Label" parent="HBox"]
+modulate = Color(1, 1, 0, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "钱币：999"
+
+[node name="SeedNum" type="Label" parent="HBox"]
+modulate = Color(0, 1, 0, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "种子数：999"
+
+[node name="PlayerLevel" type="Label" parent="HBox"]
+modulate = Color(0, 1, 1, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "等级：999"
+
+[node name="VisitButton" type="Button" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "访问"
+
+[node name="HBox2" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="LastLoginTime" type="Label" parent="HBox2"]
+modulate = Color(0.811765, 1, 0.811765, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "最后在线：2025年12时09分35秒"
+
+[node name="OnlineTime" type="Label" parent="HBox2"]
+modulate = Color(0.784314, 0.733333, 0.521569, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "累计在线时长：99时60分60秒"
+
+[node name="IsOnlineTime" type="Label" parent="HBox2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "正在检测中..."
+
+[node name="LikeNum" type="Label" parent="HBox2"]
+modulate = Color(1, 0.611765, 1, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "点赞数：999"

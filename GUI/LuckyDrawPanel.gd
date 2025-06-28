@@ -27,8 +27,8 @@ signal draw_failed(error_message: String)  # 抽奖失败信号
 # =============================================================================
 var reward_templates: Array[RichTextLabel] = []
 var current_rewards: Array = []
-var network_manager = null
-var main_game = null
+@onready var network_manager = get_node("/root/main/UI/TCPNetworkManager")
+@onready var main_game = get_node("/root/main")
 
 # 15种不同的模板颜色
 var template_colors: Array[Color] = [
@@ -47,9 +47,9 @@ var template_colors: Array[Color] = [
 	Color(1.0, 0.95, 0.8, 1.0),   # 淡香槟色
 	Color(0.85, 0.8, 1.0, 1.0),   # 淡薰衣草色
 	Color(0.95, 1.0, 0.85, 1.0)   # 淡春绿色
-
-
 ]
+
+var anticipation_tween: Tween = null
 
 # =============================================================================
 # 基础奖励配置 - 根据 crop_data.json 调整
@@ -60,7 +60,6 @@ var base_rewards: Dictionary = {
 	"empty": {"name": "谢谢惠顾", "icon": "😅", "color": "#CCCCCC"}
 }
 
-# 根据 crop_data.json 动态构建的种子奖励
 var seed_rewards: Dictionary = {}
 
 # 抽奖费用配置
@@ -81,11 +80,8 @@ var server_reward_pools: Dictionary = {}
 func _ready() -> void:
 	_initialize_system()
 
+#初始化抽奖系统
 func _initialize_system() -> void:
-	"""初始化抽奖系统"""
-	# 获取网络管理器和主游戏引用
-	network_manager = get_node("/root/main/UI/TCPNetworkManager")
-	main_game = get_node("/root/main")
 	
 	# 连接信号
 	if main_game:
@@ -97,15 +93,15 @@ func _initialize_system() -> void:
 	_generate_reward_templates()
 	_update_template_display()
 
+#从主游戏加载作物数据并构建种子奖励
 func _load_crop_data_and_build_rewards() -> void:
-	"""从主游戏加载作物数据并构建种子奖励"""
 	if main_game and main_game.has_method("get_crop_data"):
 		var crop_data = main_game.get_crop_data()
 		if crop_data:
 			_build_seed_rewards_from_crop_data(crop_data)
 
+#根据 crop_data.json 构建种子奖励配置
 func _build_seed_rewards_from_crop_data(crop_data: Dictionary) -> void:
-	"""根据 crop_data.json 构建种子奖励配置"""
 	seed_rewards.clear()
 	
 	for crop_name in crop_data.keys():
@@ -126,8 +122,8 @@ func _build_seed_rewards_from_crop_data(crop_data: Dictionary) -> void:
 			"cost": crop_info.get("花费", 50)
 		}
 
+#根据稀有度获取颜色
 func _get_rarity_color(rarity: String) -> String:
-	"""根据稀有度获取颜色"""
 	match rarity:
 		"普通":
 			return "#90EE90"
@@ -270,7 +266,6 @@ func _format_template_text(reward: Dictionary) -> String:
 
 ## 执行网络抽奖
 func _perform_network_draw(draw_type: String) -> void:
-	"""通过网络请求执行抽奖"""
 	if not network_manager or not network_manager.is_connected_to_server():
 		_show_error_message("网络未连接，无法进行抽奖")
 		return
@@ -292,7 +287,6 @@ func _perform_network_draw(draw_type: String) -> void:
 
 ## 显示等待动画
 func _show_waiting_animation(draw_type: String) -> void:
-	"""显示抽奖等待动画"""
 	# 禁用抽奖按钮
 	_set_draw_buttons_enabled(false)
 	
@@ -304,7 +298,6 @@ func _show_waiting_animation(draw_type: String) -> void:
 
 ## 处理服务器抽奖响应
 func handle_lucky_draw_response(response: Dictionary) -> void:
-	"""处理来自服务器的抽奖响应"""
 	# 停止期待动画
 	_stop_anticipation_animation()
 	
@@ -329,7 +322,6 @@ func handle_lucky_draw_response(response: Dictionary) -> void:
 
 ## 显示服务器返回的抽奖结果
 func _show_server_draw_results(rewards: Array, draw_type: String, cost: int) -> void:
-	"""显示服务器返回的抽奖结果"""
 	current_rewards = rewards
 	
 	# 显示结果（动画已在handle_lucky_draw_response中停止）
@@ -492,7 +484,7 @@ func _play_anticipation_animation() -> void:
 				0.0, 1.0, 0.5
 			)
 
-var anticipation_tween: Tween = null
+
 
 func _anticipation_flash(template: RichTextLabel, progress: float) -> void:
 	"""期待动画闪烁效果"""
@@ -501,7 +493,6 @@ func _anticipation_flash(template: RichTextLabel, progress: float) -> void:
 
 ## 停止期待动画
 func _stop_anticipation_animation() -> void:
-	"""停止期待动画"""
 	if anticipation_tween:
 		anticipation_tween.kill()
 		anticipation_tween = null
@@ -524,7 +515,6 @@ func _play_result_animation() -> void:
 
 ## 显示错误信息
 func _show_error_message(message: String) -> void:
-	"""显示错误信息"""
 	lucky_draw_reward.text = "[center][color=#FF6B6B]❌ %s[/color][/center]" % message
 	lucky_draw_reward.show()
 	
@@ -579,6 +569,5 @@ func clear_draw_results() -> void:
 
 ## 刷新奖励显示（当作物数据更新时调用）
 func refresh_reward_display() -> void:
-	"""刷新奖励显示"""
 	_load_crop_data_and_build_rewards()
 	_update_template_display()

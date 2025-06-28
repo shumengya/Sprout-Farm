@@ -54,6 +54,8 @@ folder_colors={
 [importer_defaults]
 
 texture={
+&"compress/lossy_quality": 0.01,
+&"compress/mode": 1,
 &"detect_3d/compress_to": 0,
 &"mipmaps/generate": true
 }

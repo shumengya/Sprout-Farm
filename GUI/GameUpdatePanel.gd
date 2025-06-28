@@ -118,10 +118,7 @@ func display_updates(updates: Array) -> void:
 		# 处理换行符
 		content = content.replace("\\r\\n", "\n").replace("\\n", "\n")
 		# 高亮特殊符号
-		content = content.replace("✓", "[color=green]✓[/color]")
-		content = content.replace("修复：", "[color=yellow]修复：[/color]")
-		content = content.replace("添加", "[color=cyan]添加[/color]")
-		content = content.replace("修改", "[color=orange]修改[/color]")
+		#content = content.replace("✓", "[color=green]✓[/color]")
 		
 		update_text += "[color=white]" + content + "[/color]\n"
 		

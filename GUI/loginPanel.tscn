@@ -1,0 +1,190 @@
+[gd_scene load_steps=2 format=3 uid="uid://cbhitturvihqj"]
+
+[ext_resource type="Script" uid="uid://cka0r4g8tbf0" path="res://GUI/LoginPanel.gd" id="1_xnwaq"]
+
+[node name="LoginPanel" type="PanelContainer"]
+offset_left = 449.0
+offset_top = 77.0
+offset_right = 952.0
+offset_bottom = 550.0
+script = ExtResource("1_xnwaq")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="VBox"]
+modulate = Color(1, 1, 0.537255, 1)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 30
+text = "登录/注册面板"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="UserName" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox/UserName"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "账号"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="username_input" type="LineEdit" parent="VBox/UserName"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+placeholder_text = "请输入QQ号"
+metadata/_edit_use_anchors_ = true
+
+[node name="Password1" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="VBox/Password1"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "密码"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="password_input" type="LineEdit" parent="VBox/Password1"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+placeholder_text = "请输入密码"
+
+[node name="Password2" type="HBoxContainer" parent="VBox"]
+visible = false
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="VBox/Password2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "确认密码"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="password_input2" type="LineEdit" parent="VBox/Password2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+placeholder_text = "请再次输入密码"
+
+[node name="VerificationCode" type="HBoxContainer" parent="VBox"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox/VerificationCode"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "验证码"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="verificationcode_input" type="LineEdit" parent="VBox/VerificationCode"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+placeholder_text = "请输入您的QQ邮箱收到的验证码"
+metadata/_edit_use_anchors_ = true
+
+[node name="SendButton" type="Button" parent="VBox/VerificationCode"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "发送验证码"
+
+[node name="PlayerName" type="HBoxContainer" parent="VBox"]
+visible = false
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="VBox/PlayerName"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "玩家昵称"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="playername_input" type="LineEdit" parent="VBox/PlayerName"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+placeholder_text = "请输入您的玩家昵称"
+
+[node name="FarmName" type="HBoxContainer" parent="VBox"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBox/FarmName"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "农场名称"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="farmname_input" type="LineEdit" parent="VBox/FarmName"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+placeholder_text = "请输入您的农场名称"
+metadata/_edit_use_anchors_ = true
+
+[node name="LoginRegister" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="login_button" type="Button" parent="VBox/LoginRegister"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "登录"
+
+[node name="register_button" type="Button" parent="VBox/LoginRegister"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "注册"
+
+[node name="Password3" type="HBoxContainer" parent="VBox"]
+visible = false
+layout_mode = 2
+
+[node name="login_button" type="Button" parent="VBox/Password3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "发送验证码"
+
+[node name="Label2" type="Label" parent="VBox/Password3"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "找回密码"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="password_input2" type="LineEdit" parent="VBox/Password3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+placeholder_text = "请输入QQ邮箱验证码"
+
+[node name="Note" type="Label" parent="VBox"]
+modulate = Color(1, 0.552941, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "注意：首次游玩游戏需要注册账号，
+账号请直接输入您的QQ号，系统会直接向您的QQ
+邮箱发送一串验证码进行注册验证，密码请设置的复杂一
+点，以免被暴力破解（"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="status_label" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "连接状态"
+horizontal_alignment = 1

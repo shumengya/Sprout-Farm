@@ -1,12 +1,19 @@
 [gd_scene load_steps=7 format=3 uid="uid://bkivlkirrx6u8"]
 
-[ext_resource type="Texture2D" uid="uid://fibjlynv0vi2" path="res://assets/地块/土块1.png" id="1_bns1c"]
+[ext_resource type="Texture2D" uid="uid://bt1i2yhhlor5e" path="res://assets/地块/土块1.webp" id="1_bns1c"]
 [ext_resource type="Script" uid="uid://xh5tr5co5kfu" path="res://GUI/SMY_ProgressBar.gd" id="2_1n4xp"]
-[ext_resource type="Texture2D" uid="uid://cil2qobuc0chj" path="res://assets/作物/默认/0.webp" id="2_bns1c"]
+[ext_resource type="Shader" path="res://Shader/PlantSwayShader.gdshader" id="2_s5pb0"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_v46ok"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_s5pb0"]
+shader = ExtResource("2_s5pb0")
+shader_parameter/sway_strength = 0.05
+shader_parameter/sway_speed = 1.5
+shader_parameter/wind_direction = 0.0
+shader_parameter/sway_variation = 0.5
+shader_parameter/sway_start_height = 0.5
+shader_parameter/height_curve = 2.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cyybs"]
 
@@ -17,19 +24,24 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ground_sprite" type="Sprite2D" parent="."]
+modulate = Color(0.8, 0.8, 0.8, 1)
 material = SubResource("ShaderMaterial_v46ok")
 position = Vector2(50, 63)
 scale = Vector2(0.135, 0.135)
 texture = ExtResource("1_bns1c")
 
 [node name="crop_sprite" type="Sprite2D" parent="."]
-visible = false
 material = SubResource("ShaderMaterial_s5pb0")
-position = Vector2(50, 34)
+position = Vector2(51, 39)
 scale = Vector2(0.06, 0.06)
-texture = ExtResource("2_bns1c")
+
+[node name="old_crop_sprite" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_s5pb0")
+position = Vector2(51, 39)
+scale = Vector2(0.06, 0.06)
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
+modulate = Color(0.1, 0.1, 0.1, 1)
 material = SubResource("ShaderMaterial_cyybs")
 layout_mode = 2
 offset_left = 23.0
@@ -37,6 +49,9 @@ offset_top = 78.0
 offset_right = 328.0
 offset_bottom = 151.0
 scale = Vector2(0.2, 0.2)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 50
 script = ExtResource("2_1n4xp")
 

@@ -1,13 +1,13 @@
 [gd_scene load_steps=9 format=3 uid="uid://bypjb28h4ntdr"]
 
 [ext_resource type="Script" uid="uid://badqjgdfhg7vt" path="res://GUI/MainMenuPanel.gd" id="1_wpehy"]
-[ext_resource type="Texture2D" uid="uid://bhdqkhf0y2ply" path="res://assets/UI/背景1.jpg" id="2_fys16"]
-[ext_resource type="Script" path="res://GUI/GameSettingPanel.gd" id="2_n0pjj"]
-[ext_resource type="Texture2D" uid="uid://4kvddwqlodpg" path="res://assets/logo_title/logo1.png" id="3_sr106"]
-[ext_resource type="Script" path="res://GUI/GameAboutPanel.gd" id="3_y0inj"]
+[ext_resource type="Texture2D" uid="uid://ddcmrh50o1y0q" path="res://assets/菜单UI/背景1.webp" id="2_eghpk"]
+[ext_resource type="Texture2D" uid="uid://h8tto256aww4" path="res://assets/菜单Logo/logo1.webp" id="3_eghpk"]
+[ext_resource type="Script" uid="uid://bob7a4vhw4nl3" path="res://GUI/GameAboutPanel.gd" id="3_y0inj"]
+[ext_resource type="Texture2D" uid="uid://dgdootc5bny5q" path="res://assets/菜单UI/QQ群.webp" id="4_eghpk"]
 [ext_resource type="Script" uid="uid://kj7v1uxk2i6h" path="res://GUI/GameUpdatePanel.gd" id="4_fys16"]
-[ext_resource type="Texture2D" uid="uid://b5of6puh4efui" path="res://assets/杂项/柚小青装饰品.png" id="5_eghpk"]
-[ext_resource type="Texture2D" uid="uid://cuuqapjbrsdy7" path="res://assets/UI/QQ群.jpg" id="5_y0inj"]
+[ext_resource type="Texture2D" uid="uid://ccav04woielxa" path="res://assets/菜单UI/柚小青装饰品.webp" id="5_6jmhb"]
+[ext_resource type="PackedScene" uid="uid://dos15dmc1b6bt" path="res://GUI/GameSettingPanel.tscn" id="6_eghpk"]
 
 [node name="MainMenuPanel" type="Control"]
 layout_mode = 3
@@ -26,7 +26,7 @@ offset_left = -131.0
 offset_top = -24.0
 offset_right = 1568.0
 offset_bottom = 734.0
-texture = ExtResource("2_fys16")
+texture = ExtResource("2_eghpk")
 
 [node name="GUI" type="Control" parent="."]
 anchors_preset = 0
@@ -40,7 +40,7 @@ offset_top = -24.0
 offset_right = 1730.0
 offset_bottom = 696.0
 scale = Vector2(0.4, 0.4)
-texture = ExtResource("3_sr106")
+texture = ExtResource("3_eghpk")
 stretch_mode = 2
 
 [node name="RichTextLabel" type="RichTextLabel" parent="GUI"]
@@ -79,7 +79,7 @@ offset_top = 43.0
 offset_right = 952.0
 offset_bottom = 1229.0
 scale = Vector2(0.3, 0.3)
-texture = ExtResource("5_y0inj")
+texture = ExtResource("4_eghpk")
 
 [node name="YouXiaoQing" type="TextureRect" parent="GUI/AddGroupLabel"]
 layout_mode = 0
@@ -88,7 +88,7 @@ offset_top = 82.0
 offset_right = 1233.0
 offset_bottom = 1268.0
 scale = Vector2(0.14, 0.14)
-texture = ExtResource("5_eghpk")
+texture = ExtResource("5_6jmhb")
 
 [node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 0
@@ -131,41 +131,8 @@ size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 40
 text = "退出游戏"
 
-[node name="GameSettingPanel" type="Panel" parent="."]
-visible = false
+[node name="GameSettingPanel" parent="." instance=ExtResource("6_eghpk")]
 layout_mode = 0
-offset_right = 1398.0
-offset_bottom = 720.0
-script = ExtResource("2_n0pjj")
-
-[node name="Title" type="Label" parent="GameSettingPanel"]
-layout_mode = 0
-offset_right = 1398.0
-offset_bottom = 80.0
-theme_override_font_sizes/font_size = 45
-text = "游戏设置"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="QuitButton" type="Button" parent="GameSettingPanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 0
-offset_left = 1340.0
-offset_right = 1400.0
-offset_bottom = 60.0
-theme_override_font_sizes/font_size = 35
-text = "X"
-
-[node name="Scroll" type="ScrollContainer" parent="GameSettingPanel"]
-layout_mode = 0
-offset_top = 80.0
-offset_right = 1400.0
-offset_bottom = 720.0
-
-[node name="Contents" type="RichTextLabel" parent="GameSettingPanel/Scroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
 
 [node name="GameAboutPanel" type="Panel" parent="."]
 layout_mode = 0
@@ -177,6 +144,13 @@ script = ExtResource("3_y0inj")
 layout_mode = 0
 offset_right = 1398.0
 offset_bottom = 80.0
+theme_override_colors/font_color = Color(0.780392, 1, 0.905882, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
 theme_override_font_sizes/font_size = 45
 text = "关于"
 horizontal_alignment = 1
@@ -185,9 +159,9 @@ vertical_alignment = 1
 [node name="QuitButton" type="Button" parent="GameAboutPanel"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 0
-offset_left = 1340.0
+offset_left = 1325.0
 offset_right = 1400.0
-offset_bottom = 60.0
+offset_bottom = 80.0
 theme_override_font_sizes/font_size = 35
 text = "X"
 
@@ -210,7 +184,8 @@ text = "玩法介绍：
 4.不要一上来就把钱用完了（比如某某人一上来就十连抽）,可以去偷别人的菜
 
 致谢名单：
-虚空领主：（美术抠图）
+程序牛马：（作物处理+抠图）
+虚空领主：（抠图）
 豆包：（万能的美术）"
 
 [node name="GameUpdatePanel" type="Panel" parent="."]
@@ -263,6 +238,5 @@ text = "刷新"
 [connection signal="pressed" from="VBox/GameUpdateButton" to="." method="_on_game_update_button_pressed"]
 [connection signal="pressed" from="VBox/GameAboutButton" to="." method="_on_game_about_button_pressed"]
 [connection signal="pressed" from="VBox/ExitButton" to="." method="_on_exit_button_pressed"]
-[connection signal="pressed" from="GameSettingPanel/QuitButton" to="GameSettingPanel" method="_on_quit_button_pressed"]
 [connection signal="pressed" from="GameAboutPanel/QuitButton" to="GameAboutPanel" method="_on_quit_button_pressed"]
 [connection signal="pressed" from="GameUpdatePanel/QuitButton" to="GameUpdatePanel" method="_on_quit_button_pressed"]

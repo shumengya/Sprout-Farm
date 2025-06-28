@@ -65,9 +65,9 @@ func _customize_button(button: Button) -> void:
 func _apply_custom_theme() -> void:
 	# 设置面板背景颜色
 	var panel_style := StyleBoxFlat.new()
-	panel_style.bg_color = Color("f8fafc")  # very light gray
+	#panel_style.bg_color = Color.AQUA  # very light gray
 	panel_style.set_border_width_all(2)
-	panel_style.border_color = Color("cbd5e1")
+	#panel_style.border_color = Color("cbd5e1")
 
 	self.add_theme_stylebox_override("panel", panel_style)  # ✅ 修正方法名
 

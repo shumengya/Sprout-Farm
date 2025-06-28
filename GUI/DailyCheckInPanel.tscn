@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://smypui0vyso5"]
 
-[ext_resource type="Script" uid="uid://c0jfbtkh0mj5b" path="res://游戏弹窗模板/DailyCheckInPanel.gd" id="1_fj7a7"]
+[ext_resource type="Script" uid="uid://c0jfbtkh0mj5b" path="res://GUI/DailyCheckInPanel.gd" id="1_fj7a7"]
 
 [node name="DailyCheckInPanel" type="Panel"]
 offset_right = 600.0
@@ -13,6 +13,12 @@ offset_top = -1.0
 offset_right = 600.0
 offset_bottom = 41.0
 theme_override_colors/font_color = Color(0.624759, 0.8051, 0.828302, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
 theme_override_font_sizes/font_size = 35
 text = "📅每日签到📅"
 horizontal_alignment = 1

@@ -1,0 +1,68 @@
+[gd_scene load_steps=2 format=3 uid="uid://dos15dmc1b6bt"]
+
+[ext_resource type="Script" uid="uid://ct7rhywlql4y4" path="res://GUI/GameSettingPanel.gd" id="1_0c52c"]
+
+[node name="GameSettingPanel" type="Panel"]
+offset_right = 1398.0
+offset_bottom = 720.0
+script = ExtResource("1_0c52c")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_right = 1398.0
+offset_bottom = 80.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 45
+text = "游戏设置"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_left = 1327.0
+offset_right = 1400.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 35
+text = "X"
+
+[node name="LinkButton" type="LinkButton" parent="."]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 17.0
+offset_right = 79.0
+offset_bottom = 57.0
+text = "打开网页"
+uri = "http://192.168.1.110:19132/site/python"
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_top = 80.0
+offset_right = 1400.0
+offset_bottom = 720.0
+
+[node name="Panel" type="Panel" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Scroll/Panel"]
+layout_mode = 2
+offset_right = 210.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 30
+text = "背景音乐音量："
+
+[node name="HSlider" type="HSlider" parent="Scroll/Panel"]
+layout_mode = 0
+offset_left = 210.0
+offset_top = 15.0
+offset_right = 573.0
+offset_bottom = 31.0
+
+[connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]
