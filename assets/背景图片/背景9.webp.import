@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/背景9.webp-ec7c743b6f92adf27bc6f3138f73c084
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.01
 compress/hdr_compression=1

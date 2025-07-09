@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3 uid="uid://v8bx7hhl5st6"]
+
+[ext_resource type="PackedScene" uid="uid://h66an0p6pl53" path="res://Scene/Pet/PetBase.tscn" id="1_5igge"]
+[ext_resource type="Texture2D" uid="uid://lx0l12qrituk" path="res://assets/宠物图片/一堆小怪.png" id="2_5gxwu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5gxwu"]
+atlas = ExtResource("2_5gxwu")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pxsqn"]
+atlas = ExtResource("2_5gxwu")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xxlll"]
+atlas = ExtResource("2_5gxwu")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_k25pl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5gxwu")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pxsqn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xxlll")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}]
+
+[node name="SmallGreen" instance=ExtResource("1_5igge")]
+
+[node name="PetImage" parent="." index="0"]
+sprite_frames = SubResource("SpriteFrames_k25pl")
+animation = &"idle"
+
+[node name="VolumeCollision" parent="." index="1"]
+position = Vector2(-0.5, 3)

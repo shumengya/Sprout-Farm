@@ -1,0 +1,656 @@
+{
+  "experience": 12,
+  "level": 4,
+  "money": 2581,
+  "farm_name": "llsjjz的农村",
+  "user_name": "2968204579",
+  "player_name": "llsjjz",
+  "user_password": "llsjjz0920",
+  "last_login_time": "2025年06月13日18时57分26秒",
+  "total_login_time": "0时6分57秒",
+  "farm_lots": [
+    {
+      "crop_type": "黄瓜",
+      "grow_time": 1205,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "黄瓜",
+      "grow_time": 1205,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "野草1",
+      "grow_time": 5,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "野草2",
+      "grow_time": 5,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": false,
+      "max_grow_time": 1200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "杂草2",
+      "grow_time": 5,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    }
+  ],
+  "player_bag": [
+    {
+      "name": "稻谷",
+      "quality": "普通",
+      "count": 5
+    },
+    {
+      "name": "土豆",
+      "quality": "普通",
+      "count": 2
+    },
+    {
+      "name": "胡萝卜",
+      "quality": "普通",
+      "count": 3
+    }
+  ],
+  "daily_check_in": {
+    "2025-06-03": {
+      "rewards": {
+        "coins": 261,
+        "exp": 84,
+        "seeds": [
+          {
+            "name": "稻谷",
+            "quantity": 4,
+            "quality": "普通"
+          },
+          {
+            "name": "胡萝卜",
+            "quantity": 4,
+            "quality": "普通"
+          }
+        ]
+      },
+      "consecutive_days": 0,
+      "timestamp": 1748931868.513758
+    },
+    "2025-06-04": {
+      "rewards": {
+        "coins": 307,
+        "exp": 82,
+        "seeds": [
+          {
+            "name": "小麦",
+            "quantity": 3,
+            "quality": "普通"
+          }
+        ]
+      },
+      "consecutive_days": 1,
+      "timestamp": 1748992863.448056
+    },
+    "2025-06-13": {
+      "rewards": {
+        "coins": 303,
+        "exp": 90,
+        "seeds": [
+          {
+            "name": "稻谷",
+            "quantity": 5,
+            "quality": "普通"
+          },
+          {
+            "name": "土豆",
+            "quantity": 2,
+            "quality": "普通"
+          },
+          {
+            "name": "胡萝卜",
+            "quantity": 3,
+            "quality": "普通"
+          }
+        ]
+      },
+      "consecutive_days": 0,
+      "timestamp": 1749812264.8041327
+    }
+  },
+  "last_water_reset_date": "2025-06-04",
+  "total_likes": 1,
+  "daily_likes": {
+    "2025-06-04": [
+      "2427948832"
+    ],
+    "2025-06-13": [
+      "3961448694"
+    ]
+  },
+  "体力值": 0,
+  "体力上次刷新时间": "2025-06-13",
+  "体力上次恢复时间": 1749812246.7495682,
+  "注册时间": "2025年05月21日15时00分00秒"
+}

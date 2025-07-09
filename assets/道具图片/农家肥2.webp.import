@@ -2,7 +2,7 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dyqwegt2c2i01"
+uid="uid://6wvl0utelpk1"
 path="res://.godot/imported/农家肥2.webp-f90fb90481ae5dd5e74c8bc39c4c5424.ctex"
 metadata={
 "vram_texture": false
@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/农家肥2.webp-f90fb90481ae5dd5e74c8bc39c4c5
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.01
 compress/hdr_compression=1

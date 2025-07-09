@@ -2,7 +2,7 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dtie1g1164c1y"
+uid="uid://b75oytao5cgjo"
 path="res://.godot/imported/绿色史莱姆.png-8a4333d90da1b17b9e8829f66fbd46ad.ctex"
 metadata={
 "vram_texture": false
@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/绿色史莱姆.png-8a4333d90da1b17b9e8829f66
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.01
 compress/hdr_compression=1

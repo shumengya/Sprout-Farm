@@ -1,7 +1,6 @@
 extends Panel
 
-# TCP客户端演示
-# 这个脚本展示如何在UI中使用TCPClient类
+# TCP客户端通信处理
 
 # UI组件引用
 @onready var status_label = $StatusLabel
@@ -9,19 +8,27 @@ extends Panel
 @onready var send_button = $SendButton
 @onready var response_label = $Scroll/ResponseLabel
 @onready var connection_button = $ConnectionButton
-@onready var login_panel = $"/root/main/UI/LoginPanel"
+
+#所有面板
 @onready var main_game = get_node("/root/main")
+@onready var lucky_draw_panel: LuckyDrawPanel = $'../LuckyDrawPanel'
+@onready var daily_check_in_panel: DailyCheckInPanel = $'../DailyCheckInPanel'
+@onready var item_store_panel: Panel = $'../ItemStorePanel'
+@onready var item_bag_panel: Panel = $'../ItemBagPanel'
+@onready var player_bag_panel: Panel = $'../PlayerBagPanel'
+@onready var crop_warehouse_panel: Panel = $'../CropWarehousePanel'
+@onready var crop_store_panel: Panel = $'../CropStorePanel'
+@onready var player_ranking_panel: Panel = $'../PlayerRankingPanel'
+@onready var login_panel: PanelContainer = $'../LoginPanel'
+@onready var wisdom_tree_panel: Panel = $'../../SmallPanel/WisdomTreePanel'
+
+
 
 # TCP客户端
 var client: TCPClient = TCPClient.new()
 
 # 服务器配置 - 支持多个服务器地址
-var server_configs = [
-	{"host": "127.0.0.1", "port": 4040, "name": "本地"},
-	#{"host": "192.168.1.110", "port": 4040, "name": "局域网"},
-	#{"host": "47.108.90.0", "port": 4040, "name": "成都内网穿透"}#成都内网穿透
-	#{"host": "47.108.90.0", "port": 6060, "name": "成都公网"}#成都服务器
-]
+var server_configs = GlobalVariables.server_configs
 
 var current_server_index = 0
 var auto_retry = true
@@ -55,15 +62,10 @@ func _ready():
 	send_button.pressed.connect(_on_send_button_pressed)
 	
 	# 初始设置
-	status_label.text = "❌ 未连接"
+	status_label.text = "❌未连接"
 	status_label.modulate = Color.RED
 	response_label.text = "等待响应..."
 	connection_button.text = "连接"
-	
-	# 初始化延迟测量变量
-	current_ping = -1
-	is_measuring_ping = false
-	ping_timer = 0.0
 
 # 每帧检查连接状态和超时
 func _process(delta):
@@ -131,6 +133,9 @@ func _on_connected():
 	
 	# 连接成功后立即请求在线人数
 	sendGetOnlinePlayers()
+	
+	# 请求智慧树配置
+	send_get_wisdom_tree_config()
 	
 	# 立即开始第一次ping测量
 	send_ping()
@@ -281,6 +286,59 @@ func _on_data_received(data):
 									Toast.show(message, Color.GREEN)
 								else:
 									Toast.show(message, Color.RED)
+							"buy_pet":#处理购买宠物响应
+								if success:
+									# 更新玩家数据
+									if updated_data.has("money"):
+										main_game.money = updated_data["money"]
+									if updated_data.has("宠物背包"):
+										main_game.pet_bag = updated_data["宠物背包"]
+									
+									# 更新UI
+									main_game._update_ui()
+									if main_game.pet_bag_panel:
+										main_game.pet_bag_panel.update_pet_bag_ui()
+									Toast.show(message, Color.MAGENTA)
+								else:
+									Toast.show(message, Color.RED)
+							"rename_pet":#处理重命名宠物响应
+								if success:
+									# 更新玩家数据
+									if updated_data.has("宠物背包"):
+										main_game.pet_bag = updated_data["宠物背包"]
+									
+									# 更新UI
+									if main_game.pet_bag_panel:
+										main_game.pet_bag_panel.update_pet_bag_ui()
+									
+									# 通知宠物信息面板更新
+									var pet_inform_panel = get_node_or_null("/root/main/BigPanel/SmallPanel/PetInformPanel")
+									if pet_inform_panel and pet_inform_panel.has_method("on_rename_pet_success"):
+										var pet_id = data.get("pet_id", "")
+										var new_name = data.get("new_name", "")
+										pet_inform_panel.on_rename_pet_success(pet_id, new_name)
+									
+									Toast.show(message, Color.GREEN)
+								else:
+									Toast.show(message, Color.RED)
+							"set_patrol_pet":#处理设置巡逻宠物响应
+								if success:
+									# 更新巡逻宠物数据
+									if updated_data.has("巡逻宠物"):
+										main_game.patrol_pets = updated_data["巡逻宠物"]
+									
+									# 更新巡逻宠物显示
+									if main_game.has_method("update_patrol_pets"):
+										main_game.update_patrol_pets()
+									
+									# 更新巡逻按钮状态
+									var pet_inform_panel = get_node_or_null("/root/main/BigPanel/SmallPanel/PetInformPanel")
+									if pet_inform_panel and pet_inform_panel.has_method("_refresh_patrol_button"):
+										pet_inform_panel._refresh_patrol_button()
+									
+									Toast.show(message, Color.GREEN)
+								else:
+									Toast.show(message, Color.RED)
 							"use_item":#处理使用道具响应
 								print("调试：收到道具使用响应")
 								print("  - success: ", success)
@@ -425,6 +483,9 @@ func _on_data_received(data):
 				"crop_data_response":			#作物数据更新响应
 					if main_game and main_game.has_method("_handle_crop_data_response"):
 						main_game._handle_crop_data_response(data)
+				"item_config_response":			#道具配置数据响应
+					if main_game and main_game.has_method("_handle_item_config_response"):
+						main_game._handle_item_config_response(data)
 				"visit_player_response":		#访问玩家响应
 					if main_game and main_game.has_method("_handle_visit_player_response"):
 						main_game._handle_visit_player_response(data)
@@ -466,6 +527,51 @@ func _on_data_received(data):
 				"refresh_player_info_response":	#刷新玩家信息响应
 					if main_game and main_game.has_method("_handle_account_setting_response"):
 						main_game._handle_account_setting_response(data)
+				"steal_caught":					#偷菜被发现响应
+					if main_game and main_game.has_method("_handle_steal_caught_response"):
+						main_game._handle_steal_caught_response(data)
+				"global_broadcast_message":		#全服大喇叭消息
+					if main_game and main_game.has_method("_handle_global_broadcast_message"):
+						main_game._handle_global_broadcast_message(data)
+				"global_broadcast_response":	#全服大喇叭发送响应
+					if main_game and main_game.has_method("_handle_global_broadcast_response"):
+						main_game._handle_global_broadcast_response(data)
+				"broadcast_history_response":	#全服大喇叭历史消息响应
+					if main_game and main_game.has_method("_handle_broadcast_history_response"):
+						main_game._handle_broadcast_history_response(data)
+				"use_pet_item_response":		#宠物使用道具响应
+					if main_game and main_game.has_method("_handle_use_pet_item_response"):
+						main_game._handle_use_pet_item_response(data)
+				"use_farm_item_response":		#农场道具使用响应
+					if main_game and main_game.has_method("_handle_use_farm_item_response"):
+						main_game._handle_use_farm_item_response(data)
+				"buy_scare_crow_response":		#购买稻草人响应
+					if main_game and main_game.has_method("_handle_buy_scare_crow_response"):
+						main_game._handle_buy_scare_crow_response(data)
+				"modify_scare_crow_config_response":	#修改稻草人配置响应
+					if main_game and main_game.has_method("_handle_modify_scare_crow_config_response"):
+						main_game._handle_modify_scare_crow_config_response(data)
+				"get_scare_crow_config_response":	#获取稻草人配置响应
+					if main_game and main_game.has_method("_handle_get_scare_crow_config_response"):
+						main_game._handle_get_scare_crow_config_response(data)
+				"wisdom_tree_operation_response":	#智慧树操作响应
+					var success = data.get("success", false)
+					var message = data.get("message", "")
+					var operation_type = data.get("operation_type", "")
+					var updated_data = data.get("updated_data", {})
+					
+					if wisdom_tree_panel and wisdom_tree_panel.has_method("handle_wisdom_tree_operation_response"):
+						wisdom_tree_panel.handle_wisdom_tree_operation_response(success, message, operation_type, updated_data)
+				"wisdom_tree_message_response":		#智慧树消息发送响应
+					var success = data.get("success", false)
+					var message = data.get("message", "")
+					var updated_data = data.get("updated_data", {})
+					
+					if wisdom_tree_panel and wisdom_tree_panel.has_method("handle_wisdom_tree_message_response"):
+						wisdom_tree_panel.handle_wisdom_tree_message_response(success, message, updated_data)
+				"wisdom_tree_config_response":		#智慧树配置响应
+					if main_game and main_game.has_method("_handle_wisdom_tree_config_response"):
+						main_game._handle_wisdom_tree_config_response(data)
 				_:
 					# 显示其他类型的消息
 					return
@@ -603,19 +709,20 @@ func sendRemoveCrop(lot_index):
 	return true
 
 #发送购买种子信息
-func sendBuySeed(crop_name):
+func sendBuySeed(crop_name, quantity = 1):
 	if not client.is_client_connected():
 		return false
 		
 	client.send_data({
 		"type": "buy_seed",
 		"crop_name": crop_name,
+		"quantity": quantity,
 		"timestamp": Time.get_unix_time_from_system()
 	})
 	return true
 
 #发送购买道具信息
-func sendBuyItem(item_name, item_cost):
+func sendBuyItem(item_name, item_cost, quantity = 1):
 	if not client.is_client_connected():
 		return false
 		
@@ -623,6 +730,59 @@ func sendBuyItem(item_name, item_cost):
 		"type": "buy_item",
 		"item_name": item_name,
 		"item_cost": item_cost,
+		"quantity": quantity,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送购买宠物信息
+func sendBuyPet(pet_name, pet_cost):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "buy_pet",
+		"pet_name": pet_name,
+		"pet_cost": pet_cost,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送重命名宠物信息
+func sendRenamePet(pet_id, new_name):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "rename_pet",
+		"pet_id": pet_id,
+		"new_name": new_name,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送设置巡逻宠物信息
+func sendSetPatrolPet(pet_id, is_patrolling):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "set_patrol_pet",
+		"pet_id": pet_id,
+		"is_patrolling": is_patrolling,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送设置出战宠物信息
+func sendSetBattlePet(pet_id, is_battle):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "set_battle_pet",
+		"pet_id": pet_id,
+		"is_battle": is_battle,
 		"timestamp": Time.get_unix_time_from_system()
 	})
 	return true
@@ -631,8 +791,8 @@ func sendBuyItem(item_name, item_cost):
 func sendUseItem(lot_index, item_name, use_type, target_username = ""):
 	
 	if not client.is_client_connected():
-		print("错误：客户端未连接")
 		return false
+		
 	var message = {
 		"type": "use_item",
 		"lot_index": lot_index,
@@ -710,6 +870,16 @@ func sendGetCropData():
 		
 	client.send_data({
 		"type": "request_crop_data"
+	})
+	return true
+
+#发送获取道具配置数据请求
+func sendGetItemConfig():
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "request_item_config"
 	})
 	return true
 
@@ -872,6 +1042,78 @@ func sendClaimOnlineGift(gift_name: String):
 	client.send_data({
 		"type": "claim_online_gift",
 		"gift_name": gift_name,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送购买稻草人请求
+func send_buy_scare_crow(scare_crow_type: String, price: int):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "buy_scare_crow",
+		"scare_crow_type": scare_crow_type,
+		"price": price,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送修改稻草人配置请求
+func send_modify_scare_crow_config(config_data: Dictionary, modify_cost: int):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "modify_scare_crow_config",
+		"config_data": config_data,
+		"modify_cost": modify_cost,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送获取稻草人配置请求
+func send_get_scare_crow_config():
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "get_scare_crow_config",
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送智慧树操作请求
+func send_wisdom_tree_operation(operation_type: String):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "wisdom_tree_operation",
+		"operation_type": operation_type,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送智慧树消息
+func send_wisdom_tree_message(message: String):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "wisdom_tree_message",
+		"message": message,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送获取智慧树配置请求
+func send_get_wisdom_tree_config():
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "get_wisdom_tree_config",
 		"timestamp": Time.get_unix_time_from_system()
 	})
 	return true

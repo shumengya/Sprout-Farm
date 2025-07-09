@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dsln1w1aqgf1k" path="res://assets/游戏UI/玩家默认头像.webp" id="1_sgoxp"]
 [ext_resource type="Script" uid="uid://0d2j5m6j2ema" path="res://Components/HTTPTextureRect.gd" id="2_ky0k8"]
 
-[node name="player_ranking_item" type="VBoxContainer"]
+[node name="PlayerRankingItem" type="VBoxContainer"]
 offset_right = 1152.0
 offset_bottom = 82.0
 

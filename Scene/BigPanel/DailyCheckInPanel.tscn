@@ -1,0 +1,82 @@
+[gd_scene load_steps=2 format=3 uid="uid://smypui0vyso5"]
+
+[ext_resource type="Script" uid="uid://c0jfbtkh0mj5b" path="res://Script/BigPanel/DailyCheckInPanel.gd" id="1_fj7a7"]
+
+[node name="DailyCheckInPanel" type="Panel"]
+offset_right = 600.0
+offset_bottom = 720.0
+script = ExtResource("1_fj7a7")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_top = -1.0
+offset_right = 600.0
+offset_bottom = 41.0
+theme_override_colors/font_color = Color(0.624759, 0.8051, 0.828302, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/font_size = 35
+text = "📅每日签到📅"
+horizontal_alignment = 1
+
+[node name="Label" type="Label" parent="."]
+modulate = Color(0.642982, 0.510828, 1, 1)
+layout_mode = 0
+offset_top = 419.0
+offset_right = 600.0
+offset_bottom = 468.0
+theme_override_font_sizes/font_size = 30
+text = "🎉签到奖励🎉"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(57, 57)
+layout_mode = 0
+offset_left = 543.0
+offset_top = 1.0
+offset_right = 600.0
+offset_bottom = 58.0
+theme_override_font_sizes/font_size = 35
+text = "X"
+
+[node name="DailyCheckInButton" type="Button" parent="."]
+modulate = Color(1, 1, 0.52549, 1)
+custom_minimum_size = Vector2(150, 70)
+layout_mode = 0
+offset_left = 243.0
+offset_top = 649.0
+offset_right = 393.0
+offset_bottom = 719.0
+theme_override_font_sizes/font_size = 35
+text = "签到"
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_top = 58.0
+offset_right = 600.0
+offset_bottom = 419.0
+
+[node name="DailyCheckInHistory" type="RichTextLabel" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+threaded = true
+
+[node name="DailyCheckInReward" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_top = 481.0
+offset_right = 600.0
+offset_bottom = 649.0
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+text = "+500 经验，+400 钱币，+5 普通-番茄种子，+1 传奇-火龙果种子 "
+horizontal_alignment = 1
+
+[connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="DailyCheckInButton" to="." method="_on_daily_check_in_button_pressed"]

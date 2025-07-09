@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bypjb28h4ntdr"]
+[gd_scene load_steps=12 format=3 uid="uid://bypjb28h4ntdr"]
 
 [ext_resource type="Script" uid="uid://badqjgdfhg7vt" path="res://GUI/MainMenuPanel.gd" id="1_wpehy"]
 [ext_resource type="Texture2D" uid="uid://ddcmrh50o1y0q" path="res://assets/菜单UI/背景1.webp" id="2_eghpk"]
@@ -8,6 +8,31 @@
 [ext_resource type="Script" uid="uid://kj7v1uxk2i6h" path="res://GUI/GameUpdatePanel.gd" id="4_fys16"]
 [ext_resource type="Texture2D" uid="uid://ccav04woielxa" path="res://assets/菜单UI/柚小青装饰品.webp" id="5_6jmhb"]
 [ext_resource type="PackedScene" uid="uid://dos15dmc1b6bt" path="res://GUI/GameSettingPanel.tscn" id="6_eghpk"]
+[ext_resource type="Script" uid="uid://ciwjx67wjubdy" path="res://GUI/CheckUpdatePanel.gd" id="9_6jmhb"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eghpk"]
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6jmhb"]
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
 
 [node name="MainMenuPanel" type="Control"]
 layout_mode = 3
@@ -132,12 +157,22 @@ theme_override_font_sizes/font_size = 40
 text = "退出游戏"
 
 [node name="GameSettingPanel" parent="." instance=ExtResource("6_eghpk")]
+visible = false
 layout_mode = 0
+offset_left = 138.0
+offset_top = 80.0
+offset_right = 1536.0
+offset_bottom = 800.0
 
 [node name="GameAboutPanel" type="Panel" parent="."]
+visible = false
 layout_mode = 0
-offset_right = 1398.0
-offset_bottom = 720.0
+offset_left = 138.0
+offset_top = 80.0
+offset_right = 1536.0
+offset_bottom = 800.0
+scale = Vector2(0.8, 0.8)
+theme_override_styles/panel = SubResource("StyleBoxFlat_eghpk")
 script = ExtResource("3_y0inj")
 
 [node name="Title" type="Label" parent="GameAboutPanel"]
@@ -159,23 +194,31 @@ vertical_alignment = 1
 [node name="QuitButton" type="Button" parent="GameAboutPanel"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 0
-offset_left = 1325.0
-offset_right = 1400.0
-offset_bottom = 80.0
+offset_left = 1305.0
+offset_top = 17.5
+offset_right = 1380.0
+offset_bottom = 97.5
 theme_override_font_sizes/font_size = 35
 text = "X"
 
 [node name="Scroll" type="ScrollContainer" parent="GameAboutPanel"]
 layout_mode = 0
+offset_left = 15.0
 offset_top = 80.0
-offset_right = 1400.0
-offset_bottom = 720.0
+offset_right = 3428.0
+offset_bottom = 1636.0
+scale = Vector2(0.4, 0.4)
 
 [node name="Contents" type="RichTextLabel" parent="GameAboutPanel/Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/normal_font_size = 30
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/normal_font_size = 70
+bbcode_enabled = true
 text = "玩法介绍：
 1.版本要匹配，服务器版本一直在更新，请及时下载最新版客户端，否者无法登录游戏
 2.游戏目前适配Windows和安卓平台，未来也会适配Linux桌面版，IOS应该会有吧...?
@@ -191,15 +234,20 @@ text = "玩法介绍：
 [node name="GameUpdatePanel" type="Panel" parent="."]
 visible = false
 layout_mode = 0
-offset_right = 1398.0
-offset_bottom = 720.0
+offset_left = 138.0
+offset_top = 80.0
+offset_right = 1536.0
+offset_bottom = 800.0
+scale = Vector2(0.8, 0.8)
+theme_override_styles/panel = SubResource("StyleBoxFlat_6jmhb")
 script = ExtResource("4_fys16")
 
 [node name="Scroll" type="ScrollContainer" parent="GameUpdatePanel"]
 layout_mode = 0
+offset_left = 15.0
 offset_top = 80.0
-offset_right = 1400.0
-offset_bottom = 720.0
+offset_right = 1384.0
+offset_bottom = 705.0
 
 [node name="Contents" type="RichTextLabel" parent="GameUpdatePanel/Scroll"]
 layout_mode = 2
@@ -219,19 +267,59 @@ vertical_alignment = 1
 [node name="QuitButton" type="Button" parent="GameUpdatePanel"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 0
-offset_left = 1340.0
-offset_right = 1400.0
-offset_bottom = 60.0
+offset_left = 1320.0
+offset_top = 17.5
+offset_right = 1380.0
+offset_bottom = 77.5
 theme_override_font_sizes/font_size = 35
 text = "X"
 
 [node name="RefreshButton" type="Button" parent="GameUpdatePanel"]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 0
-offset_right = 78.0
-offset_bottom = 60.0
+offset_left = 15.0
+offset_top = 17.5
+offset_right = 93.0
+offset_bottom = 77.5
 theme_override_font_sizes/font_size = 35
 text = "刷新"
+
+[node name="CheckUpdatePanel" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 260.0
+offset_top = 53.0
+offset_right = 1150.0
+offset_bottom = 596.0
+script = ExtResource("9_6jmhb")
+
+[node name="Title" type="Label" parent="CheckUpdatePanel"]
+layout_mode = 0
+offset_right = 890.0
+offset_bottom = 89.0
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_font_sizes/font_size = 40
+text = "检测到新版本！"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DownloadButton" type="Button" parent="CheckUpdatePanel"]
+layout_mode = 0
+offset_top = 480.0
+offset_right = 890.0
+offset_bottom = 543.0
+theme_override_font_sizes/font_size = 40
+text = "下载新版本"
+
+[node name="Contents" type="Label" parent="CheckUpdatePanel"]
+layout_mode = 0
+offset_top = 133.0
+offset_right = 890.0
+offset_bottom = 480.0
+theme_override_font_sizes/font_size = 30
+text = "服务端一直在更新，使用旧版本客户端无法与最新版服务端兼容，
+请及时下载最新版，点击下方链接跳转到浏览器下载最新版，
+或者加入QQ群在群文件中下载最新开发版"
 
 [connection signal="pressed" from="VBox/StartGameButton" to="." method="_on_start_game_button_pressed"]
 [connection signal="pressed" from="VBox/GameSettingButton" to="." method="_on_game_setting_button_pressed"]
@@ -240,3 +328,4 @@ text = "刷新"
 [connection signal="pressed" from="VBox/ExitButton" to="." method="_on_exit_button_pressed"]
 [connection signal="pressed" from="GameAboutPanel/QuitButton" to="GameAboutPanel" method="_on_quit_button_pressed"]
 [connection signal="pressed" from="GameUpdatePanel/QuitButton" to="GameUpdatePanel" method="_on_quit_button_pressed"]
+[connection signal="pressed" from="CheckUpdatePanel/DownloadButton" to="CheckUpdatePanel" method="_on_download_button_pressed"]

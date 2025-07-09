@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mengyafarm-server:
+    build: .
+    container_name: mengyafarm-server
+    restart: unless-stopped
+    ports:
+      - "6060:6060"
+    volumes:
+      # 持久化游戏存档
+      - ./game_saves:/app/game_saves
+      # 持久化配置文件
+      - ./config:/app/config
+      # 持久化聊天日志
+      - ./chat:/app/chat
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LANG=C.UTF-8
+      - LC_ALL=C.UTF-8
+    networks:
+      - mengyafarm-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  mengyafarm-network:
+    driver: bridge 

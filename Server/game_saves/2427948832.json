@@ -1,0 +1,7699 @@
+{
+  "experience": 831,
+  "level": 116,
+  "money": 427076,
+  "farm_name": "神经病院",
+  "user_name": "2427948832",
+  "player_name": "唐大伟",
+  "user_password": "mylc205823",
+  "last_login_time": "2025年06月29日23时35分03秒",
+  "total_login_time": "5时45分12秒",
+  "farm_lots": [
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25220,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25220,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4,
+      "浇水时间": 1749425231.633868
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25290,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25280,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25270,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25260,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25240,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25220,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25290,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25280,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25270,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25260,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25250,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25250,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25250,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25250,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25240,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25240,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25240,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25240,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25240,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25240,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25240,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25240,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25230,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25230,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25230,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25290,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25280,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25270,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25260,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25250,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25240,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25230,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25230,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25230,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25230,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25230,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25290,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25280,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25270,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25270,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25260,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25260,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25260,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25250,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25220,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25210,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    },
+    {
+      "crop_type": "杂交树2",
+      "grow_time": 25200,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 25200,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 4
+    }
+  ],
+  "player_bag": [
+    {
+      "name": "稻谷",
+      "quality": "普通",
+      "count": 51
+    },
+    {
+      "name": "黄瓜",
+      "quality": "优良",
+      "count": 15
+    },
+    {
+      "name": "土豆",
+      "quality": "优良",
+      "count": 123
+    },
+    {
+      "name": "草莓",
+      "quality": "稀有",
+      "count": 10
+    },
+    {
+      "name": "鱼腥草",
+      "quality": "稀有",
+      "count": 11
+    },
+    {
+      "name": "小麦",
+      "quality": "优良",
+      "count": 46
+    },
+    {
+      "name": "大白菜",
+      "quality": "优良",
+      "count": 15
+    },
+    {
+      "name": "花椰菜",
+      "quality": "稀有",
+      "count": 1
+    },
+    {
+      "name": "大豆",
+      "quality": "优良",
+      "count": 13
+    },
+    {
+      "name": "柿子",
+      "quality": "稀有",
+      "count": 4
+    },
+    {
+      "name": "山葵",
+      "quality": "优良",
+      "count": 29
+    },
+    {
+      "name": "蕨菜",
+      "quality": "史诗",
+      "count": 3
+    },
+    {
+      "name": "胡萝卜",
+      "quality": "普通",
+      "count": 15
+    },
+    {
+      "name": "蓝莓",
+      "quality": "稀有",
+      "count": 2
+    },
+    {
+      "name": "豌豆",
+      "quality": "优良",
+      "count": 3
+    },
+    {
+      "name": "南瓜",
+      "quality": "史诗",
+      "count": 1
+    },
+    {
+      "name": "树莓",
+      "quality": "史诗",
+      "count": 1
+    },
+    {
+      "name": "洋葱",
+      "quality": "优良",
+      "count": 1
+    },
+    {
+      "name": "杂交树2",
+      "quality": "传奇",
+      "count": 11
+    },
+    {
+      "name": "杂交树1",
+      "quality": "传奇",
+      "count": 1
+    },
+    {
+      "name": "玉米",
+      "count": 3,
+      "type": "seed",
+      "quality": "优良"
+    }
+  ],
+  "total_likes": 9,
+  "last_water_reset_date": "2025-06-04",
+  "体力值": 20,
+  "体力上次刷新时间": "2025-06-29",
+  "体力上次恢复时间": 1751208457.2466617,
+  "new_player_gift_claimed": true,
+  "new_player_gift_time": "2025-06-08 22:27:37",
+  "lucky_draw_history": [
+    {
+      "date": "2025-06-08 22:27:43",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "黄瓜",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 260,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 129,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 296,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 188,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 339
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "史诗",
+          "amount": 1433
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 236
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 494,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 233,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "山葵",
+              "amount": 3,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 321
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:32:41",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 352
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "草莓",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 102
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 119
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 60
+        },
+        {
+          "type": "seed",
+          "name": "鱼腥草",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 196
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 59
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:32:41",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 306
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "草莓",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 135
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 101
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:32:41",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 172
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 178
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 286
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 91
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 368
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 436
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 118
+        },
+        {
+          "type": "seed",
+          "name": "洋葱",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 294,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 145,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:32:48",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 151
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 297
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 140
+        },
+        {
+          "type": "seed",
+          "name": "山葵",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 109
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 130
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 165
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 322,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 150,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "甜菜",
+          "rarity": "传奇",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:33:03",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 285
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 229
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 903
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 98
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 193
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 63
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 176
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 279,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 177,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:33:06",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "草莓",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 586
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 127
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "鱼腥草",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:33:08",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 433
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 264
+        },
+        {
+          "type": "seed",
+          "name": "大白菜",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 109
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 326
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 112
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 532,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 288,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "黄瓜",
+              "amount": 2,
+              "rarity": "稀有"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:33:09",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 572
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 370
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 86
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 173
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 105
+        },
+        {
+          "type": "seed",
+          "name": "番茄",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "史诗",
+          "amount": 554
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 343,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 139,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:33:10",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 117
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 117
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 295,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 145,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "山葵",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 257
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 226
+        },
+        {
+          "type": "package",
+          "name": "传奇大礼包",
+          "rarity": "传奇",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 1858,
+              "rarity": "传奇"
+            },
+            {
+              "type": "exp",
+              "amount": 605,
+              "rarity": "传奇"
+            },
+            {
+              "type": "seed",
+              "name": "葡萄",
+              "amount": 1,
+              "rarity": "传奇"
+            },
+            {
+              "type": "seed",
+              "name": "蓝莓",
+              "amount": 2,
+              "rarity": "传奇"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:02",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 155
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 230
+        },
+        {
+          "type": "seed",
+          "name": "树莓",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 284
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 651,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 309,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "黄瓜",
+              "amount": 3,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "大白菜",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 491,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 284,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "山葵",
+              "amount": 2,
+              "rarity": "稀有"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:05",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 59
+        },
+        {
+          "type": "seed",
+          "name": "大豆",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "package",
+          "name": "史诗礼包",
+          "rarity": "史诗",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 745,
+              "rarity": "史诗"
+            },
+            {
+              "type": "exp",
+              "amount": 532,
+              "rarity": "史诗"
+            },
+            {
+              "type": "seed",
+              "name": "花椰菜",
+              "amount": 2,
+              "rarity": "史诗"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "花椰菜",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 692,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 280,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "番茄",
+              "amount": 2,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "史诗",
+          "amount": 1311
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 964
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:09",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 345,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 168,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 142
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 580
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 752
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 298,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 113,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "稻谷",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 921
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:10",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 179
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 137
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 50
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 60
+        },
+        {
+          "type": "seed",
+          "name": "大白菜",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "南瓜",
+          "rarity": "史诗",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 113
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:11",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 78
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 159
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 237
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 572
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 320
+        },
+        {
+          "type": "seed",
+          "name": "黄瓜",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 206
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:13",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 452
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 402
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 202
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "蕨菜",
+          "rarity": "史诗",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 82
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 205
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 234
+        },
+        {
+          "type": "seed",
+          "name": "大豆",
+          "rarity": "优良",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:17",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 257
+        },
+        {
+          "type": "seed",
+          "name": "向日葵",
+          "rarity": "史诗",
+          "amount": 1
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 294,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 140,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "package",
+          "name": "史诗礼包",
+          "rarity": "史诗",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 840,
+              "rarity": "史诗"
+            },
+            {
+              "type": "exp",
+              "amount": 445,
+              "rarity": "史诗"
+            },
+            {
+              "type": "seed",
+              "name": "蓝莓",
+              "amount": 1,
+              "rarity": "史诗"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 381,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 123,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "稻谷",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 186
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:20",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 738
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 90
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 92
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 100
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 285
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 146
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 839
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 566
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:24",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 139
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 334
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 358,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 129,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "稻谷",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 143
+        },
+        {
+          "type": "seed",
+          "name": "树莓",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 471
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 418
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:27",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 133
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 530
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 341,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 180,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "玉米",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 811
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 136
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 267
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:28",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 172
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 71
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 70
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 247
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 295
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 216
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "package",
+          "name": "传奇大礼包",
+          "rarity": "传奇",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 1854,
+              "rarity": "传奇"
+            },
+            {
+              "type": "exp",
+              "amount": 681,
+              "rarity": "传奇"
+            },
+            {
+              "type": "seed",
+              "name": "葡萄",
+              "amount": 1,
+              "rarity": "传奇"
+            },
+            {
+              "type": "seed",
+              "name": "花椰菜",
+              "amount": 3,
+              "rarity": "传奇"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:28",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 155
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 131
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 105
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 67
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 150
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 276,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 158,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 592
+        },
+        {
+          "type": "seed",
+          "name": "蕨菜",
+          "rarity": "史诗",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 295
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:28",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 559
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 338,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 166,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "稻谷",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "大豆",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "鱼腥草",
+          "rarity": "稀有",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:29",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "黄瓜",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 185
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "洋葱",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "package",
+          "name": "传奇大礼包",
+          "rarity": "传奇",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 1421,
+              "rarity": "传奇"
+            },
+            {
+              "type": "exp",
+              "amount": 947,
+              "rarity": "传奇"
+            },
+            {
+              "type": "seed",
+              "name": "南瓜",
+              "amount": 1,
+              "rarity": "传奇"
+            },
+            {
+              "type": "seed",
+              "name": "鱼腥草",
+              "amount": 2,
+              "rarity": "传奇"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:30",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 235
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 261,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 183,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "番茄",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 61
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "蓝莓",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 85
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:31",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 130
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 151
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 483
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 281
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "山葵",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 195
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 251
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "传奇",
+          "amount": 2103
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:31",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "大豆",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 147
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "大白菜",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "鱼腥草",
+          "rarity": "稀有",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:31",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 251
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 163
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 555
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 710
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 323
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 293
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 564
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:32",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 894
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 155
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 158
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 110
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 583
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 187
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 69
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 339
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:32",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "史诗",
+          "amount": 1027
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 741
+        },
+        {
+          "type": "seed",
+          "name": "山葵",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 614,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 309,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "黄瓜",
+              "amount": 2,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 253
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 300
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 104
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:32",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "山葵",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 397
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 472,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 261,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "番茄",
+              "amount": 2,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 189
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 88
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 240
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 306
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 429
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:33",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "山葵",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 84
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 282
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 174
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 183
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 270
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 617,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 325,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "大白菜",
+              "amount": 3,
+              "rarity": "稀有"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:33",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 142
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 148
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 339
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 390
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 133
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 339,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 176,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 239
+        },
+        {
+          "type": "seed",
+          "name": "山葵",
+          "rarity": "优良",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:33",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 139
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 63
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 84
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 332,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 115,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 357
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 400
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 394
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:33",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 536
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 297
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 185
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 121
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 161
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "人参",
+          "rarity": "传奇",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:34",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 324,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 100,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "柿子",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "史诗",
+          "amount": 728
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "史诗",
+          "amount": 1370
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 206,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 171,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "稻谷",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "史诗",
+          "amount": 1027
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 67
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 65
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 376
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 61
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:34",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 216
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 152
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 262
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 236
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 237
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 186
+        },
+        {
+          "type": "seed",
+          "name": "洋葱",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 900
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:34",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 249
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 363
+        },
+        {
+          "type": "seed",
+          "name": "香草",
+          "rarity": "传奇",
+          "amount": 1
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 282
+        },
+        {
+          "type": "seed",
+          "name": "洋葱",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 99
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 116
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:34",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 384,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 100,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 279
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 290
+        },
+        {
+          "type": "seed",
+          "name": "大白菜",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 607
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 262
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 866
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:34",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "番茄",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 131
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 206
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 109
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 275
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "葡萄",
+          "rarity": "史诗",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:35",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 123
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 701
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 200
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 91
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 358,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 116,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "山葵",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 290
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:35",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 633
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 432
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 106
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 251
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 117
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:35",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 208
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 339,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 183,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 310,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 143,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 560,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 228,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "山葵",
+              "amount": 2,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 303
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 101
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:35",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 237
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 397
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 144
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 136
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 79
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 527
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 908
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:36",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "柿子",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "大白菜",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 80
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "山葵",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "package",
+          "name": "史诗礼包",
+          "rarity": "史诗",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 757,
+              "rarity": "史诗"
+            },
+            {
+              "type": "exp",
+              "amount": 390,
+              "rarity": "史诗"
+            },
+            {
+              "type": "seed",
+              "name": "树莓",
+              "amount": 1,
+              "rarity": "史诗"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 201
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:36",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 172
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 300
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 127
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "package",
+          "name": "史诗礼包",
+          "rarity": "史诗",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 770,
+              "rarity": "史诗"
+            },
+            {
+              "type": "exp",
+              "amount": 428,
+              "rarity": "史诗"
+            },
+            {
+              "type": "seed",
+              "name": "蓝莓",
+              "amount": 2,
+              "rarity": "史诗"
+            }
+          ]
+        },
+        {
+          "type": "package",
+          "name": "史诗礼包",
+          "rarity": "史诗",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 1147,
+              "rarity": "史诗"
+            },
+            {
+              "type": "exp",
+              "amount": 597,
+              "rarity": "史诗"
+            },
+            {
+              "type": "seed",
+              "name": "蓝莓",
+              "amount": 2,
+              "rarity": "史诗"
+            }
+          ]
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 664,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 230,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "山葵",
+              "amount": 3,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "树莓",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 197
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:36",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 986
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 100
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "黄瓜",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 233
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 259
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 298,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 144,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "稻谷",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 197
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 93
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:36",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 94
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 196
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 566
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 129
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 107
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "传奇",
+          "amount": 1010
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:37",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 80
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 179
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 182
+        },
+        {
+          "type": "seed",
+          "name": "洋葱",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 153
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 171
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 927
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 91
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:37",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 538
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 158
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "玉米",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "番茄",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 135
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "史诗",
+          "amount": 750
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:37",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 277
+        },
+        {
+          "type": "seed",
+          "name": "蓝莓",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 223,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 140,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 369,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 164,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 135
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 223,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 164,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 394,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 186,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 319
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 4
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:37",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 261
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 432
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 215
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 254
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 334
+        },
+        {
+          "type": "seed",
+          "name": "大豆",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 551
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:38",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 656
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 139
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 171
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 656
+        },
+        {
+          "type": "seed",
+          "name": "洋葱",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 207
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 210
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:38",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 154
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "柿子",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 246
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 135
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 343,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 115,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 169
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 128
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:38",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "玉米",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 217,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 198,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 133
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 130
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "橘子树",
+          "rarity": "传奇",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:38",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 111
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 200
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 121
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 182
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 217
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 296
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 108
+        },
+        {
+          "type": "seed",
+          "name": "柿子",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 331
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:38",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 250
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 190
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 298
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 234
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 287,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 148,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 232
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 228,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 171,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "大豆",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "package",
+          "name": "传奇大礼包",
+          "rarity": "传奇",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 1087,
+              "rarity": "传奇"
+            },
+            {
+              "type": "exp",
+              "amount": 629,
+              "rarity": "传奇"
+            },
+            {
+              "type": "seed",
+              "name": "芦笋",
+              "amount": 1,
+              "rarity": "传奇"
+            },
+            {
+              "type": "seed",
+              "name": "草莓",
+              "amount": 3,
+              "rarity": "传奇"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:39",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 659,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 282,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "洋葱",
+              "amount": 2,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 143
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 237,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 184,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 472
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 620
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 262,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 177,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 91
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:39",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 468
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 94
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 176
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 174
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "史诗",
+          "amount": 616
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 143
+        },
+        {
+          "type": "seed",
+          "name": "番茄",
+          "rarity": "优良",
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:39",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 357,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 191,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 274
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 607
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 277
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 578
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 194
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 871
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:40",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 330,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 166,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 867
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 176
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 128
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 142
+        },
+        {
+          "type": "seed",
+          "name": "玉米",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 293
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:40",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 172
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 86
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 146
+        },
+        {
+          "type": "seed",
+          "name": "玉米",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 82
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "富贵竹",
+          "rarity": "传奇",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:40",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 176
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 247
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 84
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 104
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 153
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 139
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "传奇",
+          "amount": 993
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:40",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 135
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 428
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 292
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 491
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 459
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 253
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 129
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:41",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "史诗",
+          "amount": 1002
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "蓝莓",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 347,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 113,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 102
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 514
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 91
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 86
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:41",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 525
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "树莓",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 304
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 388,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 174,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "蓝莓",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 230,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 106,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:41",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 85
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 199
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 183
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 268
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 511
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 632
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 454
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:41",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 152
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 403
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 229,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 144,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "土豆",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 924
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 144
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 299
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:42",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 94
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 209,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 181,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 143
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 340
+        },
+        {
+          "type": "seed",
+          "name": "草莓",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "玉米",
+          "rarity": "优良",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 86
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:42",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 133
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "史诗",
+          "amount": 593
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 353
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "茄子",
+          "rarity": "史诗",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "date": "2025-06-08 22:34:42",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 65
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 55
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 101
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 469
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 567,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 202,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "洋葱",
+              "amount": 2,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "empty",
+          "name": "谢谢惠顾",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 74
+        }
+      ]
+    },
+    {
+      "date": "2025-06-09 06:31:11",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 821
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 286
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 225
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 67
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "花椰菜",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 578
+        }
+      ]
+    },
+    {
+      "date": "2025-06-09 13:13:34",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 290
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 157
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 134
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 313
+        },
+        {
+          "type": "seed",
+          "name": "柿子",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "蕨菜",
+          "rarity": "史诗",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 299
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 359,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 128,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 223
+        }
+      ]
+    },
+    {
+      "date": "2025-06-10 09:12:27",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 61
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 273
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 169
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 294
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 673,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 291,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "大豆",
+              "amount": 3,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 264
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 70
+        },
+        {
+          "type": "seed",
+          "name": "胡萝卜",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "柿子",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "蓝莓",
+          "rarity": "稀有",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "date": "2025-06-10 11:57:31",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 62
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 129
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 92
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 279
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 361
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 284
+        },
+        {
+          "type": "package",
+          "name": "稀有礼包",
+          "rarity": "稀有",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 646,
+              "rarity": "稀有"
+            },
+            {
+              "type": "exp",
+              "amount": 345,
+              "rarity": "稀有"
+            },
+            {
+              "type": "seed",
+              "name": "大豆",
+              "amount": 2,
+              "rarity": "稀有"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 171
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "date": "2025-06-10 11:57:33",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 109
+        },
+        {
+          "type": "seed",
+          "name": "大白菜",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 129
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "豌豆",
+          "rarity": "优良",
+          "amount": 1
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 226
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 346,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 118,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "胡萝卜",
+              "amount": 3,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 881
+        }
+      ]
+    },
+    {
+      "date": "2025-06-10 11:57:34",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "南瓜",
+          "rarity": "史诗",
+          "amount": 1
+        },
+        {
+          "type": "seed",
+          "name": "鱼腥草",
+          "rarity": "稀有",
+          "amount": 2
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "稀有",
+          "amount": 723
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 81
+        },
+        {
+          "type": "empty",
+          "name": "下次再来",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 257
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 69
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 107
+        },
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        }
+      ]
+    },
+    {
+      "date": "2025-06-10 11:57:36",
+      "type": "ten",
+      "cost": 6400,
+      "rewards": [
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 299
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 121
+        },
+        {
+          "type": "package",
+          "name": "成长套餐",
+          "rarity": "优良",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 363,
+              "rarity": "优良"
+            },
+            {
+              "type": "exp",
+              "amount": 119,
+              "rarity": "优良"
+            },
+            {
+              "type": "seed",
+              "name": "小麦",
+              "amount": 2,
+              "rarity": "优良"
+            }
+          ]
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 119
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "普通",
+          "amount": 79
+        },
+        {
+          "type": "package",
+          "name": "史诗礼包",
+          "rarity": "史诗",
+          "amount": 1,
+          "contents": [
+            {
+              "type": "coins",
+              "amount": 943,
+              "rarity": "史诗"
+            },
+            {
+              "type": "exp",
+              "amount": 385,
+              "rarity": "史诗"
+            },
+            {
+              "type": "seed",
+              "name": "树莓",
+              "amount": 1,
+              "rarity": "史诗"
+            }
+          ]
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 359
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "小麦",
+          "rarity": "普通",
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "date": "2025-06-10 11:57:39",
+      "type": "five",
+      "cost": 3600,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 3
+        },
+        {
+          "type": "empty",
+          "name": "继续努力",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "稻谷",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 479
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "普通",
+          "amount": 287
+        }
+      ]
+    },
+    {
+      "date": "2025-06-10 11:57:41",
+      "type": "five",
+      "cost": 3600,
+      "rewards": [
+        {
+          "type": "empty",
+          "name": "再试一次",
+          "rarity": "空奖",
+          "amount": 0
+        },
+        {
+          "type": "seed",
+          "name": "柿子",
+          "rarity": "稀有",
+          "amount": 1
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "优良",
+          "amount": 552
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 467
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "优良",
+          "amount": 253
+        }
+      ]
+    },
+    {
+      "date": "2025-06-10 11:57:45",
+      "type": "five",
+      "cost": 3600,
+      "rewards": [
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        },
+        {
+          "type": "exp",
+          "name": "经验",
+          "rarity": "稀有",
+          "amount": 329
+        },
+        {
+          "type": "coins",
+          "name": "金币",
+          "rarity": "史诗",
+          "amount": 1444
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 2
+        },
+        {
+          "type": "seed",
+          "name": "土豆",
+          "rarity": "普通",
+          "amount": 4
+        }
+      ]
+    }
+  ],
+  "daily_check_in": {
+    "2025-06-08": {
+      "rewards": {
+        "coins": 374,
+        "exp": 85,
+        "seeds": [
+          {
+            "name": "稻谷",
+            "quantity": 3,
+            "quality": "普通"
+          },
+          {
+            "name": "胡萝卜",
+            "quantity": 3,
+            "quality": "普通"
+          }
+        ]
+      },
+      "consecutive_days": 0,
+      "timestamp": 1749392892.9526005
+    },
+    "2025-06-09": {
+      "rewards": {
+        "coins": 210,
+        "exp": 59,
+        "seeds": [
+          {
+            "name": "稻谷",
+            "quantity": 2,
+            "quality": "普通"
+          }
+        ]
+      },
+      "consecutive_days": 1,
+      "timestamp": 1749398586.9145467
+    },
+    "2025-06-10": {
+      "rewards": {
+        "coins": 410,
+        "exp": 93,
+        "seeds": [
+          {
+            "name": "稻谷",
+            "quantity": 3,
+            "quality": "普通"
+          }
+        ]
+      },
+      "consecutive_days": 2,
+      "timestamp": 1749517875.6898322
+    }
+  },
+  "daily_likes": {
+    "2025-06-08": [
+      "3205788256"
+    ],
+    "2025-06-09": [
+      "3205788256"
+    ]
+  },
+  "注册时间": "2025年05月21日15时00分00秒",
+  "online_gift": {
+    "2025-06-29": {
+      "start_time": 1751208457.2467475,
+      "claimed_gifts": {
+        "1分钟": 1751208925.8545015,
+        "3分钟": 1751208929.2945051
+      },
+      "total_online_time": 629.7599904537201,
+      "last_login_time": 1751208924.7341027
+    }
+  },
+  "作物仓库": [
+    {
+      "name": "山葵",
+      "quality": "优良",
+      "count": 105
+    }
+  ],
+  "道具背包": [
+    {
+      "name": "铲子",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+[gd_scene load_steps=13 format=3 uid="uid://cqfa6ng6x2s8q"]
+
+[ext_resource type="PackedScene" uid="uid://h66an0p6pl53" path="res://Scene/Pet/PetBase.tscn" id="1_ff7pm"]
+[ext_resource type="Texture2D" uid="uid://cvpsjlje7q3to" path="res://assets/宠物图片/红色史莱姆.png" id="2_ff7pm"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s7ip1"]
+atlas = ExtResource("2_ff7pm")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ff7pm"]
+atlas = ExtResource("2_ff7pm")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_53j2r"]
+atlas = ExtResource("2_ff7pm")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ij01"]
+atlas = ExtResource("2_ff7pm")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_20513"]
+atlas = ExtResource("2_ff7pm")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3f8fr"]
+atlas = ExtResource("2_ff7pm")
+region = Rect2(72, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kbexh"]
+atlas = ExtResource("2_ff7pm")
+region = Rect2(48, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_njkpw"]
+atlas = ExtResource("2_ff7pm")
+region = Rect2(24, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xbspe"]
+atlas = ExtResource("2_ff7pm")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yhcbw"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s7ip1")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ff7pm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_53j2r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ij01")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_20513")
+}],
+"loop": false,
+"name": &"wake",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3f8fr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kbexh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_njkpw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xbspe")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}]
+
+[node name="RedSlime" instance=ExtResource("1_ff7pm")]
+position = Vector2(0, -1)
+
+[node name="PetImage" parent="." index="0"]
+sprite_frames = SubResource("SpriteFrames_yhcbw")
+frame_progress = 0.528863
+
+[node name="PetToolImage" parent="PetImage" index="0"]
+visible = false
+position = Vector2(-11.25, 3.25)

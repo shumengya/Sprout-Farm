@@ -1,0 +1,152 @@
+[gd_scene load_steps=3 format=3 uid="uid://dbfqu87627yg6"]
+
+[ext_resource type="Script" uid="uid://fk4q3x6uqydd" path="res://Script/BigPanel/PlayerRankingPanel.gd" id="1_efhd6"]
+[ext_resource type="PackedScene" uid="uid://crd28qnymob7" path="res://GUI/PlayerRankingItem.tscn" id="1_xwp76"]
+
+[node name="PlayerRankingPanel" type="Panel"]
+offset_left = 2.0
+offset_right = 1402.0
+offset_bottom = 720.0
+script = ExtResource("1_efhd6")
+
+[node name="RegisterPlayerNum" type="Label" parent="."]
+self_modulate = Color(1, 0.701961, 1, 1)
+layout_mode = 0
+offset_left = 864.0
+offset_right = 1014.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 30
+text = "注册人数："
+
+[node name="Title" type="RichTextLabel" parent="."]
+layout_mode = 2
+offset_left = 2.0
+offset_right = 1395.0
+offset_bottom = 56.0
+size_flags_vertical = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/normal_font_size = 40
+bbcode_enabled = true
+text = "玩家排行榜"
+horizontal_alignment = 1
+
+[node name="SearchLineEdit" type="LineEdit" parent="."]
+layout_mode = 0
+offset_left = 143.0
+offset_top = 3.0
+offset_right = 426.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "输入要搜索的人"
+
+[node name="RefreshButton" type="Button" parent="."]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 0
+offset_top = 3.0
+offset_right = 78.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "刷新"
+
+[node name="SearchButton" type="Button" parent="."]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 0
+offset_left = 425.0
+offset_top = 3.0
+offset_right = 503.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "搜索"
+
+[node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 0
+offset_left = 1338.0
+offset_top = 3.0
+offset_right = 1395.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 35
+text = "X"
+
+[node name="FiterAndSortHBox" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_top = 63.0
+offset_right = 1398.0
+offset_bottom = 120.0
+
+[node name="SortLabel" type="Label" parent="FiterAndSortHBox"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 30
+text = "排序："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoneySortBtn" type="Button" parent="FiterAndSortHBox"]
+self_modulate = Color(1, 1, 0.321569, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "钱币"
+
+[node name="SeedSortBtn" type="Button" parent="FiterAndSortHBox"]
+self_modulate = Color(0.329412, 1, 0.345098, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "种子数"
+
+[node name="LevelSortBtn" type="Button" parent="FiterAndSortHBox"]
+self_modulate = Color(0, 1, 1, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "等级"
+
+[node name="OnlineTimeSortBtn" type="Button" parent="FiterAndSortHBox"]
+self_modulate = Color(0.784314, 0.733333, 0.521569, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "在线时长"
+
+[node name="LoginTimeSortBtn" type="Button" parent="FiterAndSortHBox"]
+self_modulate = Color(0.811765, 1, 0.811765, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "登录时间"
+
+[node name="LikeNumSortBtn" type="Button" parent="FiterAndSortHBox"]
+self_modulate = Color(1, 0.513726, 1, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点赞数"
+
+[node name="IsOnlineSortBtn" type="Button" parent="FiterAndSortHBox"]
+self_modulate = Color(0.691357, 0.691357, 0.691357, 1)
+custom_minimum_size = Vector2(158, 57)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "在线情况"
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 2
+offset_top = 121.0
+offset_right = 1400.0
+offset_bottom = 720.0
+size_flags_vertical = 3
+
+[node name="PlayerList" type="VBoxContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PlayerRankingItem" parent="Scroll/PlayerList" instance=ExtResource("1_xwp76")]
+layout_mode = 2

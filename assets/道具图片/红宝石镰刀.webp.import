@@ -2,7 +2,7 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cfjp42k4iv006"
+uid="uid://c0s3v0opke0as"
 path="res://.godot/imported/红宝石镰刀.webp-dd5dd53017cec46004b27eb970ed7011.ctex"
 metadata={
 "vram_texture": false
@@ -15,7 +15,7 @@ dest_files=["res://.godot/imported/红宝石镰刀.webp-dd5dd53017cec46004b27eb9
 
 [params]
 
-compress/mode=1
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.01
 compress/hdr_compression=1

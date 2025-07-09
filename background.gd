@@ -11,19 +11,7 @@ var backgrounds :Array = [
 	"res://assets/背景图片/背景7.webp",
 	"res://assets/背景图片/背景8.webp",
 	"res://assets/背景图片/背景9.webp",
-	"res://assets/背景图片/背景10.webp",
-	"res://assets/背景图片/背景11.webp",
-	"res://assets/背景图片/背景12.webp",
-	"res://assets/背景图片/背景13.webp",
-	"res://assets/背景图片/背景14.webp",
-	"res://assets/背景图片/背景15.webp",
-	"res://assets/背景图片/背景16.webp",
-	"res://assets/背景图片/背景17.webp",
-	"res://assets/背景图片/背景18.webp",
-	"res://assets/背景图片/背景19.webp",
-	"res://assets/背景图片/背景20.webp",
-	"res://assets/背景图片/背景21.webp",
-	"res://assets/背景图片/背景22.webp"
+	"res://assets/背景图片/背景10.webp"
 ]
 
 # 当前显示的背景索引

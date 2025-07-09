@@ -1,0 +1,167 @@
+[gd_scene load_steps=4 format=3 uid="uid://hesp70n3ondo"]
+
+[ext_resource type="Script" uid="uid://mtfp0ct42nrx" path="res://Script/BigPanel/CropStorePanel.gd" id="1_ehof8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8kysg"]
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 5
+shadow_size = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uc6q1"]
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 20
+
+[node name="CropStorePanel" type="Panel"]
+offset_left = 79.0
+offset_top = 70.0
+offset_right = 1598.0
+offset_bottom = 790.0
+scale = Vector2(0.8, 0.8)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_8kysg")
+script = ExtResource("1_ehof8")
+
+[node name="TMBackGround" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = -101.0
+offset_top = -87.0
+offset_right = 1655.0
+offset_bottom = 811.0
+color = Color(1, 1, 1, 0)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+offset_right = 1519.0
+offset_bottom = 69.0
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.964706, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 50
+text = "种子商店"
+horizontal_alignment = 1
+
+[node name="SortContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_top = 78.0
+offset_right = 1519.0
+offset_bottom = 141.0
+alignment = 1
+
+[node name="FilterLabel" type="Label" parent="SortContainer"]
+self_modulate = Color(0.607843, 0.647059, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "筛选："
+
+[node name="Sort_All" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "全部"
+
+[node name="Sort_Common" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "普通"
+
+[node name="Sort_Superior" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "优良"
+
+[node name="Sort_Rare" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "稀有"
+
+[node name="Sort_Epic" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "史诗"
+
+[node name="Sort_Legendary" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "传奇"
+
+[node name="SortLabel" type="Label" parent="SortContainer"]
+self_modulate = Color(0.607843, 0.647059, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "排序："
+
+[node name="Sort_Price" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "按价格"
+
+[node name="Sort_GrowTime" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "按生长时间"
+
+[node name="Sort_Profit" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "按收益"
+
+[node name="Sort_Level" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "按等级"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+offset_left = 13.0
+offset_top = 144.0
+offset_right = 3727.0
+offset_bottom = 1551.0
+scale = Vector2(0.4, 0.4)
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_uc6q1")
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+scroll_deadzone = -10
+
+[node name="Crop_Grid" type="GridContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+columns = 8
+
+[node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 1438.75
+offset_top = 11.25
+offset_right = 1498.75
+offset_bottom = 74.25
+theme_override_font_sizes/font_size = 40
+text = "X"
+
+[node name="RefreshButton" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 13.0
+offset_top = 11.0
+offset_right = 101.0
+offset_bottom = 74.0
+theme_override_font_sizes/font_size = 40
+text = "刷新"
+
+[connection signal="pressed" from="RefreshButton" to="." method="_on_refresh_button_pressed"]

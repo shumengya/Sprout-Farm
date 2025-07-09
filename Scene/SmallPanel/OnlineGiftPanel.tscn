@@ -1,0 +1,149 @@
+[gd_scene load_steps=2 format=3 uid="uid://dpiy0aim20n2h"]
+
+[ext_resource type="Script" uid="uid://ccaqrb6sdwbux" path="res://Script/SmallPanel/OnlineGiftPanel.gd" id="1_i0ga4"]
+
+[node name="OnlineGiftPanel" type="Panel"]
+visible = false
+offset_left = 449.0
+offset_top = 77.0
+offset_right = 970.0
+offset_bottom = 327.0
+script = ExtResource("1_i0ga4")
+
+[node name="Quit_Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 465.0
+offset_right = 515.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Title" type="Label" parent="."]
+modulate = Color(0.996846, 0.629335, 1, 1)
+layout_mode = 2
+offset_right = 516.0
+offset_bottom = 42.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/font_size = 30
+text = "在线礼包"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Grid" type="GridContainer" parent="."]
+layout_mode = 2
+offset_top = 46.0
+offset_right = 500.0
+offset_bottom = 210.0
+columns = 5
+
+[node name="OneMinute" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "在线
+1分钟"
+icon_alignment = 1
+expand_icon = true
+
+[node name="ThreeMinutes" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.995313, 0.515623, 0.748044, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "在线
+3分钟"
+icon_alignment = 1
+expand_icon = true
+
+[node name="FiveMinutes" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.635294, 0.827451, 0.537255, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "在线
+5分钟"
+icon_alignment = 1
+expand_icon = true
+
+[node name="TenMinutes" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.760784, 0.533333, 0.160784, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "在线
+10分钟"
+icon_alignment = 1
+expand_icon = true
+
+[node name="ThirtyMinutes" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.870588, 0.870588, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "在线
+30分钟"
+icon_alignment = 1
+expand_icon = true
+
+[node name="OneHour" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.188235, 0.839216, 0.243137, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "在线
+1小时"
+icon_alignment = 1
+expand_icon = true
+
+[node name="ThreeHours" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0.87451, 0.87451, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "在线
+3小时"
+icon_alignment = 1
+expand_icon = true
+
+[node name="FiveHours" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.509804, 0.301961, 0.85098, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "在线
+5小时"
+icon_alignment = 1
+expand_icon = true
+
+[connection signal="pressed" from="Quit_Button" to="." method="_on_quit_button_pressed"]

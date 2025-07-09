@@ -15,7 +15,7 @@ extends Camera2D
 @export var bounds_min: Vector2 = Vector2(-1000, -1000)
 @export var bounds_max: Vector2 = Vector2(1000, 1000)
 
-var current_zoom_level: float = 1.0
+var current_zoom_level: float = 2
 
 # 触摸相关变量
 var is_dragging: bool = false
@@ -30,6 +30,9 @@ func _ready():
 
 
 func _process(delta):
+	if GlobalVariables.isZoomDisabled == true:
+		return
+	
 	# 处理相机移动
 	var input_dir = Vector2.ZERO
 	
@@ -63,6 +66,10 @@ func _process(delta):
 
 # 处理输入事件（包括触摸和鼠标）
 func _input(event):
+	if GlobalVariables.isZoomDisabled == true:
+		return
+	pass
+	
 	# 鼠标滚轮缩放
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:

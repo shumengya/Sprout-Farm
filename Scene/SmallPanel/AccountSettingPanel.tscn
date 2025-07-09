@@ -1,0 +1,157 @@
+[gd_scene load_steps=5 format=3 uid="uid://d3i0l6ysrde6o"]
+
+[ext_resource type="Script" uid="uid://dinrduqwsf5k5" path="res://Script/SmallPanel/AccountSettingPanel.gd" id="1_xfiot"]
+[ext_resource type="Texture2D" uid="uid://dsln1w1aqgf1k" path="res://assets/游戏UI/玩家默认头像.webp" id="2_a2cah"]
+[ext_resource type="Script" uid="uid://0d2j5m6j2ema" path="res://Components/HTTPTextureRect.gd" id="3_wibl7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y1hsh"]
+border_color = Color(2.98411e-06, 0.95982, 0.386903, 1)
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 20
+shadow_size = 20
+shadow_offset = Vector2(10, 10)
+anti_aliasing = false
+anti_aliasing_size = 5.0
+
+[node name="AccountSettingPanel" type="Panel"]
+visible = false
+offset_left = 243.0
+offset_top = 42.0
+offset_right = 1154.0
+offset_bottom = 689.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_y1hsh")
+script = ExtResource("1_xfiot")
+
+[node name="Title" type="RichTextLabel" parent="."]
+modulate = Color(1, 0.745098, 0.54902, 1)
+layout_mode = 0
+offset_left = 2.0
+offset_right = 911.0
+offset_bottom = 56.0
+size_flags_vertical = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/normal_font_size = 40
+bbcode_enabled = true
+text = "玩家信息设置"
+horizontal_alignment = 1
+threaded = true
+
+[node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 0
+offset_left = 854.0
+offset_right = 911.0
+offset_bottom = 57.0
+theme_override_font_sizes/font_size = 35
+text = "X"
+
+[node name="RefreshButton" type="Button" parent="."]
+custom_minimum_size = Vector2(55, 55)
+layout_mode = 0
+offset_left = 2.0
+offset_right = 80.0
+offset_bottom = 57.0
+theme_override_font_sizes/font_size = 35
+text = "刷新"
+
+[node name="VBox1" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_top = 58.0
+offset_right = 911.0
+offset_bottom = 647.0
+
+[node name="HBox1" type="HBoxContainer" parent="VBox1"]
+layout_mode = 2
+alignment = 1
+
+[node name="HTTPTextureRect" type="TextureRect" parent="VBox1/HBox1"]
+layout_mode = 2
+texture = ExtResource("2_a2cah")
+script = ExtResource("3_wibl7")
+metadata/_custom_type_script = "uid://0d2j5m6j2ema"
+
+[node name="Grid" type="GridContainer" parent="VBox1"]
+layout_mode = 2
+columns = 2
+
+[node name="User_Name" type="Label" parent="VBox1/Grid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "账户："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="User_Name_Input" type="Label" parent="VBox1/Grid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "74074091740"
+vertical_alignment = 1
+
+[node name="User_Password" type="Label" parent="VBox1/Grid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "密码："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="User_Password_Input" type="LineEdit" parent="VBox1/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入密码"
+
+[node name="Player_Name" type="Label" parent="VBox1/Grid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "玩家昵称："
+
+[node name="Player_Name_Input" type="LineEdit" parent="VBox1/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入玩家昵称"
+
+[node name="Farm_Name" type="Label" parent="VBox1/Grid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "农场名称："
+
+[node name="Farm_Name_Input" type="LineEdit" parent="VBox1/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入农场名称"
+
+[node name="Personal_Profile" type="Label" parent="VBox1/Grid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "个人简介："
+
+[node name="Personal_Profile_Input" type="LineEdit" parent="VBox1/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入个人简介"
+
+[node name="HBox2" type="HBoxContainer" parent="VBox1"]
+layout_mode = 2
+alignment = 1
+
+[node name="Remove_Account_Btn" type="Button" parent="VBox1/HBox2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "删除账号"
+
+[node name="Confirm_Btn" type="Button" parent="VBox1/HBox2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "确认修改"

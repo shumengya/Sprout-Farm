@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://d1lu2yg4xl382"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uhubb"]
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+
+[node name="LoadProgressPanel" type="Panel"]
+visible = false
+offset_right = 1402.0
+offset_bottom = 719.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_uhubb")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_right = 1402.0
+offset_bottom = 550.0
+theme_override_colors/font_color = Color(0.966397, 0.970739, 0.632937, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/font_size = 40
+text = "正在加载资源中，请稍后..."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LoadProgressBar" type="ProgressBar" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 430.0
+offset_right = 1396.0
+offset_bottom = 489.0
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 7
+theme_override_font_sizes/font_size = 40

@@ -1,0 +1,100 @@
+[gd_scene load_steps=2 format=3 uid="uid://4rwitowdt4h"]
+
+[ext_resource type="Script" uid="uid://rlk8e51pibtm" path="res://Script/SmallPanel/OneClickPlantPanel.gd" id="1_cvoer"]
+
+[node name="OneClickPlantPanel" type="Panel"]
+visible = false
+offset_left = 450.0
+offset_top = 77.0
+offset_right = 966.0
+offset_bottom = 327.0
+script = ExtResource("1_cvoer")
+
+[node name="Quit_Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 465.0
+offset_right = 515.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="Title" type="Label" parent="."]
+self_modulate = Color(0.431373, 0.498039, 1, 1)
+layout_mode = 2
+offset_right = 516.0
+offset_bottom = 42.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/font_size = 30
+text = "一键种植面板"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Grid" type="GridContainer" parent="."]
+layout_mode = 2
+offset_top = 46.0
+offset_right = 500.0
+offset_bottom = 210.0
+columns = 5
+
+[node name="FullScreenPlantBtn" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "全屏种植"
+icon_alignment = 1
+expand_icon = true
+
+[node name="OneRowPlantBtn" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.972549, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "行种植"
+icon_alignment = 1
+expand_icon = true
+
+[node name="OneColumnPlantBtn" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "列种植"
+icon_alignment = 1
+expand_icon = true
+
+[node name="NineSquarePlantBtn" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "九宫格
+种植"
+icon_alignment = 1
+expand_icon = true
+
+[node name="CrossPlantBtn" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.54902, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "十字法
+种植"
+icon_alignment = 1
+expand_icon = true
+
+[node name="RandomPlantBtn" type="Button" parent="Grid"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.49586, 0.63552, 1)
+theme_override_font_sizes/font_size = 20
+text = "随机种植"
+icon_alignment = 1
+expand_icon = true
+
+[connection signal="pressed" from="Quit_Button" to="." method="_on_quit_button_pressed"]

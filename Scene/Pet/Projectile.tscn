@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://bvqkm1n2p6xty"]
+
+[ext_resource type="Script" uid="uid://cbhhx6st14pse" path="res://Script/Pet/Projectile.gd" id="1_vqkm1"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 5.0
+
+[node name="Projectile" type="Area2D"]
+script = ExtResource("1_vqkm1")
+
+[node name="ProjectileSprite" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 0, 1)
+scale = Vector2(0.5, 0.5)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="Trail" type="Line2D" parent="."]
+width = 2.0
+default_color = Color(1, 1, 0, 0.5)

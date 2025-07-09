@@ -1,0 +1,90 @@
+[gd_scene load_steps=3 format=3 uid="uid://j4ft87o7jk14"]
+
+[ext_resource type="Script" uid="uid://bruqwi63myl1m" path="res://Script/BigPanel/ItemStorePanel.gd" id="1_vx1qn"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n03md"]
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
+
+[node name="ItemStorePanel" type="Panel"]
+visible = false
+offset_left = 58.0
+offset_top = 79.0
+offset_right = 1598.0
+offset_bottom = 799.0
+scale = Vector2(0.8, 0.8)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
+script = ExtResource("1_vx1qn")
+
+[node name="TMBackGround" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = -184.0
+offset_top = -100.0
+offset_right = 1571.0
+offset_bottom = 804.0
+color = Color(1, 1, 1, 0)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+offset_left = 15.0
+offset_top = 88.0
+offset_right = 3799.0
+offset_bottom = 1626.0
+scale = Vector2(0.4, 0.4)
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Store_Grid" type="GridContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+columns = 8
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+offset_right = 1540.0
+offset_bottom = 75.0
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 0.807843, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 40
+text = "道具商店"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 1457.5
+offset_top = 13.75
+offset_right = 1517.5
+offset_bottom = 76.75
+theme_override_font_sizes/font_size = 40
+text = "X"
+
+[node name="RefreshButton" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 12.5
+offset_top = 12.5
+offset_right = 100.5
+offset_bottom = 75.5
+theme_override_font_sizes/font_size = 40
+text = "刷新"
+
+[connection signal="pressed" from="RefreshButton" to="." method="_on_refresh_button_pressed"]

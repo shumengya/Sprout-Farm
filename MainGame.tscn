@@ -1,59 +1,54 @@
-[gd_scene load_steps=42 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=57 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
 [ext_resource type="PackedScene" uid="uid://bkivlkirrx6u8" path="res://CopyItems/crop_item.tscn" id="3_isiom"]
-[ext_resource type="Script" uid="uid://mtfp0ct42nrx" path="res://GUI/CropStorePanel.gd" id="3_qtrx8"]
 [ext_resource type="Texture2D" uid="uid://ftv231igtdoq" path="res://assets/游戏UI/等级.webp" id="3_y1hsh"]
-[ext_resource type="Script" uid="uid://cgr332wsx63a8" path="res://GUI/PlayerBagPanel.gd" id="4_led80"]
 [ext_resource type="Texture2D" uid="uid://bqib5y8uwg6hx" path="res://assets/游戏UI/钱币.webp" id="4_ql8k3"]
-[ext_resource type="Script" uid="uid://fk4q3x6uqydd" path="res://GUI/PlayerRankingPanel.gd" id="4_yphxy"]
 [ext_resource type="Texture2D" uid="uid://waqbwo2r33j3" path="res://assets/游戏UI/小提示.webp" id="5_5b81d"]
 [ext_resource type="Texture2D" uid="uid://bnhyqsw8yjekh" path="res://assets/游戏UI/体力值图标.webp" id="5_n03md"]
-[ext_resource type="PackedScene" uid="uid://crd28qnymob7" path="res://GUI/PlayerRankingItem.tscn" id="5_yphxy"]
 [ext_resource type="Texture2D" uid="uid://cj0qac0wmm0q8" path="res://assets/游戏UI/点赞图标.webp" id="6_8kysg"]
 [ext_resource type="PackedScene" uid="uid://cpxiaqh0y6a5d" path="res://Network/TCPNetworkManager.tscn" id="7_401ut"]
 [ext_resource type="Texture2D" uid="uid://d3pev0nbt8sjd" path="res://assets/游戏UI/玩家昵称.webp" id="7_n03md"]
 [ext_resource type="Texture2D" uid="uid://cxm72d5t4dn0q" path="res://assets/游戏UI/农场名称.webp" id="8_uhubb"]
 [ext_resource type="Texture2D" uid="uid://b665dc0ye72lg" path="res://assets/游戏UI/服务器连接状态.webp" id="9_uc6q1"]
-[ext_resource type="Script" uid="uid://c7bxje0wvvgo4" path="res://GameCamera2D.gd" id="10_o8l48"]
+[ext_resource type="Script" uid="uid://c7bxje0wvvgo4" path="res://game_camera.gd" id="10_o8l48"]
 [ext_resource type="Texture2D" uid="uid://dsuaw8kcdtrst" path="res://assets/游戏UI/FPS图标.webp" id="10_uhubb"]
 [ext_resource type="Texture2D" uid="uid://bso5fyjavdien" path="res://assets/游戏UI/玩家数图标.webp" id="10_vygm6"]
-[ext_resource type="PackedScene" uid="uid://cbhitturvihqj" path="res://GUI/loginPanel.tscn" id="11_6jgly"]
-[ext_resource type="PackedScene" uid="uid://dckc8nrn7p425" path="res://GUI/LandPanel.tscn" id="12_y1hsh"]
-[ext_resource type="Script" uid="uid://ccaqrb6sdwbux" path="res://GUI/OnlineGiftPanel.gd" id="13_y1hsh"]
-[ext_resource type="PackedScene" uid="uid://btp1h6hic2sin" path="res://GUI/AcceptDialog.tscn" id="16_0igvr"]
+[ext_resource type="PackedScene" uid="uid://cbhitturvihqj" path="res://Scene/BigPanel/LoginPanel.tscn" id="11_6jgly"]
+[ext_resource type="PackedScene" uid="uid://dckc8nrn7p425" path="res://Scene/SmallPanel/LandPanel.tscn" id="12_y1hsh"]
+[ext_resource type="PackedScene" uid="uid://dpiy0aim20n2h" path="res://Scene/SmallPanel/OnlineGiftPanel.tscn" id="14_5b81d"]
+[ext_resource type="PackedScene" uid="uid://4rwitowdt4h" path="res://Scene/SmallPanel/OneClickPlantPanel.tscn" id="15_8kysg"]
+[ext_resource type="PackedScene" uid="uid://btp1h6hic2sin" path="res://Scene/Dialog/AcceptDialog.tscn" id="16_0igvr"]
+[ext_resource type="PackedScene" uid="uid://dbfqu87627yg6" path="res://Scene/BigPanel/PlayerRankingPanel.tscn" id="16_n03md"]
 [ext_resource type="Script" uid="uid://dckw8dskfbnkp" path="res://background.gd" id="17_0igvr"]
-[ext_resource type="PackedScene" uid="uid://bndf1e4sgdjr6" path="res://GUI/LuckyDrawPanel.tscn" id="17_f21le"]
-[ext_resource type="Script" uid="uid://bruqwi63myl1m" path="res://GUI/ItemStorePanel.gd" id="17_vygm6"]
-[ext_resource type="PackedScene" uid="uid://smypui0vyso5" path="res://GUI/DailyCheckInPanel.tscn" id="18_m6fch"]
-[ext_resource type="Script" uid="uid://rlk8e51pibtm" path="res://GUI/OneClickPlantPanel.gd" id="18_n03md"]
-[ext_resource type="Script" uid="uid://ptdj0qmobihd" path="res://GUI/CropWarehousePanel.gd" id="20_uc6q1"]
-[ext_resource type="Script" uid="uid://b701r833vse3u" path="res://GUI/ItemBagPanel.gd" id="22_2e153"]
-[ext_resource type="Texture2D" uid="uid://dsln1w1aqgf1k" path="res://assets/游戏UI/玩家默认头像.webp" id="23_5b81d"]
-[ext_resource type="Script" uid="uid://dinrduqwsf5k5" path="res://GUI/AccountSettingPanel.gd" id="23_8kysg"]
-[ext_resource type="Script" uid="uid://0d2j5m6j2ema" path="res://Components/HTTPTextureRect.gd" id="24_8kysg"]
+[ext_resource type="PackedScene" uid="uid://bndf1e4sgdjr6" path="res://Scene/BigPanel/LuckyDrawPanel.tscn" id="17_f21le"]
+[ext_resource type="PackedScene" uid="uid://hesp70n3ondo" path="res://Scene/BigPanel/CropStorePanel.tscn" id="17_ql8k3"]
+[ext_resource type="PackedScene" uid="uid://drw18a6mcr2of" path="res://Scene/BigPanel/CropWarehousePanel.tscn" id="18_5b81d"]
+[ext_resource type="PackedScene" uid="uid://smypui0vyso5" path="res://Scene/BigPanel/DailyCheckInPanel.tscn" id="18_m6fch"]
+[ext_resource type="PackedScene" uid="uid://bseuwniienrqy" path="res://Scene/BigPanel/PlayerBagPanel.tscn" id="19_8kysg"]
+[ext_resource type="PackedScene" uid="uid://cehw5sx5pgmmc" path="res://Scene/BigPanel/ItemBagPanel.tscn" id="20_n03md"]
+[ext_resource type="PackedScene" uid="uid://j4ft87o7jk14" path="res://Scene/BigPanel/ItemStorePanel.tscn" id="21_uhubb"]
+[ext_resource type="PackedScene" uid="uid://cw8am7nnbgca5" path="res://Scene/Pet/PetFightPanel.tscn" id="23_n03md"]
+[ext_resource type="Script" uid="uid://bdhwvqsmakna2" path="res://Script/BigPanel/PetBagPanel.gd" id="23_uc6q1"]
+[ext_resource type="PackedScene" uid="uid://cnjidcwuv4nn4" path="res://Scene/BigPanel/PetStorePanel.tscn" id="24_uc6q1"]
+[ext_resource type="PackedScene" uid="uid://d3i0l6ysrde6o" path="res://Scene/SmallPanel/AccountSettingPanel.tscn" id="26_uc6q1"]
+[ext_resource type="PackedScene" uid="uid://d1lu2yg4xl382" path="res://Scene/SmallPanel/LoadProgressPanel.tscn" id="27_vygm6"]
+[ext_resource type="Script" uid="uid://bvhupqlw2h1j8" path="res://Script/SmallPanel/DebugPanel.gd" id="28_8kysg"]
 [ext_resource type="Script" uid="uid://ca2chgx5w3g1y" path="res://Components/GameBGMPlayer.gd" id="28_m6fch"]
+[ext_resource type="Script" uid="uid://d4fvv2sjngajr" path="res://Script/Dialog/BatchBuyPopup.gd" id="29_5b81d"]
+[ext_resource type="Texture2D" uid="uid://2sdfbvf1isif" path="res://icon.svg" id="31_uc6q1"]
+[ext_resource type="Script" uid="uid://doo34ll0yb078" path="res://Script/SmallPanel/PetInformPanel.gd" id="31_vygm6"]
+[ext_resource type="Script" uid="uid://bakeq8tm6r4j4" path="res://Script/SmallPanel/GlobalServerBroadcastPanel.gd" id="34_k1sw4"]
+[ext_resource type="Script" uid="uid://dobao5y5s2dij" path="res://Script/SmallPanel/ScareCrowPanel.gd" id="35_6ylhg"]
+[ext_resource type="Texture2D" uid="uid://d06uaoowmcvxj" path="res://assets/稻草人图片/稻草人2.webp" id="36_jyxgm"]
+[ext_resource type="Texture2D" uid="uid://cbe0f8ex17csy" path="res://assets/稻草人图片/稻草人3.webp" id="37_6ylhg"]
 [ext_resource type="PackedScene" uid="uid://ibl5wbbw3pwc" path="res://CopyItems/item_button.tscn" id="39_cdkxt"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8kysg"]
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-corner_detail = 5
-shadow_size = 20
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uc6q1"]
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-corner_detail = 20
+[ext_resource type="Script" uid="uid://dwf28j01ckg3y" path="res://Script/SmallPanel/WisdomTreePanel.gd" id="39_np7ck"]
+[ext_resource type="Texture2D" uid="uid://bt1i2yhhlor5e" path="res://assets/地块/土块1.webp" id="41_cdkxt"]
+[ext_resource type="Texture2D" uid="uid://3ff2lnbc0op7" path="res://assets/稻草人图片/稻草人1.webp" id="43_6rkns"]
+[ext_resource type="Texture2D" uid="uid://nci8k65dcm6b" path="res://assets/草地图片/草地1.webp" id="43_jbja5"]
+[ext_resource type="Texture2D" uid="uid://cbdm5e6s8bf6l" path="res://assets/智慧树图片/智慧树4.webp" id="45_xvovi"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n03md"]
 border_width_left = 5
@@ -67,31 +62,55 @@ corner_radius_bottom_left = 20
 corner_detail = 20
 shadow_size = 20
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y1hsh"]
-border_color = Color(2.98411e-06, 0.95982, 0.386903, 1)
-border_blend = true
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-corner_detail = 20
-shadow_size = 20
-shadow_offset = Vector2(10, 10)
-anti_aliasing = false
-anti_aliasing_size = 5.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uhubb"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5b81d"]
 border_width_left = 10
 border_width_top = 10
 border_width_right = 10
 border_width_bottom = 10
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k1sw4"]
+bg_color = Color(0.6, 0.6, 0.6, 0.984314)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+corner_detail = 20
+shadow_size = 20
+shadow_offset = Vector2(5, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jyxgm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_np7ck"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 30
 
 [sub_resource type="Environment" id="Environment_m6fch"]
 background_mode = 3
 ambient_light_energy = 0.0
-glow_enabled = true
 glow_bloom = 0.3
 glow_blend_mode = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6ylhg"]
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
+shadow_offset = Vector2(3, 3)
 
 [node name="main" type="Node"]
 script = ExtResource("1_v3yaj")
@@ -306,6 +325,34 @@ theme_override_constants/shadow_outline_size = 10
 theme_override_font_sizes/font_size = 25
 text = "游戏小提示"
 
+[node name="GlobalServerBroadcast_image" type="TextureRect" parent="UI/GUI/GameInfoHBox3"]
+layout_mode = 2
+texture = ExtResource("5_5b81d")
+expand_mode = 2
+
+[node name="GlobalServerBroadcast" type="Label" parent="UI/GUI/GameInfoHBox3"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.564706, 0.137255, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/font_size = 25
+text = "全服大喇叭"
+vertical_alignment = 1
+clip_text = true
+
+[node name="WatchBroadcast" type="Button" parent="UI/GUI/GameInfoHBox3"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.513233, 0.513233, 0.513233, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 25
+text = "查看"
+
 [node name="FarmVBox" type="VBoxContainer" parent="UI/GUI"]
 layout_mode = 0
 offset_left = 4.0
@@ -462,12 +509,17 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "智慧树"
 
-[node name="MyPetButton" type="Button" parent="UI/GUI/OtherVBox"]
-visible = false
+[node name="PetBagButton" type="Button" parent="UI/GUI/OtherVBox"]
 modulate = Color(0.992157, 0.482353, 0.870588, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "我的宠物"
+text = "宠物背包"
+
+[node name="PetStoreButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.992157, 0.482353, 0.870588, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "宠物商店"
 
 [node name="ScareCrowButton" type="Button" parent="UI/GUI/OtherVBox"]
 visible = false
@@ -476,1171 +528,833 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "稻草人"
 
-[node name="LoginPanel" parent="UI" instance=ExtResource("11_6jgly")]
+[node name="BigPanel" type="CanvasLayer" parent="UI"]
 
-[node name="LandPanel" parent="UI" instance=ExtResource("12_y1hsh")]
+[node name="LuckyDrawPanel" parent="UI/BigPanel" instance=ExtResource("17_f21le")]
 visible = false
-offset_left = 454.0
-offset_top = 77.0
-offset_right = 970.0
-offset_bottom = 548.0
-
-[node name="OnlineGiftPanel" type="Panel" parent="UI"]
-visible = false
-offset_left = 449.0
-offset_top = 77.0
-offset_right = 970.0
-offset_bottom = 327.0
-script = ExtResource("13_y1hsh")
-
-[node name="Quit_Button" type="Button" parent="UI/OnlineGiftPanel"]
-layout_mode = 0
-offset_left = 465.0
-offset_right = 515.0
-offset_bottom = 50.0
-theme_override_font_sizes/font_size = 30
-text = "X"
-
-[node name="HBox" type="HBoxContainer" parent="UI/OnlineGiftPanel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Title" type="Label" parent="UI/OnlineGiftPanel"]
-modulate = Color(0.996846, 0.629335, 1, 1)
-layout_mode = 2
-offset_right = 516.0
-offset_bottom = 42.0
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 3
-theme_override_constants/shadow_offset_y = 3
-theme_override_constants/outline_size = 10
-theme_override_constants/shadow_outline_size = 10
-theme_override_font_sizes/font_size = 30
-text = "在线礼包"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Grid" type="GridContainer" parent="UI/OnlineGiftPanel"]
-layout_mode = 2
-offset_top = 46.0
-offset_right = 500.0
-offset_bottom = 210.0
-columns = 5
-
-[node name="OneMinute" type="Button" parent="UI/OnlineGiftPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_colors/font_color = Color(1, 0, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "在线
-1分钟"
-icon_alignment = 1
-expand_icon = true
-
-[node name="ThreeMinutes" type="Button" parent="UI/OnlineGiftPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_colors/font_color = Color(0.995313, 0.515623, 0.748044, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "在线
-3分钟"
-icon_alignment = 1
-expand_icon = true
-
-[node name="FiveMinutes" type="Button" parent="UI/OnlineGiftPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_colors/font_color = Color(0.635294, 0.827451, 0.537255, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "在线
-5分钟"
-icon_alignment = 1
-expand_icon = true
-
-[node name="TenMinutes" type="Button" parent="UI/OnlineGiftPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.760784, 0.533333, 0.160784, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "在线
-10分钟"
-icon_alignment = 1
-expand_icon = true
-
-[node name="ThirtyMinutes" type="Button" parent="UI/OnlineGiftPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.870588, 0.870588, 0, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "在线
-30分钟"
-icon_alignment = 1
-expand_icon = true
-
-[node name="OneHour" type="Button" parent="UI/OnlineGiftPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.188235, 0.839216, 0.243137, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "在线
-1小时"
-icon_alignment = 1
-expand_icon = true
-
-[node name="ThreeHours" type="Button" parent="UI/OnlineGiftPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_colors/font_color = Color(0, 0.87451, 0.87451, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "在线
-3小时"
-icon_alignment = 1
-expand_icon = true
-
-[node name="FiveHours" type="Button" parent="UI/OnlineGiftPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.509804, 0.301961, 0.85098, 1)
-theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "在线
-5小时"
-icon_alignment = 1
-expand_icon = true
-
-[node name="OneClickPlantPanel" type="Panel" parent="UI"]
-visible = false
-offset_left = 450.0
-offset_top = 77.0
-offset_right = 966.0
-offset_bottom = 327.0
-script = ExtResource("18_n03md")
-
-[node name="Quit_Button" type="Button" parent="UI/OneClickPlantPanel"]
-layout_mode = 0
-offset_left = 465.0
-offset_right = 515.0
-offset_bottom = 50.0
-theme_override_font_sizes/font_size = 30
-text = "X"
-
-[node name="Title" type="Label" parent="UI/OneClickPlantPanel"]
-self_modulate = Color(0.431373, 0.498039, 1, 1)
-layout_mode = 2
-offset_right = 516.0
-offset_bottom = 42.0
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 3
-theme_override_constants/shadow_offset_y = 3
-theme_override_constants/outline_size = 10
-theme_override_constants/shadow_outline_size = 10
-theme_override_font_sizes/font_size = 30
-text = "一键种植面板"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Grid" type="GridContainer" parent="UI/OneClickPlantPanel"]
-layout_mode = 2
-offset_top = 46.0
-offset_right = 500.0
-offset_bottom = 210.0
-columns = 5
-
-[node name="FullScreenPlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "全屏种植"
-icon_alignment = 1
-expand_icon = true
-
-[node name="OneRowPlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.972549, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "行种植"
-icon_alignment = 1
-expand_icon = true
-
-[node name="OneColumnPlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "列种植"
-icon_alignment = 1
-expand_icon = true
-
-[node name="NineSquarePlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 1, 1, 1)
-theme_override_font_sizes/font_size = 20
-text = "九宫格
-种植"
-icon_alignment = 1
-expand_icon = true
-
-[node name="CrossPlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.54902, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "十字法
-种植"
-icon_alignment = 1
-expand_icon = true
-
-[node name="RandomPlantBtn" type="Button" parent="UI/OneClickPlantPanel/Grid"]
-custom_minimum_size = Vector2(100, 100)
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.49586, 0.63552, 1)
-theme_override_font_sizes/font_size = 20
-text = "随机种植"
-icon_alignment = 1
-expand_icon = true
-
-[node name="PlayerRankingPanel" type="Panel" parent="UI"]
-visible = false
-offset_left = 2.0
-offset_right = 1402.0
-offset_bottom = 720.0
-script = ExtResource("4_yphxy")
-
-[node name="RegisterPlayerNum" type="Label" parent="UI/PlayerRankingPanel"]
-self_modulate = Color(1, 0.701961, 1, 1)
-layout_mode = 0
-offset_left = 864.0
-offset_right = 1014.0
-offset_bottom = 42.0
-theme_override_font_sizes/font_size = 30
-text = "注册人数："
-
-[node name="Title" type="RichTextLabel" parent="UI/PlayerRankingPanel"]
-layout_mode = 2
-offset_left = 2.0
-offset_right = 1395.0
-offset_bottom = 56.0
-size_flags_vertical = 3
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 10
-theme_override_constants/shadow_offset_y = 3
-theme_override_constants/shadow_offset_x = 3
-theme_override_constants/shadow_outline_size = 10
-theme_override_font_sizes/normal_font_size = 40
-bbcode_enabled = true
-text = "玩家排行榜"
-horizontal_alignment = 1
-
-[node name="SearchLineEdit" type="LineEdit" parent="UI/PlayerRankingPanel"]
-layout_mode = 0
-offset_left = 143.0
-offset_top = 3.0
-offset_right = 426.0
-offset_bottom = 60.0
-theme_override_font_sizes/font_size = 35
-text = "输入要搜索的人"
-
-[node name="RefreshButton" type="Button" parent="UI/PlayerRankingPanel"]
-custom_minimum_size = Vector2(55, 55)
-layout_mode = 0
-offset_top = 3.0
-offset_right = 78.0
-offset_bottom = 60.0
-theme_override_font_sizes/font_size = 35
-text = "刷新"
-
-[node name="SearchButton" type="Button" parent="UI/PlayerRankingPanel"]
-custom_minimum_size = Vector2(55, 55)
-layout_mode = 0
 offset_left = 425.0
-offset_top = 3.0
-offset_right = 503.0
-offset_bottom = 60.0
-theme_override_font_sizes/font_size = 35
-text = "搜索"
-
-[node name="QuitButton" type="Button" parent="UI/PlayerRankingPanel"]
-custom_minimum_size = Vector2(55, 55)
-layout_mode = 0
-offset_left = 1338.0
-offset_top = 3.0
-offset_right = 1395.0
-offset_bottom = 60.0
-theme_override_font_sizes/font_size = 35
-text = "X"
-
-[node name="FiterAndSortHBox" type="HBoxContainer" parent="UI/PlayerRankingPanel"]
-layout_mode = 0
-offset_top = 63.0
-offset_right = 1398.0
-offset_bottom = 120.0
-
-[node name="SortLabel" type="Label" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
-layout_mode = 2
-size_flags_vertical = 1
-theme_override_font_sizes/font_size = 30
-text = "排序："
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="MoneySortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
-self_modulate = Color(1, 1, 0.321569, 1)
-custom_minimum_size = Vector2(158, 57)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "钱币"
-
-[node name="SeedSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
-self_modulate = Color(0.329412, 1, 0.345098, 1)
-custom_minimum_size = Vector2(158, 57)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "种子数"
-
-[node name="LevelSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
-self_modulate = Color(0, 1, 1, 1)
-custom_minimum_size = Vector2(158, 57)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "等级"
-
-[node name="OnlineTimeSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
-self_modulate = Color(0.784314, 0.733333, 0.521569, 1)
-custom_minimum_size = Vector2(158, 57)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "在线时长"
-
-[node name="LoginTimeSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
-self_modulate = Color(0.811765, 1, 0.811765, 1)
-custom_minimum_size = Vector2(158, 57)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "登录时间"
-
-[node name="LikeNumSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
-self_modulate = Color(1, 0.513726, 1, 1)
-custom_minimum_size = Vector2(158, 57)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "点赞数"
-
-[node name="IsOnlineSortBtn" type="Button" parent="UI/PlayerRankingPanel/FiterAndSortHBox"]
-self_modulate = Color(0.691357, 0.691357, 0.691357, 1)
-custom_minimum_size = Vector2(158, 57)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "在线情况"
-
-[node name="Scroll" type="ScrollContainer" parent="UI/PlayerRankingPanel"]
-layout_mode = 2
-offset_top = 121.0
-offset_right = 1400.0
-offset_bottom = 720.0
-size_flags_vertical = 3
-
-[node name="PlayerList" type="VBoxContainer" parent="UI/PlayerRankingPanel/Scroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="player_ranking_item" parent="UI/PlayerRankingPanel/Scroll/PlayerList" instance=ExtResource("5_yphxy")]
-layout_mode = 2
-
-[node name="CropStorePanel" type="Panel" parent="UI"]
-visible = false
-offset_left = 126.0
-offset_top = 70.0
-offset_right = 1525.0
-offset_bottom = 790.0
-scale = Vector2(0.8, 0.8)
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_8kysg")
-script = ExtResource("3_qtrx8")
-
-[node name="TMBackGround" type="ColorRect" parent="UI/CropStorePanel"]
-layout_mode = 0
-offset_left = -157.0
-offset_top = -87.0
-offset_right = 1592.0
-offset_bottom = 811.0
-color = Color(1, 1, 1, 0)
-
-[node name="Title" type="Label" parent="UI/CropStorePanel"]
-layout_mode = 2
-offset_right = 1397.0
-offset_bottom = 55.0
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 0.964706, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 5
-theme_override_constants/shadow_offset_y = 5
-theme_override_constants/outline_size = 15
-theme_override_constants/shadow_outline_size = 15
-theme_override_font_sizes/font_size = 50
-text = "种子商店"
-horizontal_alignment = 1
-
-[node name="SortContainer" type="HBoxContainer" parent="UI/CropStorePanel"]
-layout_mode = 0
-offset_top = 78.0
-offset_right = 1399.0
-offset_bottom = 141.0
-alignment = 1
-
-[node name="FilterLabel" type="Label" parent="UI/CropStorePanel/SortContainer"]
-self_modulate = Color(0.607843, 0.647059, 1, 1)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "筛选："
-
-[node name="Sort_All" type="Button" parent="UI/CropStorePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "全部"
-
-[node name="Sort_Common" type="Button" parent="UI/CropStorePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "普通"
-
-[node name="Sort_Superior" type="Button" parent="UI/CropStorePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "优良"
-
-[node name="Sort_Rare" type="Button" parent="UI/CropStorePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "稀有"
-
-[node name="Sort_Epic" type="Button" parent="UI/CropStorePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "史诗"
-
-[node name="Sort_Legendary" type="Button" parent="UI/CropStorePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "传奇"
-
-[node name="SortLabel" type="Label" parent="UI/CropStorePanel/SortContainer"]
-self_modulate = Color(0.607843, 0.647059, 1, 1)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "排序："
-
-[node name="Sort_Price" type="Button" parent="UI/CropStorePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按价格"
-
-[node name="Sort_GrowTime" type="Button" parent="UI/CropStorePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按生长时间"
-
-[node name="Sort_Profit" type="Button" parent="UI/CropStorePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按收益"
-
-[node name="Sort_Level" type="Button" parent="UI/CropStorePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按等级"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/CropStorePanel"]
-layout_mode = 2
-offset_left = 13.0
-offset_top = 144.0
-offset_right = 3450.0
-offset_bottom = 1551.0
-scale = Vector2(0.4, 0.4)
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_uc6q1")
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 2
-scroll_deadzone = -10
-
-[node name="Crop_Grid" type="GridContainer" parent="UI/CropStorePanel/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-columns = 8
-
-[node name="QuitButton" type="Button" parent="UI/CropStorePanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 1327.0
-offset_top = 13.0
-offset_right = 1387.0
-offset_bottom = 76.0
-theme_override_font_sizes/font_size = 40
-text = "X"
-
-[node name="RefreshButton" type="Button" parent="UI/CropStorePanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 13.0
-offset_top = 11.0
-offset_right = 101.0
-offset_bottom = 74.0
-theme_override_font_sizes/font_size = 40
-text = "刷新"
-
-[node name="CropWarehousePanel" type="Panel" parent="UI"]
-visible = false
-offset_left = 119.0
-offset_top = 77.0
-offset_right = 1518.0
-offset_bottom = 797.0
-scale = Vector2(0.8, 0.8)
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_8kysg")
-script = ExtResource("20_uc6q1")
-
-[node name="TMBackGround" type="ColorRect" parent="UI/CropWarehousePanel"]
-layout_mode = 0
-offset_left = -76.0
-offset_top = -39.0
-offset_right = 1480.0
-offset_bottom = 764.0
-color = Color(1, 1, 1, 0)
-
-[node name="Title" type="Label" parent="UI/CropWarehousePanel"]
-layout_mode = 2
-offset_right = 1397.0
-offset_bottom = 55.0
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 0.964706, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 3
-theme_override_constants/shadow_offset_y = 3
-theme_override_constants/outline_size = 10
-theme_override_constants/shadow_outline_size = 10
-theme_override_font_sizes/font_size = 40
-text = "作物仓库"
-horizontal_alignment = 1
-
-[node name="SortContainer" type="HBoxContainer" parent="UI/CropWarehousePanel"]
-layout_mode = 0
-offset_top = 58.0
-offset_right = 1399.0
-offset_bottom = 121.0
-alignment = 1
-
-[node name="FilterLabel" type="Label" parent="UI/CropWarehousePanel/SortContainer"]
-self_modulate = Color(0.607843, 1, 1, 1)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "筛选："
-
-[node name="Sort_All" type="Button" parent="UI/CropWarehousePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "全部"
-
-[node name="Sort_Common" type="Button" parent="UI/CropWarehousePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "普通"
-
-[node name="Sort_Superior" type="Button" parent="UI/CropWarehousePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "优良"
-
-[node name="Sort_Rare" type="Button" parent="UI/CropWarehousePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "稀有"
-
-[node name="Sort_Epic" type="Button" parent="UI/CropWarehousePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "史诗"
-
-[node name="Sort_Legendary" type="Button" parent="UI/CropWarehousePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "传奇"
-
-[node name="SortLabel" type="Label" parent="UI/CropWarehousePanel/SortContainer"]
-self_modulate = Color(0.607843, 1, 1, 1)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "排序："
-
-[node name="Sort_Price" type="Button" parent="UI/CropWarehousePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按价格"
-
-[node name="Sort_GrowTime" type="Button" parent="UI/CropWarehousePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按生长时间"
-
-[node name="Sort_Profit" type="Button" parent="UI/CropWarehousePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按收益"
-
-[node name="Sort_Level" type="Button" parent="UI/CropWarehousePanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按等级"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/CropWarehousePanel"]
-layout_mode = 2
-offset_left = 9.0
-offset_top = 121.0
-offset_right = 3462.0
-offset_bottom = 1588.0
-scale = Vector2(0.4, 0.4)
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_uc6q1")
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 2
-scroll_deadzone = -10
-
-[node name="Warehouse_Grid" type="GridContainer" parent="UI/CropWarehousePanel/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-columns = 8
-
-[node name="QuitButton" type="Button" parent="UI/CropWarehousePanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 1327.5
-offset_top = 10.0
-offset_right = 1387.5
-offset_bottom = 73.0
-theme_override_font_sizes/font_size = 40
-text = "X"
-
-[node name="RefreshButton" type="Button" parent="UI/CropWarehousePanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 12.5001
-offset_top = 12.5
-offset_right = 100.5
-offset_bottom = 75.5
-theme_override_font_sizes/font_size = 40
-text = "刷新"
-
-[node name="PlayerBagPanel" type="Panel" parent="UI"]
-visible = false
-offset_left = 157.0
-offset_top = 79.0
-offset_right = 1554.0
-offset_bottom = 799.0
-scale = Vector2(0.8, 0.8)
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
-script = ExtResource("4_led80")
-
-[node name="TMBackGround" type="ColorRect" parent="UI/PlayerBagPanel"]
-layout_mode = 0
-offset_left = -157.0
-offset_top = -85.0
-offset_right = 1595.0
-offset_bottom = 811.0
-color = Color(1, 1, 1, 0)
-
-[node name="SortContainer" type="HBoxContainer" parent="UI/PlayerBagPanel"]
-layout_mode = 0
-offset_top = 58.0
-offset_right = 1397.0
-offset_bottom = 121.0
-alignment = 1
-
-[node name="FilterLabel" type="Label" parent="UI/PlayerBagPanel/SortContainer"]
-modulate = Color(0.439216, 0.560784, 1, 1)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "排序："
-
-[node name="Sort_All" type="Button" parent="UI/PlayerBagPanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "全部"
-
-[node name="Sort_Common" type="Button" parent="UI/PlayerBagPanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "普通"
-
-[node name="Sort_Superior" type="Button" parent="UI/PlayerBagPanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "优良"
-
-[node name="Sort_Rare" type="Button" parent="UI/PlayerBagPanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "稀有"
-
-[node name="Sort_Epic" type="Button" parent="UI/PlayerBagPanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "史诗"
-
-[node name="Sort_Legendary" type="Button" parent="UI/PlayerBagPanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "传奇"
-
-[node name="SortLabel" type="Label" parent="UI/PlayerBagPanel/SortContainer"]
-modulate = Color(0.439216, 0.560784, 1, 1)
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "排序："
-
-[node name="Sort_Price" type="Button" parent="UI/PlayerBagPanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按价格"
-
-[node name="Sort_GrowTime" type="Button" parent="UI/PlayerBagPanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按生长时间"
-
-[node name="Sort_Profit" type="Button" parent="UI/PlayerBagPanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按收益"
-
-[node name="Sort_Level" type="Button" parent="UI/PlayerBagPanel/SortContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按等级"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/PlayerBagPanel"]
-layout_mode = 2
-offset_left = 11.0
-offset_top = 121.0
-offset_right = 3452.0
-offset_bottom = 1592.0
-scale = Vector2(0.4, 0.4)
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="Bag_Grid" type="GridContainer" parent="UI/PlayerBagPanel/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-columns = 8
-
-[node name="Title" type="Label" parent="UI/PlayerBagPanel"]
-layout_mode = 2
-offset_right = 1396.0
-offset_bottom = 55.0
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_constants/outline_size = 10
-theme_override_constants/shadow_outline_size = 10
-theme_override_font_sizes/font_size = 40
-text = "种子仓库"
-horizontal_alignment = 1
-
-[node name="QuitButton" type="Button" parent="UI/PlayerBagPanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 1326.25
-offset_top = 13.75
-offset_right = 1386.25
-offset_bottom = 76.75
-theme_override_font_sizes/font_size = 40
-text = "X"
-
-[node name="RefreshButton" type="Button" parent="UI/PlayerBagPanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 15.0001
-offset_top = 13.75
-offset_right = 75.0001
-offset_bottom = 76.75
-theme_override_font_sizes/font_size = 40
-text = "刷新"
-
-[node name="ItemBagPanel" type="Panel" parent="UI"]
-visible = false
-offset_left = 145.0
-offset_top = 79.0
-offset_right = 1542.0
-offset_bottom = 799.0
-scale = Vector2(0.8, 0.8)
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
-script = ExtResource("22_2e153")
-
-[node name="TMBackGround" type="ColorRect" parent="UI/ItemBagPanel"]
-layout_mode = 0
-offset_left = -179.0
-offset_top = -100.0
-offset_right = 1566.0
-offset_bottom = 800.0
-color = Color(1, 1, 1, 0)
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/ItemBagPanel"]
-layout_mode = 2
-offset_left = 13.0
-offset_top = 95.0
-offset_right = 3437.0
-offset_bottom = 1608.0
-scale = Vector2(0.4, 0.4)
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="Bag_Grid" type="GridContainer" parent="UI/ItemBagPanel/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-columns = 8
-
-[node name="Title" type="Label" parent="UI/ItemBagPanel"]
-layout_mode = 2
-offset_right = 1396.0
-offset_bottom = 55.0
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 0.807843, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 4
-theme_override_constants/shadow_offset_y = 4
-theme_override_constants/outline_size = 15
-theme_override_constants/shadow_outline_size = 15
-theme_override_font_sizes/font_size = 40
-text = "道具背包"
-horizontal_alignment = 1
-
-[node name="QuitButton" type="Button" parent="UI/ItemBagPanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 1325.0
-offset_top = 12.5
-offset_right = 1385.0
-offset_bottom = 75.5
-theme_override_font_sizes/font_size = 40
-text = "X"
-
-[node name="RefreshButton" type="Button" parent="UI/ItemBagPanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 12.5
-offset_top = 13.75
-offset_right = 100.5
-offset_bottom = 76.75
-theme_override_font_sizes/font_size = 40
-text = "刷新"
-
-[node name="ItemStorePanel" type="Panel" parent="UI"]
-visible = false
-offset_left = 145.0
-offset_top = 79.0
-offset_right = 1542.0
-offset_bottom = 799.0
-scale = Vector2(0.8, 0.8)
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
-script = ExtResource("17_vygm6")
-
-[node name="TMBackGround" type="ColorRect" parent="UI/ItemStorePanel"]
-layout_mode = 0
-offset_left = -184.0
-offset_top = -100.0
-offset_right = 1571.0
-offset_bottom = 804.0
-color = Color(1, 1, 1, 0)
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/ItemStorePanel"]
-layout_mode = 2
-offset_left = 15.0
-offset_top = 88.0
-offset_right = 3434.0
-offset_bottom = 1626.0
-scale = Vector2(0.4, 0.4)
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="Store_Grid" type="GridContainer" parent="UI/ItemStorePanel/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-columns = 8
-
-[node name="Title" type="Label" parent="UI/ItemStorePanel"]
-layout_mode = 2
-offset_right = 1396.0
-offset_bottom = 62.0
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 0.807843, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 4
-theme_override_constants/shadow_offset_y = 4
-theme_override_constants/outline_size = 15
-theme_override_constants/shadow_outline_size = 15
-theme_override_font_sizes/font_size = 40
-text = "道具商店"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="QuitButton" type="Button" parent="UI/ItemStorePanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 1325.0
-offset_top = 11.25
-offset_right = 1385.0
-offset_bottom = 74.25
-theme_override_font_sizes/font_size = 40
-text = "X"
-
-[node name="RefreshButton" type="Button" parent="UI/ItemStorePanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 12.5
-offset_top = 12.5
-offset_right = 100.5
-offset_bottom = 75.5
-theme_override_font_sizes/font_size = 40
-text = "刷新"
-
-[node name="TCPNetworkManager" parent="UI" instance=ExtResource("7_401ut")]
-visible = false
-offset_left = 2.00012
-offset_top = 143.0
-offset_right = 2.00012
-offset_bottom = 143.0
-scale = Vector2(0.7, 0.7)
-
-[node name="AcceptDialog" parent="UI" instance=ExtResource("16_0igvr")]
-visible = false
-
-[node name="LuckyDrawPanel" parent="UI" instance=ExtResource("17_f21le")]
-visible = false
-offset_left = 442.0
-offset_right = 1042.0
-
-[node name="DailyCheckInPanel" parent="UI" instance=ExtResource("18_m6fch")]
+offset_top = 2.0
+offset_right = 1025.0
+offset_bottom = 722.0
+
+[node name="DailyCheckInPanel" parent="UI/BigPanel" instance=ExtResource("18_m6fch")]
 visible = false
 offset_left = 442.0
 offset_top = 3.0
 offset_right = 1042.0
 offset_bottom = 723.0
 
-[node name="AccountSettingPanel" type="Panel" parent="UI"]
+[node name="TCPNetworkManagerPanel" parent="UI/BigPanel" instance=ExtResource("7_401ut")]
 visible = false
-offset_left = 243.0
-offset_top = 42.0
-offset_right = 1154.0
-offset_bottom = 689.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_y1hsh")
-script = ExtResource("23_8kysg")
+offset_top = 97.0
+offset_bottom = 97.0
+scale = Vector2(0.7, 0.7)
 
-[node name="Title" type="RichTextLabel" parent="UI/AccountSettingPanel"]
-modulate = Color(1, 0.745098, 0.54902, 1)
-layout_mode = 0
-offset_left = 2.0
-offset_right = 911.0
-offset_bottom = 56.0
+[node name="PlayerRankingPanel" parent="UI/BigPanel" instance=ExtResource("16_n03md")]
+visible = false
+offset_left = 0.0
+offset_right = 1400.0
+
+[node name="ItemStorePanel" parent="UI/BigPanel" instance=ExtResource("21_uhubb")]
+offset_left = 80.0
+offset_top = 77.0
+offset_right = 1620.0
+offset_bottom = 797.0
+
+[node name="CropWarehousePanel" parent="UI/BigPanel" instance=ExtResource("18_5b81d")]
+
+[node name="LoginPanel" parent="UI/BigPanel" instance=ExtResource("11_6jgly")]
+visible = false
+top_level = true
+offset_left = 342.0
+offset_top = 40.0
+offset_right = 1092.0
+offset_bottom = 700.0
+
+[node name="PlayerBagPanel" parent="UI/BigPanel" instance=ExtResource("19_8kysg")]
+visible = false
+
+[node name="CropStorePanel" parent="UI/BigPanel" instance=ExtResource("17_ql8k3")]
+visible = false
+
+[node name="ItemBagPanel" parent="UI/BigPanel" instance=ExtResource("20_n03md")]
+visible = false
+
+[node name="PetStorePanel" parent="UI/BigPanel" instance=ExtResource("24_uc6q1")]
+visible = false
+
+[node name="PetBagPanel" type="Panel" parent="UI/BigPanel"]
+visible = false
+offset_left = 69.0
+offset_top = 56.0
+offset_right = 1635.0
+offset_bottom = 836.0
+scale = Vector2(0.8, 0.8)
+size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 10
-theme_override_constants/shadow_offset_y = 3
-theme_override_constants/shadow_offset_x = 3
-theme_override_constants/shadow_outline_size = 10
-theme_override_font_sizes/normal_font_size = 40
-bbcode_enabled = true
-text = "玩家信息设置"
-horizontal_alignment = 1
-threaded = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
+script = ExtResource("23_uc6q1")
 
-[node name="QuitButton" type="Button" parent="UI/AccountSettingPanel"]
-custom_minimum_size = Vector2(55, 55)
+[node name="TMBackGround" type="ColorRect" parent="UI/BigPanel/PetBagPanel"]
 layout_mode = 0
-offset_left = 854.0
-offset_right = 911.0
-offset_bottom = 57.0
-theme_override_font_sizes/font_size = 35
+offset_left = -90.0
+offset_top = -71.0
+offset_right = 1672.0
+offset_bottom = 831.0
+color = Color(1, 1, 1, 0)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/BigPanel/PetBagPanel"]
+layout_mode = 2
+offset_left = 28.0
+offset_top = 95.0
+offset_right = 3805.0
+offset_bottom = 1723.0
+scale = Vector2(0.4, 0.4)
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Bag_Grid" type="GridContainer" parent="UI/BigPanel/PetBagPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+columns = 8
+
+[node name="Title" type="Label" parent="UI/BigPanel/PetBagPanel"]
+layout_mode = 2
+offset_right = 1566.0
+offset_bottom = 69.0
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 0.807843, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 50
+text = "宠物背包2"
+horizontal_alignment = 1
+
+[node name="QuitButton" type="Button" parent="UI/BigPanel/PetBagPanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 1478.75
+offset_top = 20.0
+offset_right = 1538.75
+offset_bottom = 83.0
+theme_override_font_sizes/font_size = 40
 text = "X"
 
-[node name="RefreshButton" type="Button" parent="UI/AccountSettingPanel"]
-custom_minimum_size = Vector2(55, 55)
-layout_mode = 0
-offset_left = 2.0
-offset_right = 80.0
-offset_bottom = 57.0
-theme_override_font_sizes/font_size = 35
+[node name="RefreshButton" type="Button" parent="UI/BigPanel/PetBagPanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 27.5
+offset_top = 16.25
+offset_right = 115.5
+offset_bottom = 79.25
+theme_override_font_sizes/font_size = 40
 text = "刷新"
 
-[node name="VBox1" type="VBoxContainer" parent="UI/AccountSettingPanel"]
-layout_mode = 0
-offset_top = 58.0
+[node name="PetFightPanel" parent="UI/BigPanel" instance=ExtResource("23_n03md")]
+visible = false
+
+[node name="SmallPanel" type="CanvasLayer" parent="UI"]
+
+[node name="LandPanel" parent="UI/SmallPanel" instance=ExtResource("12_y1hsh")]
+visible = false
+offset_left = 442.0
+offset_top = 77.0
+offset_right = 958.0
+offset_bottom = 548.0
+
+[node name="LoadProgressPanel" parent="UI/SmallPanel" instance=ExtResource("27_vygm6")]
+
+[node name="AccountSettingPanel" parent="UI/SmallPanel" instance=ExtResource("26_uc6q1")]
+offset_left = 0.0
+offset_top = 0.0
 offset_right = 911.0
 offset_bottom = 647.0
 
-[node name="HBox1" type="HBoxContainer" parent="UI/AccountSettingPanel/VBox1"]
-layout_mode = 2
-alignment = 1
+[node name="OneClickPlantPanel" parent="UI/SmallPanel" instance=ExtResource("15_8kysg")]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 516.0
+offset_bottom = 250.0
 
-[node name="HTTPTextureRect" type="TextureRect" parent="UI/AccountSettingPanel/VBox1/HBox1"]
-layout_mode = 2
-texture = ExtResource("23_5b81d")
-script = ExtResource("24_8kysg")
-metadata/_custom_type_script = "uid://0d2j5m6j2ema"
+[node name="OnlineGiftPanel" parent="UI/SmallPanel" instance=ExtResource("14_5b81d")]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 521.0
+offset_bottom = 250.0
 
-[node name="Grid" type="GridContainer" parent="UI/AccountSettingPanel/VBox1"]
-layout_mode = 2
-columns = 2
-
-[node name="User_Name" type="Label" parent="UI/AccountSettingPanel/VBox1/Grid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "账户："
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="User_Name_Input" type="Label" parent="UI/AccountSettingPanel/VBox1/Grid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "74074091740"
-vertical_alignment = 1
-
-[node name="User_Password" type="Label" parent="UI/AccountSettingPanel/VBox1/Grid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "密码："
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="User_Password_Input" type="LineEdit" parent="UI/AccountSettingPanel/VBox1/Grid"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 30
-placeholder_text = "请输入密码"
-
-[node name="Player_Name" type="Label" parent="UI/AccountSettingPanel/VBox1/Grid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "玩家昵称："
-
-[node name="Player_Name_Input" type="LineEdit" parent="UI/AccountSettingPanel/VBox1/Grid"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 30
-placeholder_text = "请输入玩家昵称"
-
-[node name="Farm_Name" type="Label" parent="UI/AccountSettingPanel/VBox1/Grid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "农场名称："
-
-[node name="Farm_Name_Input" type="LineEdit" parent="UI/AccountSettingPanel/VBox1/Grid"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 30
-placeholder_text = "请输入农场名称"
-
-[node name="Personal_Profile" type="Label" parent="UI/AccountSettingPanel/VBox1/Grid"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "个人简介："
-
-[node name="Personal_Profile_Input" type="LineEdit" parent="UI/AccountSettingPanel/VBox1/Grid"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 30
-placeholder_text = "请输入个人简介"
-
-[node name="HBox2" type="HBoxContainer" parent="UI/AccountSettingPanel/VBox1"]
-layout_mode = 2
-alignment = 1
-
-[node name="Remove_Account_Btn" type="Button" parent="UI/AccountSettingPanel/VBox1/HBox2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "删除账号"
-
-[node name="Confirm_Btn" type="Button" parent="UI/AccountSettingPanel/VBox1/HBox2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "确认修改"
-
-[node name="LoadProgressPanel" type="Panel" parent="UI"]
+[node name="DebugPanel" type="Panel" parent="UI/SmallPanel"]
 visible = false
+offset_left = 1000.0
+offset_top = -3.0
 offset_right = 1402.0
-offset_bottom = 719.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_uhubb")
+offset_bottom = 716.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_5b81d")
+script = ExtResource("28_8kysg")
 
-[node name="Title" type="Label" parent="UI/LoadProgressPanel"]
+[node name="Title" type="Label" parent="UI/SmallPanel/DebugPanel"]
 layout_mode = 0
-offset_right = 1402.0
-offset_bottom = 550.0
-theme_override_colors/font_color = Color(0.966397, 0.970739, 0.632937, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 5
-theme_override_constants/shadow_offset_y = 5
-theme_override_constants/outline_size = 10
-theme_override_constants/shadow_outline_size = 10
+offset_right = 402.0
+offset_bottom = 60.0
 theme_override_font_sizes/font_size = 40
-text = "正在加载资源中，请稍后..."
+text = "调试面板"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="LoadProgressBar" type="ProgressBar" parent="UI/LoadProgressPanel"]
+[node name="DebugRichText" type="RichTextLabel" parent="UI/SmallPanel/DebugPanel"]
 layout_mode = 0
 offset_left = 8.0
-offset_top = 430.0
-offset_right = 1396.0
-offset_bottom = 489.0
-theme_override_colors/font_color = Color(0, 1, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 7
+offset_top = 63.0
+offset_right = 391.0
+offset_bottom = 709.0
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/DebugPanel"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 0
+offset_left = 322.0
+offset_top = 11.0
+offset_right = 392.0
+offset_bottom = 81.0
 theme_override_font_sizes/font_size = 40
+text = "X"
+
+[node name="PetInformPanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_left = 342.0
+offset_right = 1022.0
+offset_bottom = 723.0
+script = ExtResource("31_vygm6")
+
+[node name="Title" type="Label" parent="UI/SmallPanel/PetInformPanel"]
+layout_mode = 0
+offset_right = 680.0
+offset_bottom = 49.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 35
+text = "宠物信息"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PetImage" type="TextureRect" parent="UI/SmallPanel/PetInformPanel"]
+layout_mode = 0
+offset_left = 289.0
+offset_top = 56.0
+offset_right = 422.0
+offset_bottom = 184.0
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("31_uc6q1")
+
+[node name="InformScroll" type="ScrollContainer" parent="UI/SmallPanel/PetInformPanel"]
+layout_mode = 0
+offset_top = 159.0
+offset_right = 683.0
+offset_bottom = 647.0
+
+[node name="VBox" type="VBoxContainer" parent="UI/SmallPanel/PetInformPanel/InformScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="PetNameHBox" type="HBoxContainer" parent="UI/SmallPanel/PetInformPanel/InformScroll/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PetName" type="Label" parent="UI/SmallPanel/PetInformPanel/InformScroll/VBox/PetNameHBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "宠物名字"
+horizontal_alignment = 1
+
+[node name="PetNameEdit" type="LineEdit" parent="UI/SmallPanel/PetInformPanel/InformScroll/VBox/PetNameHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+placeholder_text = "请输入宠物名字"
+
+[node name="PetInform" type="RichTextLabel" parent="UI/SmallPanel/PetInformPanel/InformScroll/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/bold_italics_font_size = 25
+theme_override_font_sizes/italics_font_size = 25
+theme_override_font_sizes/mono_font_size = 25
+theme_override_font_sizes/normal_font_size = 25
+theme_override_font_sizes/bold_font_size = 30
+bbcode_enabled = true
+threaded = true
+
+[node name="ButtonHBox" type="HBoxContainer" parent="UI/SmallPanel/PetInformPanel"]
+layout_mode = 0
+offset_top = 646.0
+offset_right = 680.0
+offset_bottom = 719.0
+
+[node name="EditInformButton" type="Button" parent="UI/SmallPanel/PetInformPanel/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "修改信息"
+
+[node name="FeedButton" type="Button" parent="UI/SmallPanel/PetInformPanel/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "喂养"
+
+[node name="UseItemButton" type="Button" parent="UI/SmallPanel/PetInformPanel/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "使用道具"
+
+[node name="BattleButton" type="Button" parent="UI/SmallPanel/PetInformPanel/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "出战"
+
+[node name="PatroButton" type="Button" parent="UI/SmallPanel/PetInformPanel/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+toggle_mode = true
+text = "巡逻"
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/PetInformPanel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 626.0
+offset_right = 676.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="RefreshButton" type="Button" parent="UI/SmallPanel/PetInformPanel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+theme_override_font_sizes/font_size = 30
+text = "刷新"
+
+[node name="GlobalServerBroadcastPanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_left = 322.0
+offset_right = 985.0
+offset_bottom = 721.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_k1sw4")
+script = ExtResource("34_k1sw4")
+
+[node name="Title" type="Label" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 12.0
+offset_right = 653.0
+offset_bottom = 63.0
+theme_override_colors/font_color = Color(0.821789, 0.821789, 0.821789, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "全服大喇叭"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MessageContents" type="RichTextLabel" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 72.0
+offset_right = 653.0
+offset_bottom = 642.0
+theme_override_font_sizes/bold_italics_font_size = 15
+theme_override_font_sizes/italics_font_size = 15
+theme_override_font_sizes/mono_font_size = 15
+theme_override_font_sizes/normal_font_size = 15
+theme_override_font_sizes/bold_font_size = 15
+bbcode_enabled = true
+
+[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 649.0
+offset_right = 653.0
+offset_bottom = 709.0
+
+[node name="InputMessage" type="LineEdit" parent="UI/SmallPanel/GlobalServerBroadcastPanel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SendMessageButton" type="Button" parent="UI/SmallPanel/GlobalServerBroadcastPanel/HBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = " 发送 "
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 601.0
+offset_top = 12.0
+offset_right = 651.0
+offset_bottom = 62.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="WatchMoreButton" type="Button" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 13.0
+offset_top = 12.0
+offset_right = 141.0
+offset_bottom = 62.0
+theme_override_font_sizes/font_size = 30
+text = "查看更多"
+
+[node name="ScareCrowPanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_right = 1402.0
+offset_bottom = 723.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_jyxgm")
+script = ExtResource("35_6ylhg")
+
+[node name="Title" type="Label" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_top = -3.0
+offset_right = 1403.0
+offset_bottom = 63.0
+theme_override_colors/font_color = Color(0.89059, 0.89059, 0.89059, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 40
+text = "农场稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BuyScareCrowHbox" type="HBoxContainer" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_top = 69.0
+offset_right = 2337.0
+offset_bottom = 333.0
+scale = Vector2(0.6, 0.6)
+alignment = 1
+
+[node name="ScareCrow1" type="Button" parent="UI/SmallPanel/ScareCrowPanel/BuyScareCrowHbox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "花费：999元"
+icon = ExtResource("43_6rkns")
+icon_alignment = 1
+
+[node name="ScareCrow2" type="Button" parent="UI/SmallPanel/ScareCrowPanel/BuyScareCrowHbox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "花费888元"
+icon = ExtResource("36_jyxgm")
+icon_alignment = 1
+
+[node name="ScareCrow3" type="Button" parent="UI/SmallPanel/ScareCrowPanel/BuyScareCrowHbox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "花费1000元"
+icon = ExtResource("37_6ylhg")
+icon_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_top = 227.0
+offset_right = 1403.0
+offset_bottom = 284.0
+
+[node name="ScareCrowName" type="Label" parent="UI/SmallPanel/ScareCrowPanel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "稻草人名字"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScareCrowInput" type="LineEdit" parent="UI/SmallPanel/ScareCrowPanel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "请输入稻草人名字"
+
+[node name="ScareCrowNameColor" type="Label" parent="UI/SmallPanel/ScareCrowPanel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "稻草人名字颜色"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScareCrowNameColorInput" type="ColorPickerButton" parent="UI/SmallPanel/ScareCrowPanel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.733005, 0.733005, 0.733005, 1)
+
+[node name="ScareCrowTalksGrid" type="GridContainer" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_top = 283.0
+offset_right = 1402.0
+offset_bottom = 387.0
+columns = 2
+
+[node name="Talk1" type="LineEdit" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入稻草人说的第一句话"
+
+[node name="Talk2" type="LineEdit" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入稻草人说的第二句话"
+
+[node name="Talk3" type="LineEdit" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入稻草人说的第三句话"
+
+[node name="Talk4" type="LineEdit" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入稻草人说的第四句话"
+
+[node name="ScareCrowTalksColorGrid" type="GridContainer" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_left = -2.0
+offset_top = 399.0
+offset_right = 1400.0
+offset_bottom = 503.0
+columns = 4
+
+[node name="TalkColor1" type="Label" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "第一句话颜色 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorPickerButton1" type="ColorPickerButton" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TalkColor2" type="Label" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "第二句话颜色 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorPickerButton2" type="ColorPickerButton" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TalkColor3" type="Label" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "第三句话颜色 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorPickerButton3" type="ColorPickerButton" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TalkColor4" type="Label" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "第四句话颜色 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorPickerButton4" type="ColorPickerButton" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/ScareCrowPanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_left = 1334.0
+offset_top = 6.0
+offset_right = 1394.0
+offset_bottom = 66.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="Label" type="Label" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_top = 516.0
+offset_right = 1096.0
+offset_bottom = 571.0
+theme_override_font_sizes/font_size = 40
+text = "这个可爱的稻草人可以在别人访问你农场时向他/她展示几句话"
+
+[node name="HBox2" type="HBoxContainer" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 656.0
+offset_right = 1402.0
+offset_bottom = 719.0
+alignment = 1
+
+[node name="SureButton" type="Button" parent="UI/SmallPanel/ScareCrowPanel/HBox2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "确认修改"
+
+[node name="WisdomTreePanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_right = 1400.0
+offset_bottom = 720.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_np7ck")
+script = ExtResource("39_np7ck")
+
+[node name="Title" type="Label" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 19.0
+offset_right = 1382.0
+offset_bottom = 74.0
+theme_override_colors/font_color = Color(0.954954, 0.709181, 7.70092e-07, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 50
+text = "智慧树"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Description" type="Label" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 62.0
+offset_right = 1322.0
+offset_bottom = 280.0
+theme_override_colors/font_color = Color(0.654902, 1, 1, 1)
+theme_override_font_sizes/font_size = 30
+text = "只需花费一点点钱币，就可以匿名发送一句话，由于智慧树强大的链接性，其他玩家在浇水施肥时就有概率收到这句话。向他人发送一句祝福吧(,,・ω・,,) ，只要你不断的给智慧树浇水施肥，它就会长得越来越高"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 431.0
+offset_right = 1382.0
+offset_bottom = 531.0
+alignment = 1
+
+[node name="WaterButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "浇水"
+
+[node name="FertilizeButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "施肥"
+
+[node name="PlayMusicButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "放音乐"
+
+[node name="KillBugButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "杀虫"
+
+[node name="KillGrassButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "除草"
+
+[node name="ReviveButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "复活"
+
+[node name="VBox" type="VBoxContainer" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 531.0
+offset_right = 1383.0
+offset_bottom = 706.0
+
+[node name="Explanation" type="Label" parent="UI/SmallPanel/WisdomTreePanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "请在下方输入您想发送给别人的一句话"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/WisdomTreePanel/VBox"]
+layout_mode = 2
+
+[node name="TalkInput" type="LineEdit" parent="UI/SmallPanel/WisdomTreePanel/VBox/HBox"]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+placeholder_text = "在这里输入(*´∀ ˋ*)"
+alignment = 1
+
+[node name="SendButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/VBox/HBox"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 35
+text = "发送"
+
+[node name="Grid" type="GridContainer" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 303.0
+offset_right = 1383.0
+offset_bottom = 431.0
+columns = 2
+
+[node name="Level" type="Label" parent="UI/SmallPanel/WisdomTreePanel/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "等级：999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Health" type="Label" parent="UI/SmallPanel/WisdomTreePanel/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "生命值：999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Experience" type="Label" parent="UI/SmallPanel/WisdomTreePanel/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "经验值：999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Height" type="Label" parent="UI/SmallPanel/WisdomTreePanel/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "高度：999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 235.0
+offset_right = 1383.0
+offset_bottom = 290.0
+theme_override_font_sizes/font_size = 40
+text = "智慧树状态"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_left = 1317.0
+offset_top = 22.0
+offset_right = 1377.0
+offset_bottom = 85.0
+theme_override_font_sizes/font_size = 40
+text = "X"
+
+[node name="DiaLog" type="CanvasLayer" parent="UI"]
+
+[node name="AcceptDialog" parent="UI/DiaLog" instance=ExtResource("16_0igvr")]
+visible = false
+
+[node name="BatchBuyPopup" type="PanelContainer" parent="UI/DiaLog"]
+visible = false
+offset_left = 426.0
+offset_top = 90.0
+offset_right = 928.0
+offset_bottom = 556.0
+script = ExtResource("29_5b81d")
+
+[node name="VBox" type="VBoxContainer" parent="UI/DiaLog/BatchBuyPopup"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/DiaLog/BatchBuyPopup/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "是否购买"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Contents" type="Label" parent="UI/DiaLog/BatchBuyPopup/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 20
+text = "这是说明内容"
+horizontal_alignment = 1
+
+[node name="BuyNumEdit" type="LineEdit" parent="UI/DiaLog/BatchBuyPopup/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+
+[node name="HBox" type="HBoxContainer" parent="UI/DiaLog/BatchBuyPopup/VBox"]
+layout_mode = 2
+
+[node name="SureButton" type="Button" parent="UI/DiaLog/BatchBuyPopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "确定"
+
+[node name="CancelButton" type="Button" parent="UI/DiaLog/BatchBuyPopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "取消"
 
 [node name="BackgroundUI" type="CanvasLayer" parent="."]
 layer = -1
@@ -1659,6 +1373,14 @@ self_modulate = Color(0.5, 0.5, 0.5, 1)
 
 [node name="Timer" type="Timer" parent="BackgroundUI/BackgroundSwitcher"]
 
+[node name="PetPatrolPathLine" type="Line2D" parent="."]
+position = Vector2(-52.4841, -115.095)
+scale = Vector2(0.92426, 0.816774)
+points = PackedVector2Array(-40, -100, -40, 1100, 1400, 1100, 1400, -100)
+closed = true
+width = 5.0
+default_color = Color(0, 1, 1, 1)
+
 [node name="GridContainer" type="GridContainer" parent="."]
 z_as_relative = false
 custom_minimum_size = Vector2(100, 100)
@@ -1667,6 +1389,86 @@ offset_top = 2.0
 offset_right = 1398.0
 offset_bottom = 722.0
 columns = 10
+
+[node name="Button" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button2" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button3" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button4" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button5" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button6" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button7" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button8" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button9" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button10" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button11" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button12" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button13" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button14" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button15" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button16" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button17" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button18" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button19" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button20" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
 
 [node name="CopyNodes" type="Node2D" parent="."]
 position = Vector2(-1000, 0)
@@ -1685,22 +1487,1494 @@ offset_bottom = -61.0
 anchor_mode = 0
 position_smoothing_enabled = true
 script = ExtResource("10_o8l48")
-max_zoom = 1.1
+max_zoom = 2.0
 bounds_enabled = true
 bounds_min = Vector2(-500, -500)
 bounds_max = Vector2(500, 500)
-current_zoom_level = 1.1
-
-[node name="GameManager" type="Node" parent="."]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_m6fch")
+
+[node name="GameManager" type="Node" parent="."]
 
 [node name="GameBGMPlayer" type="Node" parent="."]
 script = ExtResource("28_m6fch")
 play_mode = 1
 music_files_list = Array[String](["res://assets/音乐/Anibli&RelaxingPianoMusic-StrollThroughtheSky.ogg", "res://assets/音乐/BanAM-Futatabi.ogg", "res://assets/音乐/MCMZebra-AlwaysandManyTimes.ogg", "res://assets/音乐/MicMusicbox-Ashitakasekki.ogg", "res://assets/音乐/Nemuネム-PromiseoftheWorld.ogg", "res://assets/音乐/α-WaveRelaxationHealingMusicLab-いつも何度でも[「千と千尋の神隠し」より][ピアノ].ogg", "res://assets/音乐/久石让-ふたたび.ogg", "res://assets/音乐/广桥真纪子-いのちの名前(生命之名).ogg", "res://assets/音乐/日本群星-PromiseoftheWorld.ogg"])
 
+[node name="GroundBackground" type="Node2D" parent="."]
+visible = false
+modulate = Color(0.929412, 1, 0.431373, 1)
+position = Vector2(3786, -1016)
+scale = Vector2(1.5, 1.5)
+
+[node name="土块1" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2203, 576)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块2" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2165, 598)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块3" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2240, 598)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块4" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2202, 620)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块5" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2127, 621)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块6" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2089, 643)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块7" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2164, 643)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块8" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2126, 665)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块9" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2278, 621)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块10" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2240, 643)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块11" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2315, 643)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块12" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2277, 665)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块13" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2202, 666)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块14" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2164, 688)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块15" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2239, 688)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块16" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2201, 710)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块17" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2052, 666)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块18" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2014, 688)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块19" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2089, 688)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块20" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2051, 710)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块21" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1976, 711)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块22" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1938, 733)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块23" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2013, 733)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块24" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1975, 755)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块25" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2127, 711)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块26" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2089, 733)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块27" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2164, 733)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块28" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2126, 755)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块29" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2051, 756)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块30" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2013, 778)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块31" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2088, 778)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块32" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2050, 800)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块33" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2353, 667)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块34" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2315, 689)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块35" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2390, 689)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块36" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2352, 711)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块37" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2277, 712)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块38" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2239, 734)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块39" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2314, 734)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块40" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2276, 756)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块41" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2428, 712)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块42" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2390, 734)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块43" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2465, 734)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块44" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2427, 756)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块45" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2352, 757)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块46" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2314, 779)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块47" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2389, 779)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块48" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2351, 801)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块49" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2202, 757)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块50" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2164, 779)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块51" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2239, 779)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块52" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2201, 801)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块53" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2126, 802)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块54" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2088, 824)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块55" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2163, 824)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块56" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2125, 846)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块57" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2277, 802)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块58" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2239, 824)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块59" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2314, 824)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块60" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2276, 846)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块61" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2201, 847)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块62" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2163, 869)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块63" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2238, 869)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块64" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2200, 891)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块65" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1900, 756)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块66" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1862, 778)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块67" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1937, 778)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块68" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1899, 800)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块69" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1824, 801)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块70" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1786, 823)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块71" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1861, 823)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块72" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1823, 845)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块73" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1975, 801)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块74" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1937, 823)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块75" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2012, 823)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块76" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1974, 845)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块77" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1899, 846)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块78" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1861, 868)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块79" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1936, 868)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块80" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1898, 890)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块81" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1749, 846)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块82" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1711, 868)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块83" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1786, 868)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块84" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1748, 890)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块85" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1673, 891)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块86" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1635, 913)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块87" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1710, 913)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块88" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1672, 935)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块89" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1824, 891)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块90" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1786, 913)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块91" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1861, 913)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块92" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1823, 935)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块93" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1748, 936)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块94" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1710, 958)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块95" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1785, 958)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块96" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1747, 980)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块97" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2050, 847)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块98" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2012, 869)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块99" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2087, 869)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块100" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2049, 891)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块101" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1974, 892)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块102" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1936, 914)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块103" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2011, 914)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块104" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1973, 936)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块105" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2125, 892)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块106" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2087, 914)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块107" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2162, 914)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块108" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2124, 936)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块109" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2049, 937)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块110" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2011, 959)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块111" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2086, 959)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块112" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2048, 981)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块113" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1899, 937)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块114" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1861, 959)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块115" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1936, 959)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块116" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1898, 981)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块117" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1823, 982)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块118" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1785, 1004)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块119" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1860, 1004)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块120" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1822, 1026)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块121" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1974, 982)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块122" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1936, 1004)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块123" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2011, 1004)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块124" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1973, 1026)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块125" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1898, 1027)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块126" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1860, 1049)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块127" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1935, 1049)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块128" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1897, 1071)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块129" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2504, 756)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块130" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2466, 778)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块131" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2541, 778)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块132" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2503, 800)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块133" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2428, 801)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块134" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2390, 823)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块135" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2465, 823)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块136" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2427, 845)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块137" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2579, 801)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块138" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2541, 823)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块139" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2616, 823)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块140" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2578, 845)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块141" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2503, 846)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块142" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2465, 868)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块143" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2540, 868)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块144" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2502, 890)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块145" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2353, 846)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块146" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2315, 868)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块147" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2390, 868)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块148" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2352, 890)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块149" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2277, 891)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块150" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2239, 913)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块151" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2314, 913)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块152" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2276, 935)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块153" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2428, 891)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块154" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2390, 913)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块155" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2465, 913)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块156" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2427, 935)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块157" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2352, 936)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块158" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2314, 958)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块159" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2389, 958)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块160" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2351, 980)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块161" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2654, 847)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块162" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2616, 869)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块163" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2691, 869)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块164" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2653, 891)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块165" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2578, 892)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块166" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2540, 914)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块167" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2615, 914)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块168" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2577, 936)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块169" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2729, 892)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块170" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2691, 914)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块171" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2766, 914)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块172" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2728, 936)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块173" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2653, 937)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块174" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2615, 959)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块175" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2690, 959)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块176" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2652, 981)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块177" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2503, 937)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块178" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2465, 959)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块179" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2540, 959)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块180" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2502, 981)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块181" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2427, 982)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块182" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2389, 1004)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块183" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2464, 1004)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块184" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2426, 1026)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块185" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2578, 982)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块186" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2540, 1004)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块187" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2615, 1004)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块188" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2577, 1026)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块189" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2502, 1027)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块190" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2464, 1049)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块191" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2539, 1049)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块192" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2501, 1071)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块193" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2202, 935)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块194" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2164, 957)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块195" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2239, 957)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块196" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2201, 979)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块197" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2126, 980)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块198" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2088, 1002)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块199" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2163, 1002)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块200" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2125, 1024)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块201" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2277, 980)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块202" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2239, 1002)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块203" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2314, 1002)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块204" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2276, 1024)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块205" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2201, 1025)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块206" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2163, 1047)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块207" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2238, 1047)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块208" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2200, 1069)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块209" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2051, 1025)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块210" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2013, 1047)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块211" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2088, 1047)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块212" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2050, 1069)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块213" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1975, 1070)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块214" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1937, 1092)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块215" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2012, 1092)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块216" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-1974, 1114)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块217" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2126, 1070)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块218" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2088, 1092)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块219" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2163, 1092)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块220" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2125, 1114)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块221" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2050, 1115)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块222" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2012, 1137)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块223" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2087, 1137)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块224" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2049, 1159)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块225" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2352, 1026)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块226" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2314, 1048)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块227" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2389, 1048)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块228" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2351, 1070)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块229" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2276, 1071)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块230" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2238, 1093)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块231" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2313, 1093)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块232" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2275, 1115)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块233" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2427, 1071)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块234" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2389, 1093)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块235" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2464, 1093)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块236" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2426, 1115)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块237" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2351, 1116)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块238" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2313, 1138)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块239" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2388, 1138)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块240" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2350, 1160)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块241" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2201, 1116)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块242" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2163, 1138)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块243" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2238, 1138)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块244" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2200, 1160)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块245" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2125, 1161)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块246" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2087, 1183)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块247" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2162, 1183)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块248" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2124, 1205)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块249" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2276, 1161)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块250" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2238, 1183)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块251" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2313, 1183)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块252" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2275, 1205)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块253" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2200, 1206)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块254" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2162, 1228)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块255" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2237, 1228)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="土块256" type="Sprite2D" parent="GroundBackground"]
+position = Vector2(-2199, 1250)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("41_cdkxt")
+
+[node name="Decoration" type="Node2D" parent="."]
+
+[node name="ScareCrow" type="Button" parent="Decoration"]
+custom_minimum_size = Vector2(100, 100)
+offset_left = 2.0
+offset_top = -108.0
+offset_right = 266.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/ScareCrow"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("43_jbja5")
+
+[node name="ScareCrowImage" type="Sprite2D" parent="Decoration/ScareCrow"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("43_6rkns")
+
+[node name="ScareCrowName" type="RichTextLabel" parent="Decoration/ScareCrow"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackgroundPanel" type="Panel" parent="Decoration/ScareCrow"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -265.0
+offset_right = 339.0
+offset_bottom = -145.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_6ylhg")
+
+[node name="ScareCrowtalks" type="RichTextLabel" parent="Decoration/ScareCrow/BackgroundPanel"]
+layout_mode = 0
+offset_left = 13.0
+offset_right = 390.0
+offset_bottom = 113.0
+theme_override_font_sizes/bold_italics_font_size = 35
+theme_override_font_sizes/italics_font_size = 35
+theme_override_font_sizes/mono_font_size = 35
+theme_override_font_sizes/normal_font_size = 35
+theme_override_font_sizes/bold_font_size = 35
+bbcode_enabled = true
+text = "臭小子不要偷我的菜，被我逮到你就完蛋了！"
+autowrap_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScareCrow2" type="Button" parent="Decoration"]
+custom_minimum_size = Vector2(100, 100)
+offset_left = 108.0
+offset_top = -108.0
+offset_right = 372.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/ScareCrow2"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("43_jbja5")
+
+[node name="ScareCrowImage" type="Sprite2D" parent="Decoration/ScareCrow2"]
+visible = false
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("43_6rkns")
+
+[node name="ScareCrowName" type="RichTextLabel" parent="Decoration/ScareCrow2"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackgroundPanel" type="Panel" parent="Decoration/ScareCrow2"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -265.0
+offset_right = 339.0
+offset_bottom = -145.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_6ylhg")
+
+[node name="ScareCrowtalks" type="RichTextLabel" parent="Decoration/ScareCrow2/BackgroundPanel"]
+layout_mode = 0
+offset_left = 13.0
+offset_right = 390.0
+offset_bottom = 113.0
+theme_override_font_sizes/bold_italics_font_size = 35
+theme_override_font_sizes/italics_font_size = 35
+theme_override_font_sizes/mono_font_size = 35
+theme_override_font_sizes/normal_font_size = 35
+theme_override_font_sizes/bold_font_size = 35
+bbcode_enabled = true
+text = "臭小子不要偷我的菜，被我逮到你就完蛋了！"
+autowrap_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WisdomTree" type="Button" parent="Decoration"]
+custom_minimum_size = Vector2(100, 100)
+offset_left = 928.0
+offset_top = -108.0
+offset_right = 1192.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/WisdomTree"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("43_jbja5")
+
+[node name="WisdomTreeImage" type="Sprite2D" parent="Decoration/WisdomTree"]
+position = Vector2(126, 82)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("45_xvovi")
+
+[node name="TreeName" type="Label" parent="Decoration/WisdomTree"]
+self_modulate = Color(2, 2, 2, 1)
+layout_mode = 0
+offset_top = -145.0
+offset_right = 265.0
+offset_bottom = -96.0
+theme_override_font_sizes/font_size = 35
+text = "智慧树"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TreeStatus" type="Label" parent="Decoration/WisdomTree"]
+self_modulate = Color(2, 2, 2, 1)
+layout_mode = 0
+offset_left = -122.0
+offset_top = -190.0
+offset_right = 370.0
+offset_bottom = -141.0
+theme_override_font_sizes/font_size = 35
+text = "等级lv：99  高度：99m"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackgroundPanel" type="Panel" parent="Decoration/WisdomTree"]
+layout_mode = 0
+offset_left = -212.0
+offset_top = -350.0
+offset_right = 491.0
+offset_bottom = -195.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_6ylhg")
+
+[node name="AnonymousTalk" type="RichTextLabel" parent="Decoration/WisdomTree/BackgroundPanel"]
+layout_mode = 0
+offset_left = 13.0
+offset_right = 695.0
+offset_bottom = 155.0
+theme_override_font_sizes/bold_italics_font_size = 35
+theme_override_font_sizes/italics_font_size = 35
+theme_override_font_sizes/mono_font_size = 35
+theme_override_font_sizes/normal_font_size = 35
+theme_override_font_sizes/bold_font_size = 35
+bbcode_enabled = true
+text = "给未来的某个陌生人说一句话吧"
+autowrap_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="UI/GUI/GameInfoHBox3/WatchBroadcast" to="." method="_on_watch_broadcast_button_pressed"]
 [connection signal="pressed" from="UI/GUI/FarmVBox/SeedStoreButton" to="." method="_on_open_store_button_pressed"]
 [connection signal="pressed" from="UI/GUI/FarmVBox/SeedWarehouseButton" to="." method="_on_seed_warehouse_button_pressed"]
 [connection signal="pressed" from="UI/GUI/FarmVBox/CropWarehouseButton" to="." method="_on_crop_warehouse_button_pressed"]
@@ -1722,15 +2996,10 @@ music_files_list = Array[String](["res://assets/音乐/Anibli&RelaxingPianoMusic
 [connection signal="pressed" from="UI/GUI/OtherVBox/SmallGameButton" to="." method="_on_online_gift_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/SettingButton" to="." method="_on_setting_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/WisdomTreeButton" to="." method="_on_setting_button_pressed"]
-[connection signal="pressed" from="UI/GUI/OtherVBox/MyPetButton" to="." method="_on_my_pet_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/PetBagButton" to="." method="_on_pet_bag_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/PetStoreButton" to="." method="_on_pet_store_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/ScareCrowButton" to="." method="_on_my_pet_button_pressed"]
-[connection signal="pressed" from="UI/OnlineGiftPanel/Quit_Button" to="UI/OnlineGiftPanel" method="_on_quit_button_pressed"]
-[connection signal="pressed" from="UI/OneClickPlantPanel/Quit_Button" to="UI/OneClickPlantPanel" method="_on_quit_button_pressed"]
-[connection signal="pressed" from="UI/CropStorePanel/QuitButton" to="." method="_on_quit_button_pressed"]
-[connection signal="pressed" from="UI/CropStorePanel/RefreshButton" to="UI/CropStorePanel" method="_on_refresh_button_pressed"]
-[connection signal="pressed" from="UI/CropWarehousePanel/QuitButton" to="." method="_on_quit_button_pressed"]
-[connection signal="pressed" from="UI/CropWarehousePanel/RefreshButton" to="UI/CropWarehousePanel" method="_on_refresh_button_pressed"]
-[connection signal="pressed" from="UI/PlayerBagPanel/RefreshButton" to="UI/PlayerBagPanel" method="_on_refresh_button_pressed"]
-[connection signal="pressed" from="UI/ItemBagPanel/QuitButton" to="UI/ItemBagPanel" method="_on_quit_button_pressed"]
-[connection signal="pressed" from="UI/ItemBagPanel/RefreshButton" to="UI/ItemBagPanel" method="_on_refresh_button_pressed"]
-[connection signal="pressed" from="UI/ItemStorePanel/RefreshButton" to="UI/ItemStorePanel" method="_on_refresh_button_pressed"]
+[connection signal="pressed" from="UI/SmallPanel/DebugPanel/QuitButton" to="UI/SmallPanel/DebugPanel" method="_on_quit_button_pressed"]
+[connection signal="pressed" from="Decoration/ScareCrow" to="." method="_on_scare_crow_pressed"]
+[connection signal="pressed" from="Decoration/ScareCrow2" to="." method="_on_scare_crow_pressed"]
+[connection signal="pressed" from="Decoration/WisdomTree" to="." method="_on_wisdom_tree_pressed"]

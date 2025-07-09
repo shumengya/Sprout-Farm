@@ -1,0 +1,157 @@
+[gd_scene load_steps=3 format=3 uid="uid://bseuwniienrqy"]
+
+[ext_resource type="Script" uid="uid://cgr332wsx63a8" path="res://Script/BigPanel/PlayerBagPanel.gd" id="1_srags"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n03md"]
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
+
+[node name="PlayerBagPanel" type="Panel"]
+offset_left = 63.0
+offset_top = 79.0
+offset_right = 1620.0
+offset_bottom = 799.0
+scale = Vector2(0.8, 0.8)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
+script = ExtResource("1_srags")
+
+[node name="TMBackGround" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = -81.0
+offset_top = -96.0
+offset_right = 1677.0
+offset_bottom = 802.0
+color = Color(1, 1, 1, 0)
+
+[node name="SortContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_top = 58.0
+offset_right = 1557.0
+offset_bottom = 121.0
+alignment = 1
+
+[node name="FilterLabel" type="Label" parent="SortContainer"]
+modulate = Color(0.439216, 0.560784, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "排序："
+
+[node name="Sort_All" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "全部"
+
+[node name="Sort_Common" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "普通"
+
+[node name="Sort_Superior" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "优良"
+
+[node name="Sort_Rare" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "稀有"
+
+[node name="Sort_Epic" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "史诗"
+
+[node name="Sort_Legendary" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "传奇"
+
+[node name="SortLabel" type="Label" parent="SortContainer"]
+modulate = Color(0.439216, 0.560784, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "排序："
+
+[node name="Sort_Price" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "按价格"
+
+[node name="Sort_GrowTime" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "按生长时间"
+
+[node name="Sort_Profit" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "按收益"
+
+[node name="Sort_Level" type="Button" parent="SortContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "按等级"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+offset_left = 11.0
+offset_top = 121.0
+offset_right = 3877.0
+offset_bottom = 1592.0
+scale = Vector2(0.4, 0.4)
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Bag_Grid" type="GridContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+columns = 8
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+offset_right = 1557.0
+offset_bottom = 55.0
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/font_size = 40
+text = "种子仓库"
+horizontal_alignment = 1
+
+[node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 1478.75
+offset_top = 13.75
+offset_right = 1538.75
+offset_bottom = 76.75
+theme_override_font_sizes/font_size = 40
+text = "X"
+
+[node name="RefreshButton" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 15.0001
+offset_top = 13.75
+offset_right = 75.0001
+offset_bottom = 76.75
+theme_override_font_sizes/font_size = 40
+text = "刷新"
+
+[connection signal="pressed" from="RefreshButton" to="." method="_on_refresh_button_pressed"]

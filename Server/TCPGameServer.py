@@ -55,9 +55,9 @@ import random
 # 服务器配置参数
 # ============================================================================
 server_host: str = "0.0.0.0"
-server_port: int = 4040
+server_port: int = 6060
 buffer_size: int = 4096
-server_version: str = "1.0.5"
+server_version: str = "2.0.1"
 
 
 
@@ -89,6 +89,7 @@ class TCPGameServer(TCPServer):
         self.start_crop_growth_timer()
         self.start_batch_save_timer()
         self.start_weed_growth_timer()
+        self.start_wisdom_tree_health_decay_timer()
     
     #初始化性能操作
     def _init_performance_settings(self):
@@ -153,6 +154,18 @@ class TCPGameServer(TCPServer):
         self.weed_timer.daemon = True
         self.weed_timer.start()
     
+    def start_wisdom_tree_health_decay_timer(self):
+        """启动智慧树生命值衰减定时器"""
+        try:
+            self.check_wisdom_tree_health_decay()
+        except Exception as e:
+            self.log('ERROR', f"智慧树生命值衰减检查时出错: {str(e)}", 'SERVER')
+        
+        # 创建下一个智慧树衰减检查计时器（每天检查一次）
+        self.wisdom_tree_decay_timer = threading.Timer(86400, self.start_wisdom_tree_health_decay_timer)  # 每24小时检查一次
+        self.wisdom_tree_decay_timer.daemon = True
+        self.wisdom_tree_decay_timer.start()
+    
     #获取服务器统计信息
     def get_server_stats(self):
         """获取服务器统计信息"""
@@ -179,6 +192,12 @@ class TCPGameServer(TCPServer):
             self.weed_timer.cancel()
             self.weed_timer = None
             self.log('INFO', "杂草生长计时器已停止", 'SERVER')
+        
+        # 停止智慧树生命值衰减计时器
+        if hasattr(self, 'wisdom_tree_decay_timer') and self.wisdom_tree_decay_timer:
+            self.wisdom_tree_decay_timer.cancel()
+            self.wisdom_tree_decay_timer = None
+            self.log('INFO', "智慧树生命值衰减计时器已停止", 'SERVER')
         
         # 强制保存所有缓存数据
         self.log('INFO', "正在保存所有玩家数据...", 'SERVER')
@@ -674,6 +693,18 @@ class TCPGameServer(TCPServer):
             return self._handle_buy_seed(client_id, message)
         elif message_type == "buy_item":#购买道具
             return self._handle_buy_item(client_id, message)
+        elif message_type == "buy_pet":#购买宠物
+            return self._handle_buy_pet(client_id, message)
+        elif message_type == "rename_pet":#重命名宠物
+            return self._handle_rename_pet(client_id, message)
+        elif message_type == "set_patrol_pet":#设置巡逻宠物
+            return self._handle_set_patrol_pet(client_id, message)
+        elif message_type == "set_battle_pet":#设置出战宠物
+            return self._handle_set_battle_pet(client_id, message)
+        elif message_type == "update_battle_pet_data":#更新宠物对战数据
+            return self._handle_update_battle_pet_data(client_id, message)
+        elif message_type == "feed_pet":#喂食宠物
+            return self._handle_feed_pet(client_id, message)
         elif message_type == "dig_ground":#开垦土地
             return self._handle_dig_ground(client_id, message)
         elif message_type == "remove_crop":#铲除作物
@@ -700,6 +731,8 @@ class TCPGameServer(TCPServer):
             return self._handle_player_rankings_request(client_id, message)
         elif message_type == "request_crop_data":#请求作物数据
             return self._handle_crop_data_request(client_id)
+        elif message_type == "request_item_config":#请求道具配置数据
+            return self._handle_item_config_request(client_id)
         elif message_type == "visit_player":#拜访其他玩家农场
             return self._handle_visit_player_request(client_id, message)
         elif message_type == "return_my_farm":#返回我的农场
@@ -724,6 +757,26 @@ class TCPGameServer(TCPServer):
             return self._handle_delete_account_request(client_id, message)
         elif message_type == "refresh_player_info":#刷新玩家信息
             return self._handle_refresh_player_info_request(client_id, message)
+        elif message_type == "global_broadcast":#全服大喇叭消息
+            return self._handle_global_broadcast_message(client_id, message)
+        elif message_type == "request_broadcast_history":#请求全服大喇叭历史消息
+            return self._handle_request_broadcast_history(client_id, message)
+        elif message_type == "use_pet_item":#宠物使用道具
+            return self._handle_use_pet_item(client_id, message)
+        elif message_type == "use_farm_item":#农场道具使用
+            return self._handle_use_farm_item(client_id, message)
+        elif message_type == "buy_scare_crow":#购买稻草人
+            return self._handle_buy_scare_crow(client_id, message)
+        elif message_type == "modify_scare_crow_config":#修改稻草人配置
+            return self._handle_modify_scare_crow_config(client_id, message)
+        elif message_type == "get_scare_crow_config":#获取稻草人配置
+            return self._handle_get_scare_crow_config(client_id, message)
+        elif message_type == "wisdom_tree_operation":#智慧树操作
+            return self._handle_wisdom_tree_operation(client_id, message)
+        elif message_type == "wisdom_tree_message":#智慧树消息
+            return self._handle_wisdom_tree_message(client_id, message)
+        elif message_type == "get_wisdom_tree_config":#获取智慧树配置
+            return self._handle_get_wisdom_tree_config(client_id, message)
         #---------------------------------------------------------------------------
 
         elif message_type == "message":#处理聊天消息（暂未实现）
@@ -803,6 +856,9 @@ class TCPGameServer(TCPServer):
             # 检查并更新已存在玩家的注册时间
             self._check_and_update_register_time(player_data, username)
             
+            # 检查并修复智慧树配置
+            self._check_and_fix_wisdom_tree_config(player_data, username)
+            
             # 初始化今日在线礼包数据
             current_date = datetime.datetime.now().strftime("%Y-%m-%d")
             if "online_gift" not in player_data:
@@ -831,12 +887,16 @@ class TCPGameServer(TCPServer):
             # 发送初始数据
             self._send_initial_login_data(client_id, player_data)
             
-            # 返回登录成功消息
+            # 返回登录成功消息，转换巡逻宠物和出战宠物数据
+            response_player_data = player_data.copy()
+            response_player_data["巡逻宠物"] = self._convert_patrol_pets_to_full_data(player_data)
+            response_player_data["出战宠物"] = self._convert_battle_pets_to_full_data(player_data)
+            
             response = {
                 "type": "login_response",
                 "status": "success",
                 "message": "登录成功",
-                "player_data": player_data
+                "player_data": response_player_data
             }
         else:
             # 登录失败
@@ -871,6 +931,17 @@ class TCPGameServer(TCPServer):
             }
             self.send_data(client_id, crop_data_message)
             self.log('INFO', f"已向登录用户发送作物数据配置", 'SERVER')
+        
+        # 发送最新的道具配置数据
+        item_config = self._load_item_config()
+        if item_config:
+            item_config_message = {
+                "type": "item_config_response",
+                "success": True,
+                "item_config": item_config
+            }
+            self.send_data(client_id, item_config_message)
+            self.log('INFO', f"已向登录用户发送道具配置数据，道具种类：{len(item_config)}", 'SERVER')
     
 
     #处理注册消息
@@ -1302,6 +1373,18 @@ class TCPGameServer(TCPServer):
         if not self._check_stamina_sufficient(current_player_data, stamina_cost):
             return self._send_action_error(client_id, "harvest_crop", f"体力值不足，偷菜需要 {stamina_cost} 点体力，当前体力：{current_player_data.get('体力值', 0)}")
         
+        # 检查是否被巡逻宠物发现（调试：100%概率）
+        patrol_pets = target_player_data.get("巡逻宠物", [])
+        if patrol_pets and len(patrol_pets) > 0:
+            # 100%概率被发现（调试用）
+            import random
+            if random.random() <= 1.0:
+                # 被巡逻宠物发现了！
+                return self._handle_steal_caught_by_patrol(
+                    client_id, current_player_data, current_username, 
+                    target_player_data, target_username, patrol_pets[0]
+                )
+        
         # 读取作物配置
         crop_data = self._load_crop_data()
         
@@ -1398,6 +1481,107 @@ class TCPGameServer(TCPServer):
                 "作物仓库": current_player_data.get("作物仓库", [])
             }
         })
+    
+    # 处理偷菜被巡逻宠物发现的情况
+    def _handle_steal_caught_by_patrol(self, client_id, current_player_data, current_username, target_player_data, target_username, patrol_pet_id):
+        """处理偷菜被巡逻宠物发现的情况"""
+        # 检查当前玩家是否有出战宠物
+        battle_pets = current_player_data.get("出战宠物", [])
+        
+        if len(battle_pets) == 0:
+            # 没有出战宠物，只能逃跑，支付1000金币
+            escape_cost = 1000
+            if current_player_data.get("money", 0) < escape_cost:
+                # 金币不足，偷菜失败
+                self.log('INFO', f"玩家 {current_username} 偷菜被发现，金币不足逃跑，偷菜失败", 'SERVER')
+                return self.send_data(client_id, {
+                    "type": "steal_caught",
+                    "success": False,
+                    "message": f"偷菜被 {target_username} 的巡逻宠物发现！金币不足支付逃跑费用（需要{escape_cost}金币），偷菜失败！",
+                    "patrol_pet_data": self._get_patrol_pet_data(target_player_data, patrol_pet_id),
+                    "has_battle_pet": False,
+                    "escape_cost": escape_cost,
+                    "current_money": current_player_data.get("money", 0)
+                })
+            else:
+                # 自动逃跑，扣除金币
+                current_player_data["money"] -= escape_cost
+                target_player_data["money"] += escape_cost
+                
+                # 保存数据
+                self.save_player_data(current_username, current_player_data)
+                self.save_player_data(target_username, target_player_data)
+                
+                self.log('INFO', f"玩家 {current_username} 偷菜被发现，支付 {escape_cost} 金币逃跑", 'SERVER')
+                return self.send_data(client_id, {
+                    "type": "steal_caught",
+                    "success": False,
+                    "message": f"偷菜被 {target_username} 的巡逻宠物发现！支付了 {escape_cost} 金币逃跑",
+                    "patrol_pet_data": self._get_patrol_pet_data(target_player_data, patrol_pet_id),
+                    "has_battle_pet": False,
+                    "escape_cost": escape_cost,
+                    "updated_data": {
+                        "money": current_player_data["money"]
+                    }
+                })
+        else:
+            # 有出战宠物，可以选择战斗或逃跑
+            battle_pet_id = battle_pets[0]  # 取第一个出战宠物
+            
+            # 检查出战宠物是否与巡逻宠物是同一个（不应该发生，但保险起见）
+            if battle_pet_id == patrol_pet_id:
+                self.log('WARNING', f"玩家 {current_username} 的出战宠物与 {target_username} 的巡逻宠物是同一个，这不应该发生", 'SERVER')
+                return self._send_action_error(client_id, "harvest_crop", "系统错误：宠物冲突")
+            
+            self.log('INFO', f"玩家 {current_username} 偷菜被发现，可以选择战斗或逃跑", 'SERVER')
+            return self.send_data(client_id, {
+                "type": "steal_caught",
+                "success": False,
+                "message": f"偷菜被 {target_username} 的巡逻宠物发现！",
+                "patrol_pet_data": self._get_patrol_pet_data(target_player_data, patrol_pet_id),
+                "battle_pet_data": self._get_battle_pet_data(current_player_data, battle_pet_id),
+                "has_battle_pet": True,
+                "escape_cost": 1000,
+                "battle_cost": 1300,
+                "target_username": target_username,
+                "current_username": current_username
+            })
+    
+    # 获取巡逻宠物数据
+    def _get_patrol_pet_data(self, player_data, patrol_pet_id):
+        """根据巡逻宠物ID获取完整宠物数据"""
+        pet_bag = player_data.get("宠物背包", [])
+        for pet in pet_bag:
+            if pet.get("基本信息", {}).get("宠物ID", "") == patrol_pet_id:
+                # 添加场景路径
+                import copy
+                pet_data = copy.deepcopy(pet)
+                pet_type = pet.get("基本信息", {}).get("宠物类型", "")
+                pet_configs = self._load_pet_config()
+                if pet_type in pet_configs:
+                    pet_data["场景路径"] = pet_configs[pet_type].get("场景路径", "res://Scene/Pet/PetBase.tscn")
+                else:
+                    pet_data["场景路径"] = "res://Scene/Pet/PetBase.tscn"
+                return pet_data
+        return None
+    
+    # 获取出战宠物数据
+    def _get_battle_pet_data(self, player_data, battle_pet_id):
+        """根据出战宠物ID获取完整宠物数据"""
+        pet_bag = player_data.get("宠物背包", [])
+        for pet in pet_bag:
+            if pet.get("基本信息", {}).get("宠物ID", "") == battle_pet_id:
+                # 添加场景路径
+                import copy
+                pet_data = copy.deepcopy(pet)
+                pet_type = pet.get("基本信息", {}).get("宠物类型", "")
+                pet_configs = self._load_pet_config()
+                if pet_type in pet_configs:
+                    pet_data["场景路径"] = pet_configs[pet_type].get("场景路径", "res://Scene/Pet/PetBase.tscn")
+                else:
+                    pet_data["场景路径"] = "res://Scene/Pet/PetBase.tscn"
+                return pet_data
+        return None
     
     # 生成收获种子奖励（10%概率获得1-2个种子）
     def _generate_harvest_seed_reward(self, crop_type):
@@ -1744,6 +1928,11 @@ class TCPGameServer(TCPServer):
             return self.send_data(client_id, response)
         
         crop_name = message.get("crop_name", "")
+        quantity = message.get("quantity", 1)  # 获取购买数量，默认为1
+        
+        # 确保购买数量为正整数
+        if not isinstance(quantity, int) or quantity <= 0:
+            quantity = 1
         
         # 加载作物配置
         crop_data = self._load_crop_data()
@@ -1754,29 +1943,33 @@ class TCPGameServer(TCPServer):
         if crop_name not in crop_data:
             return self._send_action_error(client_id, "buy_seed", "该种子不存在")
         
-        # 处理购买
-        return self._process_seed_purchase(client_id, player_data, username, crop_name, crop_data[crop_name])
+        # 处理批量购买
+        return self._process_seed_purchase(client_id, player_data, username, crop_name, crop_data[crop_name], quantity)
     
     #处理种子购买逻辑
-    def _process_seed_purchase(self, client_id, player_data, username, crop_name, crop):
+    def _process_seed_purchase(self, client_id, player_data, username, crop_name, crop, quantity=1):
         """处理种子购买逻辑"""
         # 检查玩家等级
         if player_data["level"] < crop.get("等级", 1):
             return self._send_action_error(client_id, "buy_seed", "等级不足，无法购买此种子")
         
+        # 计算总花费
+        unit_cost = crop.get("花费", 0)
+        total_cost = unit_cost * quantity
+        
         # 检查玩家金钱
-        if player_data["money"] < crop.get("花费", 0):
-            return self._send_action_error(client_id, "buy_seed", "金钱不足，无法购买此种子")
+        if player_data["money"] < total_cost:
+            return self._send_action_error(client_id, "buy_seed", f"金钱不足，无法购买此种子。需要{total_cost}元，当前只有{player_data['money']}元")
         
         # 扣除金钱
-        player_data["money"] -= crop.get("花费", 0)
+        player_data["money"] -= total_cost
         
         # 将种子添加到背包
         seed_found = False
         
         for item in player_data.get("player_bag", []):
             if item.get("name") == crop_name:
-                item["count"] += 1
+                item["count"] += quantity
                 seed_found = True
                 break
         
@@ -1787,19 +1980,19 @@ class TCPGameServer(TCPServer):
             player_data["player_bag"].append({
                 "name": crop_name,
                 "quality": crop.get("品质", "普通"),
-                "count": 1
+                "count": quantity
             })
         
         # 保存玩家数据
         self.save_player_data(username, player_data)
         
-        self.log('INFO', f"玩家 {username} 购买了种子 {crop_name}", 'SERVER')
+        self.log('INFO', f"玩家 {username} 购买了 {quantity} 个种子 {crop_name}，花费 {total_cost} 元", 'SERVER')
         
         return self.send_data(client_id, {
             "type": "action_response",
             "action_type": "buy_seed",
             "success": True,
-            "message": f"成功购买 {crop_name} 种子",
+            "message": f"成功购买 {quantity} 个 {crop_name} 种子",
             "updated_data": {
                 "money": player_data["money"],
                 "player_bag": player_data["player_bag"]
@@ -1827,6 +2020,11 @@ class TCPGameServer(TCPServer):
         
         item_name = message.get("item_name", "")
         item_cost = message.get("item_cost", 0)
+        quantity = message.get("quantity", 1)  # 获取购买数量，默认为1
+        
+        # 确保购买数量为正整数
+        if not isinstance(quantity, int) or quantity <= 0:
+            quantity = 1
         
         # 加载道具配置
         item_config = self._load_item_config()
@@ -1842,20 +2040,21 @@ class TCPGameServer(TCPServer):
         if item_cost != actual_cost:
             return self._send_action_error(client_id, "buy_item", f"道具价格验证失败，实际价格为{actual_cost}元")
         
-        # 处理购买
-        return self._process_item_purchase(client_id, player_data, username, item_name, item_config[item_name])
+        # 处理批量购买
+        return self._process_item_purchase(client_id, player_data, username, item_name, item_config[item_name], quantity)
     
     #处理道具购买逻辑
-    def _process_item_purchase(self, client_id, player_data, username, item_name, item_info):
+    def _process_item_purchase(self, client_id, player_data, username, item_name, item_info, quantity=1):
         """处理道具购买逻辑"""
-        item_cost = item_info.get("花费", 0)
+        unit_cost = item_info.get("花费", 0)
+        total_cost = unit_cost * quantity
         
         # 检查玩家金钱
-        if player_data["money"] < item_cost:
-            return self._send_action_error(client_id, "buy_item", "金钱不足，无法购买此道具")
+        if player_data["money"] < total_cost:
+            return self._send_action_error(client_id, "buy_item", f"金钱不足，无法购买此道具。需要{total_cost}元，当前只有{player_data['money']}元")
         
         # 扣除金钱
-        player_data["money"] -= item_cost
+        player_data["money"] -= total_cost
         
         # 将道具添加到道具背包
         item_found = False
@@ -1866,26 +2065,26 @@ class TCPGameServer(TCPServer):
         
         for item in player_data["道具背包"]:
             if item.get("name") == item_name:
-                item["count"] += 1
+                item["count"] += quantity
                 item_found = True
                 break
         
         if not item_found:
             player_data["道具背包"].append({
                 "name": item_name,
-                "count": 1
+                "count": quantity
             })
         
         # 保存玩家数据
         self.save_player_data(username, player_data)
         
-        self.log('INFO', f"玩家 {username} 购买了道具 {item_name}，花费 {item_cost} 元", 'SERVER')
+        self.log('INFO', f"玩家 {username} 购买了 {quantity} 个道具 {item_name}，花费 {total_cost} 元", 'SERVER')
         
         return self.send_data(client_id, {
             "type": "action_response",
             "action_type": "buy_item",
             "success": True,
-            "message": f"成功购买 {item_name}",
+            "message": f"成功购买 {quantity} 个 {item_name}",
             "updated_data": {
                 "money": player_data["money"],
                 "道具背包": player_data["道具背包"]
@@ -1904,6 +2103,835 @@ class TCPGameServer(TCPServer):
 #==========================购买道具处理==========================
 
 
+#==========================购买宠物处理==========================
+    #处理购买宠物请求
+    def _handle_buy_pet(self, client_id, message):
+        """处理购买宠物请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "购买宠物", "buy_pet")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "buy_pet")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        pet_name = message.get("pet_name", "")
+        pet_cost = message.get("pet_cost", 0)
+        
+        # 加载宠物配置
+        pet_config = self._load_pet_config()
+        if not pet_config:
+            return self._send_action_error(client_id, "buy_pet", "服务器无法加载宠物数据")
+        
+        # 检查宠物是否存在
+        if pet_name not in pet_config:
+            return self._send_action_error(client_id, "buy_pet", "该宠物不存在")
+        
+        # 检查宠物是否可购买
+        pet_info = pet_config[pet_name]
+        purchase_info = pet_info.get("购买信息", {})
+        if not purchase_info.get("能否购买", False):
+            return self._send_action_error(client_id, "buy_pet", "该宠物不可购买")
+        
+        # 验证价格是否正确
+        actual_cost = purchase_info.get("购买价格", 0)
+        if pet_cost != actual_cost:
+            return self._send_action_error(client_id, "buy_pet", f"宠物价格验证失败，实际价格为{actual_cost}元")
+        
+        # 检查玩家是否已拥有该宠物
+        if self._player_has_pet(player_data, pet_name):
+            return self._send_action_error(client_id, "buy_pet", f"你已经拥有 {pet_name} 了！")
+        
+        # 处理宠物购买
+        return self._process_pet_purchase(client_id, player_data, username, pet_name, pet_info)
+    
+    #处理宠物购买逻辑
+    def _process_pet_purchase(self, client_id, player_data, username, pet_name, pet_info):
+        """处理宠物购买逻辑"""
+        purchase_info = pet_info.get("购买信息", {})
+        pet_cost = purchase_info.get("购买价格", 0)
+        
+        # 检查玩家金钱
+        if player_data["money"] < pet_cost:
+            return self._send_action_error(client_id, "buy_pet", f"金钱不足，无法购买此宠物。需要{pet_cost}元，当前只有{player_data['money']}元")
+        
+        # 扣除金钱
+        player_data["money"] -= pet_cost
+        
+        # 确保宠物背包存在
+        if "宠物背包" not in player_data:
+            player_data["宠物背包"] = []
+        
+        # 创建宠物实例数据 - 复制宠物配置的完整JSON数据
+        import copy
+        pet_instance = copy.deepcopy(pet_info)
+        
+        # 为购买的宠物设置独特的ID和主人信息
+        import time
+        current_time = time.time()
+        unique_id = str(int(current_time * 1000))  # 使用时间戳作为唯一ID
+        
+        # 更新基本信息
+        if "基本信息" in pet_instance:
+            pet_instance["基本信息"]["宠物主人"] = username
+            pet_instance["基本信息"]["宠物ID"] = unique_id
+            pet_instance["基本信息"]["宠物名称"] = f"{username}的{pet_name}"
+            
+            # 设置宠物生日（详细时间）
+            import datetime
+            now = datetime.datetime.now()
+            birthday = f"{now.year}年{now.month}月{now.day}日{now.hour}时{now.minute}分{now.second}秒"
+            pet_instance["基本信息"]["生日"] = birthday
+            pet_instance["基本信息"]["年龄"] = 0  # 刚出生年龄为0
+        
+        # 将宠物添加到宠物背包
+        player_data["宠物背包"].append(pet_instance)
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 购买了宠物 {pet_name}，花费 {pet_cost} 元", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "buy_pet",
+            "success": True,
+            "message": f"成功购买宠物 {pet_name}！",
+            "updated_data": {
+                "money": player_data["money"],
+                "宠物背包": player_data["宠物背包"]
+            }
+        })
+    
+    #检查玩家是否已拥有某种宠物
+    def _player_has_pet(self, player_data, pet_name):
+        """检查玩家是否已拥有指定类型的宠物"""
+        pet_bag = player_data.get("宠物背包", [])
+        for pet in pet_bag:
+            basic_info = pet.get("基本信息", {})
+            pet_type = basic_info.get("宠物类型", "")
+            if pet_type == pet_name:
+                return True
+        return False
+    
+    #加载宠物配置数据
+    def _load_pet_config(self):
+        """从pet_data.json加载宠物配置数据"""
+        try:
+            with open("config/pet_data.json", 'r', encoding='utf-8') as file:
+                return json.load(file)
+        except Exception as e:
+            self.log('ERROR', f"无法加载宠物数据: {str(e)}", 'SERVER')
+            return {}
+    
+    # 将巡逻宠物ID转换为完整宠物数据
+    def _convert_patrol_pets_to_full_data(self, player_data):
+        """将存储的巡逻宠物ID转换为完整的宠物数据"""
+        patrol_pets_data = []
+        patrol_pets_ids = player_data.get("巡逻宠物", [])
+        pet_bag = player_data.get("宠物背包", [])
+        
+        for patrol_pet_id in patrol_pets_ids:
+            for pet in pet_bag:
+                if pet.get("基本信息", {}).get("宠物ID", "") == patrol_pet_id:
+                    # 为巡逻宠物添加场景路径
+                    import copy
+                    patrol_pet_data = copy.deepcopy(pet)
+                    
+                    # 根据宠物类型获取场景路径
+                    pet_type = pet.get("基本信息", {}).get("宠物类型", "")
+                    pet_configs = self._load_pet_config()
+                    if pet_type in pet_configs:
+                        scene_path = pet_configs[pet_type].get("场景路径", "")
+                        patrol_pet_data["场景路径"] = scene_path
+                    
+                    patrol_pets_data.append(patrol_pet_data)
+                    break
+        
+        return patrol_pets_data
+    
+    # 将出战宠物ID转换为完整宠物数据
+    def _convert_battle_pets_to_full_data(self, player_data):
+        """将存储的出战宠物ID转换为完整的宠物数据"""
+        battle_pets_data = []
+        battle_pets_ids = player_data.get("出战宠物", [])
+        pet_bag = player_data.get("宠物背包", [])
+        
+        for battle_pet_id in battle_pets_ids:
+            for pet in pet_bag:
+                if pet.get("基本信息", {}).get("宠物ID", "") == battle_pet_id:
+                    # 为出战宠物添加场景路径
+                    import copy
+                    battle_pet_data = copy.deepcopy(pet)
+                    
+                    # 根据宠物类型获取场景路径
+                    pet_type = pet.get("基本信息", {}).get("宠物类型", "")
+                    pet_configs = self._load_pet_config()
+                    if pet_type in pet_configs:
+                        scene_path = pet_configs[pet_type].get("场景路径", "")
+                        battle_pet_data["场景路径"] = scene_path
+                    
+                    battle_pets_data.append(battle_pet_data)
+                    break
+        
+        return battle_pets_data
+#==========================购买宠物处理==========================
+
+
+#==========================重命名宠物处理==========================
+    #处理重命名宠物请求
+    def _handle_rename_pet(self, client_id, message):
+        """处理重命名宠物请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "重命名宠物", "rename_pet")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "rename_pet")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        pet_id = message.get("pet_id", "")
+        new_name = message.get("new_name", "")
+        
+        # 验证参数
+        if not pet_id:
+            return self._send_action_error(client_id, "rename_pet", "宠物ID不能为空")
+        
+        if not new_name:
+            return self._send_action_error(client_id, "rename_pet", "宠物名字不能为空")
+        
+        # 验证名字长度
+        if len(new_name) > 20:
+            return self._send_action_error(client_id, "rename_pet", "宠物名字太长，最多20个字符")
+        
+        # 检查宠物是否存在
+        pet_bag = player_data.get("宠物背包", [])
+        pet_found = False
+        
+        for pet in pet_bag:
+            basic_info = pet.get("基本信息", {})
+            if basic_info.get("宠物ID", "") == pet_id:
+                # 检查宠物主人是否正确
+                if basic_info.get("宠物主人", "") != username:
+                    return self._send_action_error(client_id, "rename_pet", "你不是该宠物的主人")
+                
+                # 更新宠物名字
+                basic_info["宠物名称"] = new_name
+                pet_found = True
+                break
+        
+        if not pet_found:
+            return self._send_action_error(client_id, "rename_pet", "未找到指定ID的宠物")
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 重命名宠物 {pet_id} 为 {new_name}", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "rename_pet",
+            "success": True,
+            "message": f"宠物名字已成功修改为 {new_name}",
+            "pet_id": pet_id,
+            "new_name": new_name,
+            "updated_data": {
+                "宠物背包": player_data["宠物背包"]
+            }
+        })
+#==========================重命名宠物处理==========================
+
+
+#==========================设置巡逻宠物处理==========================
+    #处理设置巡逻宠物请求
+    def _handle_set_patrol_pet(self, client_id, message):
+        """处理设置或取消巡逻宠物的请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "设置巡逻宠物", "set_patrol_pet")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "set_patrol_pet")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        pet_id = message.get("pet_id", "")
+        is_patrolling = message.get("is_patrolling", False)
+        
+        self.log('INFO', f"处理巡逻宠物请求: pet_id={pet_id}, is_patrolling={is_patrolling}", client_id)
+        
+        # 验证参数
+        if not pet_id:
+            return self._send_action_error(client_id, "set_patrol_pet", "宠物ID不能为空")
+        
+        # 获取宠物背包和巡逻宠物列表
+        pet_bag = player_data.get("宠物背包", [])
+        patrol_pets = player_data.get("巡逻宠物", [])
+        
+        # 查找目标宠物
+        target_pet = None
+        for pet in pet_bag:
+            if pet.get("基本信息", {}).get("宠物ID", "") == pet_id:
+                target_pet = pet
+                break
+        
+        if not target_pet:
+            return self._send_action_error(client_id, "set_patrol_pet", "未找到指定的宠物")
+        
+        # 检查宠物主人是否正确
+        basic_info = target_pet.get("基本信息", {})
+        if basic_info.get("宠物主人", "") != username:
+            return self._send_action_error(client_id, "set_patrol_pet", "你不是该宠物的主人")
+        
+        pet_name = basic_info.get("宠物名称", basic_info.get("宠物类型", "未知宠物"))
+        
+        if is_patrolling:
+            # 添加到巡逻列表
+            # 检查巡逻宠物数量限制（最多3个）
+            if len(patrol_pets) >= 3:
+                return self._send_action_error(client_id, "set_patrol_pet", "最多只能设置3个巡逻宠物")
+            
+            # 检查是否已在巡逻列表中（现在只检查ID）
+            for patrol_pet_id in patrol_pets:
+                if patrol_pet_id == pet_id:
+                    return self._send_action_error(client_id, "set_patrol_pet", f"{pet_name} 已在巡逻列表中")
+            
+            # 添加到巡逻列表（只保存宠物ID）
+            patrol_pets.append(pet_id)
+            message_text = f"{pet_name} 已设置为巡逻宠物"
+            self.log('INFO', f"玩家 {username} 设置宠物 {pet_name} 为巡逻宠物", 'SERVER')
+            
+        else:
+            # 从巡逻列表移除
+            original_count = len(patrol_pets)
+            patrol_pets = [pid for pid in patrol_pets if pid != pet_id]
+            
+            if len(patrol_pets) == original_count:
+                return self._send_action_error(client_id, "set_patrol_pet", f"{pet_name} 不在巡逻列表中")
+            
+            message_text = f"{pet_name} 已取消巡逻"
+            self.log('INFO', f"玩家 {username} 取消宠物 {pet_name} 的巡逻", 'SERVER')
+        
+        # 更新玩家数据
+        player_data["巡逻宠物"] = patrol_pets
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        # 构建返回给客户端的巡逻宠物数据（完整宠物数据）
+        patrol_pets_data = []
+        for patrol_pet_id in patrol_pets:
+            for pet in pet_bag:
+                if pet.get("基本信息", {}).get("宠物ID", "") == patrol_pet_id:
+                    # 为巡逻宠物添加场景路径
+                    import copy
+                    patrol_pet_data = copy.deepcopy(pet)
+                    
+                    # 根据宠物类型获取场景路径
+                    pet_type = pet.get("基本信息", {}).get("宠物类型", "")
+                    pet_configs = self._load_pet_config()
+                    if pet_type in pet_configs:
+                        scene_path = pet_configs[pet_type].get("场景路径", "")
+                        patrol_pet_data["场景路径"] = scene_path
+                    
+                    patrol_pets_data.append(patrol_pet_data)
+                    break
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "set_patrol_pet",
+            "success": True,
+            "message": message_text,
+            "pet_id": pet_id,
+            "is_patrolling": is_patrolling,
+            "updated_data": {
+                "巡逻宠物": patrol_pets_data
+            }
+        })
+#==========================设置巡逻宠物处理==========================
+
+
+#==========================设置出战宠物处理==========================
+    #处理设置出战宠物请求
+    def _handle_set_battle_pet(self, client_id, message):
+        """处理设置出战宠物请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "设置出战宠物", "set_battle_pet")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "set_battle_pet")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        pet_id = message.get("pet_id", "")
+        is_battle = message.get("is_battle", True)  # 默认为设置出战
+        
+        if not pet_id:
+            return self._send_action_error(client_id, "set_battle_pet", "宠物ID不能为空")
+        
+        # 获取宠物背包和出战宠物列表
+        pet_bag = player_data.get("宠物背包", [])
+        battle_pets = player_data.get("出战宠物", [])
+        patrol_pets = player_data.get("巡逻宠物", [])
+        
+        # 查找宠物是否在背包中
+        target_pet = None
+        for pet in pet_bag:
+            if pet.get("基本信息", {}).get("宠物ID", "") == pet_id:
+                target_pet = pet
+                break
+        
+        if not target_pet:
+            return self._send_action_error(client_id, "set_battle_pet", f"宠物背包中找不到ID为 {pet_id} 的宠物")
+        
+        pet_name = target_pet.get("基本信息", {}).get("宠物名称", "未知宠物")
+        
+        if is_battle:
+            # 添加到出战列表
+            # 检查是否已在出战列表中
+            if pet_id in battle_pets:
+                return self._send_action_error(client_id, "set_battle_pet", f"{pet_name} 已在出战列表中")
+            
+            # 检查是否在巡逻列表中（出战宠物不能是巡逻宠物）
+            if pet_id in patrol_pets:
+                return self._send_action_error(client_id, "set_battle_pet", f"{pet_name} 正在巡逻，不能同时设置为出战宠物")
+            
+            # 检查出战宠物数量限制（最多1个）
+            if len(battle_pets) >= 1:
+                return self._send_action_error(client_id, "set_battle_pet", "最多只能设置1个出战宠物")
+            
+            # 添加到出战列表
+            battle_pets.append(pet_id)
+            message_text = f"{pet_name} 已设置为出战宠物"
+            self.log('INFO', f"玩家 {username} 设置宠物 {pet_name} 为出战宠物", 'SERVER')
+            
+        else:
+            # 从出战列表移除
+            if pet_id not in battle_pets:
+                return self._send_action_error(client_id, "set_battle_pet", f"{pet_name} 不在出战列表中")
+            
+            battle_pets.remove(pet_id)
+            message_text = f"{pet_name} 已移除出战状态"
+            self.log('INFO', f"玩家 {username} 移除宠物 {pet_name} 的出战状态", 'SERVER')
+        
+        # 更新玩家数据
+        player_data["出战宠物"] = battle_pets
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        # 构建返回给客户端的出战宠物数据（完整宠物数据）
+        battle_pets_data = []
+        for battle_pet_id in battle_pets:
+            for pet in pet_bag:
+                if pet.get("基本信息", {}).get("宠物ID", "") == battle_pet_id:
+                    # 为出战宠物添加场景路径
+                    import copy
+                    battle_pet_data = copy.deepcopy(pet)
+                    
+                    # 根据宠物类型获取场景路径
+                    pet_type = pet.get("基本信息", {}).get("宠物类型", "")
+                    pet_configs = self._load_pet_config()
+                    if pet_configs and pet_type in pet_configs:
+                        battle_pet_data["场景路径"] = pet_configs[pet_type].get("场景路径", "res://Scene/Pet/PetBase.tscn")
+                    else:
+                        battle_pet_data["场景路径"] = "res://Scene/Pet/PetBase.tscn"
+                    
+                    battle_pets_data.append(battle_pet_data)
+                    break
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "set_battle_pet",
+            "success": True,
+            "message": message_text,
+            "pet_id": pet_id,
+            "is_battle": is_battle,
+            "updated_data": {
+                "出战宠物": battle_pets_data
+            }
+        })
+#==========================设置出战宠物处理==========================
+
+
+#==========================更新宠物对战数据处理==========================
+    #处理更新宠物对战数据请求
+    def _handle_update_battle_pet_data(self, client_id, message):
+        """处理更新宠物对战数据请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "更新宠物对战数据", "update_battle_pet_data")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取请求参数
+        pet_id = message.get("pet_id", "")
+        attacker_name = message.get("attacker_name", "")
+        exp_gained = message.get("exp_gained", 0)
+        intimacy_gained = message.get("intimacy_gained", 0)
+        new_level = message.get("new_level", 1)
+        new_experience = message.get("new_experience", 0)
+        new_max_experience = message.get("new_max_experience", 100)
+        new_intimacy = message.get("new_intimacy", 0)
+        level_ups = message.get("level_ups", 0)
+        level_bonus_multiplier = message.get("level_bonus_multiplier", 1.0)
+        
+        if not pet_id or not attacker_name:
+            return self._send_action_error(client_id, "update_battle_pet_data", "无效的宠物ID或进攻者名称")
+        
+        # 获取进攻者玩家数据
+        player_data = self.load_player_data(attacker_name)
+        if not player_data:
+            return self._send_action_error(client_id, "update_battle_pet_data", "无法找到进攻者数据")
+        
+        # 更新宠物数据
+        success = self._update_pet_battle_data(player_data, pet_id, exp_gained, intimacy_gained, 
+                                               new_level, new_experience, new_max_experience, 
+                                               new_intimacy, level_ups, level_bonus_multiplier)
+        
+        if success:
+            # 保存玩家数据
+            self.save_player_data(attacker_name, player_data)
+            
+            self.log('INFO', f"成功更新玩家 {attacker_name} 的宠物 {pet_id} 对战数据：经验+{exp_gained}，亲密度+{intimacy_gained}，升级{level_ups}级", 'SERVER')
+            
+            return self.send_data(client_id, {
+                "type": "action_response",
+                "action_type": "update_battle_pet_data",
+                "success": True,
+                "message": f"成功更新宠物对战数据",
+                "pet_id": pet_id,
+                "exp_gained": exp_gained,
+                "intimacy_gained": intimacy_gained,
+                "level_ups": level_ups
+            })
+        else:
+            return self._send_action_error(client_id, "update_battle_pet_data", f"无法找到宠物ID为 {pet_id} 的宠物")
+
+    #辅助函数-更新宠物对战数据
+    def _update_pet_battle_data(self, player_data, pet_id, exp_gained, intimacy_gained, 
+                                new_level, new_experience, new_max_experience, 
+                                new_intimacy, level_ups, level_bonus_multiplier):
+        """更新宠物对战数据"""
+        
+        # 确保宠物背包存在
+        if "宠物背包" not in player_data:
+            player_data["宠物背包"] = []
+        
+        # 查找指定宠物
+        target_pet = None
+        for pet in player_data["宠物背包"]:
+            if pet.get("基本信息", {}).get("宠物ID") == pet_id:
+                target_pet = pet
+                break
+        
+        if not target_pet:
+            return False
+        
+        # 更新等级经验数据
+        level_exp_data = target_pet.setdefault("等级经验", {})
+        level_exp_data["宠物等级"] = new_level
+        level_exp_data["当前经验"] = new_experience
+        level_exp_data["最大经验"] = new_max_experience
+        level_exp_data["亲密度"] = new_intimacy
+        
+        # 如果有升级，更新属性
+        if level_ups > 0:
+            health_defense_data = target_pet.setdefault("生命与防御", {})
+            
+            # 计算升级后的属性（每级10%加成）
+            old_max_health = health_defense_data.get("最大生命值", 100.0)
+            old_max_shield = health_defense_data.get("最大护盾值", 0.0)
+            old_max_armor = health_defense_data.get("最大护甲值", 100.0)
+            
+            # 应用升级加成
+            new_max_health = old_max_health * level_bonus_multiplier
+            new_max_shield = old_max_shield * level_bonus_multiplier
+            new_max_armor = old_max_armor * level_bonus_multiplier
+            
+            health_defense_data["最大生命值"] = new_max_health
+            health_defense_data["当前生命值"] = new_max_health  # 升级回满血
+            health_defense_data["最大护盾值"] = new_max_shield
+            health_defense_data["当前护盾值"] = new_max_shield  # 升级回满护盾
+            health_defense_data["最大护甲值"] = new_max_armor
+            health_defense_data["当前护甲值"] = new_max_armor  # 升级回满护甲
+            
+            # 更新攻击属性
+            attack_data = target_pet.setdefault("基础攻击属性", {})
+            old_attack_damage = attack_data.get("基础攻击伤害", 20.0)
+            new_attack_damage = old_attack_damage * level_bonus_multiplier
+            attack_data["基础攻击伤害"] = new_attack_damage
+        
+        return True
+#==========================更新宠物对战数据处理==========================
+
+
+#==========================宠物喂食处理==========================
+    #处理宠物喂食请求
+    def _handle_feed_pet(self, client_id, message):
+        """处理宠物喂食请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "宠物喂食", "feed_pet")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "feed_pet")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        # 获取请求参数
+        pet_id = message.get("pet_id", "")
+        crop_name = message.get("crop_name", "")
+        feed_effects = message.get("feed_effects", {})
+        
+        # 验证参数
+        if not pet_id:
+            return self._send_action_error(client_id, "feed_pet", "宠物ID不能为空")
+        
+        if not crop_name:
+            return self._send_action_error(client_id, "feed_pet", "作物名称不能为空")
+        
+        # 检查玩家是否有该作物
+        crop_warehouse = player_data.get("crop_warehouse", [])
+        crop_found = False
+        crop_index = -1
+        
+        for i, crop_item in enumerate(crop_warehouse):
+            if crop_item.get("name") == crop_name:
+                if crop_item.get("count", 0) > 0:
+                    crop_found = True
+                    crop_index = i
+                    break
+        
+        if not crop_found:
+            return self._send_action_error(client_id, "feed_pet", f"没有足够的{crop_name}用于喂食")
+        
+        # 检查宠物是否存在
+        pet_bag = player_data.get("宠物背包", [])
+        target_pet = None
+        
+        for pet in pet_bag:
+            if pet.get("基本信息", {}).get("宠物ID", "") == pet_id:
+                # 检查宠物主人是否正确
+                if pet.get("基本信息", {}).get("宠物主人", "") != username:
+                    return self._send_action_error(client_id, "feed_pet", "你不是该宠物的主人")
+                target_pet = pet
+                break
+        
+        if not target_pet:
+            return self._send_action_error(client_id, "feed_pet", "未找到指定的宠物")
+        
+        # 验证作物是否有喂养效果
+        crop_data = self._load_crop_data()
+        if crop_name not in crop_data or "喂养效果" not in crop_data[crop_name]:
+            return self._send_action_error(client_id, "feed_pet", f"{crop_name}没有喂养效果")
+        
+        # 获取作物的喂养效果
+        crop_feed_effects = crop_data[crop_name]["喂养效果"]
+        
+        # 执行喂食
+        success, applied_effects = self._process_pet_feeding(player_data, target_pet, crop_name, crop_index, crop_feed_effects)
+        
+        if success:
+            # 保存玩家数据
+            self.save_player_data(username, player_data)
+            
+            pet_name = target_pet.get("基本信息", {}).get("宠物名称", "未知宠物")
+            
+            # 构建效果描述
+            effect_descriptions = []
+            for effect_name, effect_value in applied_effects.items():
+                if effect_value > 0:
+                    effect_descriptions.append(f"{effect_name}+{effect_value}")
+            
+            effect_text = "，".join(effect_descriptions) if effect_descriptions else "无效果"
+            self.log('INFO', f"玩家 {username} 用{crop_name}喂食宠物 {pet_name}，获得：{effect_text}", 'SERVER')
+            
+            return self.send_data(client_id, {
+                "type": "action_response",
+                "action_type": "feed_pet",
+                "success": True,
+                "message": f"成功喂食{pet_name}！获得：{effect_text}",
+                "pet_id": pet_id,
+                "crop_name": crop_name,
+                "applied_effects": applied_effects,
+                "updated_data": {
+                    "宠物背包": player_data["宠物背包"],
+                    "crop_warehouse": player_data["crop_warehouse"]
+                }
+            })
+        else:
+            return self._send_action_error(client_id, "feed_pet", "喂食失败")
+    
+    #辅助函数-处理宠物喂食逻辑
+    def _process_pet_feeding(self, player_data, target_pet, crop_name, crop_index, feed_effects):
+        """处理宠物喂食逻辑，支持多种属性提升"""
+        try:
+            # 消耗作物
+            crop_warehouse = player_data.get("crop_warehouse", [])
+            if crop_index >= 0 and crop_index < len(crop_warehouse):
+                crop_warehouse[crop_index]["count"] -= 1
+                # 如果数量为0，移除该作物
+                if crop_warehouse[crop_index]["count"] <= 0:
+                    crop_warehouse.pop(crop_index)
+            
+            # 记录实际应用的效果
+            applied_effects = {}
+            
+            # 获取宠物各个属性数据
+            level_exp_data = target_pet.setdefault("等级经验", {})
+            health_defense_data = target_pet.setdefault("生命与防御", {})
+            attack_data = target_pet.setdefault("基础攻击属性", {})
+            movement_data = target_pet.setdefault("移动与闪避", {})
+            
+            # 处理经验效果
+            if "经验" in feed_effects:
+                exp_gain = feed_effects["经验"]
+                current_exp = level_exp_data.get("当前经验", 0)
+                max_exp = level_exp_data.get("最大经验", 100)
+                current_level = level_exp_data.get("宠物等级", 1)
+                
+                new_exp = current_exp + exp_gain
+                applied_effects["经验"] = exp_gain
+                
+                # 检查是否升级
+                level_ups = 0
+                while new_exp >= max_exp and current_level < 100:  # 假设最大等级为100
+                    level_ups += 1
+                    new_exp -= max_exp
+                    current_level += 1
+                    # 每升一级，最大经验增加20%
+                    max_exp = int(max_exp * 1.2)
+                
+                # 更新经验数据
+                level_exp_data["当前经验"] = new_exp
+                level_exp_data["最大经验"] = max_exp
+                level_exp_data["宠物等级"] = current_level
+                
+                # 如果升级了，记录升级次数
+                if level_ups > 0:
+                    applied_effects["升级"] = level_ups
+                    # 升级时应用属性加成
+                    self._apply_level_up_bonus(target_pet, level_ups)
+            
+            # 处理生命值效果
+            if "生命值" in feed_effects:
+                hp_gain = feed_effects["生命值"]
+                current_hp = health_defense_data.get("当前生命值", 100)
+                max_hp = health_defense_data.get("最大生命值", 100)
+                
+                actual_hp_gain = min(hp_gain, max_hp - current_hp)  # 不能超过最大生命值
+                if actual_hp_gain > 0:
+                    health_defense_data["当前生命值"] = current_hp + actual_hp_gain
+                    applied_effects["生命值"] = actual_hp_gain
+            
+            # 处理攻击力效果
+            if "攻击力" in feed_effects:
+                attack_gain = feed_effects["攻击力"]
+                current_attack = attack_data.get("基础攻击伤害", 20)
+                new_attack = current_attack + attack_gain
+                attack_data["基础攻击伤害"] = new_attack
+                applied_effects["攻击力"] = attack_gain
+            
+            # 处理移动速度效果
+            if "移动速度" in feed_effects:
+                speed_gain = feed_effects["移动速度"]
+                current_speed = movement_data.get("移动速度", 100)
+                new_speed = current_speed + speed_gain
+                movement_data["移动速度"] = new_speed
+                applied_effects["移动速度"] = speed_gain
+            
+            # 处理亲密度效果
+            if "亲密度" in feed_effects:
+                intimacy_gain = feed_effects["亲密度"]
+                current_intimacy = level_exp_data.get("亲密度", 0)
+                max_intimacy = level_exp_data.get("最大亲密度", 1000)
+                
+                actual_intimacy_gain = min(intimacy_gain, max_intimacy - current_intimacy)
+                if actual_intimacy_gain > 0:
+                    level_exp_data["亲密度"] = current_intimacy + actual_intimacy_gain
+                    applied_effects["亲密度"] = actual_intimacy_gain
+            
+            # 处理护甲值效果
+            if "护甲值" in feed_effects:
+                armor_gain = feed_effects["护甲值"]
+                current_armor = health_defense_data.get("当前护甲值", 10)
+                max_armor = health_defense_data.get("最大护甲值", 10)
+                
+                actual_armor_gain = min(armor_gain, max_armor - current_armor)
+                if actual_armor_gain > 0:
+                    health_defense_data["当前护甲值"] = current_armor + actual_armor_gain
+                    applied_effects["护甲值"] = actual_armor_gain
+            
+            # 处理护盾值效果
+            if "护盾值" in feed_effects:
+                shield_gain = feed_effects["护盾值"]
+                current_shield = health_defense_data.get("当前护盾值", 0)
+                max_shield = health_defense_data.get("最大护盾值", 0)
+                
+                actual_shield_gain = min(shield_gain, max_shield - current_shield)
+                if actual_shield_gain > 0:
+                    health_defense_data["当前护盾值"] = current_shield + actual_shield_gain
+                    applied_effects["护盾值"] = actual_shield_gain
+            
+            # 处理暴击率效果
+            if "暴击率" in feed_effects:
+                crit_gain = feed_effects["暴击率"] / 100.0  # 转换为小数
+                current_crit = attack_data.get("暴击率", 0.1)
+                new_crit = min(current_crit + crit_gain, 1.0)  # 最大100%
+                attack_data["暴击率"] = new_crit
+                applied_effects["暴击率"] = feed_effects["暴击率"]
+            
+            # 处理闪避率效果
+            if "闪避率" in feed_effects:
+                dodge_gain = feed_effects["闪避率"] / 100.0  # 转换为小数
+                current_dodge = movement_data.get("闪避率", 0.05)
+                new_dodge = min(current_dodge + dodge_gain, 1.0)  # 最大100%
+                movement_data["闪避率"] = new_dodge
+                applied_effects["闪避率"] = feed_effects["闪避率"]
+            
+            return True, applied_effects
+            
+        except Exception as e:
+            self.log('ERROR', f"宠物喂食处理失败: {str(e)}", 'SERVER')
+            return False, {}
+    
+    #辅助函数-应用升级加成
+    def _apply_level_up_bonus(self, target_pet, level_ups):
+        """应用升级时的属性加成"""
+        # 每升一级，属性增加10%
+        level_bonus_multiplier = 1.1 ** level_ups
+        
+        # 更新生命和防御属性
+        health_defense_data = target_pet.setdefault("生命与防御", {})
+        old_max_hp = health_defense_data.get("最大生命值", 100)
+        old_max_armor = health_defense_data.get("最大护甲值", 10)
+        old_max_shield = health_defense_data.get("最大护盾值", 0)
+        
+        new_max_hp = old_max_hp * level_bonus_multiplier
+        new_max_armor = old_max_armor * level_bonus_multiplier
+        new_max_shield = old_max_shield * level_bonus_multiplier
+        
+        health_defense_data["最大生命值"] = new_max_hp
+        health_defense_data["当前生命值"] = new_max_hp  # 升级回满血
+        health_defense_data["最大护甲值"] = new_max_armor
+        health_defense_data["当前护甲值"] = new_max_armor
+        health_defense_data["最大护盾值"] = new_max_shield
+        health_defense_data["当前护盾值"] = new_max_shield
+        
+        # 更新攻击属性
+        attack_data = target_pet.setdefault("基础攻击属性", {})
+        old_attack = attack_data.get("基础攻击伤害", 20)
+        new_attack = old_attack * level_bonus_multiplier
+        attack_data["基础攻击伤害"] = new_attack
+#==========================宠物喂食处理==========================
 
 
 #==========================开垦土地处理==========================
@@ -3396,6 +4424,342 @@ class TCPGameServer(TCPServer):
 
 
 
+#==========================宠物使用道具处理==========================
+    def _handle_use_pet_item(self, client_id, message):
+        """处理宠物使用道具请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "宠物使用道具", "use_pet_item")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取请求参数
+        item_name = message.get("item_name", "")
+        pet_id = message.get("pet_id", "")
+        
+        if not item_name or not pet_id:
+            return self.send_data(client_id, {
+                "type": "use_pet_item_response",
+                "success": False,
+                "message": "缺少必要参数"
+            })
+        
+        # 获取玩家数据
+        username = self.user_data[client_id]["username"]
+        player_data = self.load_player_data(username)
+        
+        if not player_data:
+            return self.send_data(client_id, {
+                "type": "use_pet_item_response",
+                "success": False,
+                "message": "玩家数据加载失败"
+            })
+        
+        # 检查道具是否存在
+        item_bag = player_data.get("道具背包", [])
+        item_found = False
+        item_index = -1
+        
+        for i, item in enumerate(item_bag):
+            if item.get("name") == item_name:
+                if item.get("count", 0) > 0:
+                    item_found = True
+                    item_index = i
+                    break
+        
+        if not item_found:
+            return self.send_data(client_id, {
+                "type": "use_pet_item_response",
+                "success": False,
+                "message": f"道具 {item_name} 不足"
+            })
+        
+        # 检查宠物是否存在
+        pet_bag = player_data.get("宠物背包", [])
+        pet_found = False
+        pet_index = -1
+        
+        for i, pet in enumerate(pet_bag):
+            if pet.get("基本信息", {}).get("宠物ID") == pet_id:
+                pet_found = True
+                pet_index = i
+                break
+        
+        if not pet_found:
+            return self.send_data(client_id, {
+                "type": "use_pet_item_response",
+                "success": False,
+                "message": "找不到指定的宠物"
+            })
+        
+        # 处理道具使用
+        try:
+            success, result_message, updated_pet = self._process_pet_item_use(
+                item_name, pet_bag[pet_index]
+            )
+            
+            if success:
+                # 更新宠物数据
+                pet_bag[pet_index] = updated_pet
+                
+                # 减少道具数量
+                item_bag[item_index]["count"] -= 1
+                if item_bag[item_index]["count"] <= 0:
+                    item_bag.pop(item_index)
+                
+                # 保存玩家数据
+                self.save_player_data(username, player_data)
+                
+                # 发送成功响应
+                response = {
+                    "type": "use_pet_item_response",
+                    "success": True,
+                    "message": result_message,
+                    "updated_data": {
+                        "宠物背包": pet_bag,
+                        "道具背包": item_bag
+                    }
+                }
+                
+                self.log('INFO', f"用户 {username} 对宠物 {pet_id} 使用道具 {item_name} 成功", 'PET_ITEM')
+                
+            else:
+                # 发送失败响应
+                response = {
+                    "type": "use_pet_item_response",
+                    "success": False,
+                    "message": result_message
+                }
+            
+            return self.send_data(client_id, response)
+            
+        except Exception as e:
+            self.log('ERROR', f"宠物使用道具处理失败: {str(e)}", 'PET_ITEM')
+            return self.send_data(client_id, {
+                "type": "use_pet_item_response",
+                "success": False,
+                "message": "道具使用处理失败"
+            })
+    
+    def _process_pet_item_use(self, item_name, pet_data):
+        """处理具体的宠物道具使用逻辑"""
+        try:
+            # 根据道具类型应用不同的效果
+            if item_name == "不死图腾":
+                # 启用死亡免疫机制
+                pet_data["特殊机制开关"]["启用死亡免疫机制"] = True
+                pet_data["特殊属性"]["死亡免疫"] = True
+                return True, f"宠物 {pet_data['基本信息']['宠物名称']} 获得了死亡免疫能力！", pet_data
+                
+            elif item_name == "荆棘护甲":
+                # 启用伤害反弹机制
+                pet_data["特殊机制开关"]["启用伤害反弹机制"] = True
+                pet_data["特殊属性"]["伤害反弹"] = 0.3  # 反弹30%伤害
+                return True, f"宠物 {pet_data['基本信息']['宠物名称']} 获得了荆棘护甲！", pet_data
+                
+            elif item_name == "狂暴药水":
+                # 启用狂暴模式机制
+                pet_data["特殊机制开关"]["启用狂暴模式机制"] = True
+                pet_data["特殊属性"]["狂暴阈值"] = 0.3  # 血量低于30%时触发
+                pet_data["特殊属性"]["狂暴状态伤害倍数"] = 2.0  # 狂暴时伤害翻倍
+                return True, f"宠物 {pet_data['基本信息']['宠物名称']} 获得了狂暴能力！", pet_data
+                
+            elif item_name == "援军令牌":
+                # 启用援助召唤机制
+                pet_data["特殊机制开关"]["启用援助召唤机制"] = True
+                pet_data["援助系统"]["援助触发阈值"] = 0.2  # 血量低于20%时触发
+                pet_data["援助系统"]["援助召唤数量"] = 3  # 召唤3个援军
+                return True, f"宠物 {pet_data['基本信息']['宠物名称']} 获得了援军召唤能力！", pet_data
+                
+            elif item_name in ["金刚图腾", "灵木图腾", "潮汐图腾", "烈焰图腾", "敦岩图腾"]:
+                # 改变宠物元素
+                element_map = {
+                    "金刚图腾": "METAL",
+                    "灵木图腾": "WOOD", 
+                    "潮汐图腾": "WATER",
+                    "烈焰图腾": "FIRE",
+                    "敦岩图腾": "EARTH"
+                }
+                
+                element_name_map = {
+                    "金刚图腾": "金",
+                    "灵木图腾": "木",
+                    "潮汐图腾": "水", 
+                    "烈焰图腾": "火",
+                    "敦岩图腾": "土"
+                }
+                
+                new_element = element_map[item_name]
+                element_name = element_name_map[item_name]
+                
+                pet_data["元素属性"]["元素类型"] = new_element
+                pet_data["元素属性"]["元素克制额外伤害"] = 100.0  # 元素克制时额外伤害
+                
+                return True, f"宠物 {pet_data['基本信息']['宠物名称']} 的元素属性已改变为{element_name}元素！", pet_data
+            
+            else:
+                return False, f"未知的宠物道具: {item_name}"
+                
+        except Exception as e:
+            self.log('ERROR', f"处理宠物道具效果失败: {str(e)}", 'PET_ITEM')
+            return False, "道具效果处理失败"
+    
+#==========================宠物使用道具处理==========================
+
+
+    #==========================农场道具使用处理==========================
+    def _handle_use_farm_item(self, client_id, message):
+        """处理农场道具使用请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "农场道具使用", "use_farm_item")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取请求参数
+        item_name = message.get("item_name", "")
+        
+        if not item_name:
+            return self.send_data(client_id, {
+                "type": "use_farm_item_response",
+                "success": False,
+                "message": "缺少必要参数"
+            })
+        
+        # 获取玩家数据
+        username = self.user_data[client_id]["username"]
+        player_data = self.load_player_data(username)
+        
+        if not player_data:
+            return self.send_data(client_id, {
+                "type": "use_farm_item_response",
+                "success": False,
+                "message": "玩家数据加载失败"
+            })
+        
+        # 检查道具是否存在
+        item_bag = player_data.get("道具背包", [])
+        item_found = False
+        item_index = -1
+        
+        for i, item in enumerate(item_bag):
+            if item.get("name") == item_name:
+                if item.get("count", 0) > 0:
+                    item_found = True
+                    item_index = i
+                    break
+        
+        if not item_found:
+            return self.send_data(client_id, {
+                "type": "use_farm_item_response",
+                "success": False,
+                "message": f"道具 {item_name} 不足"
+            })
+        
+        # 处理道具使用
+        try:
+            success, result_message, rewards = self._process_farm_item_use(item_name, player_data)
+            
+            if success:
+                # 减少道具数量
+                item_bag[item_index]["count"] -= 1
+                if item_bag[item_index]["count"] <= 0:
+                    item_bag.pop(item_index)
+                
+                # 应用奖励
+                if "money" in rewards:
+                    player_data["money"] += rewards["money"]
+                if "experience" in rewards:
+                    player_data["experience"] += rewards["experience"]
+                
+                # 检查是否升级
+                self._check_level_up(player_data)
+                
+                # 保存玩家数据
+                self.save_player_data(username, player_data)
+                
+                # 发送成功响应
+                response = {
+                    "type": "use_farm_item_response",
+                    "success": True,
+                    "message": result_message,
+                    "updated_data": {
+                        "money": player_data["money"],
+                        "experience": player_data["experience"],
+                        "level": player_data["level"],
+                        "道具背包": item_bag
+                    }
+                }
+                
+                self.log('INFO', f"用户 {username} 使用农场道具 {item_name} 成功", 'FARM_ITEM')
+                
+            else:
+                # 发送失败响应
+                response = {
+                    "type": "use_farm_item_response",
+                    "success": False,
+                    "message": result_message
+                }
+            
+            return self.send_data(client_id, response)
+            
+        except Exception as e:
+            self.log('ERROR', f"农场道具使用处理失败: {str(e)}", 'FARM_ITEM')
+            return self.send_data(client_id, {
+                "type": "use_farm_item_response",
+                "success": False,
+                "message": "道具使用处理失败"
+            })
+    
+    def _process_farm_item_use(self, item_name, player_data):
+        """处理具体的农场道具使用逻辑"""
+        try:
+            rewards = {}
+            
+            if item_name == "小额经验卡":
+                # 给玩家增加500经验
+                rewards["experience"] = 500
+                return True, f"使用 {item_name} 成功！获得了500经验值", rewards
+                
+            elif item_name == "小额金币卡":
+                # 给玩家增加500金币
+                rewards["money"] = 500
+                return True, f"使用 {item_name} 成功！获得了500金币", rewards
+            
+            else:
+                return False, f"未知的农场道具: {item_name}", {}
+                
+        except Exception as e:
+            self.log('ERROR', f"处理农场道具效果失败: {str(e)}", 'FARM_ITEM')
+            return False, "道具效果处理失败", {}
+    
+    #==========================农场道具使用处理==========================
+
+
+
+
+#==========================道具配置数据处理==========================
+    #处理客户端请求道具配置数据
+    def _handle_item_config_request(self, client_id):
+        """处理客户端请求道具配置数据"""
+        item_config = self._load_item_config()
+        
+        if item_config:
+            self.log('INFO', f"向客户端 {client_id} 发送道具配置数据，道具种类：{len(item_config)}", 'SERVER')
+            return self.send_data(client_id, {
+                "type": "item_config_response",
+                "success": True,
+                "item_config": item_config
+            })
+        else:
+            return self.send_data(client_id, {
+                "type": "item_config_response",
+                "success": False,
+                "message": "无法读取道具配置数据"
+            })
+#==========================道具配置数据处理==========================
+
+
+
+
 #==========================升级土地处理==========================
     #处理升级土地请求
     def _handle_upgrade_land(self, client_id, message):
@@ -3730,6 +5094,90 @@ class TCPGameServer(TCPServer):
             self.save_player_data(username, player_data)
             self.log('INFO', f"为已存在玩家 {username} 设置默认注册时间", 'SERVER')
     
+    def _check_and_fix_wisdom_tree_config(self, player_data, username):
+        """检查并修复智慧树配置"""
+        import time
+        current_time = int(time.time())
+        
+        # 初始化智慧树配置（如果不存在）
+        if "智慧树配置" not in player_data:
+            player_data["智慧树配置"] = {
+                "距离上一次杀虫时间": current_time,
+                "距离上一次除草时间": current_time,
+                "智慧树显示的话": "",
+                "等级": 1,
+                "当前经验值": 0,
+                "最大经验值": 100,
+                "最大生命值": 100,
+                "当前生命值": 100,
+                "高度": 20
+            }
+            self.log('INFO', f"为玩家 {username} 初始化智慧树配置", 'SERVER')
+        else:
+            # 检查并修复已存在的智慧树配置
+            wisdom_tree_config = player_data["智慧树配置"]
+            config_fixed = False
+            
+            # 修复空字符串或无效的时间戳
+            if "距离上一次除草时间" not in wisdom_tree_config or not wisdom_tree_config["距离上一次除草时间"] or wisdom_tree_config["距离上一次除草时间"] == "":
+                wisdom_tree_config["距离上一次除草时间"] = current_time
+                config_fixed = True
+                
+            if "距离上一次杀虫时间" not in wisdom_tree_config or not wisdom_tree_config["距离上一次杀虫时间"] or wisdom_tree_config["距离上一次杀虫时间"] == "":
+                wisdom_tree_config["距离上一次杀虫时间"] = current_time
+                config_fixed = True
+                
+            if "上次护理时间" not in wisdom_tree_config or not wisdom_tree_config["上次护理时间"]:
+                wisdom_tree_config["上次护理时间"] = current_time
+                config_fixed = True
+                
+            # 确保其他必需字段存在并转换旧格式
+            if "等级" not in wisdom_tree_config:
+                wisdom_tree_config["等级"] = 1
+                config_fixed = True
+            if "当前经验值" not in wisdom_tree_config:
+                # 兼容旧的"经验"字段
+                old_exp = wisdom_tree_config.get("经验", 0)
+                wisdom_tree_config["当前经验值"] = old_exp
+                if "经验" in wisdom_tree_config:
+                    del wisdom_tree_config["经验"]
+                config_fixed = True
+            if "最大经验值" not in wisdom_tree_config:
+                wisdom_tree_config["最大经验值"] = self._calculate_wisdom_tree_max_exp(wisdom_tree_config.get("等级", 1))
+                config_fixed = True
+            if "当前生命值" not in wisdom_tree_config:
+                # 兼容旧的"生命值"字段
+                old_health = wisdom_tree_config.get("生命值", 100)
+                wisdom_tree_config["当前生命值"] = old_health
+                if "生命值" in wisdom_tree_config:
+                    del wisdom_tree_config["生命值"]  # 删除旧字段
+                config_fixed = True
+            if "最大生命值" not in wisdom_tree_config:
+                wisdom_tree_config["最大生命值"] = 100
+                config_fixed = True
+            if "高度" not in wisdom_tree_config:
+                wisdom_tree_config["高度"] = 20
+                config_fixed = True
+            if "智慧树显示的话" not in wisdom_tree_config:
+                wisdom_tree_config["智慧树显示的话"] = ""
+                config_fixed = True
+                
+            if config_fixed:
+                self.log('INFO', f"为玩家 {username} 修复智慧树配置", 'SERVER')
+    
+    def _calculate_wisdom_tree_max_exp(self, level):
+        """计算智慧树指定等级的最大经验值
+        使用前期升级快，后期愈来愈慢的公式
+        """
+        if level <= 1:
+            return 100
+        # 使用指数增长公式：基础经验 * (等级^1.5) * 1.2
+        base_exp = 50
+        exp_multiplier = 1.2
+        level_factor = pow(level, 1.5)
+        max_exp = int(base_exp * level_factor * exp_multiplier)
+        return max_exp
+    
 #==========================玩家体力值处理==========================
 
 
@@ -4008,6 +5456,10 @@ class TCPGameServer(TCPServer):
 
 
 
+
+
+
+
 #==========================访问其他玩家农场处理==========================
     #处理访问其他玩家农场的请求
     def _handle_visit_player_request(self, client_id, message):
@@ -4036,6 +5488,9 @@ class TCPGameServer(TCPServer):
                 "message": f"无法找到玩家 {target_username} 的数据"
             })
         
+        # 检查并修复目标玩家的智慧树配置格式
+        self._check_and_fix_wisdom_tree_config(target_player_data, target_username)
+        
         # 返回目标玩家的农场数据（只返回可见的数据，不包含敏感信息如密码）
         safe_player_data = {
             "user_name": target_player_data.get("user_name", target_username),
@@ -4049,6 +5504,11 @@ class TCPGameServer(TCPServer):
             "player_bag": target_player_data.get("player_bag", []),
             "作物仓库": target_player_data.get("作物仓库", []),
             "道具背包": target_player_data.get("道具背包", []),
+            "宠物背包": target_player_data.get("宠物背包", []),
+            "巡逻宠物": self._convert_patrol_pets_to_full_data(target_player_data),
+            "出战宠物": self._convert_battle_pets_to_full_data(target_player_data),
+            "稻草人配置": target_player_data.get("稻草人配置", {}),
+            "智慧树配置": target_player_data.get("智慧树配置", {}),
             "last_login_time": target_player_data.get("last_login_time", "未知"),
             "total_login_time": target_player_data.get("total_login_time", "0时0分0秒"),
             "total_likes": target_player_data.get("total_likes", 0)
@@ -4108,6 +5568,10 @@ class TCPGameServer(TCPServer):
                 "体力值": player_data.get("体力值", 20),
                 "farm_lots": player_data.get("farm_lots", []),
                 "player_bag": player_data.get("player_bag", []),
+                "宠物背包": player_data.get("宠物背包", []),
+                "巡逻宠物": self._convert_patrol_pets_to_full_data(player_data),
+                "出战宠物": self._convert_battle_pets_to_full_data(player_data),
+                "稻草人配置": player_data.get("稻草人配置", {}),
                 "total_likes": player_data.get("total_likes", 0)
             },
             "is_visiting": False
@@ -4467,6 +5931,240 @@ class TCPGameServer(TCPServer):
         return self.send_data(client_id, pong_response)
 
 #==========================PING延迟检测处理==========================
+
+
+
+#==========================全服大喇叭消息处理==========================
+    #处理全服大喇叭消息
+    def _handle_global_broadcast_message(self, client_id, message):
+        """处理全服大喇叭消息"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "发送全服大喇叭消息", "global_broadcast")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取消息内容
+        content = message.get("content", "").strip()
+        if not content:
+            return self.send_data(client_id, {
+                "type": "global_broadcast_response",
+                "success": False,
+                "message": "消息内容不能为空"
+            })
+        
+        # 检查消息长度
+        if len(content) > 200:
+            return self.send_data(client_id, {
+                "type": "global_broadcast_response",
+                "success": False,
+                "message": "消息长度不能超过200字符"
+            })
+        
+        # 获取发送者信息
+        username = self.user_data[client_id]["username"]
+        
+        # 获取玩家数据以获取昵称
+        player_data = self.load_player_data(username)
+        player_name = ""
+        if player_data:
+            player_name = player_data.get("player_name", "")
+        
+        # 创建广播消息
+        broadcast_message = {
+            "type": "global_broadcast_message",
+            "username": username,
+            "player_name": player_name,
+            "content": content,
+            "timestamp": time.time()
+        }
+        
+        # 广播给所有在线用户
+        self.broadcast(broadcast_message)
+        
+        # 保存消息到日志文件
+        self._save_broadcast_message_to_log(username, player_name, content)
+        
+        # 发送成功响应给发送者
+        self.send_data(client_id, {
+            "type": "global_broadcast_response",
+            "success": True,
+            "message": "大喇叭消息发送成功"
+        })
+        
+        self.log('INFO', f"用户 {username}({player_name}) 发送全服大喇叭消息: {content}", 'BROADCAST')
+        
+        return True
+    
+    #保存大喇叭消息到日志文件
+    def _save_broadcast_message_to_log(self, username, player_name, content):
+        """保存大喇叭消息到日志文件"""
+        try:
+            # 创建chat文件夹（如果不存在）
+            import os
+            chat_dir = os.path.join(os.path.dirname(__file__), "chat")
+            if not os.path.exists(chat_dir):
+                os.makedirs(chat_dir)
+            
+            # 获取当前日期作为文件名
+            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            log_file_path = os.path.join(chat_dir, f"{current_date}.log")
+            
+            # 格式化时间戳
+            timestamp = datetime.datetime.now().strftime("%Y年%m月%d日 %H:%M:%S")
+            
+            # 创建日志条目
+            display_name = player_name if player_name else username
+            log_entry = f"[{timestamp}] {display_name}({username}): {content}\n"
+            
+            # 追加到日志文件
+            with open(log_file_path, 'a', encoding='utf-8') as f:
+                f.write(log_entry)
+                
+        except Exception as e:
+            self.log('ERROR', f"保存大喇叭消息到日志文件时出错: {str(e)}", 'BROADCAST')
+    
+    def _handle_request_broadcast_history(self, client_id, message):
+        """处理请求全服大喇叭历史消息"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "请求全服大喇叭历史消息", "request_broadcast_history")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        try:
+            days = message.get("days", 3)  # 默认加载3天
+            if days > 30:  # 限制最多30天
+                days = 30
+            
+            messages = self._load_broadcast_history(days)
+            
+            # 发送历史消息响应
+            response = {
+                "type": "broadcast_history_response",
+                "success": True,
+                "messages": messages,
+                "days": days
+            }
+            
+            self.log('INFO', f"向客户端 {client_id} 发送了 {len(messages)} 条历史消息（最近{days}天）", 'SERVER')
+            return self.send_data(client_id, response)
+            
+        except Exception as e:
+            self.log('ERROR', f"处理全服大喇叭历史消息请求失败: {str(e)}", 'SERVER')
+            error_response = {
+                "type": "broadcast_history_response",
+                "success": False,
+                "message": "加载历史消息失败"
+            }
+            return self.send_data(client_id, error_response)
+    
+    def _load_broadcast_history(self, days):
+        """从日志文件加载历史消息"""
+        messages = []
+        chat_dir = os.path.join(os.path.dirname(__file__), "chat")
+        
+        if not os.path.exists(chat_dir):
+            return messages
+        
+        try:
+            # 获取需要加载的日期范围
+            end_date = datetime.datetime.now()
+            start_date = end_date - datetime.timedelta(days=days-1)
+            
+            self.log('INFO', f"查找历史消息，日期范围: {start_date.strftime('%Y-%m-%d')} 到 {end_date.strftime('%Y-%m-%d')}", 'SERVER')
+            
+            # 遍历日期范围内的所有日志文件
+            current_date = start_date
+            while current_date <= end_date:
+                date_str = current_date.strftime("%Y-%m-%d")
+                log_file = os.path.join(chat_dir, f"{date_str}.log")
+                
+                self.log('INFO', f"检查日志文件: {log_file}", 'SERVER')
+                
+                if os.path.exists(log_file):
+                    self.log('INFO', f"找到日志文件: {log_file}", 'SERVER')
+                    with open(log_file, "r", encoding="utf-8") as f:
+                        lines = f.readlines()
+                        
+                    self.log('INFO', f"日志文件 {date_str}.log 包含 {len(lines)} 行", 'SERVER')
+                    
+                    # 解析每一行消息
+                    for line in lines:
+                        line = line.strip()
+                        if line:
+                            parsed_message = self._parse_log_message(line)
+                            if parsed_message:
+                                messages.append(parsed_message)
+                                self.log('INFO', f"解析消息成功: {parsed_message['content'][:20]}...", 'SERVER')
+                            else:
+                                self.log('WARNING', f"解析消息失败: {line[:50]}...", 'SERVER')
+                else:
+                    self.log('INFO', f"日志文件不存在: {log_file}", 'SERVER')
+                
+                current_date += datetime.timedelta(days=1)
+            
+            # 按时间戳排序
+            messages.sort(key=lambda x: x.get("timestamp", 0))
+            
+            # 限制消息数量，最多返回500条
+            if len(messages) > 500:
+                messages = messages[-500:]
+            
+            return messages
+            
+        except Exception as e:
+            self.log('ERROR', f"加载全服大喇叭历史消息失败: {str(e)}", 'SERVER')
+            return []
+    
+    def _parse_log_message(self, line):
+        """解析日志消息行"""
+        try:
+            # 消息格式: [时间] 昵称(QQ号): 消息内容
+            import re
+            
+            # 匹配时间部分
+            time_match = re.match(r'\[([^\]]+)\]', line)
+            if not time_match:
+                return None
+            
+            time_str = time_match.group(1)
+            
+            # 匹配用户名和消息内容
+            # 格式: 昵称(QQ号): 消息内容
+            content_part = line[len(time_match.group(0)):].strip()
+            
+            # 查找用户名和消息内容
+            user_match = re.match(r'([^(]+)\(([^)]+)\):\s*(.+)', content_part)
+            if not user_match:
+                return None
+            
+            player_name = user_match.group(1).strip()
+            username = user_match.group(2).strip()
+            content = user_match.group(3).strip()
+            
+            # 解析时间戳
+            try:
+                # 时间格式: 2024年01月01日 12:00:00
+                time_obj = datetime.datetime.strptime(time_str, "%Y年%m月%d日 %H:%M:%S")
+                timestamp = time_obj.timestamp()
+            except:
+                timestamp = time.time()
+            
+            return {
+                "username": username,
+                "player_name": player_name,
+                "display_name": player_name if player_name else username,
+                "content": content,
+                "timestamp": timestamp,
+                "time_str": time_str
+            }
+            
+        except Exception as e:
+            self.log('ERROR', f"解析日志消息失败: {line}, 错误: {str(e)}", 'SERVER')
+            return None
+
+ #==========================全服大喇叭消息处理==========================
+ 
+ 
 
 
 
@@ -5719,6 +7417,1255 @@ class TCPGameServer(TCPServer):
         })
 # ================================账户设置处理方法================================
 
+
+
+#==========================稻草人系统处理==========================
+    def _handle_buy_scare_crow(self, client_id, message):
+        """处理购买稻草人请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "购买稻草人", "buy_scare_crow")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "buy_scare_crow")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        scare_crow_type = message.get("scare_crow_type", "")
+        price = message.get("price", 0)
+        
+        # 加载稻草人配置
+        scare_crow_config = self._load_scare_crow_config()
+        if not scare_crow_config:
+            return self._send_buy_scare_crow_error(client_id, "服务器无法加载稻草人配置")
+        
+        # 检查稻草人类型是否存在
+        if scare_crow_type not in scare_crow_config.get("稻草人类型", {}):
+            return self._send_buy_scare_crow_error(client_id, "该稻草人类型不存在")
+        
+        # 验证价格是否正确
+        actual_price = scare_crow_config["稻草人类型"][scare_crow_type]["价格"]
+        if price != actual_price:
+            return self._send_buy_scare_crow_error(client_id, f"稻草人价格验证失败，实际价格为{actual_price}金币")
+        
+        # 检查玩家金钱
+        if player_data["money"] < price:
+            return self._send_buy_scare_crow_error(client_id, f"金币不足，需要{price}金币，当前只有{player_data['money']}金币")
+        
+        # 确保稻草人配置存在
+        if "稻草人配置" not in player_data:
+            player_data["稻草人配置"] = {
+                "已拥有稻草人类型": ["稻草人1"],
+                "稻草人展示类型": "",
+                "稻草人昵称": "我的稻草人",
+                "稻草人昵称颜色": "#ffffff",
+                "稻草人说的话": {
+                    "第一句话": {"内容": "", "颜色": "#000000"},
+                    "第二句话": {"内容": "", "颜色": "#000000"},
+                    "第三句话": {"内容": "", "颜色": "#000000"},
+                    "第四句话": {"内容": "", "颜色": "#000000"}
+                }
+            }
+        
+        # 检查是否已拥有该稻草人
+        if scare_crow_type in player_data["稻草人配置"]["已拥有稻草人类型"]:
+            return self._send_buy_scare_crow_error(client_id, f"你已经拥有{scare_crow_type}了")
+        
+        # 扣除金钱
+        player_data["money"] -= price
+        
+        # 添加稻草人到已拥有列表
+        player_data["稻草人配置"]["已拥有稻草人类型"].append(scare_crow_type)
+        
+        # 如果是第一个稻草人，设置为展示类型
+        if player_data["稻草人配置"]["稻草人展示类型"] == "":
+            player_data["稻草人配置"]["稻草人展示类型"] = scare_crow_type
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 购买了稻草人 {scare_crow_type}，花费 {price} 金币", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "buy_scare_crow_response",
+            "success": True,
+            "message": f"成功购买{scare_crow_type}！",
+            "updated_data": {
+                "money": player_data["money"],
+                "稻草人配置": player_data["稻草人配置"]
+            }
+        })
+    
+    def _handle_modify_scare_crow_config(self, client_id, message):
+        """处理修改稻草人配置请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "修改稻草人配置", "modify_scare_crow_config")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "modify_scare_crow_config")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        config_data = message.get("config_data", {})
+        modify_cost = message.get("modify_cost", 300)
+        
+        # 加载稻草人配置
+        scare_crow_config = self._load_scare_crow_config()
+        if not scare_crow_config:
+            return self._send_modify_scare_crow_config_error(client_id, "服务器无法加载稻草人配置")
+        
+        # 检查是否只是切换展示类型（不收费）
+        is_only_changing_display = (
+            len(config_data) == 1 and 
+            "稻草人展示类型" in config_data and 
+            modify_cost == 0
+        )
+        
+        if not is_only_changing_display:
+            # 验证修改费用
+            actual_cost = scare_crow_config.get("修改稻草人配置花费", 300)
+            if modify_cost != actual_cost:
+                return self._send_modify_scare_crow_config_error(client_id, f"修改费用验证失败，实际费用为{actual_cost}金币")
+            
+            # 检查玩家金钱
+            if player_data["money"] < modify_cost:
+                return self._send_modify_scare_crow_config_error(client_id, f"金币不足，需要{modify_cost}金币，当前只有{player_data['money']}金币")
+        
+        # 确保稻草人配置存在
+        if "稻草人配置" not in player_data:
+            return self._send_modify_scare_crow_config_error(client_id, "你还没有稻草人，请先购买稻草人")
+        
+        # 只在非切换展示类型时扣除金钱
+        if not is_only_changing_display:
+            player_data["money"] -= modify_cost
+        
+        # 更新稻草人配置
+        if "稻草人展示类型" in config_data:
+            # 检查展示类型是否已拥有
+            owned_types = player_data["稻草人配置"].get("已拥有稻草人类型", [])
+            if config_data["稻草人展示类型"] in owned_types:
+                player_data["稻草人配置"]["稻草人展示类型"] = config_data["稻草人展示类型"]
+            else:
+                return self._send_modify_scare_crow_config_error(client_id, "你没有拥有该稻草人类型")
+        
+        if "稻草人昵称" in config_data:
+            player_data["稻草人配置"]["稻草人昵称"] = config_data["稻草人昵称"]
+        
+        if "稻草人昵称颜色" in config_data:
+            player_data["稻草人配置"]["稻草人昵称颜色"] = config_data["稻草人昵称颜色"]
+        
+        if "稻草人说的话" in config_data:
+            player_data["稻草人配置"]["稻草人说的话"] = config_data["稻草人说的话"]
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        if is_only_changing_display:
+            self.log('INFO', f"玩家 {username} 切换了稻草人展示类型到 {config_data['稻草人展示类型']}", 'SERVER')
+            message = f"成功切换到{config_data['稻草人展示类型']}！"
+        else:
+            self.log('INFO', f"玩家 {username} 修改了稻草人配置，花费 {modify_cost} 金币", 'SERVER')
+            message = f"稻草人配置修改成功！花费{modify_cost}金币"
+        
+        return self.send_data(client_id, {
+            "type": "modify_scare_crow_config_response",
+            "success": True,
+            "message": message,
+            "updated_data": {
+                "money": player_data["money"],
+                "稻草人配置": player_data["稻草人配置"]
+            }
+        })
+    
+    def _handle_get_scare_crow_config(self, client_id, message):
+        """处理获取稻草人配置请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "获取稻草人配置", "get_scare_crow_config")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "get_scare_crow_config")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        # 确保稻草人配置存在
+        if "稻草人配置" not in player_data:
+            player_data["稻草人配置"] = {
+                "已拥有稻草人类型": [],
+                "稻草人展示类型": "",
+                "稻草人昵称": "我的稻草人",
+                "稻草人昵称颜色": "#ffffff",
+                "稻草人说的话": {
+                    "第一句话": {"内容": "", "颜色": "#000000"},
+                    "第二句话": {"内容": "", "颜色": "#000000"},
+                    "第三句话": {"内容": "", "颜色": "#000000"},
+                    "第四句话": {"内容": "", "颜色": "#000000"}
+                }
+            }
+            # 保存默认配置
+            self.save_player_data(username, player_data)
+        
+        return self.send_data(client_id, {
+            "type": "get_scare_crow_config_response",
+            "success": True,
+            "message": "获取稻草人配置成功",
+            "scare_crow_config": player_data["稻草人配置"]
+        })
+    
+    def _load_scare_crow_config(self):
+        """加载稻草人配置"""
+        try:
+            with open("config/scare_crow_config.json", 'r', encoding='utf-8') as file:
+                return json.load(file)
+        except Exception as e:
+            self.log('ERROR', f"无法加载稻草人配置: {str(e)}", 'SERVER')
+            return {}
+    
+    def _send_buy_scare_crow_error(self, client_id, message):
+        """发送购买稻草人错误响应"""
+        return self.send_data(client_id, {
+            "type": "buy_scare_crow_response",
+            "success": False,
+            "message": message
+        })
+    
+    def _send_modify_scare_crow_config_error(self, client_id, message):
+        """发送修改稻草人配置错误响应"""
+        return self.send_data(client_id, {
+            "type": "modify_scare_crow_config_response",
+            "success": False,
+            "message": message
+        })
+
+#==========================智慧树系统处理==========================
+    def _handle_wisdom_tree_operation(self, client_id, message):
+        """处理智慧树操作请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "智慧树操作", "wisdom_tree_operation")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "wisdom_tree_operation")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        operation_type = message.get("operation_type", "")
+        
+        # 检查并修复智慧树配置格式
+        self._check_and_fix_wisdom_tree_config(player_data, username)
+        
+        # 获取修复后的智慧树配置
+        wisdom_tree_config = player_data["智慧树配置"]
+        
+        # 处理不同的操作类型
+        if operation_type == "water":
+            return self._process_wisdom_tree_water(client_id, player_data, username, wisdom_tree_config)
+        elif operation_type == "fertilize":
+            return self._process_wisdom_tree_fertilize(client_id, player_data, username, wisdom_tree_config)
+        elif operation_type == "kill_grass":
+            return self._process_wisdom_tree_kill_grass(client_id, player_data, username, wisdom_tree_config)
+        elif operation_type == "kill_bug":
+            return self._process_wisdom_tree_kill_bug(client_id, player_data, username, wisdom_tree_config)
+        elif operation_type == "play_music":
+            return self._process_wisdom_tree_play_music(client_id, player_data, username, wisdom_tree_config)
+        elif operation_type == "revive":
+            return self._process_wisdom_tree_revive(client_id, player_data, username, wisdom_tree_config)
+        elif operation_type == "get_random_message":
+            return self._process_wisdom_tree_get_random_message(client_id, player_data, username, wisdom_tree_config)
+        else:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": "未知的智慧树操作类型",
+                "operation_type": operation_type
+            })
+    
+    def _process_wisdom_tree_water(self, client_id, player_data, username, wisdom_tree_config):
+        """处理智慧树浇水"""
+        # 检查智慧树是否死亡
+        if wisdom_tree_config["当前生命值"] <= 0:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": "智慧树已死亡，请先复活！",
+                "operation_type": "water"
+            })
+        
+        # 浇水费用
+        water_cost = 100
+        
+        # 检查金钱是否足够
+        if player_data["money"] < water_cost:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": f"金钱不足，浇水需要 {water_cost} 金币",
+                "operation_type": "water"
+            })
+        
+        # 执行浇水
+        player_data["money"] -= water_cost
+        
+        # 浇水经验：50-150随机
+        import random
+        exp_gained = random.randint(50, 150)
+        wisdom_tree_config["当前经验值"] += exp_gained
+        
+        # 浇水高度：40%概率增加1-2高度
+        height_gained = 0
+        if random.random() < 0.4:  # 40%概率
+            height_gained = random.randint(1, 2)
+            wisdom_tree_config["高度"] = min(100, wisdom_tree_config["高度"] + height_gained)
+        
+        # 检查等级提升
+        level_up_occurred = self._check_wisdom_tree_level_up(wisdom_tree_config)
+        
+        # 保存数据
+        self.save_player_data(username, player_data)
+        
+        height_msg = f"，高度+{height_gained}" if height_gained > 0 else ""
+        self.log('INFO', f"玩家 {username} 给智慧树浇水，花费 {water_cost} 金币，经验+{exp_gained}{height_msg}", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "wisdom_tree_operation_response",
+            "success": True,
+            "message": f"浇水成功！经验+{exp_gained}{height_msg}",
+            "operation_type": "water",
+            "updated_data": {
+                "money": player_data["money"],
+                "智慧树配置": wisdom_tree_config
+            }
+        })
+    
+    def _process_wisdom_tree_fertilize(self, client_id, player_data, username, wisdom_tree_config):
+        """处理智慧树施肥"""
+        # 检查智慧树是否死亡
+        if wisdom_tree_config["当前生命值"] <= 0:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": "智慧树已死亡，请先复活！",
+                "operation_type": "fertilize"
+            })
+        
+        # 施肥费用
+        fertilize_cost = 200
+        
+        # 检查金钱是否足够
+        if player_data["money"] < fertilize_cost:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": f"金钱不足，施肥需要 {fertilize_cost} 金币",
+                "operation_type": "fertilize"
+            })
+        
+        # 执行施肥
+        player_data["money"] -= fertilize_cost
+        
+        # 施肥经验：10-40随机
+        import random
+        exp_gained = random.randint(10, 40)
+        wisdom_tree_config["当前经验值"] += exp_gained
+        
+        # 施肥高度：80%概率增加1-7高度
+        height_gained = 0
+        if random.random() < 0.8:  # 80%概率
+            height_gained = random.randint(1, 7)
+            wisdom_tree_config["高度"] = min(100, wisdom_tree_config["高度"] + height_gained)
+        
+        # 检查等级提升
+        level_up_occurred = self._check_wisdom_tree_level_up(wisdom_tree_config)
+        
+        # 保存数据
+        self.save_player_data(username, player_data)
+        
+        height_msg = f"，高度+{height_gained}" if height_gained > 0 else ""
+        self.log('INFO', f"玩家 {username} 给智慧树施肥，花费 {fertilize_cost} 金币，经验+{exp_gained}{height_msg}", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "wisdom_tree_operation_response",
+            "success": True,
+            "message": f"施肥成功！经验+{exp_gained}{height_msg}",
+            "operation_type": "fertilize",
+            "updated_data": {
+                "money": player_data["money"],
+                "智慧树配置": wisdom_tree_config
+            }
+        })
+    
+    def _process_wisdom_tree_kill_grass(self, client_id, player_data, username, wisdom_tree_config):
+        """处理智慧树除草"""
+        # 检查智慧树是否死亡
+        if wisdom_tree_config["当前生命值"] <= 0:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": "智慧树已死亡，请先复活！",
+                "operation_type": "kill_grass"
+            })
+        
+        # 除草费用
+        kill_grass_cost = 150
+        
+        # 检查金钱是否足够
+        if player_data["money"] < kill_grass_cost:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": f"金钱不足，除草需要 {kill_grass_cost} 金币",
+                "operation_type": "kill_grass"
+            })
+        
+        # 执行除草
+        import time
+        player_data["money"] -= kill_grass_cost
+        max_health = wisdom_tree_config["最大生命值"]
+        wisdom_tree_config["当前生命值"] = min(max_health, wisdom_tree_config["当前生命值"] + 10)
+        wisdom_tree_config["距离上一次除草时间"] = int(time.time())
+        
+        # 保存数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 给智慧树除草，花费 {kill_grass_cost} 金币，生命值+10", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "wisdom_tree_operation_response",
+            "success": True,
+            "message": "除草成功！生命值+10",
+            "operation_type": "kill_grass",
+            "updated_data": {
+                "money": player_data["money"],
+                "智慧树配置": wisdom_tree_config
+            }
+        })
+    
+    def _process_wisdom_tree_kill_bug(self, client_id, player_data, username, wisdom_tree_config):
+        """处理智慧树杀虫"""
+        # 检查智慧树是否死亡
+        if wisdom_tree_config["当前生命值"] <= 0:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": "智慧树已死亡，请先复活！",
+                "operation_type": "kill_bug"
+            })
+        
+        # 杀虫费用
+        kill_bug_cost = 150
+        
+        # 检查金钱是否足够
+        if player_data["money"] < kill_bug_cost:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": f"金钱不足，杀虫需要 {kill_bug_cost} 金币",
+                "operation_type": "kill_bug"
+            })
+        
+                # 执行杀虫
+        player_data["money"] -= kill_bug_cost
+        max_health = wisdom_tree_config["最大生命值"]
+        wisdom_tree_config["当前生命值"] = min(max_health, wisdom_tree_config["当前生命值"] + 15)
+        wisdom_tree_config["距离上一次杀虫时间"] = int(time.time())
+        
+        # 保存数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 给智慧树杀虫，花费 {kill_bug_cost} 金币，生命值+15", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "wisdom_tree_operation_response",
+            "success": True,
+            "message": "杀虫成功！生命值+15",
+            "operation_type": "kill_bug",
+            "updated_data": {
+                "money": player_data["money"],
+                "智慧树配置": wisdom_tree_config
+            }
+        })
+    
+    def _process_wisdom_tree_play_music(self, client_id, player_data, username, wisdom_tree_config):
+        """处理智慧树放音乐"""
+        # 检查智慧树是否死亡
+        if wisdom_tree_config["当前生命值"] <= 0:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": "智慧树已死亡，请先复活！",
+                "operation_type": "play_music"
+            })
+        
+        # 放音乐费用
+        play_music_cost = 100
+        
+        # 检查金钱是否足够
+        if player_data["money"] < play_music_cost:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": f"金钱不足，放音乐需要 {play_music_cost} 金币",
+                "operation_type": "play_music"
+            })
+        
+        # 执行放音乐
+        player_data["money"] -= play_music_cost
+        
+        # 从智慧树消息库中随机获取一条消息
+        random_message = self._get_random_wisdom_tree_message()
+        if random_message:
+            wisdom_tree_config["智慧树显示的话"] = random_message
+        
+        # 保存数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 给智慧树放音乐，花费 {play_music_cost} 金币，获得随机消息", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "wisdom_tree_operation_response",
+            "success": True,
+            "message": "放音乐成功！获得了一条神秘消息",
+            "operation_type": "play_music",
+            "random_message": random_message,
+            "updated_data": {
+                "money": player_data["money"],
+                "智慧树配置": wisdom_tree_config
+            }
+        })
+    
+    def _process_wisdom_tree_revive(self, client_id, player_data, username, wisdom_tree_config):
+        """处理智慧树复活"""
+        # 检查智慧树是否真的死亡
+        if wisdom_tree_config["当前生命值"] > 0:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": "智慧树还活着，不需要复活！",
+                "operation_type": "revive"
+            })
+        
+        # 复活费用
+        revive_cost = 1000
+        
+        # 检查金钱是否足够
+        if player_data["money"] < revive_cost:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": f"金钱不足，复活智慧树需要 {revive_cost} 金币",
+                "operation_type": "revive"
+            })
+        
+        # 执行复活
+        player_data["money"] -= revive_cost
+        wisdom_tree_config["当前生命值"] = wisdom_tree_config["最大生命值"]
+        
+        # 保存数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 复活了智慧树，花费 {revive_cost} 金币", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "wisdom_tree_operation_response",
+            "success": True,
+            "message": "智慧树复活成功！",
+            "operation_type": "revive",
+            "updated_data": {
+                "money": player_data["money"],
+                "智慧树配置": wisdom_tree_config
+            }
+        })
+    
+    def _process_wisdom_tree_get_random_message(self, client_id, player_data, username, wisdom_tree_config):
+        """处理获取随机智慧树消息"""
+        # 从智慧树消息库中随机获取一条消息
+        random_message = self._get_random_wisdom_tree_message()
+        
+        if random_message:
+            wisdom_tree_config["智慧树显示的话"] = random_message
+            
+            # 保存数据
+            self.save_player_data(username, player_data)
+            
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": True,
+                "message": "获得了一条神秘消息",
+                "operation_type": "get_random_message",
+                "random_message": random_message,
+                "updated_data": {
+                    "智慧树配置": wisdom_tree_config
+                }
+            })
+        else:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_operation_response",
+                "success": False,
+                "message": "暂时没有新消息",
+                "operation_type": "get_random_message"
+            })
+    
+    def _handle_wisdom_tree_message(self, client_id, message):
+        """处理智慧树消息发送请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "发送智慧树消息", "wisdom_tree_message")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "wisdom_tree_message")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        message_content = message.get("message", "").strip()
+        
+        # 验证消息内容
+        if not message_content:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_message_response",
+                "success": False,
+                "message": "消息内容不能为空"
+            })
+        
+        if len(message_content) > 100:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_message_response",
+                "success": False,
+                "message": "消息长度不能超过100个字符"
+            })
+        
+        # 发送消息费用
+        send_cost = 50
+        
+        # 检查金钱是否足够
+        if player_data["money"] < send_cost:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_message_response",
+                "success": False,
+                "message": f"金钱不足，发送消息需要 {send_cost} 金币"
+            })
+        
+        # 扣除费用
+        player_data["money"] -= send_cost
+        
+        # 保存消息到智慧树消息库
+        success = self._save_wisdom_tree_message(username, message_content)
+        
+        if success:
+            # 保存玩家数据
+            self.save_player_data(username, player_data)
+            
+            self.log('INFO', f"玩家 {username} 发送智慧树消息，花费 {send_cost} 金币：{message_content}", 'SERVER')
+            
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_message_response",
+                "success": True,
+                "message": "消息发送成功！",
+                "updated_data": {
+                    "money": player_data["money"]
+                }
+            })
+        else:
+            return self.send_data(client_id, {
+                "type": "wisdom_tree_message_response",
+                "success": False,
+                "message": "消息发送失败，请重试"
+            })
+    
+    def _handle_get_wisdom_tree_config(self, client_id, message):
+        """处理获取智慧树配置请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "获取智慧树配置", "get_wisdom_tree_config")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "get_wisdom_tree_config")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        # 检查并修复智慧树配置
+        self._check_and_fix_wisdom_tree_config(player_data, username)
+        
+        # 保存修复后的数据
+        self.save_player_data(username, player_data)
+        
+        # 返回智慧树配置
+        wisdom_tree_config = player_data.get("智慧树配置", {})
+        
+        self.log('INFO', f"玩家 {username} 请求智慧树配置", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "wisdom_tree_config_response",
+            "success": True,
+            "config": wisdom_tree_config
+        })
+    
+    def _check_wisdom_tree_level_up(self, wisdom_tree_config):
+        """检查智慧树等级提升"""
+        current_level = wisdom_tree_config["等级"]
+        current_experience = wisdom_tree_config["当前经验值"]
+        max_experience = wisdom_tree_config["最大经验值"]
+        level_ups = 0
+        
+        # 检查是否可以升级（最高等级20）
+        while current_level < 20 and current_experience >= max_experience:
+            # 升级
+            current_level += 1
+            current_experience -= max_experience  # 扣除升级所需经验
+            level_ups += 1
+            
+            # 计算新等级的最大经验值
+            max_experience = self._calculate_wisdom_tree_max_exp(current_level)
+            
+            self.log('INFO', f"智慧树等级提升到 {current_level} 级，新的最大经验值: {max_experience}", 'SERVER')
+        
+        # 每升一级，最大生命值+2，当前生命值也+2
+        if level_ups > 0:
+            health_bonus = level_ups * 2
+            wisdom_tree_config["最大生命值"] = min(200, wisdom_tree_config["最大生命值"] + health_bonus)
+            wisdom_tree_config["当前生命值"] = min(wisdom_tree_config["最大生命值"], wisdom_tree_config["当前生命值"] + health_bonus)
+            self.log('INFO', f"智慧树升级 {level_ups} 级，最大生命值+{health_bonus}", 'SERVER')
+        
+        # 更新配置
+        wisdom_tree_config["等级"] = current_level
+        wisdom_tree_config["当前经验值"] = current_experience
+        wisdom_tree_config["最大经验值"] = max_experience
+        
+        return level_ups > 0
+    
+    def _get_random_wisdom_tree_message(self):
+        """从智慧树消息库中随机获取一条消息"""
+        import os
+        import json
+        import random
+        
+        wisdom_tree_data_path = os.path.join(os.path.dirname(__file__), "config", "wisdom_tree_data.json")
+        
+        try:
+            with open(wisdom_tree_data_path, 'r', encoding='utf-8') as f:
+                wisdom_tree_data = json.load(f)
+            
+            messages = wisdom_tree_data.get("messages", [])
+            if messages:
+                selected_message = random.choice(messages)
+                return selected_message.get("content", "")
+            else:
+                return ""
+        except Exception as e:
+            print(f"读取智慧树消息失败：{e}")
+            return ""
+    
+    def _save_wisdom_tree_message(self, username, message_content):
+        """保存智慧树消息到消息库"""
+        import os
+        import json
+        import time
+        import uuid
+        
+        wisdom_tree_data_path = os.path.join(os.path.dirname(__file__), "config", "wisdom_tree_data.json")
+        
+        try:
+            # 读取现有数据
+            if os.path.exists(wisdom_tree_data_path):
+                with open(wisdom_tree_data_path, 'r', encoding='utf-8') as f:
+                    wisdom_tree_data = json.load(f)
+            else:
+                wisdom_tree_data = {
+                    "messages": [],
+                    "total_messages": 0,
+                    "last_update": ""
+                }
+            
+            # 创建新消息
+            new_message = {
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                "sender": username,
+                "content": message_content,
+                "id": str(uuid.uuid4())
+            }
+            
+            # 添加到消息列表
+            wisdom_tree_data["messages"].append(new_message)
+            wisdom_tree_data["total_messages"] = len(wisdom_tree_data["messages"])
+            wisdom_tree_data["last_update"] = new_message["timestamp"]
+            
+            # 保持最多1000条消息
+            if len(wisdom_tree_data["messages"]) > 1000:
+                wisdom_tree_data["messages"] = wisdom_tree_data["messages"][-1000:]
+                wisdom_tree_data["total_messages"] = len(wisdom_tree_data["messages"])
+            
+            # 保存数据
+            with open(wisdom_tree_data_path, 'w', encoding='utf-8') as f:
+                json.dump(wisdom_tree_data, f, ensure_ascii=False, indent=4)
+            
+            return True
+        except Exception as e:
+            print(f"保存智慧树消息失败：{e}")
+            return False
+    
+    def check_wisdom_tree_health_decay(self):
+        """检查智慧树生命值衰减"""
+        import time
+        import random
+        
+        current_time = int(time.time())
+        processed_count = 0
+        
+        # 检查所有在线玩家
+        for client_id in self.user_data:
+            if self.user_data[client_id].get("logged_in", False):
+                username = self.user_data[client_id]["username"]
+                player_data = self.load_player_data(username)
+                if player_data and "智慧树配置" in player_data:
+                    self._process_wisdom_tree_decay(player_data["智慧树配置"], username)
+                    self.save_player_data(username, player_data)
+                    processed_count += 1
+        
+        # 检查缓存中的离线玩家
+        for username in list(self.player_cache.keys()):
+            if username not in [self.user_data[cid].get("username") for cid in self.user_data if self.user_data[cid].get("logged_in", False)]:
+                player_data = self.player_cache[username]
+                if "智慧树配置" in player_data:
+                    self._process_wisdom_tree_decay(player_data["智慧树配置"], username)
+                    self.save_player_data(username, player_data)
+                    processed_count += 1
+        
+        if processed_count > 0:
+            self.log('INFO', f"已处理 {processed_count} 个玩家的智慧树生命值衰减", 'SERVER')
+    
+    def _process_wisdom_tree_decay(self, wisdom_tree_config, username):
+        """处理单个玩家的智慧树生命值衰减"""
+        import time
+        import random
+        
+        current_time = int(time.time())
+        
+        # 获取上次除草和杀虫时间，处理空字符串和无效值
+        last_grass_time_raw = wisdom_tree_config.get("距离上一次除草时间", current_time)
+        last_bug_time_raw = wisdom_tree_config.get("距离上一次杀虫时间", current_time)
+        
+        # 处理空字符串和无效时间戳
+        try:
+            last_grass_time = int(last_grass_time_raw) if last_grass_time_raw and str(last_grass_time_raw).strip() else current_time
+        except (ValueError, TypeError):
+            last_grass_time = current_time
+            
+        try:
+            last_bug_time = int(last_bug_time_raw) if last_bug_time_raw and str(last_bug_time_raw).strip() else current_time
+        except (ValueError, TypeError):
+            last_bug_time = current_time
+        
+        # 如果时间戳无效（为0或负数），设置为当前时间
+        if last_grass_time <= 0:
+            last_grass_time = current_time
+        if last_bug_time <= 0:
+            last_bug_time = current_time
+        
+        # 检查是否3天没有除草
+        days_since_grass = (current_time - last_grass_time) / 86400  # 转换为天数
+        if days_since_grass >= 3:
+            # 计算应该衰减的天数
+            decay_days = int(days_since_grass)
+            if decay_days > 0:
+                # 每天减少1-3血量
+                total_decay = 0
+                for _ in range(decay_days):
+                    daily_decay = random.randint(1, 3)
+                    total_decay += daily_decay
+                
+                wisdom_tree_config["当前生命值"] = max(0, wisdom_tree_config["当前生命值"] - total_decay)
+                self.log('INFO', f"玩家 {username} 的智慧树因{decay_days}天未除草，生命值减少{total_decay}", 'SERVER')
+                
+                # 更新除草时间为当前时间，避免重复扣血
+                wisdom_tree_config["距离上一次除草时间"] = current_time
+        
+        # 检查是否3天没有杀虫
+        days_since_bug = (current_time - last_bug_time) / 86400  # 转换为天数
+        if days_since_bug >= 3:
+            # 计算应该衰减的天数
+            decay_days = int(days_since_bug)
+            if decay_days > 0:
+                # 每天减少1-3血量
+                total_decay = 0
+                for _ in range(decay_days):
+                    daily_decay = random.randint(1, 3)
+                    total_decay += daily_decay
+                
+                wisdom_tree_config["当前生命值"] = max(0, wisdom_tree_config["当前生命值"] - total_decay)
+                self.log('INFO', f"玩家 {username} 的智慧树因{decay_days}天未杀虫，生命值减少{total_decay}", 'SERVER')
+                
+                # 更新杀虫时间为当前时间，避免重复扣血
+                wisdom_tree_config["距离上一次杀虫时间"] = current_time
+#==========================智慧树系统处理==========================
+#==========================稻草人系统处理==========================
+
+
+
+# ================================账户设置处理方法================================
+
+# 控制台命令系统
+class ConsoleCommands:
+    """控制台命令处理类"""
+    
+    def __init__(self, server):
+        self.server = server
+        self.commands = {
+            "addmoney": self.cmd_add_money,
+            "addxp": self.cmd_add_experience,
+            "addlevel": self.cmd_add_level,
+            "addseed": self.cmd_add_seed,
+            "lsplayer": self.cmd_list_players,
+            "playerinfo": self.cmd_player_info,
+            "resetland": self.cmd_reset_land,
+            "help": self.cmd_help,
+            "stop": self.cmd_stop,
+            "save": self.cmd_save_all,
+            "reload": self.cmd_reload_config
+        }
+    
+    def process_command(self, command_line):
+        """处理控制台命令"""
+        if not command_line.strip():
+            return
+            
+        parts = command_line.strip().split()
+        if not parts:
+            return
+            
+        # 移除命令前的斜杠（如果有）
+        command = parts[0].lstrip('/')
+        args = parts[1:] if len(parts) > 1 else []
+        
+        if command in self.commands:
+            try:
+                self.commands[command](args)
+            except Exception as e:
+                print(f"❌ 执行命令 '{command}' 时出错: {str(e)}")
+        else:
+            print(f"❌ 未知命令: {command}")
+            print("💡 输入 'help' 查看可用命令")
+    
+    def cmd_add_money(self, args):
+        """添加金币命令: /addmoney QQ号 数量"""
+        if len(args) != 2:
+            print("❌ 用法: /addmoney <QQ号> <数量>")
+            return
+            
+        qq_number, amount_str = args
+        try:
+            amount = int(amount_str)
+        except ValueError:
+            print("❌ 金币数量必须是整数")
+            return
+            
+        # 加载玩家数据
+        player_data = self.server.load_player_data(qq_number)
+        if not player_data:
+            print(f"❌ 玩家 {qq_number} 不存在")
+            return
+            
+        # 修改金币
+        old_money = player_data.get("money", 0)
+        player_data["money"] = old_money + amount
+        
+        # 保存数据
+        self.server.save_player_data(qq_number, player_data)
+        self.server.save_player_data_immediate(qq_number)
+        
+        print(f"✅ 已为玩家 {qq_number} 添加 {amount} 金币")
+        print(f"   原金币: {old_money} → 新金币: {player_data['money']}")
+    
+    def cmd_add_experience(self, args):
+        """添加经验命令: /addxp QQ号 数量"""
+        if len(args) != 2:
+            print("❌ 用法: /addxp <QQ号> <数量>")
+            return
+            
+        qq_number, amount_str = args
+        try:
+            amount = int(amount_str)
+        except ValueError:
+            print("❌ 经验数量必须是整数")
+            return
+            
+        # 加载玩家数据
+        player_data = self.server.load_player_data(qq_number)
+        if not player_data:
+            print(f"❌ 玩家 {qq_number} 不存在")
+            return
+            
+        # 修改经验
+        old_exp = player_data.get("experience", 0)
+        player_data["experience"] = old_exp + amount
+        
+        # 检查是否升级
+        old_level = player_data.get("level", 1)
+        self.server._check_level_up(player_data)
+        new_level = player_data.get("level", 1)
+        
+        # 保存数据
+        self.server.save_player_data(qq_number, player_data)
+        self.server.save_player_data_immediate(qq_number)
+        
+        print(f"✅ 已为玩家 {qq_number} 添加 {amount} 经验")
+        print(f"   原经验: {old_exp} → 新经验: {player_data['experience']}")
+        if new_level > old_level:
+            print(f"🎉 玩家升级了! {old_level} → {new_level}")
+    
+    def cmd_add_level(self, args):
+        """添加等级命令: /addlevel QQ号 数量"""
+        if len(args) != 2:
+            print("❌ 用法: /addlevel <QQ号> <数量>")
+            return
+            
+        qq_number, amount_str = args
+        try:
+            amount = int(amount_str)
+        except ValueError:
+            print("❌ 等级数量必须是整数")
+            return
+            
+        # 加载玩家数据
+        player_data = self.server.load_player_data(qq_number)
+        if not player_data:
+            print(f"❌ 玩家 {qq_number} 不存在")
+            return
+            
+        # 修改等级
+        old_level = player_data.get("level", 1)
+        new_level = max(1, old_level + amount)  # 确保等级不小于1
+        player_data["level"] = new_level
+        
+        # 保存数据
+        self.server.save_player_data(qq_number, player_data)
+        self.server.save_player_data_immediate(qq_number)
+        
+        print(f"✅ 已为玩家 {qq_number} 添加 {amount} 等级")
+        print(f"   原等级: {old_level} → 新等级: {new_level}")
+    
+    def cmd_add_seed(self, args):
+        """添加种子命令: /addseed QQ号 作物名称 数量"""
+        if len(args) != 3:
+            print("❌ 用法: /addseed <QQ号> <作物名称> <数量>")
+            return
+            
+        qq_number, crop_name, amount_str = args
+        try:
+            amount = int(amount_str)
+        except ValueError:
+            print("❌ 种子数量必须是整数")
+            return
+            
+        # 加载玩家数据
+        player_data = self.server.load_player_data(qq_number)
+        if not player_data:
+            print(f"❌ 玩家 {qq_number} 不存在")
+            return
+            
+        # 检查作物是否存在
+        crop_data = self.server._load_crop_data()
+        if crop_name not in crop_data:
+            print(f"❌ 作物 '{crop_name}' 不存在")
+            print(f"💡 可用作物: {', '.join(list(crop_data.keys())[:10])}...")
+            return
+            
+        # 添加种子到背包
+        if "seeds" not in player_data:
+            player_data["seeds"] = {}
+            
+        old_count = player_data["seeds"].get(crop_name, 0)
+        player_data["seeds"][crop_name] = old_count + amount
+        
+        # 保存数据
+        self.server.save_player_data(qq_number, player_data)
+        self.server.save_player_data_immediate(qq_number)
+        
+        print(f"✅ 已为玩家 {qq_number} 添加 {amount} 个 {crop_name} 种子")
+        print(f"   原数量: {old_count} → 新数量: {player_data['seeds'][crop_name]}")
+    
+    def cmd_list_players(self, args):
+        """列出所有玩家命令: /lsplayer"""
+        saves_dir = "game_saves"
+        if not os.path.exists(saves_dir):
+            print("❌ 游戏存档目录不存在")
+            return
+            
+        player_files = [f for f in os.listdir(saves_dir) if f.endswith('.json')]
+        if not player_files:
+            print("📭 暂无已注册玩家")
+            return
+            
+        print(f"📋 已注册玩家列表 (共 {len(player_files)} 人):")
+        print("-" * 80)
+        print(f"{'QQ号':<12} {'昵称':<15} {'等级':<6} {'金币':<10} {'最后登录':<20}")
+        print("-" * 80)
+        
+        for i, filename in enumerate(sorted(player_files), 1):
+            qq_number = filename.replace('.json', '')
+            try:
+                player_data = self.server._load_player_data_from_file(qq_number)
+                if player_data:
+                    nickname = player_data.get("player_name", "未设置")
+                    level = player_data.get("level", 1)
+                    money = player_data.get("money", 0)
+                    last_login = player_data.get("last_login_time", "从未登录")
+                    
+                    print(f"{qq_number:<12} {nickname:<15} {level:<6} {money:<10} {last_login:<20}")
+            except Exception as e:
+                print(f"{qq_number:<12} {'数据错误':<15} {'--':<6} {'--':<10} {'无法读取':<20}")
+        
+        print("-" * 80)
+    
+    def cmd_player_info(self, args):
+        """查看玩家信息命令: /playerinfo QQ号"""
+        if len(args) != 1:
+            print("❌ 用法: /playerinfo <QQ号>")
+            return
+            
+        qq_number = args[0]
+        player_data = self.server.load_player_data(qq_number)
+        if not player_data:
+            print(f"❌ 玩家 {qq_number} 不存在")
+            return
+            
+        print(f"👤 玩家信息: {qq_number}")
+        print("=" * 50)
+        print(f"昵称: {player_data.get('player_name', '未设置')}")
+        print(f"农场名: {player_data.get('farm_name', '未设置')}")
+        print(f"等级: {player_data.get('level', 1)}")
+        print(f"经验: {player_data.get('experience', 0)}")
+        print(f"金币: {player_data.get('money', 0)}")
+        print(f"体力: {player_data.get('体力值', 20)}")
+        print(f"注册时间: {player_data.get('注册时间', '未知')}")
+        print(f"最后登录: {player_data.get('last_login_time', '从未登录')}")
+        print(f"总在线时长: {player_data.get('total_login_time', '0时0分0秒')}")
+        
+        # 显示土地信息
+        farm_lots = player_data.get("farm_lots", [])
+        planted_count = sum(1 for lot in farm_lots if lot.get("is_planted", False))
+        digged_count = sum(1 for lot in farm_lots if lot.get("is_diged", False))
+        print(f"土地状态: 总共{len(farm_lots)}块，已开垦{digged_count}块，已种植{planted_count}块")
+        
+        # 显示种子信息
+        seeds = player_data.get("seeds", {})
+        if seeds:
+            print(f"种子背包: {len(seeds)}种作物，总计{sum(seeds.values())}个种子")
+        else:
+            print("种子背包: 空")
+            
+        print("=" * 50)
+    
+    def cmd_reset_land(self, args):
+        """重置玩家土地命令: /resetland QQ号"""
+        if len(args) != 1:
+            print("❌ 用法: /resetland <QQ号>")
+            return
+            
+        qq_number = args[0]
+        player_data = self.server.load_player_data(qq_number)
+        if not player_data:
+            print(f"❌ 玩家 {qq_number} 不存在")
+            return
+            
+        # 加载初始化模板
+        try:
+            with open("config/initial_player_data_template.json", 'r', encoding='utf-8') as f:
+                template_data = json.load(f)
+        except Exception as e:
+            print(f"❌ 无法加载初始化模板: {str(e)}")
+            return
+            
+        # 重置土地状态
+        if "farm_lots" in template_data:
+            old_lots_count = len(player_data.get("farm_lots", []))
+            player_data["farm_lots"] = template_data["farm_lots"]
+            new_lots_count = len(player_data["farm_lots"])
+            
+            # 保存数据
+            self.server.save_player_data(qq_number, player_data)
+            self.server.save_player_data_immediate(qq_number)
+            
+            print(f"✅ 已重置玩家 {qq_number} 的土地状态")
+            print(f"   土地数量: {old_lots_count} → {new_lots_count}")
+            print(f"   所有作物和状态已清除，恢复为初始状态")
+        else:
+            print("❌ 初始化模板中没有找到土地数据")
+    
+    def cmd_help(self, args):
+        """显示帮助信息"""
+        print("🌱 萌芽农场服务器控制台命令帮助")
+        print("=" * 60)
+        print("玩家管理命令:")
+        print("  /addmoney <QQ号> <数量>     - 为玩家添加金币")
+        print("  /addxp <QQ号> <数量>        - 为玩家添加经验")
+        print("  /addlevel <QQ号> <数量>     - 为玩家添加等级")
+        print("  /addseed <QQ号> <作物> <数量> - 为玩家添加种子")
+        print("  /lsplayer                   - 列出所有已注册玩家")
+        print("  /playerinfo <QQ号>          - 查看玩家详细信息")
+        print("  /resetland <QQ号>           - 重置玩家土地状态")
+        print("")
+        print("服务器管理命令:")
+        print("  /save                       - 立即保存所有玩家数据")
+        print("  /reload                     - 重新加载配置文件")
+        print("  /stop                       - 停止服务器")
+        print("  /help                       - 显示此帮助信息")
+        print("=" * 60)
+        print("💡 提示: 命令前的斜杠(/)是可选的")
+    
+    def cmd_save_all(self, args):
+        """保存所有数据命令"""
+        try:
+            self.server.force_save_all_data()
+            print("✅ 已强制保存所有玩家数据")
+        except Exception as e:
+            print(f"❌ 保存数据时出错: {str(e)}")
+    
+    def cmd_reload_config(self, args):
+        """重新加载配置命令"""
+        try:
+            # 重新加载作物数据
+            self.server._load_crop_data()
+            print("✅ 已重新加载配置文件")
+        except Exception as e:
+            print(f"❌ 重新加载配置时出错: {str(e)}")
+    
+    def cmd_stop(self, args):
+        """停止服务器命令"""
+        print("⚠️  正在停止服务器...")
+        try:
+            self.server.force_save_all_data()
+            print("💾 数据保存完成")
+        except:
+            pass
+        self.server.stop()
+        print("✅ 服务器已停止")
+        import sys
+        sys.exit(0)
+
+def console_input_thread(server):
+    """控制台输入处理线程"""
+    console = ConsoleCommands(server)
+    
+    print("💬 控制台已就绪，输入 'help' 查看可用命令")
+    
+    while True:
+        try:
+            command = input("> ").strip()
+            if command:
+                console.process_command(command)
+        except EOFError:
+            break
+        except KeyboardInterrupt:
+            break
+        except Exception as e:
+            print(f"❌ 处理命令时出错: {str(e)}")
+
 # 主程序启动入口
 if __name__ == "__main__":
     import sys
@@ -5748,10 +8695,15 @@ if __name__ == "__main__":
         print("   ├── 每日签到奖励")
         print("   ├── 幸运抽奖系统")
         print("   ├── 玩家互动功能")
-        print("   └── 性能优化缓存")
+        print("   ├── 性能优化缓存")
+        print("   └── 控制台命令系统")
         print("=" * 60)
-        print("🔥 服务器运行中... 按 Ctrl+C 停止服务器")
-        print("=" * 60)
+        print("🔥 服务器运行中...")
+        
+        # 启动控制台输入线程
+        console_thread = threading.Thread(target=console_input_thread, args=(server,))
+        console_thread.daemon = True
+        console_thread.start()
         
         # 主循环：保持服务器运行
         while True:
@@ -5763,6 +8715,11 @@ if __name__ == "__main__":
         print("💾 正在保存数据并关闭服务器...")
         
         if 'server' in locals():
+            try:
+                server.force_save_all_data()
+                print("💾 数据保存完成")
+            except:
+                pass
             server.stop()
             
         print("✅ 服务器已安全关闭")

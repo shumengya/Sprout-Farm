@@ -1,8 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://bkivlkirrx6u8"]
+[gd_scene load_steps=9 format=3 uid="uid://bkivlkirrx6u8"]
 
 [ext_resource type="Texture2D" uid="uid://bt1i2yhhlor5e" path="res://assets/地块/土块1.webp" id="1_bns1c"]
-[ext_resource type="Script" uid="uid://xh5tr5co5kfu" path="res://GUI/SMY_ProgressBar.gd" id="2_1n4xp"]
 [ext_resource type="Shader" path="res://Shader/PlantSwayShader.gdshader" id="2_s5pb0"]
+[ext_resource type="Texture2D" uid="uid://xyj4ro44cwj5" path="res://assets/作物/人参/0.webp" id="3_bns1c"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_v46ok"]
 
@@ -17,8 +17,23 @@ shader_parameter/height_curve = 2.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_cyybs"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bns1c"]
+bg_color = Color(0.377919, 0.377919, 0.377919, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+corner_detail = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s5pb0"]
+bg_color = Color(0.360784, 0.776471, 0.223529, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+corner_detail = 15
+
 [node name="CropItem" type="Button"]
-self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_right = 40.0
 offset_bottom = 40.0
@@ -32,8 +47,9 @@ texture = ExtResource("1_bns1c")
 
 [node name="crop_sprite" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_s5pb0")
-position = Vector2(51, 39)
-scale = Vector2(0.06, 0.06)
+position = Vector2(51, 45)
+scale = Vector2(0.339844, 0.363281)
+texture = ExtResource("3_bns1c")
 
 [node name="old_crop_sprite" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_s5pb0")
@@ -41,40 +57,43 @@ position = Vector2(51, 39)
 scale = Vector2(0.06, 0.06)
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
-modulate = Color(0.1, 0.1, 0.1, 1)
 material = SubResource("ShaderMaterial_cyybs")
 layout_mode = 2
-offset_left = 23.0
-offset_top = 78.0
-offset_right = 328.0
-offset_bottom = 151.0
+offset_left = 18.0
+offset_top = -5.0
+offset_right = 348.0
+offset_bottom = 68.0
 scale = Vector2(0.2, 0.2)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 50
-script = ExtResource("2_1n4xp")
+theme_override_styles/background = SubResource("StyleBoxFlat_bns1c")
+theme_override_styles/fill = SubResource("StyleBoxFlat_s5pb0")
+value = 80.0
 
 [node name="crop_name" type="Label" parent="."]
 modulate = Color(2, 2, 2, 1)
 layout_mode = 2
-offset_top = -9.0
+offset_top = 76.0
 offset_right = 250.0
-offset_bottom = 33.0
+offset_bottom = 118.0
 scale = Vector2(0.4, 0.4)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
+text = "[空地]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="status_label" type="Label" parent="."]
 modulate = Color(0.721569, 1, 1, 1)
 layout_mode = 2
-offset_top = 8.0
+offset_top = 62.0
 offset_right = 500.0
-offset_bottom = 77.0
+offset_bottom = 131.0
 scale = Vector2(0.2, 0.2)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 50
+text = "[已施肥]"
 horizontal_alignment = 1
 vertical_alignment = 1

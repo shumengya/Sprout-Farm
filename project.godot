@@ -55,7 +55,6 @@ folder_colors={
 
 texture={
 &"compress/lossy_quality": 0.01,
-&"compress/mode": 1,
 &"detect_3d/compress_to": 0,
 &"mipmaps/generate": true
 }
@@ -75,6 +74,7 @@ ui_load={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"
 textures/vram_compression/import_etc2_astc=true
 textures/webp_compression/compression_method=3

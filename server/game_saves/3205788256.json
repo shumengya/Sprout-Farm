@@ -1,20 +1,8 @@
 {
   "farm_lots": [
     {
-      "crop_type": "辣椒",
-      "grow_time": 660,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 650,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1750941703.97167
-    },
-    {
-      "crop_type": "辣椒",
-      "grow_time": 740,
+      "crop_type": "生菜",
+      "grow_time": 650,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -24,23 +12,8 @@
       "土地等级": 4
     },
     {
-      "crop_type": "辣椒",
-      "grow_time": 690,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 650,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1750941712.5249715,
-      "施肥类型": "生长素",
-      "施肥倍数": 3.0,
-      "施肥持续时间": 600
-    },
-    {
-      "crop_type": "辣椒",
-      "grow_time": 660,
+      "crop_type": "生菜",
+      "grow_time": 650,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -50,30 +23,8 @@
       "土地等级": 4
     },
     {
-      "crop_type": "野草1",
-      "grow_time": 10,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "野草1",
-      "grow_time": 10,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "辣椒",
-      "grow_time": 660,
+      "crop_type": "生菜",
+      "grow_time": 650,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -83,8 +34,8 @@
       "土地等级": 4
     },
     {
-      "crop_type": "辣椒",
-      "grow_time": 660,
+      "crop_type": "生菜",
+      "grow_time": 650,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -94,853 +45,176 @@
       "土地等级": 4
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "山楂",
+      "grow_time": 1085,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 650,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 650,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749282770.1309266
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 650,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749282775.8268695,
-      "施肥类型": "生长素",
-      "施肥倍数": 3.0,
-      "施肥持续时间": 600
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 720,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "施肥类型": "金坷垃",
-      "施肥倍数": 5.0,
-      "施肥持续时间": 300
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 650,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "施肥类型": "农家肥",
-      "施肥倍数": 2.0,
-      "施肥持续时间": 1800
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 650,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1751003939.982712
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 650,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 9600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 25200,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 21600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 21600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
       "max_grow_time": 1080,
       "已浇水": false,
       "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749981581.0701528
+      "土地等级": 0
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "山楂",
+      "grow_time": 1085,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749981579.340645
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 720,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749981577.9899538
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 720,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749981575.3987803
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 21600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749981582.565002
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 240,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749981583.5566695
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749993714.7086222
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 720,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749981585.0290024
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 720,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749981586.284726
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 25200,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
       "max_grow_time": 1080,
       "已浇水": false,
       "已施肥": false,
-      "土地等级": 4
+      "土地等级": 0
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "山楂",
+      "grow_time": 1084,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
       "max_grow_time": 1080,
       "已浇水": false,
       "已施肥": false,
-      "土地等级": 4
+      "土地等级": 0
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 21600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 21600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4,
-      "浇水时间": 1749383079.5425293
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 21600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 21600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 21600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "杂草2",
-      "grow_time": 10,
+      "crop_type": "山楂",
+      "grow_time": 1084,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "杂草1",
-      "grow_time": 8,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 2
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 2
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 2
-    },
-    {
-      "crop_type": "野草2",
-      "grow_time": 8,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 2
-    },
-    {
-      "crop_type": "杂草2",
-      "grow_time": 8,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 2
-    },
-    {
-      "crop_type": "杂草1",
-      "grow_time": 8,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 2
-    },
-    {
-      "crop_type": "野草2",
-      "grow_time": 8,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 2
-    },
-    {
-      "crop_type": "杂草1",
-      "grow_time": 8,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 2
-    },
-    {
-      "crop_type": "杂草2",
-      "grow_time": 8,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 2
-    },
-    {
-      "crop_type": "野草2",
-      "grow_time": 8,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 2
-    },
-    {
-      "crop_type": "野草2",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "野草1",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "杂草2",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "野草1",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "野草2",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "野草2",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "野草2",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "杂草1",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "野草1",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "野草1",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "杂草1",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "杂草1",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "野草1",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "野草2",
-      "grow_time": 6,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": true,
-      "max_grow_time": 5,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 14400,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 8400,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 10800,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 18000,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 240,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 240,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 4
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 300,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 1320,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 600,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
       "max_grow_time": 1080,
       "已浇水": false,
       "已施肥": false,
-      "土地等级": 0,
-      "施肥类型": "金坷垃",
-      "施肥倍数": 5.0,
-      "施肥持续时间": 300
+      "土地等级": 0
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "山楂",
+      "grow_time": 1084,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
       "max_grow_time": 1080,
       "已浇水": false,
       "已施肥": false,
-      "土地等级": 0,
-      "施肥类型": "生长素",
-      "施肥倍数": 3.0,
-      "施肥持续时间": 600
+      "土地等级": 0
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "山楂",
+      "grow_time": 1084,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
+      "max_grow_time": 1080,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "山楂",
+      "grow_time": 1083,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1080,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "山楂",
+      "grow_time": 1083,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1080,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "山楂",
+      "grow_time": 1083,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1080,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "山楂",
+      "grow_time": 1083,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1080,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "山楂",
+      "grow_time": 1082,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1080,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "山楂",
+      "grow_time": 1082,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1080,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "山楂",
+      "grow_time": 1082,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1080,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "山楂",
+      "grow_time": 1082,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1080,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "山楂",
+      "grow_time": 1081,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
+      "max_grow_time": 1080,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "山楂",
+      "grow_time": 1081,
+      "is_dead": false,
+      "is_diged": true,
+      "is_planted": true,
       "max_grow_time": 1080,
       "已浇水": false,
       "已施肥": false,
@@ -950,20 +224,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 1080,
-      "已浇水": false,
-      "已施肥": false,
-      "土地等级": 1
-    },
-    {
-      "crop_type": "",
-      "grow_time": 0,
-      "is_dead": false,
-      "is_diged": true,
-      "is_planted": false,
-      "max_grow_time": 1080,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -972,9 +235,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 1080,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -983,9 +246,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 1080,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -994,9 +257,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 1080,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1005,9 +268,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 600,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1016,9 +279,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 240,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1027,9 +290,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 720,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1038,9 +301,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 240,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1049,9 +312,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 18000,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1060,9 +323,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 300,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1071,9 +334,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 600,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1082,9 +345,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 12000,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1093,9 +356,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 600,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1104,9 +367,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 900,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1115,9 +378,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 2520,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1126,9 +389,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 300,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1137,9 +400,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 900,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1148,9 +411,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 240,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1159,9 +422,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 300,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1170,9 +433,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 300,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1181,9 +444,9 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 600,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
@@ -1192,22 +455,98 @@
       "crop_type": "",
       "grow_time": 0,
       "is_dead": false,
-      "is_diged": true,
+      "is_diged": false,
       "is_planted": false,
-      "max_grow_time": 240,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
+      "已浇水": false,
+      "已施肥": false,
+      "土地等级": 0
+    },
+    {
+      "crop_type": "",
+      "grow_time": 0,
+      "is_dead": false,
+      "is_diged": false,
+      "is_planted": false,
+      "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
     }
   ],
-  "player_bag": [],
-  "experience": 1597,
+  "player_bag": [
+    {
+      "name": "山楂",
+      "quality": "优良",
+      "count": 977
+    },
+    {
+      "name": "生菜",
+      "quality": "普通",
+      "count": 6
+    },
+    {
+      "name": "桃子",
+      "quality": "优良",
+      "count": 6
+    },
+    {
+      "name": "杂交树2",
+      "quality": "传奇",
+      "count": 2
+    }
+  ],
+  "experience": 4763,
   "farm_name": "树萌芽の狗窝",
   "player_name": "树萌芽",
   "level": 61,
-  "money": 615398172872,
-  "last_login_time": "2025年06月27日14时40分33秒",
-  "total_login_time": "144时10分23秒",
+  "money": 615397779752,
+  "last_login_time": "2025年07月09日17时14分04秒",
+  "total_login_time": "160时30分33秒",
   "user_name": "3205788256",
   "user_password": "tyh@19900420",
   "last_water_reset_date": "2025-06-06",
@@ -1226,7 +565,8 @@
   },
   "seeds": {
     "芦笋": 2,
-    "测试作物": 8
+    "测试作物": 8,
+    "龙果": 9999
   },
   "last_check_in_date": "2025-06-01",
   "check_in_count": 1,
@@ -1736,8 +1076,8 @@
   ],
   "total_likes": 1,
   "体力值": 20,
-  "体力上次刷新时间": "2025-06-27",
-  "体力上次恢复时间": 1750993973.8191202,
+  "体力上次刷新时间": "2025-07-09",
+  "体力上次恢复时间": 1752051316.4890897,
   "new_player_gift_claimed": true,
   "new_player_gift_time": "2025-06-08 19:22:41",
   "session_start_time": 1749878790.288913,
@@ -1801,6 +1141,68 @@
       "start_time": 1750993973.8192315,
       "claimed_gifts": {},
       "total_online_time": 7170.0
+    },
+    "2025-06-28": {
+      "start_time": 1751093256.0338128,
+      "claimed_gifts": {},
+      "total_online_time": 2847.0
+    },
+    "2025-06-29": {
+      "start_time": 1751193607.6517036,
+      "claimed_gifts": {},
+      "total_online_time": 467.0,
+      "last_login_time": 1751207557.543835
+    },
+    "2025-06-30": {
+      "start_time": 1751213643.126199,
+      "claimed_gifts": {},
+      "total_online_time": 3939.0,
+      "last_login_time": 1751260873.454821
+    },
+    "2025-07-01": {
+      "start_time": 1751357093.0563874,
+      "claimed_gifts": {},
+      "total_online_time": 2665.0
+    },
+    "2025-07-02": {
+      "start_time": 1751386053.3238037,
+      "claimed_gifts": {},
+      "total_online_time": 2410.0
+    },
+    "2025-07-03": {
+      "start_time": 1751525631.9076009,
+      "claimed_gifts": {},
+      "total_online_time": 195.0
+    },
+    "2025-07-04": {
+      "start_time": 1751633335.1202183,
+      "claimed_gifts": {},
+      "total_online_time": 18.0
+    },
+    "2025-07-05": {
+      "start_time": 1751678133.0375116,
+      "claimed_gifts": {},
+      "total_online_time": 4309.0
+    },
+    "2025-07-06": {
+      "start_time": 1751765706.2394679,
+      "claimed_gifts": {},
+      "total_online_time": 3933.0
+    },
+    "2025-07-07": {
+      "start_time": 1751817898.7042572,
+      "claimed_gifts": {},
+      "total_online_time": 37229.0
+    },
+    "2025-07-08": {
+      "start_time": 1751938901.7367072,
+      "claimed_gifts": {},
+      "total_online_time": 673.0
+    },
+    "2025-07-09": {
+      "start_time": 1752051316.4895062,
+      "claimed_gifts": {},
+      "total_online_time": 125.0
     }
   },
   "个人简介": "人生啊，就这样吧",
@@ -1839,7 +1241,7 @@
     {
       "name": "杂交树1",
       "quality": "传奇",
-      "count": 44
+      "count": 47
     },
     {
       "name": "藏红花",
@@ -1879,7 +1281,7 @@
     {
       "name": "胡萝卜",
       "quality": "普通",
-      "count": 79
+      "count": 163
     },
     {
       "name": "土豆",
@@ -1949,7 +1351,7 @@
     {
       "name": "杂交树2",
       "quality": "传奇",
-      "count": 33
+      "count": 34
     },
     {
       "name": "苹果",
@@ -1959,13 +1361,442 @@
     {
       "name": "辣椒",
       "quality": "普通",
-      "count": 49
+      "count": 67
+    },
+    {
+      "name": "大蒜",
+      "quality": "普通",
+      "count": 15
+    },
+    {
+      "name": "生菜",
+      "quality": "普通",
+      "count": 8
+    },
+    {
+      "name": "富贵竹",
+      "quality": "传奇",
+      "count": 4
+    },
+    {
+      "name": "栀子花",
+      "quality": "稀有",
+      "count": 22
+    },
+    {
+      "name": "凤凰木",
+      "quality": "传奇",
+      "count": 5
+    },
+    {
+      "name": "桃子",
+      "quality": "优良",
+      "count": 17
     }
   ],
   "道具背包": [
     {
       "name": "水桶",
       "count": 1
+    },
+    {
+      "name": "生长素",
+      "count": 1002
+    },
+    {
+      "name": "铲子",
+      "count": 2
+    },
+    {
+      "name": "时运-镰刀",
+      "count": 1000
+    },
+    {
+      "name": "荆棘护甲",
+      "count": 1
+    },
+    {
+      "name": "狂暴药水",
+      "count": 1
+    },
+    {
+      "name": "援军令牌",
+      "count": 1
+    },
+    {
+      "name": "金刚图腾",
+      "count": 1
+    },
+    {
+      "name": "灵木图腾",
+      "count": 1
+    },
+    {
+      "name": "敦岩图腾",
+      "count": 1
     }
-  ]
+  ],
+  "宠物背包": [
+    {
+      "场景路径": "res://Scene/Pet/SmallGreen.tscn",
+      "基本信息": {
+        "宠物主人": "3205788256",
+        "宠物名称": "萌芽小绿",
+        "队伍标识": "team1",
+        "宠物ID": "1751682842035",
+        "宠物类型": "小绿",
+        "生日": "2025年7月5日10时34分2秒",
+        "年龄": 0,
+        "性格": "活泼",
+        "简介": "",
+        "爱好": ""
+      },
+      "等级经验": {
+        "宠物等级": 4,
+        "当前经验": 26.0,
+        "最大经验": 172.8,
+        "亲密度": 204.0,
+        "最大亲密度": 1000.0
+      },
+      "购买信息": {
+        "能否购买": true,
+        "购买价格": 1000,
+        "出售价格": 500
+      },
+      "生命与防御": {
+        "最大生命值": 331.0,
+        "当前生命值": 331.0,
+        "生命恢复速度": 1.0,
+        "最大护盾值": 0.0,
+        "当前护盾值": 0.0,
+        "护盾恢复速度": 0.0,
+        "最大护甲值": 133.10000000000005,
+        "当前护甲值": 133.10000000000005
+      },
+      "基础攻击属性": {
+        "攻击类型": "MELEE",
+        "基础攻击伤害": 399.30000000000007,
+        "攻击距离": 100.0,
+        "暴击率": 0.1,
+        "暴击伤害倍数": 1.5,
+        "生命汲取": 0.1,
+        "护甲穿透": 0.0
+      },
+      "近战攻击": {
+        "近战额外伤害": 0.0,
+        "近战攻击速度": 1.0
+      },
+      "远程攻击": {
+        "远程额外伤害": 0.0,
+        "远程攻击速度": 1.0,
+        "远程攻击模式": "SINGLE",
+        "子弹速度": 300.0
+      },
+      "散弹攻击": {
+        "散弹数量": 5,
+        "散弹扩散角度": 45.0
+      },
+      "多发射击": {
+        "多发射击行数": 2,
+        "多发射击列数": 3,
+        "多发射击间距": 30.0
+      },
+      "加特林属性": {
+        "加特林子弹数量": 8,
+        "加特林射击间隔": 0.1,
+        "加特林冷却时间": 2.0
+      },
+      "穿透属性": {
+        "穿透数量": 3
+      },
+      "移动与闪避": {
+        "移动速度": 100.0,
+        "闪避率": 0.05,
+        "击退力度": 300.0,
+        "击退抗性": 0.0
+      },
+      "元素属性": {
+        "元素类型": "FIRE",
+        "元素克制额外伤害": 100.0
+      },
+      "特殊属性": {
+        "控制抗性": 0.0,
+        "伤害反弹": 0.0,
+        "死亡免疫": true,
+        "狂暴阈值": 0.3,
+        "狂暴状态伤害倍数": 1.5
+      },
+      "特殊机制开关": {
+        "启用伤害反弹机制": false,
+        "启用狂暴模式机制": false,
+        "启用死亡免疫机制": true,
+        "启用援助召唤机制": false,
+        "启用死亡重生机制": false
+      },
+      "援助系统": {
+        "援助触发阈值": 0.2,
+        "援助召唤数量": 2,
+        "援助召唤间隔": 5.0
+      },
+      "品质系统": {
+        "宠物品质": "COMMON"
+      }
+    },
+    {
+      "场景路径": "res://Scene/Pet/BigBeetle.tscn",
+      "基本信息": {
+        "宠物主人": "3205788256",
+        "宠物名称": "树萌芽の大甲虫",
+        "队伍标识": "team1",
+        "宠物ID": "1751695044465",
+        "宠物类型": "大甲虫",
+        "生日": "2025年7月5日13时57分24秒",
+        "年龄": 0,
+        "性格": "活泼",
+        "简介": "",
+        "爱好": ""
+      },
+      "等级经验": {
+        "宠物等级": 2,
+        "当前经验": 30.0,
+        "最大经验": 120.0,
+        "亲密度": 68.0,
+        "最大亲密度": 1000.0
+      },
+      "购买信息": {
+        "能否购买": true,
+        "购买价格": 1000,
+        "出售价格": 500
+      },
+      "生命与防御": {
+        "最大生命值": 220.00000000000003,
+        "当前生命值": 220.00000000000003,
+        "生命恢复速度": 1.0,
+        "最大护盾值": 0.0,
+        "当前护盾值": 0.0,
+        "护盾恢复速度": 0.0,
+        "最大护甲值": 110.00000000000001,
+        "当前护甲值": 110.00000000000001
+      },
+      "基础攻击属性": {
+        "攻击类型": "MELEE",
+        "基础攻击伤害": 27.500000000000004,
+        "攻击距离": 100.0,
+        "暴击率": 0.1,
+        "暴击伤害倍数": 1.5,
+        "生命汲取": 0.1,
+        "护甲穿透": 0.0
+      },
+      "近战攻击": {
+        "近战额外伤害": 0.0,
+        "近战攻击速度": 1.0
+      },
+      "远程攻击": {
+        "远程额外伤害": 0.0,
+        "远程攻击速度": 1.0,
+        "远程攻击模式": "SINGLE",
+        "子弹速度": 300.0
+      },
+      "散弹攻击": {
+        "散弹数量": 5,
+        "散弹扩散角度": 45.0
+      },
+      "多发射击": {
+        "多发射击行数": 2,
+        "多发射击列数": 3,
+        "多发射击间距": 30.0
+      },
+      "加特林属性": {
+        "加特林子弹数量": 8,
+        "加特林射击间隔": 0.1,
+        "加特林冷却时间": 2.0
+      },
+      "穿透属性": {
+        "穿透数量": 3
+      },
+      "移动与闪避": {
+        "移动速度": 100.0,
+        "闪避率": 0.05,
+        "击退力度": 300.0,
+        "击退抗性": 0.0
+      },
+      "元素属性": {
+        "元素类型": "WATER",
+        "元素克制额外伤害": 100.0
+      },
+      "特殊属性": {
+        "控制抗性": 0.0,
+        "伤害反弹": 0.0,
+        "死亡免疫": false,
+        "狂暴阈值": 0.3,
+        "狂暴状态伤害倍数": 1.5
+      },
+      "特殊机制开关": {
+        "启用伤害反弹机制": false,
+        "启用狂暴模式机制": false,
+        "启用死亡免疫机制": false,
+        "启用援助召唤机制": false,
+        "启用死亡重生机制": false
+      },
+      "援助系统": {
+        "援助触发阈值": 0.2,
+        "援助召唤数量": 2,
+        "援助召唤间隔": 5.0
+      },
+      "品质系统": {
+        "宠物品质": "COMMON"
+      }
+    },
+    {
+      "场景路径": "res://Scene/Pet/SmallBeetle.tscn",
+      "基本信息": {
+        "宠物主人": "3205788256",
+        "宠物名称": "3205788256的小甲虫",
+        "队伍标识": "team1",
+        "宠物ID": "1751765851860",
+        "宠物类型": "小甲虫",
+        "生日": "2025年7月6日9时37分31秒",
+        "年龄": 0,
+        "性格": "活泼",
+        "简介": "",
+        "爱好": ""
+      },
+      "等级经验": {
+        "宠物等级": 1,
+        "当前经验": 0.0,
+        "最大经验": 100.0,
+        "亲密度": 0.0,
+        "最大亲密度": 1000.0
+      },
+      "购买信息": {
+        "能否购买": true,
+        "购买价格": 1000,
+        "出售价格": 500
+      },
+      "生命与防御": {
+        "最大生命值": 200.0,
+        "当前生命值": 200.0,
+        "生命恢复速度": 1.0,
+        "最大护盾值": 0.0,
+        "当前护盾值": 0.0,
+        "护盾恢复速度": 0.0,
+        "最大护甲值": 100.0,
+        "当前护甲值": 100.0
+      },
+      "基础攻击属性": {
+        "攻击类型": "MELEE",
+        "基础攻击伤害": 25.0,
+        "攻击距离": 100.0,
+        "暴击率": 0.1,
+        "暴击伤害倍数": 1.5,
+        "生命汲取": 0.1,
+        "护甲穿透": 0.0
+      },
+      "近战攻击": {
+        "近战额外伤害": 0.0,
+        "近战攻击速度": 1.0
+      },
+      "远程攻击": {
+        "远程额外伤害": 0.0,
+        "远程攻击速度": 1.0,
+        "远程攻击模式": "SINGLE",
+        "子弹速度": 300.0
+      },
+      "散弹攻击": {
+        "散弹数量": 5,
+        "散弹扩散角度": 45.0
+      },
+      "多发射击": {
+        "多发射击行数": 2,
+        "多发射击列数": 3,
+        "多发射击间距": 30.0
+      },
+      "加特林属性": {
+        "加特林子弹数量": 8,
+        "加特林射击间隔": 0.1,
+        "加特林冷却时间": 2.0
+      },
+      "穿透属性": {
+        "穿透数量": 3
+      },
+      "移动与闪避": {
+        "移动速度": 100.0,
+        "闪避率": 0.05,
+        "击退力度": 300.0,
+        "击退抗性": 0.0
+      },
+      "元素属性": {
+        "元素类型": "NONE",
+        "元素克制额外伤害": 50.0
+      },
+      "特殊属性": {
+        "控制抗性": 0.0,
+        "伤害反弹": 0.0,
+        "死亡免疫": false,
+        "狂暴阈值": 0.3,
+        "狂暴状态伤害倍数": 1.5
+      },
+      "特殊机制开关": {
+        "启用伤害反弹机制": false,
+        "启用狂暴模式机制": false,
+        "启用死亡免疫机制": false,
+        "启用援助召唤机制": false,
+        "启用死亡重生机制": false
+      },
+      "援助系统": {
+        "援助触发阈值": 0.2,
+        "援助召唤数量": 2,
+        "援助召唤间隔": 5.0
+      },
+      "品质系统": {
+        "宠物品质": "COMMON"
+      }
+    }
+  ],
+  "巡逻宠物": [
+    "1751765851860"
+  ],
+  "出战宠物": [
+    "1751695044465"
+  ],
+  "稻草人配置": {
+    "已拥有稻草人类型": [
+      "稻草人1",
+      "稻草人2",
+      "稻草人3"
+    ],
+    "稻草人展示类型": "稻草人1",
+    "稻草人昵称": "树萌芽の稻草人",
+    "稻草人昵称颜色": "1dbc39ff",
+    "稻草人说的话": {
+      "第一句话": {
+        "内容": "我爱你",
+        "颜色": "1dbc39ff"
+      },
+      "第三句话": {
+        "内容": "为什么呢",
+        "颜色": "2625c8ff"
+      },
+      "第二句话": {
+        "内容": "但你不爱我",
+        "颜色": "1ffffaff"
+      },
+      "第四句话": {
+        "内容": "唉",
+        "颜色": "2145b2ff"
+      }
+    }
+  },
+  "智慧树配置": {
+    "距离上一次杀虫时间": 1752051316,
+    "距离上一次除草时间": 1752051316,
+    "智慧树显示的话": "你好",
+    "等级": 6,
+    "当前经验值": 204,
+    "最大经验值": 881,
+    "最大生命值": 110,
+    "当前生命值": 110,
+    "高度": 53,
+    "上次护理时间": 1752051799
+  }
 }

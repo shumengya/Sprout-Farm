@@ -3,8 +3,9 @@ extends Node
 # 变量定义
 @onready var grid_container : GridContainer = $GridContainer  # 农场地块的 GridContainer
 @onready var crop_item : Button = $CopyNodes/CropItem
+@onready var pet_patrol_path_line: Line2D = $PetPatrolPathLine #宠物农场巡逻线
 
-
+#显示信息栏
 @onready var show_money : Label =   $UI/GUI/GameInfoHBox1/money				# 显示当前剩余的钱
 @onready var show_experience : Label = $UI/GUI/GameInfoHBox1/experience  	# 显示当前玩家的经验
 @onready var show_level : Label =   $UI/GUI/GameInfoHBox1/level				# 显示当前玩家的等级
@@ -16,10 +17,13 @@ extends Node
 @onready var show_status_label : Label = $UI/GUI/GameInfoHBox2/StatusLabel	# 显示与服务器连接状态
 @onready var show_fps: Label = $UI/GUI/GameInfoHBox2/FPS					# 显示游戏FPS	
 @onready var show_hunger_value :Label = $UI/GUI/GameInfoHBox1/hunger_value	# 显示玩家体力值
-@onready var network_status_label :Label = get_node("/root/main/UI/TCPNetworkManager/StatusLabel")
+@onready var global_server_broadcast: Label = $UI/GUI/GameInfoHBox3/GlobalServerBroadcast # 显示全服大喇叭的最新消息，走马灯式滚动显示
+@onready var watch_broadcast_button: Button = $UI/GUI/GameInfoHBox3/WatchBroadcast # 查看大喇叭按钮
+
+@onready var network_status_label :Label = get_node("/root/main/UI/BigPanel/TCPNetworkManagerPanel/StatusLabel")
+
 
 #一堆按钮 
-#访问其他人农场相关的按钮
 @onready var return_my_farm_button: Button = $UI/GUI/VisitVBox/ReturnMyFarmButton	#返回我的农场
 @onready var like_button: Button = $UI/GUI/VisitVBox/LikeButton						#给别人点赞
 
@@ -36,38 +40,64 @@ extends Node
 @onready var daily_check_in_button: Button = $UI/GUI/OtherVBox/DailyCheckInButton		#每日签到
 @onready var player_ranking_button: Button = $UI/GUI/OtherVBox/PlayerRankingButton		#打开玩家排行榜
 @onready var scare_crow_button: Button = $UI/GUI/OtherVBox/ScareCrowButton	#打开稻草人面板按钮
-@onready var my_pet_button: Button = $UI/GUI/OtherVBox/MyPetButton		#打开宠物面板按钮
 @onready var return_main_menu_button: Button = $UI/GUI/OtherVBox/ReturnMainMenuButton	#返回主菜单按钮
 @onready var new_player_gift_button: Button = $UI/GUI/OtherVBox/NewPlayerGiftButton		#领取新手大礼包按钮
 @onready var account_setting_button: Button = $UI/GUI/OtherVBox/AccountSettingButton	#账户设置按钮  
 
 
-@onready var crop_grid_container : GridContainer = $UI/CropStorePanel/ScrollContainer/Crop_Grid #种子商店格子
-@onready var player_bag_grid_container : GridContainer = $UI/PlayerBagPanel/ScrollContainer/Bag_Grid #玩家背包格子
+@onready var crop_grid_container : GridContainer = $UI/BigPanel/CropStorePanel/ScrollContainer/Crop_Grid #种子商店格子
+@onready var player_bag_grid_container : GridContainer = $UI/BigPanel/PlayerBagPanel/ScrollContainer/Bag_Grid #玩家背包格子
 
 #作物品质按钮
-
-@onready var item_button :Button = $CopyNodes/item_button			#通用面板按钮
+@onready var item_button :Button = $CopyNodes/item_button			
 
 #各种面板
-@onready var land_panel : Panel = $UI/LandPanel									#地块面板
-@onready var login_panel : PanelContainer = $UI/LoginPanel						#登录注册面板
-@onready var crop_store_panel : Panel = $UI/CropStorePanel						#种子商店面板
-@onready var player_bag_panel : Panel = $UI/PlayerBagPanel						#玩家背包面板
-@onready var crop_warehouse_panel : Panel = $UI/CropWarehousePanel				#作物仓库面板
-@onready var item_bag_panel : Panel = $UI/ItemBagPanel							#道具背包面板
-@onready var item_store_panel : Panel = $UI/ItemStorePanel						#道具商店面板
-@onready var network_manager : Panel = $UI/TCPNetworkManager					#网络管理器
-@onready var player_ranking_panel : Panel = $UI/PlayerRankingPanel				#玩家排行榜面板
-@onready var daily_check_in_panel: DailyCheckInPanel = $UI/DailyCheckInPanel	#每日签到面板
-@onready var lucky_draw_panel: LuckyDrawPanel = $UI/LuckyDrawPanel				#幸运抽签面板
-@onready var one_click_plant_panel: Panel = $UI/OneClickPlantPanel				#一键种植面板
-@onready var online_gift_panel: Panel = $UI/OnlineGiftPanel						#在线礼包面板
-@onready var account_setting_panel: Panel = $UI/AccountSettingPanel				#账户设置面板
+#大面板
+@onready var lucky_draw_panel: LuckyDrawPanel = $UI/BigPanel/LuckyDrawPanel  #幸运抽奖面板
+@onready var daily_check_in_panel: DailyCheckInPanel = $UI/BigPanel/DailyCheckInPanel  #每日签到面板
+@onready var tcp_network_manager_panel: Panel = $UI/BigPanel/TCPNetworkManagerPanel  #网络管理器面板
+@onready var item_store_panel: Panel = $UI/BigPanel/ItemStorePanel  #道具商店面板
+@onready var item_bag_panel: Panel = $UI/BigPanel/ItemBagPanel  #道具背包面板
+@onready var player_bag_panel: Panel = $UI/BigPanel/PlayerBagPanel  #种子背包面板
+@onready var crop_warehouse_panel: Panel = $UI/BigPanel/CropWarehousePanel  #作物仓库面板
+@onready var crop_store_panel: Panel = $UI/BigPanel/CropStorePanel  #种子商店面板
+@onready var player_ranking_panel: Panel = $UI/BigPanel/PlayerRankingPanel  #玩家排行榜面板
+@onready var login_panel: PanelContainer = $UI/BigPanel/LoginPanel  #登录面板
+@onready var pet_bag_panel: Panel = $UI/BigPanel/PetBagPanel  #宠物背包面板
+@onready var pet_store_panel: Panel = $UI/BigPanel/PetStorePanel  #宠物商店面板
+@onready var pet_fight_panel: Panel = $UI/BigPanel/PetFightPanel  #宠物战斗面板
+@onready var pet_inform_panel: Panel = $UI/SmallPanel/PetInformPanel #宠物信息面板
 
-#加载缓存资源显示面板
-@onready var load_progress_panel: Panel = $UI/LoadProgressPanel						#加载资源面板默认为显示状态，加载完后隐藏
-@onready var load_progress_bar: ProgressBar = $UI/LoadProgressPanel/LoadProgressBar	#显示加载进度进度条
+
+#小面板
+@onready var land_panel: Panel = $UI/SmallPanel/LandPanel  #地块面板
+@onready var load_progress_panel: Panel = $UI/SmallPanel/LoadProgressPanel  #加载进度面板
+@onready var account_setting_panel: Panel = $UI/SmallPanel/AccountSettingPanel  #账户设置面板
+@onready var one_click_plant_panel: Panel = $UI/SmallPanel/OneClickPlantPanel  #一键种植地块面板
+@onready var online_gift_panel: Panel = $UI/SmallPanel/OnlineGiftPanel  #在线礼包面板
+@onready var debug_panel: Panel = $UI/SmallPanel/DebugPanel  #调试面板
+@onready var global_server_broadcast_panel: Panel = $UI/SmallPanel/GlobalServerBroadcastPanel  #全服大喇叭面板
+@onready var scare_crow_panel: Panel = $UI/SmallPanel/ScareCrowPanel #农场稻草人设置面板 
+@onready var wisdom_tree_panel: Panel = $UI/SmallPanel/WisdomTreePanel #智慧树设置面板
+
+
+#稻草人系统
+@onready var scare_crow: Button = $Decoration/ScareCrow #打开农场稻草人设置面板
+@onready var scare_crow_image: Sprite2D = $Decoration/ScareCrow/ScareCrowImage #稻草人显示的图片 
+@onready var scare_crow_name: RichTextLabel = $Decoration/ScareCrow/ScareCrowName #稻草人显示的昵称
+@onready var scare_crowtalks: RichTextLabel = $Decoration/ScareCrow/BackgroundPanel/ScareCrowtalks #稻草人显示的话 
+
+#智慧树系统
+@onready var wisdom_tree_image: Sprite2D = $Decoration/WisdomTree/WisdomTreeImage #智慧树图片从大小从0.5变到1.6
+@onready var tree_status: Label = $Decoration/WisdomTree/TreeStatus #智慧树状态 只显示 等级和高度
+@onready var anonymous_talk: RichTextLabel = $Decoration/WisdomTree/BackgroundPanel/AnonymousTalk #给智慧树听音乐100%会刷新 施肥浇水
+
+
+#各种弹窗
+@onready var accept_dialog: AcceptDialog = $UI/DiaLog/AcceptDialog
+
+
+@onready var load_progress_bar: ProgressBar = $UI/SmallPanel/LoadProgressPanel/LoadProgressBar	#显示加载进度进度条
 
 
 @onready var game_info_h_box_1: HBoxContainer = $UI/GUI/GameInfoHBox1
@@ -77,7 +107,7 @@ extends Node
 @onready var visit_v_box: VBoxContainer = $UI/GUI/VisitVBox
 @onready var other_v_box: VBoxContainer = $UI/GUI/OtherVBox
 
-@onready var accept_dialog: AcceptDialog = $UI/AcceptDialog
+
 
 var money: int = 500  # 默认每个人初始为100元
 var experience: float = 0.0  # 初始每个玩家的经验为0
@@ -95,17 +125,25 @@ var data : Dictionary = {}
 var buttons : Array = []
 
 var start_game : bool = false
-# 玩家背包数据
+# 种子背包数据
 var player_bag : Array = []  
 # 作物仓库数据
 var crop_warehouse : Array = []
 # 道具背包数据
 var item_bag : Array = []
+# 宠物背包数据
+var pet_bag : Array = []
+# 巡逻宠物数据
+var patrol_pets : Array = []
+var battle_pets : Array = []  # 出战宠物数据
+
 # 道具选择状态
 var selected_item_name : String = ""
 var is_item_selected : bool = false
 #农作物种类JSON
 var can_planted_crop : Dictionary = {}
+#道具配置数据
+var item_config_data : Dictionary = {}
 # 新手大礼包领取状态
 var new_player_gift_claimed : bool = false
 # 当前被选择的地块索引
@@ -136,13 +174,27 @@ var five_timer = 0.0
 var five_interval = 5.0
 
 var one_timer: float = 0.0
-var one_interval: float = 1.0  
+var one_interval: float = 1.0
 
-# 准备阶段
+# 稻草人话语切换相关
+var scare_crow_talk_index: int = 0
+var scare_crow_talk_timer: float = 0.0
+var scare_crow_talk_interval: float = 3.0  # 每3秒切换一次
+var scare_crow_talks_list: Array = []  
+
+#=======================脚本基础方法=======================
+
 func _ready():
 	# 显示加载进度面板，隐藏其他所有UI
 	load_progress_panel.show()
 	load_progress_bar.value = 0
+	
+	# 初始化调试面板（默认隐藏）
+	debug_panel.hide()
+	debug_panel_script = debug_panel
+	
+	# 在加载进度面板上添加调试按钮
+	_add_debug_button_to_loading_panel()
 	
 	#未登录时隐藏所有UI
 	game_info_h_box_1.hide()
@@ -163,6 +215,7 @@ func _ready():
 	player_ranking_panel.hide()
 	one_click_plant_panel.hide()
 	account_setting_panel.hide()
+	global_server_broadcast_panel.hide()
 	accept_dialog.hide()
 	
 
@@ -173,23 +226,27 @@ func _ready():
 	
 	# 先尝试加载本地数据进行快速初始化
 	_load_local_crop_data()
-	
-	# 初始化玩家背包UI
+	_load_local_item_config()
+#==================================初始化比较重要的几个面板==================================
+	# 初始化种子仓库UI
 	player_bag_panel.init_player_bag()
 	# 初始化作物仓库UI
 	crop_warehouse_panel.init_crop_warehouse()
 	# 初始化道具背包UI
 	item_bag_panel.init_item_bag()
-	# 初始化商店
+	# 初始化种子商店
 	crop_store_panel.init_store()
 	# 初始化道具商店UI
 	item_store_panel.init_item_store()
-	
+#==================================初始化比较重要的几个面板==================================
 	# 连接AcceptDialog的确认信号
 	accept_dialog.confirmed.connect(_on_accept_dialog_confirmed)
 	
 	# 启动在线人数更新定时器
 	_start_online_players_timer()
+	
+	# 初始化大喇叭显示（延迟到登录成功后）
+	# _init_broadcast_display()
 	
 	# 预加载所有作物图片（带进度显示）
 	await _preload_all_crop_textures()
@@ -241,8 +298,6 @@ func _physics_process(delta):
 	if one_timer >= one_interval:
 		one_timer = 0.0  # 重置计时器
 		
-
-		
 		#同步网络管理器的状态
 		show_status_label.text = "服务器状态："+network_status_label.text
 		show_status_label.modulate = network_status_label.modulate
@@ -271,6 +326,16 @@ func _physics_process(delta):
 	if five_timer >= five_interval:
 		five_timer = 0.0  # 重置计时器
 		show_tip.text = _random_small_game_tips()
+		
+	
+	# 稻草人话语切换计时器
+	if scare_crow_talks_list.size() > 0 and scare_crow.visible:
+		scare_crow_talk_timer += delta
+		if scare_crow_talk_timer >= scare_crow_talk_interval:
+			scare_crow_talk_timer = 0.0
+			_update_scare_crow_talk()
+#=======================脚本基础方法=======================
+
 
 #随机游戏提示
 func _random_small_game_tips() -> String:
@@ -315,7 +380,6 @@ func _handle_crop_update(update_data):
 
 # 修复背包数据，确保所有物品都有quality字段
 func _fix_player_bag_data():
-	"""修复背包数据，为缺少quality字段的物品添加默认质量"""
 	if not player_bag:
 		return
 	
@@ -345,7 +409,6 @@ func _fix_player_bag_data():
 
 # 处理登录成功
 func handle_login_success(player_data: Dictionary):
-	"""处理登录成功后的逻辑"""
 	
 	# 修复背包数据兼容性问题
 	_fix_player_bag_data()
@@ -362,12 +425,24 @@ func handle_login_success(player_data: Dictionary):
 			new_player_gift_button.show()
 	
 	# 立即请求在线人数
-	if network_manager and network_manager.is_connected_to_server():
-		network_manager.sendGetOnlinePlayers()
+	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
+		tcp_network_manager_panel.sendGetOnlinePlayers()
 		print("登录成功后请求在线人数更新")
 	
 	# 其他登录成功后的初始化逻辑可以在这里添加
 	start_game = true
+	
+	# 登录成功后初始化大喇叭显示
+	_init_broadcast_display()
+	
+	# 初始化稻草人显示
+	init_scare_crow_config()
+	
+	# 初始化智慧树显示
+	update_wisdom_tree_display()
+	
+	# 立即请求服务器历史消息以刷新显示
+	call_deferred("_request_server_history_for_refresh")
 
 
 # 处理玩家排行榜响应
@@ -413,6 +488,8 @@ func _handle_visit_player_response(data):
 		player_bag = target_player_data.get("player_bag", [])
 		crop_warehouse = target_player_data.get("作物仓库", [])
 		item_bag = target_player_data.get("道具背包", [])
+		pet_bag = target_player_data.get("宠物背包", [])
+		patrol_pets = target_player_data.get("巡逻宠物", [])
 		
 		# 更新UI显示
 		show_player_name.text = "玩家昵称：" + target_player_data.get("player_name", "未知")
@@ -437,6 +514,30 @@ func _handle_visit_player_response(data):
 		# 更新道具背包UI
 		if item_bag_panel and item_bag_panel.has_method("update_item_bag_ui"):
 			item_bag_panel.update_item_bag_ui()
+		# 更新宠物背包UI
+		if pet_bag_panel and pet_bag_panel.has_method("update_pet_bag_ui"):
+			pet_bag_panel.update_pet_bag_ui()
+		
+		# 初始化巡逻宠物（访问模式）
+		if has_method("init_patrol_pets"):
+			init_patrol_pets()
+		
+		# 更新稻草人显示（访问模式）
+		update_scare_crow_display()
+		
+		# 更新智慧树配置显示（访问模式）
+		if target_player_data.has("智慧树配置") and target_player_data["智慧树配置"] != null:
+			# 确保智慧树配置格式正确
+			var target_wisdom_config = target_player_data["智慧树配置"]
+			if target_wisdom_config is Dictionary:
+				target_wisdom_config = _ensure_wisdom_tree_config_format(target_wisdom_config)
+				
+				# 更新智慧树显示
+				_update_wisdom_tree_display(target_wisdom_config)
+			else:
+				print("智慧树配置不是Dictionary类型：", typeof(target_wisdom_config))
+		else:
+			print("目标玩家没有智慧树配置或配置为空")
 		
 		# 隐藏排行榜面板
 		if player_ranking_panel:
@@ -465,6 +566,8 @@ func _handle_return_my_farm_response(data):
 		player_bag = player_data.get("player_bag", [])
 		crop_warehouse = player_data.get("作物仓库", [])
 		item_bag = player_data.get("道具背包", [])
+		pet_bag = player_data.get("宠物背包", [])
+		patrol_pets = player_data.get("巡逻宠物", [])
 		
 		# 恢复UI显示
 		show_player_name.text = "玩家昵称：" + player_data.get("player_name", "未知")
@@ -495,9 +598,28 @@ func _handle_return_my_farm_response(data):
 		# 更新道具背包UI
 		if item_bag_panel and item_bag_panel.has_method("update_item_bag_ui"):
 			item_bag_panel.update_item_bag_ui()
+		# 更新宠物背包UI
+		if pet_bag_panel and pet_bag_panel.has_method("update_pet_bag_ui"):
+			pet_bag_panel.update_pet_bag_ui()
+		
+		# 初始化巡逻宠物（返回自己农场）
+		if has_method("init_patrol_pets"):
+			init_patrol_pets()
+		
+		# 更新稻草人显示（返回自己农场）
+		update_scare_crow_display()
+		
+		# 恢复智慧树显示（返回自己农场）
+		if player_data.has("智慧树配置") and player_data["智慧树配置"] != null:
+			var my_wisdom_config = player_data["智慧树配置"]
+			if my_wisdom_config is Dictionary:
+				my_wisdom_config = _ensure_wisdom_tree_config_format(my_wisdom_config)
+				# 更新本地智慧树配置
+				login_data["智慧树配置"] = my_wisdom_config
+				# 恢复智慧树显示
+				update_wisdom_tree_display()
 		
 		Toast.show("已返回自己的农场", Color.GREEN)
-		print("成功返回自己的农场")
 	else:
 		Toast.show("返回农场失败：" + message, Color.RED)
 		print("返回农场失败：", message)
@@ -788,25 +910,20 @@ func _update_ui():
 		show_like.text = "总赞数：" + str(int(my_likes))
 
 
+#===============================================这个函数也比较重要===============================================
 # 处理地块点击事件
 func _on_item_selected(index):
-	print("调试：地块点击事件 - 地块索引: ", index)
-	print("调试：道具选择状态 - is_item_selected: ", is_item_selected, ", selected_item_name: ", selected_item_name)
-	
 	# 检查是否处于一键种植的地块选择模式
 	if one_click_plant_panel and one_click_plant_panel.has_method("on_lot_selected"):
 		if one_click_plant_panel.on_lot_selected(index):
-			# 一键种植面板已处理了这次点击，直接返回
-			print("调试：一键种植面板处理了此点击")
 			return
 	
 	# 检查是否有道具被选择，如果有则使用道具
 	if is_item_selected and selected_item_name != "":
-		print("调试：检测到道具选择状态，调用道具使用函数")
 		_use_item_on_lot(index, selected_item_name)
 		return
 	
-	print("调试：没有道具选择，打开土地面板")
+
 	# 正常模式下，先设置地块索引，再打开土地面板
 	land_panel.selected_lot_index = index
 	selected_lot_index = index
@@ -814,35 +931,164 @@ func _on_item_selected(index):
 	# 更新按钮文本
 	if land_panel.has_method("_update_button_texts"):
 		land_panel._update_button_texts()
-
-# 收获作物
-func _harvest_crop(index):
-	var lot = farm_lots[index]
-	if lot["grow_time"] >= lot["max_grow_time"]:
-		# 发送收获请求到服务器
-		if network_manager and network_manager.sendHarvestCrop(index):
-			pass
-	else:   
-		Toast.show("作物还未成熟", Color.RED)
-
-# 检查玩家是否可以升级
-func _check_level_up():
-	var level_up_experience = 100 * level
-	if experience >= level_up_experience:
-		level += 1
-		experience -= level_up_experience
-		#print("恭喜！你升到了等级 ", level)
-		Toast.show("恭喜！你升到了" + str(level) + "级 ", Color.SKY_BLUE)
-		crop_store_panel.init_store()
+#===============================================这个函数也比较重要===============================================
 
 
-#===============================================作物数据处理===============================================
+#打开种子商店面板
+func _on_open_store_button_pressed() -> void:
+	#打开面板后暂时禁用相机功能
+	GlobalVariables.isZoomDisabled = true
+	
+	# 如果处于访问模式，不允许打开商店
+	if is_visiting_mode:
+		Toast.show("访问模式下无法使用商店", Color.ORANGE)
+		return
+	
+	# 确保商店面板已初始化
+	crop_store_panel.init_store()
+	# 显示商店面板
+	crop_store_panel.show()
+	# 确保在最前面显示
+	crop_store_panel.move_to_front() 
+	pass
+
+#打开玩家排行榜面板
+func _on_player_ranking_button_pressed() -> void:
+	#打开面板后暂时禁用相机功能
+	GlobalVariables.isZoomDisabled = true
+	
+	player_ranking_panel.show()
+	player_ranking_panel.request_player_rankings()
+	pass 
+
+
+#打开设置面板 暂时没想到可以设置什么
+func _on_setting_button_pressed() -> void:
+	pass
+
+#查看全服大喇叭按钮点击事件
+func _on_watch_broadcast_button_pressed() -> void:
+	#打开面板后暂时禁用相机功能
+	GlobalVariables.isZoomDisabled = true
+	
+	# 显示全服大喇叭面板
+	global_server_broadcast_panel.show()
+	global_server_broadcast_panel.move_to_front()
+
+
+
+# 处理AcceptDialog的确认信号
+func _on_accept_dialog_confirmed() -> void:
+	var action_type = accept_dialog.get_meta("action_type", "")
+	
+	if action_type == "one_click_harvest":
+		# 执行一键收获逻辑
+		_execute_one_click_harvest()
+	elif action_type == "buy_new_ground":
+		# 执行购买新地块逻辑
+		_execute_buy_new_ground()
+	elif action_type == "return_main_menu":
+		# 执行返回主菜单逻辑
+		_execute_return_main_menu()
+	else:
+		# 处理其他类型的确认逻辑
+		pass
+
+
+#打开一键种植面板
+func _on_one_click_plant_button_pressed() -> void:
+	# 如果处于访问模式，不允许操作
+	if is_visiting_mode:
+		Toast.show("访问模式下无法使用一键种植", Color.ORANGE)
+		return
+	
+	# 检查是否有网络连接
+	if not tcp_network_manager_panel.is_connected_to_server():
+		Toast.show("未连接服务器，无法使用一键种植", Color.RED)
+		return
+	
+	# 显示一键种植面板
+	one_click_plant_panel.show()
+	one_click_plant_panel.move_to_front() 
+
+# 处理连接断开事件
+func _on_connection_lost():
+	
+	# 重置游戏状态
+	start_game = false
+	
+	# 隐藏所有游戏UI
+	game_info_h_box_1.hide()
+	game_info_h_box_2.hide()
+	farm_v_box.hide()
+	visit_v_box.hide()
+	other_v_box.hide()
+	
+	# 隐藏所有面板
+	crop_store_panel.hide()
+	player_bag_panel.hide()
+	lucky_draw_panel.hide()
+	daily_check_in_panel.hide()
+	player_ranking_panel.hide()
+	one_click_plant_panel.hide()
+	global_server_broadcast_panel.hide()
+	land_panel.hide()
+	accept_dialog.hide()
+	
+	# 重置访问模式
+	if is_visiting_mode:
+		_handle_return_my_farm_response({"success": true})
+	
+	# 显示登录面板
+	if login_panel:
+		login_panel.show()
+		
+		# 更新登录面板状态
+		if login_panel.has_method("_on_connection_lost"):
+			login_panel._on_connection_lost()
+	
+	# 显示连接断开的提示
+	Toast.show("与服务器的连接已断开，请重新登录", Color.ORANGE, 3.0, 1.0)
+
+
+#==========================打开基础面板================================
+#打开种子仓库面板
+func _on_seed_warehouse_button_pressed() -> void:
+	player_bag_panel.show()
+
+#打开玩家道具背包面板
+func _on_item_bag_button_pressed() -> void:
+	item_bag_panel.show()
+	
+#打开道具商店面板
+func _on_item_store_button_pressed() -> void:
+	item_store_panel.show()
+
+#打开作物仓库面板
+func _on_crop_warehouse_button_pressed() -> void:
+	crop_warehouse_panel.show()
+
+#打开宠物背包面板
+func _on_pet_bag_button_pressed() -> void:
+	pet_bag_panel.show()
+	pass 
+
+#打开宠物商店面板
+func _on_pet_store_button_pressed() -> void:
+	pet_store_panel.show()
+	pass
+
+
+#==========================打开基础面板================================
+
+
+
+#===============================================初始化数据处理===============================================
 # 从服务器获取作物数据
 func _load_crop_data():
 	var network_manager = get_node("/root/main/UI/TCPNerworkManager")
 	if network_manager and network_manager.is_connected_to_server():
 		# 从服务器请求作物数据
-		print("正在从服务器获取作物数据...")
 		network_manager.sendGetCropData()
 	else:
 		# 如果无法连接服务器，尝试加载本地数据
@@ -850,14 +1096,19 @@ func _load_crop_data():
 		_load_local_crop_data()
 
 # 尝试从服务器加载最新数据
+#玩家登录后在后台把服务器的配置文件通过网络覆写到本地config里面 然后也使用服务器的配置
 func _try_load_from_server():
 
-	if network_manager and network_manager.is_connected_to_server():
+	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
 		# 从服务器请求最新作物数据
 		print("尝试从服务器获取最新作物数据...")
-		network_manager.sendGetCropData()
+		tcp_network_manager_panel.sendGetCropData()
+		
+		# 从服务器请求最新道具配置数据
+		print("尝试从服务器获取最新道具配置数据...")
+		tcp_network_manager_panel.sendGetItemConfig()
 	else:
-		print("服务器未连接，使用当前作物数据")
+		print("服务器未连接，使用当前本地数据")
 
 # 处理服务器作物数据响应
 func _handle_crop_data_response(response_data):
@@ -901,7 +1152,7 @@ func _load_local_crop_data():
 			print("本地缓存作物数据JSON解析错误：", json.get_error_message())
 	
 	# 如果缓存文件不存在或解析失败，加载默认数据
-	file = FileAccess.open("res://Data/crop_data.json", FileAccess.READ)
+	file = FileAccess.open("user://crop_data.json", FileAccess.READ)
 	if not file:
 		print("无法读取默认作物数据文件！")
 		return
@@ -924,11 +1175,23 @@ func _refresh_ui_after_crop_data_loaded():
 	# 重新初始化商店和背包UI，因为现在有了作物数据
 	if crop_store_panel and crop_store_panel.has_method("init_store"):
 		crop_store_panel.init_store()
-		print("商店已根据作物数据重新初始化")
+		print("种子商店已根据作物数据重新初始化")
 	
-	if player_bag_panel and player_bag_panel.has_method("init_player_bag"):
-		player_bag_panel.init_player_bag()
-		print("背包已根据作物数据重新初始化")
+	if player_bag_panel and player_bag_panel.has_method("update_player_bag_ui"):
+		player_bag_panel.update_player_bag_ui()
+		print("种子背包已根据作物数据重新初始化")
+	
+	if crop_warehouse_panel and crop_warehouse_panel.has_method("update_crop_warehouse_ui"):
+		crop_warehouse_panel.update_crop_warehouse_ui()
+		print("作物仓库已根据作物数据重新初始化")
+	
+	if item_bag_panel and item_bag_panel.has_method("update_item_bag_ui"):
+		item_bag_panel.update_item_bag_ui()
+		print("道具背包已根据作物数据重新初始化")
+	
+	if item_store_panel and item_store_panel.has_method("init_item_store"):
+		item_store_panel.init_item_store()
+		print("道具商店已根据作物数据重新初始化")
 
 # 保存作物数据到本地文件
 func _save_crop_data_to_local(crop_data):
@@ -942,33 +1205,177 @@ func _save_crop_data_to_local(crop_data):
 	file.close()
 	print("作物数据已保存到本地缓存")
 
-#===============================================作物数据处理===============================================
+# 保存道具配置数据到本地文件
+func _save_item_config_to_local(config_data):
+	var file = FileAccess.open("user://item_config.json", FileAccess.WRITE)
+	if not file:
+		print("无法创建本地道具配置缓存文件！")
+		return
+		
+	var json_string = JSON.stringify(config_data, "\t")
+	file.store_string(json_string)
+	file.close()
+	print("道具配置数据已保存到本地缓存")
+
+# 从本地文件加载道具配置数据（备用方案）
+func _load_local_item_config():
+	# 优先尝试加载用户目录下的缓存文件
+	var file = FileAccess.open("user://item_config.json", FileAccess.READ)
+	if file:
+		var json_text = file.get_as_text()
+		file.close()
+		
+		var json = JSON.new()
+		var parse_result = json.parse(json_text)
+		if parse_result == OK:
+			item_config_data = json.get_data()
+			print("已加载本地缓存的道具配置数据")
+			_refresh_ui_after_item_config_loaded()
+			return
+		else:
+			print("本地缓存道具配置数据JSON解析错误：", json.get_error_message())
+	
+	# 如果缓存文件不存在或解析失败，加载默认数据
+	file = FileAccess.open("user://item_config.json", FileAccess.READ)
+	if not file:
+		print("无法读取默认道具配置文件！")
+		return
+		
+	var json_text = file.get_as_text()
+	file.close()
+	
+	var json = JSON.new()
+	var parse_result = json.parse(json_text)
+	if parse_result != OK:
+		print("默认道具配置数据JSON解析错误：", json.get_error_message())
+		return
+		
+	item_config_data = json.get_data()
+	print("已加载默认道具配置数据")
+	_refresh_ui_after_item_config_loaded()
+
+# 道具配置数据加载后刷新UI
+func _refresh_ui_after_item_config_loaded():
+	# 重新初始化道具相关UI
+	if item_store_panel and item_store_panel.has_method("init_item_store"):
+		item_store_panel.init_item_store()
+		print("道具商店已根据道具配置数据重新初始化")
+	
+	if item_bag_panel and item_bag_panel.has_method("update_item_bag_ui"):
+		item_bag_panel.update_item_bag_ui()
+		print("道具背包已根据道具配置数据重新初始化")
+
+# 处理服务器道具配置响应
+func _handle_item_config_response(response_data):
+	var success = response_data.get("success", false)
+	
+	if success:
+		var config_data = response_data.get("item_config", {})
+		if config_data:
+			# 保存到本地文件
+			_save_item_config_to_local(config_data)
+			# 设置全局变量
+			item_config_data = config_data
+			print("道具配置数据已从服务器更新，道具种类：", item_config_data.size())
+			
+			# 重新初始化道具相关UI
+			_refresh_ui_after_item_config_loaded()
+		else:
+			print("服务器返回的道具配置数据为空")
+			_load_local_item_config()
+	else:
+		var message = response_data.get("message", "未知错误")
+		print("从服务器获取道具配置数据失败：", message)
+		_load_local_item_config()
+
+#===============================================初始化数据处理===============================================
 
 
 
 #===============================================作物图片缓存系统===============================================
 
-## 作物图片缓存和管理系统
+## 优化的作物图片缓存和管理系统
 class CropTextureManager:
-	"""作物图片缓存管理器 - 负责所有作物图片的加载、缓存和管理"""
 	
 	# 缓存字典
 	var texture_cache: Dictionary = {}          # 序列帧缓存 {crop_name: [Texture2D]}
 	var mature_texture_cache: Dictionary = {}   # 成熟图片缓存 {crop_name: Texture2D}
 	var frame_counts: Dictionary = {}           # 帧数记录 {crop_name: int}
+	var failed_resources: Array = []           # 记录加载失败的资源路径
 	
 	# 加载状态
 	var is_loading: bool = false
 	var load_progress: float = 0.0
 	var total_crops: int = 0
 	var loaded_crops: int = 0
+	var failed_crops: int = 0
+	
+	# 线程管理
+	var worker_threads: Array = []
+	var max_threads: int = 4  # 最大线程数
+	var loading_queue: Array = []
+	var loading_mutex: Mutex
+	var results_mutex: Mutex
+	var completed_results: Array = []
+	
+	# 调试面板引用
+	var debug_panel_ref = null
+	
+	# 内存管理
+	var max_cache_size: int = 200  # 最大缓存图片数量
+	var cache_access_order: Array = []  # LRU缓存访问顺序
 	
 	func _init():
-		print("[CropTextureManager] 初始化作物图片管理器")
+		print("[CropTextureManager] 初始化优化的作物图片管理器")
+		loading_mutex = Mutex.new()
+		results_mutex = Mutex.new()
+		# 根据设备性能动态调整线程数
+		_adjust_thread_count()
+		# 尝试获取调试面板引用
+		_connect_debug_panel()
+	
+	## 根据设备性能调整线程数
+	func _adjust_thread_count():
+		var platform = OS.get_name()
+		var processor_count = OS.get_processor_count()
+		
+		match platform:
+			"Android", "iOS":
+				# 移动设备使用较少线程，避免过热和电量消耗
+				max_threads = min(2, max(1, processor_count / 2))
+			"Windows", "Linux", "macOS":
+				# 桌面设备可以使用更多线程
+				max_threads = min(6, max(2, processor_count - 1))
+			_:
+				max_threads = 2
+		
+		print("[CropTextureManager] 设备: %s, CPU核心: %d, 使用线程数: %d" % [platform, processor_count, max_threads])
+	
+	## 连接调试面板
+	func _connect_debug_panel():
+		# 延迟获取调试面板引用，因为初始化时可能还未创建
+		call_deferred("_try_get_debug_panel")
+	
+	## 尝试获取调试面板引用
+	func _try_get_debug_panel():
+		var main_node = Engine.get_main_loop().current_scene
+		if main_node:
+			debug_panel_ref = main_node.get_node_or_null("UI/SmallPanel/DebugPanel")
+			if debug_panel_ref:
+				print("[CropTextureManager] 已连接到调试面板")
+	
+	## 向调试面板发送消息
+	func _send_debug_message(message: String, color: Color = Color.WHITE):
+		if debug_panel_ref and debug_panel_ref.has_method("add_debug_message"):
+			debug_panel_ref.add_debug_message(message, color)
+	
+	## 设置当前加载项目
+	func _set_current_loading_item(item_name: String):
+		if debug_panel_ref and debug_panel_ref.has_method("set_current_loading_item"):
+			debug_panel_ref.set_current_loading_item(item_name)
 	
 	## 异步预加载所有作物图片 - 主要入口函数
 	func preload_all_textures_async(crop_data: Dictionary, progress_callback: Callable) -> void:
-		"""异步预加载所有作物图片，提供进度回调"""
 		if is_loading:
 			print("[CropTextureManager] 正在加载中，跳过重复请求")
 			return
@@ -977,52 +1384,232 @@ class CropTextureManager:
 		load_progress = 0.0
 		total_crops = crop_data.size()
 		loaded_crops = 0
+		failed_crops = 0
+		failed_resources.clear()
+		completed_results.clear()
 		
-		print("[CropTextureManager] 开始异步预加载 %d 种作物图片" % total_crops)
+		print("[CropTextureManager] 开始预加载 %d 种作物图片" % total_crops)
+		_send_debug_message("开始预加载 %d 种作物图片" % total_crops, Color.CYAN)
 		
 		# 阶段1：加载默认图片 (0-10%)
 		progress_callback.call(0, "正在加载默认图片...")
+		_send_debug_message("阶段1: 加载默认图片", Color.YELLOW)
 		await _load_default_textures_async()
 		progress_callback.call(10, "默认图片加载完成")
+		_send_debug_message("默认图片加载完成", Color.GREEN)
 		
-		# 阶段2：批量加载作物图片 (10-90%)
-		await _load_crops_batch_async(crop_data, progress_callback)
+		# 阶段2：多线程批量加载作物图片 (10-90%)
+		_send_debug_message("阶段2: 多线程加载作物图片", Color.YELLOW)
+		await _load_crops_multithreaded_async(crop_data, progress_callback)
 		
 		# 阶段3：完成 (90-100%)
 		progress_callback.call(100, "所有作物图片加载完成！")
 		_print_cache_stats()
+		_send_debug_message("所有作物图片加载完成！", Color.GREEN)
+		
+		# 清理线程
+		await _cleanup_threads()
 		
 		is_loading = false
-		print("[CropTextureManager] 预加载完成")
+		var success_message = "预加载完成，成功: %d, 失败: %d" % [loaded_crops, failed_crops]
+		print("[CropTextureManager] " + success_message)
+		_send_debug_message(success_message, Color.CYAN)
 	
-	## 批量异步加载作物图片
-	func _load_crops_batch_async(crop_data: Dictionary, progress_callback: Callable) -> void:
-		"""批量异步加载作物图片，每帧加载有限数量避免卡顿"""
-		const BATCH_SIZE = 3  # 每帧最多加载3种作物
+	## 多线程批量异步加载作物图片
+	func _load_crops_multithreaded_async(crop_data: Dictionary, progress_callback: Callable) -> void:
 		var crop_names = crop_data.keys()
-		var batch_count = 0
 		
+		# 准备加载队列
+		loading_mutex.lock()
+		loading_queue.clear()
 		for crop_name in crop_names:
-			# 加载序列帧和成熟图片
-			_load_crop_textures_immediate(crop_name)
-			_load_mature_texture_immediate(crop_name)
+			loading_queue.append({
+				"crop_name": crop_name,
+				"type": "sequence"
+			})
+			loading_queue.append({
+				"crop_name": crop_name,
+				"type": "mature"
+			})
+		loading_mutex.unlock()
+		
+		# 启动工作线程
+		_send_debug_message("启动 %d 个工作线程" % max_threads, Color.CYAN)
+		for i in range(max_threads):
+			var thread = Thread.new()
+			worker_threads.append(thread)
+			thread.start(_worker_thread_function)
+		
+		# 监控进度
+		var total_tasks = loading_queue.size()
+		var last_completed = 0
+		
+		while true:
+			# 处理完成的结果
+			results_mutex.lock()
+			var current_results = completed_results.duplicate()
+			completed_results.clear()
+			results_mutex.unlock()
 			
-			loaded_crops += 1
-			batch_count += 1
+			# 应用加载结果
+			for result in current_results:
+				_apply_loading_result(result)
+				loaded_crops += 1
 			
-			# 更新进度 (10% 到 90% 区间)
-			var progress = 10 + int((float(loaded_crops) / float(total_crops)) * 80)
-			var message = "加载作物图片: %s (%d/%d)" % [crop_name, loaded_crops, total_crops]
-			progress_callback.call(progress, message)
+			# 更新进度
+			var completed_tasks = total_tasks - loading_queue.size()
+			if completed_tasks != last_completed:
+				var progress = 10 + int((float(completed_tasks) / float(total_tasks)) * 80)
+				var message = "多线程加载中... (%d/%d)" % [completed_tasks, total_tasks]
+				progress_callback.call(progress, message)
+				last_completed = completed_tasks
 			
-			# 每批次后暂停一帧，避免卡顿
-			if batch_count >= BATCH_SIZE:
-				batch_count = 0
-				await Engine.get_main_loop().process_frame
+			# 检查是否完成
+			loading_mutex.lock()
+			var queue_empty = loading_queue.is_empty()
+			loading_mutex.unlock()
+			
+			if queue_empty and completed_results.is_empty():
+				break
+			
+			# 短暂等待
+			await Engine.get_main_loop().process_frame
 	
-	## 立即加载默认图片（同步）
+	## 工作线程函数
+	func _worker_thread_function():
+		while true:
+			# 获取任务
+			loading_mutex.lock()
+			if loading_queue.is_empty():
+				loading_mutex.unlock()
+				break
+			
+			var task = loading_queue.pop_front()
+			loading_mutex.unlock()
+			
+			# 执行加载任务
+			var result = _load_texture_task(task)
+			
+			# 存储结果
+			results_mutex.lock()
+			completed_results.append(result)
+			results_mutex.unlock()
+	
+	## 执行单个纹理加载任务
+	func _load_texture_task(task: Dictionary) -> Dictionary:
+		var crop_name = task["crop_name"]
+		var task_type = task["type"]
+		var result = {
+			"crop_name": crop_name,
+			"type": task_type,
+			"success": false,
+			"textures": [],
+			"texture": null,
+			"error": ""
+		}
+		
+		if task_type == "sequence":
+			result["textures"] = _load_crop_textures_threadsafe(crop_name)
+			result["success"] = result["textures"].size() > 0
+		elif task_type == "mature":
+			result["texture"] = _load_mature_texture_threadsafe(crop_name)
+			result["success"] = result["texture"] != null
+		
+		# 检查加载是否成功
+		if not result["success"]:
+			result["error"] = "加载失败: " + crop_name
+			failed_resources.append(crop_name)
+		
+		return result
+	
+	## 线程安全的作物序列帧加载
+	func _load_crop_textures_threadsafe(crop_name: String) -> Array:
+		var textures = []
+		var crop_path = "res://assets/作物/" + crop_name + "/"
+		
+		# 检查作物文件夹是否存在
+		if not DirAccess.dir_exists_absolute(crop_path):
+			return []
+		
+		# 使用ResourceLoader.load_threaded_request进行异步加载
+		var frame_index = 0
+		var max_frames = 20  # 限制最大帧数，避免无限循环
+		
+		while frame_index < max_frames:
+			var texture_path = crop_path + str(frame_index) + ".webp"
+			
+			if not ResourceLoader.exists(texture_path):
+				break
+			
+			# 使用线程安全的资源加载
+			var texture = _load_resource_safe(texture_path)
+			if texture:
+				textures.append(texture)
+				frame_index += 1
+			else:
+				break
+		
+		return textures
+	
+	## 线程安全的成熟图片加载
+	func _load_mature_texture_threadsafe(crop_name: String) -> Texture2D:
+		var crop_path = "res://assets/作物/" + crop_name + "/"
+		var mature_path = crop_path + "成熟.webp"
+		
+		if ResourceLoader.exists(mature_path):
+			return _load_resource_safe(mature_path)
+		
+		return null
+	
+	## 安全的资源加载函数，带错误处理
+	func _load_resource_safe(path: String) -> Resource:
+		if not ResourceLoader.exists(path):
+			return null
+		
+		# 使用ResourceLoader.load，它在Godot 4中是线程安全的
+		var resource = ResourceLoader.load(path, "Texture2D")
+		
+		# 验证资源
+		if resource and resource is Texture2D:
+			return resource
+		else:
+			if resource == null:
+				print("[错误] 加载资源失败: ", path)
+				failed_resources.append(path)
+			else:
+				print("[警告] 资源类型不匹配: ", path)
+			return null
+	
+	## 应用加载结果到缓存
+	func _apply_loading_result(result: Dictionary):
+		var crop_name = result["crop_name"]
+		var task_type = result["type"]
+		var success = result["success"]
+		
+		if not success:
+			var error_msg = "加载失败: %s (%s)" % [crop_name, task_type]
+			_send_debug_message(error_msg, Color.RED)
+			return
+		
+		if task_type == "sequence":
+			var textures = result["textures"]
+			if textures.size() > 0:
+				texture_cache[crop_name] = textures
+				frame_counts[crop_name] = textures.size()
+				_update_cache_access(crop_name)
+				_send_debug_message("✓ %s: %d帧" % [crop_name, textures.size()], Color.GREEN)
+		elif task_type == "mature":
+			var texture = result["texture"]
+			if texture:
+				mature_texture_cache[crop_name] = texture
+				_update_cache_access(crop_name + "_mature")
+				_send_debug_message("✓ %s: 成熟图片" % crop_name, Color.GREEN)
+		
+		# 检查缓存大小，必要时清理
+		_check_and_cleanup_cache()
+	
+	## 立即加载默认图片（同步，但优化）
 	func _load_default_textures_async() -> void:
-		"""异步加载默认图片"""
 		const DEFAULT_CROP = "默认"
 		const DEFAULT_PATH = "res://assets/作物/默认/"
 		
@@ -1032,11 +1619,11 @@ class CropTextureManager:
 		var textures = []
 		var frame_index = 0
 		
-		# 加载序列帧
-		while true:
+		# 限制默认图片帧数
+		while frame_index < 10:
 			var texture_path = DEFAULT_PATH + str(frame_index) + ".webp"
 			if ResourceLoader.exists(texture_path):
-				var texture = load(texture_path)
+				var texture = _load_resource_safe(texture_path)
 				if texture:
 					textures.append(texture)
 					frame_index += 1
@@ -1049,18 +1636,19 @@ class CropTextureManager:
 		if textures.size() == 0:
 			var single_path = DEFAULT_PATH + "0.webp"
 			if ResourceLoader.exists(single_path):
-				var texture = load(single_path)
+				var texture = _load_resource_safe(single_path)
 				if texture:
 					textures.append(texture)
 		
 		# 缓存结果
-		texture_cache[DEFAULT_CROP] = textures
-		frame_counts[DEFAULT_CROP] = textures.size()
+		if textures.size() > 0:
+			texture_cache[DEFAULT_CROP] = textures
+			frame_counts[DEFAULT_CROP] = textures.size()
 		
 		# 加载默认成熟图片
 		var mature_path = DEFAULT_PATH + "成熟.webp"
 		if ResourceLoader.exists(mature_path):
-			var mature_texture = load(mature_path)
+			var mature_texture = _load_resource_safe(mature_path)
 			if mature_texture:
 				mature_texture_cache[DEFAULT_CROP] = mature_texture
 		
@@ -1069,81 +1657,61 @@ class CropTextureManager:
 		# 让出一帧
 		await Engine.get_main_loop().process_frame
 	
-	## 立即加载单个作物的序列帧图片
-	func _load_crop_textures_immediate(crop_name: String) -> Array:
-		"""立即加载指定作物的序列帧图片"""
-		if texture_cache.has(crop_name):
-			return texture_cache[crop_name]
+	## 更新缓存访问顺序（LRU）
+	func _update_cache_access(key: String):
+		if key in cache_access_order:
+			cache_access_order.erase(key)
+		cache_access_order.append(key)
+	
+	## 检查并清理缓存
+	func _check_and_cleanup_cache():
+		var total_cached = texture_cache.size() + mature_texture_cache.size()
 		
-		var textures = []
-		var crop_path = "res://assets/作物/" + crop_name + "/"
-		
-		# 检查作物文件夹是否存在
-		if not DirAccess.dir_exists_absolute(crop_path):
-			# 文件夹不存在，使用默认图片
-			textures = texture_cache.get("默认", [])
-		else:
-			# 加载序列帧
-			var frame_index = 0
-			while true:
-				var texture_path = crop_path + str(frame_index) + ".webp"
-				if ResourceLoader.exists(texture_path):
-					var texture = load(texture_path)
-					if texture:
-						textures.append(texture)
-						frame_index += 1
-					else:
-						break
-				else:
-					break
+		if total_cached > max_cache_size:
+			var to_remove = total_cached - max_cache_size + 10  # 多清理一些
+			_send_debug_message("⚠ 缓存超限，开始清理 %d 个项目" % to_remove, Color.ORANGE)
 			
-			# 如果没找到图片，使用默认图片
-			if textures.size() == 0:
-				textures = texture_cache.get("默认", [])
-		
-		# 缓存结果
-		texture_cache[crop_name] = textures
-		frame_counts[crop_name] = textures.size()
-		
-		return textures
+			for i in range(min(to_remove, cache_access_order.size())):
+				var key = cache_access_order[i]
+				
+				# 不清理默认图片
+				if key.begins_with("默认"):
+					continue
+				
+				if key.ends_with("_mature"):
+					var crop_name = key.replace("_mature", "")
+					mature_texture_cache.erase(crop_name)
+				else:
+					texture_cache.erase(key)
+					frame_counts.erase(key)
+			
+			# 更新访问顺序
+			cache_access_order = cache_access_order.slice(to_remove)
+			
+			var current_size = texture_cache.size() + mature_texture_cache.size()
+			var cleanup_msg = "缓存清理完成，当前缓存: %d" % current_size
+			print("[CropTextureManager] " + cleanup_msg)
+			_send_debug_message(cleanup_msg, Color.YELLOW)
 	
-	## 立即加载单个作物的成熟图片
-	func _load_mature_texture_immediate(crop_name: String) -> Texture2D:
-		"""立即加载指定作物的成熟图片"""
-		if mature_texture_cache.has(crop_name):
-			return mature_texture_cache[crop_name]
-		
-		var crop_path = "res://assets/作物/" + crop_name + "/"
-		var mature_path = crop_path + "成熟.webp"
-		var texture: Texture2D = null
-		
-		# 尝试加载作物专属成熟图片
-		if ResourceLoader.exists(mature_path):
-			texture = load(mature_path)
-		
-		# 如果没找到，使用默认成熟图片
-		if not texture:
-			texture = mature_texture_cache.get("默认", null)
-		
-		# 缓存结果
-		if texture:
-			mature_texture_cache[crop_name] = texture
-		
-		return texture
-	
-	## 根据生长进度获取作物图片
+	## 根据生长进度获取作物图片（带缓存优化）
 	func get_texture_by_progress(crop_name: String, progress: float) -> Texture2D:
-		"""根据作物名称和生长进度获取对应的图片"""
+		# 更新访问记录
+		_update_cache_access(crop_name)
+		
 		# 100%成熟时优先使用成熟图片
 		if progress >= 1.0:
 			var mature_texture = mature_texture_cache.get(crop_name, null)
 			if mature_texture:
+				_update_cache_access(crop_name + "_mature")
 				return mature_texture
 		
 		# 使用序列帧图片
 		var textures = texture_cache.get(crop_name, [])
 		if textures.size() == 0:
-			return null
+			# 如果没有缓存，尝试使用默认图片
+			textures = texture_cache.get("默认", [])
+			if textures.size() == 0:
+				return null
 		
 		if textures.size() == 1:
 			return textures[0]
@@ -1154,28 +1722,42 @@ class CropTextureManager:
 		
 		return textures[frame_index]
 	
+	## 清理线程
+	func _cleanup_threads() -> void:
+		for thread in worker_threads:
+			if thread.is_started():
+				thread.wait_to_finish()
+		worker_threads.clear()
+		print("[CropTextureManager] 工作线程已清理")
+	
 	## 清理缓存
 	func clear_cache() -> void:
-		"""清理所有缓存，释放内存"""
+		await _cleanup_threads()
 		texture_cache.clear()
 		mature_texture_cache.clear()
 		frame_counts.clear()
+		cache_access_order.clear()
+		failed_resources.clear()
 		print("[CropTextureManager] 缓存已清理")
 	
 	## 打印缓存统计信息
 	func _print_cache_stats() -> void:
-		"""打印缓存统计信息"""
 		print("[CropTextureManager] 缓存统计:")
 		print("  - 序列帧缓存: %d 种作物" % texture_cache.size())
 		print("  - 成熟图片缓存: %d 种作物" % mature_texture_cache.size())
+		print("  - 加载失败: %d 个资源" % failed_resources.size())
 		var total_frames = 0
 		for count in frame_counts.values():
 			total_frames += count
 		print("  - 总图片帧数: %d 帧" % total_frames)
+		
+		if failed_resources.size() > 0:
+			print("  - 失败的资源:")
+			for failed in failed_resources:
+				print("    * ", failed)
 	
 	## 获取详细缓存信息
 	func get_cache_info() -> String:
-		"""获取详细的缓存信息字符串"""
 		var info = "作物图片缓存详情:\n"
 		for crop_name in texture_cache.keys():
 			var frame_count = frame_counts.get(crop_name, 0)
@@ -1184,10 +1766,42 @@ class CropTextureManager:
 			if has_mature:
 				info += " (含成熟图片)"
 			info += "\n"
+		
+		if failed_resources.size() > 0:
+			info += "\n加载失败的资源:\n"
+			for failed in failed_resources:
+				info += "  - " + failed + "\n"
+		
 		return info
+	
+	## 预热常用作物（可选优化）
+	func preheat_common_crops(common_crops: Array) -> void:
+		print("[CropTextureManager] 预热常用作物: ", common_crops.size(), " 种")
+		for crop_name in common_crops:
+			# 确保常用作物在缓存中
+			if not texture_cache.has(crop_name):
+				var textures = _load_crop_textures_threadsafe(crop_name)
+				if textures.size() > 0:
+					texture_cache[crop_name] = textures
+					frame_counts[crop_name] = textures.size()
+			
+			if not mature_texture_cache.has(crop_name):
+				var mature = _load_mature_texture_threadsafe(crop_name)
+				if mature:
+					mature_texture_cache[crop_name] = mature
 
 # 全局作物图片管理器实例
 var crop_texture_manager: CropTextureManager
+
+# 资源加载调试器（可选，用于调试）
+var resource_debugger = null
+
+# 调试面板脚本引用
+var debug_panel_script = null
+
+#===============================================作物图片缓存系统===============================================
+
+
 
 #===============================================作物图片更新===============================================
 
@@ -1224,8 +1838,6 @@ func _update_lot_crop_sprite(button: Button, lot_data: Dictionary) -> void:
 	else:
 		crop_sprite.visible = false
 
-
-
 ## 批量刷新所有地块的作物图片
 func _refresh_all_crop_sprites() -> void:
 	for i in range(min(farm_lots.size(), grid_container.get_child_count())):
@@ -1239,7 +1851,6 @@ func _refresh_all_crop_sprites() -> void:
 
 ## 更新加载进度显示
 func _update_load_progress(progress: int, message: String = "") -> void:
-	"""更新加载进度条和提示信息"""
 	load_progress_bar.value = progress
 	
 	# 更新消息显示
@@ -1247,13 +1858,38 @@ func _update_load_progress(progress: int, message: String = "") -> void:
 	if message_label and message != "":
 		message_label.text = message
 	
+	# 向调试面板发送进度信息
+	if debug_panel_script and debug_panel_script.has_method("add_debug_message"):
+		if message != "":
+			debug_panel_script.add_debug_message("进度 %d%%: %s" % [progress, message], Color.CYAN)
+	
+	# 检测卡顿
+	_check_loading_stuck(progress)
+	
 	if message != "":
 		print("[加载进度] %d%% - %s" % [progress, message])
 
+# 上一次进度更新的时间和进度值
+var last_progress_time: float = 0.0
+var last_progress_value: int = 0
+
+## 检测加载卡顿
+func _check_loading_stuck(progress: int):
+	var current_time = Time.get_ticks_msec() / 1000.0
+	
+	# 如果进度没有变化
+	if progress == last_progress_value:
+		var stuck_time = current_time - last_progress_time
+		if stuck_time > 5.0:  # 5秒没有进度变化
+			if debug_panel_script and debug_panel_script.has_method("add_debug_message"):
+				debug_panel_script.add_debug_message("⚠ 加载卡顿检测: 在 %d%% 停留了 %.1f 秒" % [progress, stuck_time], Color.ORANGE)
+	else:
+		# 进度有变化，更新记录
+		last_progress_value = progress
+		last_progress_time = current_time
+
 ## 主预加载函数 - 游戏启动时调用
 func _preload_all_crop_textures() -> void:
-	"""预加载所有作物图片的主函数"""
-	print("[主游戏] 开始预加载作物图片...")
 	
 	# 初始化管理器
 	if not crop_texture_manager:
@@ -1276,7 +1912,6 @@ func _preload_all_crop_textures() -> void:
 
 ## 等待作物数据加载完成
 func _wait_for_crop_data() -> void:
-	"""等待作物数据加载完成"""
 	const MAX_WAIT_TIME = 5.0
 	var wait_time = 0.0
 	
@@ -1289,38 +1924,14 @@ func _wait_for_crop_data() -> void:
 		print("[警告] 作物数据未加载，跳过图片预加载")
 	else:
 		print("[主游戏] 作物数据加载完成，共 %d 种作物" % can_planted_crop.size())
+#===============================================加载进度管理============================================
+
+
 
 #===============================================调试和维护工具===============================================
 
-## 调试：测试直接切换图片
-func _debug_test_direct_switch(lot_index: int = 0) -> void:
-	"""调试用：测试指定地块的直接图片切换"""
-	if lot_index >= 0 and lot_index < grid_container.get_child_count():
-		var button = grid_container.get_child(lot_index)
-		var crop_sprite = button.get_node_or_null("crop_sprite")
-		if crop_sprite and crop_texture_manager:
-			# 随机选择一个作物图片进行测试
-			var crop_names = can_planted_crop.keys()
-			if crop_names.size() > 0:
-				var random_crop = crop_names[randi() % crop_names.size()]
-				var test_texture = crop_texture_manager.get_texture_by_progress(random_crop, 1.0)
-				if test_texture:
-					print("[调试] 测试地块 ", lot_index, " 的直接图片切换，使用作物：", random_crop)
-					crop_sprite.texture = test_texture
-					crop_sprite.modulate = Color.WHITE
-					crop_sprite.visible = true
-				else:
-					print("[调试] 无法获取测试贴图")
-			else:
-				print("[调试] 作物数据为空")
-		else:
-			print("[调试] 无法找到crop_sprite或图片管理器未初始化")
-	else:
-		print("[调试] 地块索引无效：", lot_index)
-
 ## 调试：打印缓存信息
 func _debug_print_crop_cache() -> void:
-	"""调试用：打印当前作物图片缓存信息"""
 	if crop_texture_manager:
 		print(crop_texture_manager.get_cache_info())
 	else:
@@ -1328,25 +1939,97 @@ func _debug_print_crop_cache() -> void:
 
 ## 调试：强制刷新所有图片
 func _debug_refresh_all_crop_sprites() -> void:
-	"""调试用：强制刷新所有地块的作物图片"""
 	print("[调试] 强制刷新所有地块图片...")
 	_refresh_all_crop_sprites()
 	print("[调试] 图片刷新完成")
 
 ## 调试：清理图片缓存
 func _debug_clear_crop_cache() -> void:
-	"""调试用：清理作物图片缓存"""
 	if crop_texture_manager:
 		crop_texture_manager.clear_cache()
 		print("[调试] 图片缓存已清理")
 
-#===============================================向后兼容性===============================================
+## 调试：启用资源加载调试器
+func _debug_enable_resource_debugger() -> void:
+	if not resource_debugger:
+		resource_debugger = preload("res://GlobalScript/ResourceLoadingDebugger.gd").new()
+		add_child(resource_debugger)
+		print("[调试] 资源加载调试器已启用")
+	else:
+		print("[调试] 资源加载调试器已经在运行")
 
+## 调试：生成资源加载报告
+func _debug_generate_loading_report() -> void:
+	if resource_debugger:
+		var report = resource_debugger.generate_loading_report()
+		print(report)
+		resource_debugger.export_debug_data_to_file()
+	else:
+		print("[调试] 资源加载调试器未启用，请先调用 _debug_enable_resource_debugger()")
+
+## 调试：检测设备能力
+func _debug_detect_device_capabilities() -> void:
+	if resource_debugger:
+		var capabilities = resource_debugger.detect_device_capabilities()
+		print("[调试] 设备能力检测结果:")
+		for key in capabilities:
+			print("  %s: %s" % [key, str(capabilities[key])])
+	else:
+		print("[调试] 资源加载调试器未启用")
+
+## 调试：强制触发低内存模式
+func _debug_trigger_low_memory_mode() -> void:
+	if crop_texture_manager:
+		# 临时降低缓存大小来模拟低内存环境
+		crop_texture_manager.max_cache_size = 50
+		crop_texture_manager._check_and_cleanup_cache()
+		print("[调试] 已触发低内存模式，缓存大小限制为50")
+
+## 调试：恢复正常内存模式
+func _debug_restore_normal_memory_mode() -> void:
+	if crop_texture_manager:
+		crop_texture_manager.max_cache_size = 200
+		print("[调试] 已恢复正常内存模式，缓存大小限制为200")
+
+## 在加载进度面板上添加调试按钮
+func _add_debug_button_to_loading_panel():
+	# 创建调试按钮
+	var debug_button = Button.new()
+	debug_button.text = "调试信息"
+	debug_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	debug_button.position = Vector2(10, 500)  # 左下角位置
+	debug_button.size = Vector2(120, 40)
+	
+	# 设置按钮样式
+	debug_button.modulate = Color(0.8, 0.8, 1.0, 0.9)  # 半透明蓝色
+	
+	# 连接点击信号
+	debug_button.pressed.connect(_on_debug_button_pressed)
+	
+	# 添加到加载进度面板
+	load_progress_panel.add_child(debug_button)
+	
+	print("[MainGame] 调试按钮已添加到加载进度面板")
+
+## 调试按钮点击处理
+func _on_debug_button_pressed():
+	if debug_panel.visible:
+		debug_panel.hide()
+	else:
+		debug_panel.show()
+		debug_panel.move_to_front()
+	print("[MainGame] 调试面板切换显示状态")
+
+#===============================================调试和维护工具===============================================
+
+
+
+#===============================================向后兼容性===============================================
 # 为了保持向后兼容，保留一些原来的函数名
 func _load_crop_textures(crop_name: String) -> Array:
 	"""向后兼容：加载作物图片序列帧"""
 	if crop_texture_manager:
-		return crop_texture_manager._load_crop_textures_immediate(crop_name)
+		return crop_texture_manager._load_crop_textures_threadsafe(crop_name)
 	return []
 
 func _get_crop_texture_by_progress(crop_name: String, progress: float) -> Texture2D:
@@ -1365,8 +2048,9 @@ func _get_crop_cache_info() -> String:
 	if crop_texture_manager:
 		return crop_texture_manager.get_cache_info()
 	return "图片管理器未初始化"
+#===============================================向后兼容性===============================================
 
-#===============================================作物图片处理结束===============================================
+
 
 
 
@@ -1386,8 +2070,8 @@ func return_to_my_farm():
 		return
 	
 	# 发送返回自己农场的请求到服务器
-	if network_manager and network_manager.has_method("sendReturnMyFarm"):
-		var success = network_manager.sendReturnMyFarm()
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendReturnMyFarm"):
+		var success = tcp_network_manager_panel.sendReturnMyFarm()
 		if success:
 			print("已发送返回自己农场的请求")
 		else:
@@ -1404,148 +2088,6 @@ func return_to_my_farm():
 
 
 
-#打开种子商店面板
-func _on_open_store_button_pressed() -> void:
-	#打开面板后暂时禁用相机功能
-	GlobalVariables.isZoomDisabled = true
-	
-	# 如果处于访问模式，不允许打开商店
-	if is_visiting_mode:
-		Toast.show("访问模式下无法使用商店", Color.ORANGE)
-		return
-	
-	# 确保商店面板已初始化
-	crop_store_panel.init_store()
-	# 显示商店面板
-	crop_store_panel.show()
-	# 确保在最前面显示
-	crop_store_panel.move_to_front() 
-	pass
-
-#打开玩家排行榜面板
-func _on_player_ranking_button_pressed() -> void:
-	#打开面板后暂时禁用相机功能
-	GlobalVariables.isZoomDisabled = true
-	
-	player_ranking_panel.show()
-	player_ranking_panel.request_player_rankings()
-	pass 
-
-
-#打开设置面板 暂时没想到可以设置什么
-func _on_setting_button_pressed() -> void:
-	pass
-
-
-#打开我的宠物系统，这个比较复杂以后再实现
-func _on_my_pet_button_pressed() -> void:
-	pass 
-
-
-# 处理AcceptDialog的确认信号
-func _on_accept_dialog_confirmed() -> void:
-	var action_type = accept_dialog.get_meta("action_type", "")
-	
-	if action_type == "one_click_harvest":
-		# 执行一键收获逻辑
-		_execute_one_click_harvest()
-	elif action_type == "buy_new_ground":
-		# 执行购买新地块逻辑
-		_execute_buy_new_ground()
-	elif action_type == "return_main_menu":
-		# 执行返回主菜单逻辑
-		_execute_return_main_menu()
-	else:
-		# 处理其他类型的确认逻辑
-		pass
-
-
-#打开一键种植面板
-func _on_one_click_plant_button_pressed() -> void:
-	# 如果处于访问模式，不允许操作
-	if is_visiting_mode:
-		Toast.show("访问模式下无法使用一键种植", Color.ORANGE)
-		return
-	
-	# 检查是否有网络连接
-	if not network_manager.is_connected_to_server():
-		Toast.show("未连接服务器，无法使用一键种植", Color.RED)
-		return
-	
-	# 显示一键种植面板
-	one_click_plant_panel.show()
-	one_click_plant_panel.move_to_front() 
-
-# 处理连接断开事件
-func _on_connection_lost():
-	
-	# 重置游戏状态
-	start_game = false
-	
-	# 隐藏所有游戏UI
-	game_info_h_box_1.hide()
-	game_info_h_box_2.hide()
-	farm_v_box.hide()
-	visit_v_box.hide()
-	other_v_box.hide()
-	
-	# 隐藏所有面板
-	crop_store_panel.hide()
-	player_bag_panel.hide()
-	lucky_draw_panel.hide()
-	daily_check_in_panel.hide()
-	player_ranking_panel.hide()
-	one_click_plant_panel.hide()
-	land_panel.hide()
-	accept_dialog.hide()
-	
-	# 重置访问模式
-	if is_visiting_mode:
-		_handle_return_my_farm_response({"success": true})
-	
-	# 显示登录面板
-	if login_panel:
-		login_panel.show()
-		
-		# 更新登录面板状态
-		if login_panel.has_method("_on_connection_lost"):
-			login_panel._on_connection_lost()
-	
-	# 显示连接断开的提示
-	Toast.show("与服务器的连接已断开，请重新登录", Color.ORANGE, 3.0, 1.0)
-
-#打开种子仓库面板
-func _on_seed_warehouse_button_pressed() -> void:
-	#打开面板后暂时禁用相机功能
-	GlobalVariables.isZoomDisabled = true
-	player_bag_panel.show()
-	pass
-
-
-#打开玩家道具背包面板
-func _on_item_bag_button_pressed() -> void:
-	item_bag_panel.show()
-	pass 
-	
-#打开道具商店面板
-func _on_item_store_button_pressed() -> void:
-	item_store_panel.show()
-	pass 
-
-#打开作物仓库面板
-func _on_crop_warehouse_button_pressed() -> void:
-	crop_warehouse_panel.show()
-	pass
-
-
-
-
-
-
-
-
-
-
 #===============================================添加新地块处理===============================================
 #添加新的地块，默认花费2000
 func _on_add_new_ground_button_pressed() -> void:
@@ -1555,7 +2097,7 @@ func _on_add_new_ground_button_pressed() -> void:
 		return
 	
 	# 检查是否有网络连接
-	if not network_manager.is_connected_to_server():
+	if not tcp_network_manager_panel.is_connected_to_server():
 		Toast.show("未连接服务器，无法购买新地块", Color.RED)
 		return
 	
@@ -1584,8 +2126,8 @@ func _execute_buy_new_ground():
 	var new_ground_cost = 2000
 	
 	# 发送购买新地块请求到服务器
-	if network_manager and network_manager.has_method("sendBuyNewGround"):
-		var success = network_manager.sendBuyNewGround()
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendBuyNewGround"):
+		var success = tcp_network_manager_panel.sendBuyNewGround()
 		if success:
 			print("已发送购买新地块请求")
 		else:
@@ -1663,7 +2205,7 @@ func _on_one_click_harvestbutton_pressed() -> void:
 		return
 	
 	# 检查是否有网络连接
-	if not network_manager.is_connected_to_server():
+	if not tcp_network_manager_panel.is_connected_to_server():
 		Toast.show("未连接服务器，无法使用一键收获", Color.RED)
 		return
 	
@@ -1710,7 +2252,7 @@ func _execute_one_click_harvest():
 			if lot["grow_time"] >= lot["max_grow_time"]:
 				harvested_count += 1
 				# 发送收获请求到服务器
-				if network_manager and network_manager.sendHarvestCrop(i):
+				if tcp_network_manager_panel and tcp_network_manager_panel.sendHarvestCrop(i):
 					success_count += 1
 					# 添加小延迟避免服务器压力过大
 					await get_tree().create_timer(0.3).timeout
@@ -1743,8 +2285,8 @@ func _on_return_main_menu_button_pressed() -> void:
 # 执行返回主菜单逻辑
 func _execute_return_main_menu():
 	# 断开与服务器的连接
-	if network_manager and network_manager.is_connected_to_server():
-		network_manager.client.disconnect_from_server()
+	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
+		tcp_network_manager_panel.client.disconnect_from_server()
 		print("已断开与服务器的连接")
 	
 	# 直接切换到主菜单场景
@@ -1844,7 +2386,7 @@ func _on_like_button_pressed() -> void:
 		return
 	
 	# 检查是否有网络连接
-	if not network_manager.is_connected_to_server():
+	if not tcp_network_manager_panel.is_connected_to_server():
 		Toast.show("未连接服务器，无法点赞", Color.RED)
 		return
 	
@@ -1855,8 +2397,8 @@ func _on_like_button_pressed() -> void:
 		return
 	
 	# 发送点赞请求
-	if network_manager and network_manager.has_method("sendLikePlayer"):
-		var success = network_manager.sendLikePlayer(target_username)
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendLikePlayer"):
+		var success = tcp_network_manager_panel.sendLikePlayer(target_username)
 		if success:
 			print("已发送点赞请求给玩家：", target_username)
 		else:
@@ -1908,8 +2450,8 @@ func _start_online_players_timer():
 
 # 请求在线人数
 func _request_online_players():
-	if network_manager and network_manager.is_connected_to_server():
-		var success = network_manager.sendGetOnlinePlayers()
+	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
+		var success = tcp_network_manager_panel.sendGetOnlinePlayers()
 		if success:
 			print("已发送在线人数请求")
 		else:
@@ -1951,12 +2493,12 @@ func _update_online_players_display(count: int, connected: bool, connecting: boo
 #新手玩家大礼包按钮点击，只能领取一次，领取后这个按钮对该账号永久隐藏
 func _on_new_player_gift_button_pressed() -> void:
 	# 检查网络连接
-	if not network_manager or not network_manager.is_connected_to_server():
+	if not tcp_network_manager_panel or not tcp_network_manager_panel.is_connected_to_server():
 		Toast.show("网络未连接，无法领取新手大礼包", Color.RED, 2.0, 1.0)
 		return
 	
 	# 显示确认对话框
-	var confirm_dialog = preload("res://GUI/AcceptDialog.gd").new()
+	var confirm_dialog = preload("res://Script/Dialog/AcceptDialog.gd").new()
 	add_child(confirm_dialog)
 	
 	confirm_dialog.set_dialog_title("领取新手大礼包")
@@ -1973,7 +2515,7 @@ func _on_new_player_gift_button_pressed() -> void:
 
 #确认领取新手大礼包
 func _on_confirm_claim_new_player_gift():
-	if network_manager and network_manager.sendClaimNewPlayerGift():
+	if tcp_network_manager_panel and tcp_network_manager_panel.sendClaimNewPlayerGift():
 		pass
 	else:
 		Toast.show("发送请求失败", Color.RED, 2.0, 1.0)
@@ -2003,6 +2545,8 @@ func _handle_new_player_gift_response(data):
 			_fix_player_bag_data()
 		if updated_data.has("new_player_gift_claimed"):
 			new_player_gift_claimed = updated_data["new_player_gift_claimed"]
+		if updated_data.has("宠物背包"):
+			pet_bag = updated_data["宠物背包"]
 		
 		# 隐藏新手大礼包按钮
 		var new_player_gift_button = find_child("NewPlayerGiftButton")
@@ -2011,6 +2555,10 @@ func _handle_new_player_gift_response(data):
 		
 		# 更新UI
 		_update_ui()
+		
+		# 更新宠物背包UI
+		if pet_bag_panel and pet_bag_panel.has_method("update_pet_bag_ui"):
+			pet_bag_panel.update_pet_bag_ui()
 		
 		# 显示成功消息
 		Toast.show(message, Color.GOLD, 3.0, 1.0)
@@ -2031,6 +2579,120 @@ func _handle_new_player_gift_response(data):
 
 
 
+#====================================全服大喇叭处理=========================================
+# 处理全服大喇叭消息
+func _handle_global_broadcast_message(data: Dictionary):
+	# 将消息传递给大喇叭面板处理
+	if global_server_broadcast_panel and global_server_broadcast_panel.has_method("receive_broadcast_message"):
+		global_server_broadcast_panel.receive_broadcast_message(data)
+
+# 处理全服大喇叭发送响应
+func _handle_global_broadcast_response(data: Dictionary):
+	var success = data.get("success", false)
+	var message = data.get("message", "")
+	
+	if success:
+		Toast.show("大喇叭消息发送成功", Color.GREEN, 2.0, 1.0)
+	else:
+		Toast.show("大喇叭消息发送失败：" + message, Color.RED, 3.0, 1.0)
+
+# 处理全服大喇叭历史消息响应
+func _handle_broadcast_history_response(data: Dictionary):
+	print("收到历史消息响应: ", data.get("messages", []).size(), " 条消息")
+	
+	if global_server_broadcast_panel and global_server_broadcast_panel.has_method("receive_history_messages"):
+		global_server_broadcast_panel.receive_history_messages(data)
+		
+		# 更新主界面大喇叭显示为最新消息
+		if global_server_broadcast:
+			var latest_message = global_server_broadcast_panel.get_latest_message()
+			print("获取到的最新消息: ", latest_message)
+			if latest_message != "暂无消息":
+				global_server_broadcast.text = latest_message
+				print("主界面大喇叭已更新为: ", latest_message)
+			else:
+				global_server_broadcast.text = ""
+				print("没有消息，清空主界面大喇叭显示")
+
+# 更新主界面大喇叭显示（超出部分显示...）
+func update_broadcast_display(message: String):
+	if global_server_broadcast and message != "":
+		
+		global_server_broadcast.text = message
+
+
+# 初始化大喇叭显示
+func _init_broadcast_display():
+	if global_server_broadcast and global_server_broadcast_panel:
+		# 先设置为空
+		global_server_broadcast.text = ""
+		
+		# 直接从本地文件加载历史消息
+		_load_broadcast_from_local()
+		
+		# 无论是否有本地消息，都请求服务器获取最新消息
+		_request_latest_broadcast_message()
+
+# 从本地文件加载大喇叭消息
+func _load_broadcast_from_local():
+	var file_path = "user://chat_history.json"
+	
+	if FileAccess.file_exists(file_path):
+		var file = FileAccess.open(file_path, FileAccess.READ)
+		if file:
+			var json_string = file.get_as_text()
+			file.close()
+			
+			var json = JSON.new()
+			var parse_result = json.parse(json_string)
+			
+			if parse_result == OK:
+				var data = json.data
+				if data is Array and data.size() > 0:
+					# 按时间戳排序
+					data.sort_custom(func(a, b): return a.get("timestamp", 0) < b.get("timestamp", 0))
+					# 获取最新消息
+					var latest = data[-1]
+					var display_name = latest.get("display_name", "匿名")
+					var content = latest.get("content", "")
+					global_server_broadcast.text = display_name + ": " + content
+					print("从本地加载大喇叭消息: ", global_server_broadcast.text)
+
+
+
+# 请求服务器获取最新的一条大喇叭消息
+func _request_latest_broadcast_message():
+	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
+		# 请求最近1天的消息，只获取最新的一条
+		var success = tcp_network_manager_panel.send_message({
+			"type": "request_broadcast_history",
+			"days": 1,
+			"limit": 1,  # 只要最新的一条
+			"timestamp": Time.get_unix_time_from_system()
+		})
+		
+		if not success:
+			print("请求最新大喇叭消息失败")
+
+# 请求服务器历史消息用于刷新显示
+func _request_server_history_for_refresh():
+	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
+		# 请求最近3天的消息
+		var success = tcp_network_manager_panel.send_message({
+			"type": "request_broadcast_history",
+			"days": 3,
+			"timestamp": Time.get_unix_time_from_system()
+		})
+		
+		if success:
+			print("已请求服务器历史消息用于刷新显示")
+		else:
+			print("请求服务器历史消息失败")
+
+#====================================全服大喇叭处理=========================================
+
+
+
 #====================================一键截图处理=========================================
 #一键截图按钮,隐藏所有UI，截图，然后保存在相应位置
 func _on_one_click_screen_shot_pressed() -> void:
@@ -2040,19 +2702,11 @@ func _on_one_click_screen_shot_pressed() -> void:
 	# 隐藏所有UI
 	_hide_all_ui_for_screenshot()
 	
-	# 进行截图
-	var success = await _take_and_save_screenshot()
-	
-	# 等待一帧
-	await get_tree().create_timer(2).timeout
+
+	await get_tree().create_timer(3).timeout
 	# 恢复UI显示
 	_restore_ui_visibility_state(ui_state)
 	
-	# 显示截图结果
-	if success:
-		Toast.show("截图保存成功！", Color.GREEN, 2.0, 1.0)
-	else:
-		Toast.show("截图保存失败！", Color.RED, 2.0, 1.0)
 
 # 保存当前UI可见性状态
 func _save_ui_visibility_state() -> Dictionary:
@@ -2137,140 +2791,6 @@ func _restore_ui_visibility_state(state: Dictionary):
 	if state.get("login_panel", false) and login_panel:
 		login_panel.show()
 
-# 截图并保存到合适的位置
-func _take_and_save_screenshot() -> bool:
-	# 获取当前视口
-	var viewport = get_viewport()
-	if not viewport:
-		print("无法获取视口")
-		return false
-	
-	# 强制渲染一帧以确保所有效果都被应用
-	RenderingServer.force_sync()
-	await get_tree().process_frame
-	
-	# 获取包含所有后处理效果的最终图像
-	var image = await _capture_viewport_with_effects(viewport)
-	if not image:
-		print("无法获取视口图像")
-		return false
-	
-	# 生成文件名（包含时间戳）
-	var datetime = Time.get_datetime_dict_from_system()
-	var filename = "萌芽农场_%04d%02d%02d_%02d%02d%02d.png" % [
-		datetime.year, datetime.month, datetime.day,
-		datetime.hour, datetime.minute, datetime.second
-	]
-	
-	# 根据平台选择保存路径
-	var save_path = _get_screenshot_save_path(filename)
-	
-	if save_path == "":
-		print("无法确定截图保存路径")
-		return false
-	
-	# 确保目录存在
-	var dir_path = save_path.get_base_dir()
-	if not DirAccess.dir_exists_absolute(dir_path):
-		# 如果目录不存在，尝试创建
-		var error = DirAccess.make_dir_recursive_absolute(dir_path)
-		if error != OK:
-			print("创建目录失败: ", dir_path, " 错误代码: ", error)
-			return false
-	
-	# 保存图像
-	var error = image.save_png(save_path)
-	if error == OK:
-		print("截图已保存到: ", save_path)
-		return true
-	else:
-		print("保存截图失败，错误代码: ", error)
-		return false
-
-# 捕获包含所有视觉效果的视口图像
-func _capture_viewport_with_effects(viewport: Viewport) -> Image:
-	# 确保视口设置启用HDR和后处理效果
-	var original_hdr = viewport.use_hdr_2d
-	var original_msaa = viewport.msaa_2d
-	
-	# 临时启用HDR和抗锯齿以获得更好的截图质量
-	viewport.use_hdr_2d = true
-	viewport.msaa_2d = Viewport.MSAA_4X
-	
-	# 等待几帧让设置生效
-	await get_tree().process_frame
-	await get_tree().process_frame
-	
-	# 获取图像
-	var image = viewport.get_texture().get_image()
-	
-	# 恢复原始设置
-	viewport.use_hdr_2d = original_hdr
-	viewport.msaa_2d = original_msaa
-	
-	return image
-
-# 根据平台获取截图保存路径
-func _get_screenshot_save_path(filename: String) -> String:
-	var platform = OS.get_name()
-	
-	match platform:
-		"Windows":
-			# Windows平台保存到桌面
-			var desktop_path = OS.get_system_dir(OS.SYSTEM_DIR_DESKTOP)
-			if desktop_path != "":
-				return desktop_path + "/" + filename
-			else:
-				# 如果获取桌面路径失败，使用用户文档目录
-				var documents_path = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
-				return documents_path + "/萌芽农场截图/" + filename
-		
-		"Android":
-			# Android平台保存到Pictures目录
-			var pictures_path = OS.get_system_dir(OS.SYSTEM_DIR_PICTURES)
-			if pictures_path != "":
-				return pictures_path + "/萌芽农场/" + filename
-			else:
-				# 如果获取Pictures目录失败，使用Downloads目录
-				var downloads_path = OS.get_system_dir(OS.SYSTEM_DIR_DOWNLOADS)
-				return downloads_path + "/萌芽农场截图/" + filename
-		
-		"Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD":
-			# Linux/BSD平台优先保存到Pictures，其次是桌面
-			var pictures_path = OS.get_system_dir(OS.SYSTEM_DIR_PICTURES)
-			if pictures_path != "":
-				return pictures_path + "/萌芽农场/" + filename
-			else:
-				var desktop_path = OS.get_system_dir(OS.SYSTEM_DIR_DESKTOP)
-				if desktop_path != "":
-					return desktop_path + "/" + filename
-				else:
-					# 最后选择用户主目录
-					return OS.get_environment("HOME") + "/萌芽农场截图/" + filename
-		
-		"macOS":
-			# macOS平台优先保存到桌面
-			var desktop_path = OS.get_system_dir(OS.SYSTEM_DIR_DESKTOP)
-			if desktop_path != "":
-				return desktop_path + "/" + filename
-			else:
-				# 如果获取桌面路径失败，使用Pictures目录
-				var pictures_path = OS.get_system_dir(OS.SYSTEM_DIR_PICTURES)
-				return pictures_path + "/萌芽农场/" + filename
-		
-		"iOS":
-			# iOS平台保存到Documents目录
-			var documents_path = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
-			return documents_path + "/萌芽农场截图/" + filename
-		
-		_:
-			# 其他平台默认保存到用户目录
-			var documents_path = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
-			if documents_path != "":
-				return documents_path + "/萌芽农场截图/" + filename
-			else:
-				# 最后使用game的用户数据目录
-				return OS.get_user_data_dir() + "/screenshots/" + filename 
 #====================================一键截图处理=========================================
 
 
@@ -2307,10 +2827,15 @@ func _handle_claim_online_gift_response(data: Dictionary):
 			player_bag = updated_data["player_bag"]
 			# 修复背包数据兼容性问题
 			_fix_player_bag_data()
+		if updated_data.has("宠物背包"):
+			pet_bag = updated_data["宠物背包"]
 		
 		# 更新UI
 		_update_ui()
 		player_bag_panel.update_player_bag_ui()
+		# 更新宠物背包UI
+		if pet_bag_panel and pet_bag_panel.has_method("update_pet_bag_ui"):
+			pet_bag_panel.update_pet_bag_ui()
 	
 	# 将响应传递给在线礼包面板处理UI更新
 	if online_gift_panel and online_gift_panel.has_method("handle_claim_online_gift_response"):
@@ -2363,6 +2888,80 @@ func _handle_account_setting_response(data: Dictionary):
 	if account_setting_panel and account_setting_panel.has_method("handle_account_response"):
 		account_setting_panel.handle_account_response(data)
 
+# 处理宠物使用道具响应
+func _handle_use_pet_item_response(data: Dictionary):
+	var success = data.get("success", false)
+	var message = data.get("message", "")
+	var updated_data = data.get("updated_data", {})
+	
+	if success:
+		# 更新宠物背包数据
+		if updated_data.has("宠物背包"):
+			pet_bag = updated_data["宠物背包"]
+			
+			# 更新宠物背包UI
+			if pet_bag_panel and pet_bag_panel.has_method("update_pet_bag_ui"):
+				pet_bag_panel.update_pet_bag_ui()
+		
+		# 更新道具背包数据
+		if updated_data.has("道具背包"):
+			item_bag = updated_data["道具背包"]
+			
+			# 更新道具背包UI
+			if item_bag_panel and item_bag_panel.has_method("update_item_bag_ui"):
+				item_bag_panel.update_item_bag_ui()
+		
+		# 刷新宠物信息面板（如果当前有显示的宠物）
+		var pet_inform_panel = get_node_or_null("UI/SmallPanel/PetInformPanel")
+		if pet_inform_panel and pet_inform_panel.has_method("show_pet_info"):
+			# 如果宠物信息面板当前有显示的宠物，刷新其信息
+			if not pet_inform_panel.current_pet_data.is_empty():
+				var current_pet_id = pet_inform_panel.current_pet_data.get("基本信息", {}).get("宠物ID", "")
+				if current_pet_id != "":
+					# 查找更新后的宠物数据
+					for pet in pet_bag:
+						if pet.get("基本信息", {}).get("宠物ID", "") == current_pet_id:
+							pet_inform_panel.show_pet_info(pet_inform_panel.current_pet_name, pet)
+							break
+		
+		Toast.show(message, Color.GREEN, 3.0, 1.0)
+	else:
+		Toast.show(message, Color.RED, 3.0, 1.0)
+
+# 处理农场道具使用响应
+func _handle_use_farm_item_response(data: Dictionary):
+	var success = data.get("success", false)
+	var message = data.get("message", "")
+	var updated_data = data.get("updated_data", {})
+	
+	if success:
+		# 更新金币
+		if updated_data.has("money"):
+			money = updated_data["money"]
+		
+		# 更新经验
+		if updated_data.has("experience"):
+			experience = updated_data["experience"]
+		
+		# 更新等级
+		if updated_data.has("level"):
+			level = updated_data["level"]
+		
+		# 更新道具背包数据
+		if updated_data.has("道具背包"):
+			item_bag = updated_data["道具背包"]
+			
+			# 更新道具背包UI
+			if item_bag_panel and item_bag_panel.has_method("update_item_bag_ui"):
+				item_bag_panel.update_item_bag_ui()
+		
+		# 更新UI显示
+		_update_ui()
+		
+		Toast.show(message, Color.GREEN, 3.0, 1.0)
+	else:
+		Toast.show(message, Color.RED, 3.0, 1.0)
+
 # 显示消息提示
 func show_message(message: String, color: Color):
 	# 使用Toast显示消息
@@ -2376,12 +2975,218 @@ func _on_account_setting_button_pressed() -> void:
 	pass 
 #====================================账户设置处理=========================================
 
+#====================================稻草人系统处理=========================================
+# 处理购买稻草人响应
+func _handle_buy_scare_crow_response(data: Dictionary):
+	var success = data.get("success", false)
+	var message = data.get("message", "")
+	var updated_data = data.get("updated_data", {})
+	
+	if success:
+		# 更新玩家数据
+		if updated_data.has("money"):
+			money = updated_data["money"]
+		if updated_data.has("稻草人配置"):
+			# 更新登录数据中的稻草人配置
+			login_data["稻草人配置"] = updated_data["稻草人配置"]
+			
+			# 将稻草人配置传递给稻草人面板
+			if scare_crow_panel and scare_crow_panel.has_method("handle_buy_scare_crow_response"):
+				scare_crow_panel.handle_buy_scare_crow_response(success, message, updated_data)
+		
+		# 更新UI
+		_update_ui()
+		
+		# 更新稻草人显示
+		update_scare_crow_display()
+	else:
+		if scare_crow_panel and scare_crow_panel.has_method("handle_buy_scare_crow_response"):
+			scare_crow_panel.handle_buy_scare_crow_response(success, message, updated_data)
+
+# 处理修改稻草人配置响应
+func _handle_modify_scare_crow_config_response(data: Dictionary):
+	var success = data.get("success", false)
+	var message = data.get("message", "")
+	var updated_data = data.get("updated_data", {})
+	
+	if success:
+		# 更新玩家数据
+		if updated_data.has("money"):
+			money = updated_data["money"]
+		if updated_data.has("稻草人配置"):
+			# 更新登录数据中的稻草人配置
+			login_data["稻草人配置"] = updated_data["稻草人配置"]
+			
+			# 将稻草人配置传递给稻草人面板
+			if scare_crow_panel and scare_crow_panel.has_method("handle_modify_scare_crow_config_response"):
+				scare_crow_panel.handle_modify_scare_crow_config_response(success, message, updated_data)
+		
+		# 更新UI
+		_update_ui()
+		
+		# 更新稻草人显示
+		update_scare_crow_display()
+	else:
+		if scare_crow_panel and scare_crow_panel.has_method("handle_modify_scare_crow_config_response"):
+			scare_crow_panel.handle_modify_scare_crow_config_response(success, message, updated_data)
+
+# 处理获取稻草人配置响应
+func _handle_get_scare_crow_config_response(data: Dictionary):
+	var success = data.get("success", false)
+	var scare_crow_config = data.get("scare_crow_config", {})
+	
+	if success:
+		# 更新登录数据中的稻草人配置
+		login_data["稻草人配置"] = scare_crow_config
+		
+		# 将稻草人配置传递给稻草人面板
+		if scare_crow_panel and scare_crow_panel.has_method("set_player_scare_crow_config"):
+			scare_crow_panel.set_player_scare_crow_config(scare_crow_config)
+		
+		# 更新稻草人显示
+		update_scare_crow_display()
+
+# 更新稻草人显示
+func update_scare_crow_display():
+	# 始终显示稻草人按钮，这样玩家可以点击进入设置面板
+	scare_crow.show()
+	
+	# 如果处于访问模式，显示被访问玩家的稻草人
+	var config_to_display = {}
+	
+	if is_visiting_mode and visited_player_data.has("稻草人配置"):
+		config_to_display = visited_player_data["稻草人配置"]
+	elif login_data.has("稻草人配置"):
+		config_to_display = login_data["稻草人配置"]
+	else:
+		# 如果没有稻草人配置，隐藏稻草人图片和话语
+		scare_crow_image.hide()
+		scare_crowtalks.hide()
+		scare_crow_name.hide()
+		return
+	
+	# 检查是否有已拥有的稻草人类型
+	var owned_types = config_to_display.get("已拥有稻草人类型", [])
+	if owned_types.size() == 0:
+		# 如果没有购买过任何稻草人，隐藏稻草人图片和话语
+		scare_crow_image.hide()
+		scare_crowtalks.hide()
+		scare_crow_name.hide()
+		return
+	
+	# 显示稻草人元素
+	scare_crow_image.show()
+	scare_crowtalks.show()
+	scare_crow_name.show()
+	
+	# 更新稻草人图片
+	var display_type = config_to_display.get("稻草人展示类型", "")
+	if display_type != "":
+		var image_path = ""
+		match display_type:
+			"稻草人1":
+				image_path = "res://assets/稻草人图片/稻草人1.webp"
+			"稻草人2":
+				image_path = "res://assets/稻草人图片/稻草人2.webp"
+			"稻草人3":
+				image_path = "res://assets/稻草人图片/稻草人3.webp"
+		
+		if image_path != "" and ResourceLoader.exists(image_path):
+			var texture = load(image_path)
+			scare_crow_image.texture = texture
+	
+	# 更新稻草人昵称和颜色
+	var scare_crow_nickname = config_to_display.get("稻草人昵称", "稻草人")
+	var nickname_color = config_to_display.get("稻草人昵称颜色", "#ffffff")
+	scare_crow_name.text = "[color=" + nickname_color + "]" + scare_crow_nickname + "[/color]"
+	
+	# 准备稻草人说的话列表
+	var talks = config_to_display.get("稻草人说的话", {})
+	scare_crow_talks_list.clear()
+	
+	for i in range(1, 5):
+		var talk_key = "第" + ["一", "二", "三", "四"][i-1] + "句话"
+		if talks.has(talk_key):
+			var talk_data = talks[talk_key]
+			var content = talk_data.get("内容", "")
+			var color = talk_data.get("颜色", "#000000")
+			
+			if content != "":
+				scare_crow_talks_list.append({
+					"content": content,
+					"color": color
+				})
+	
+	# 如果没有话语内容，添加默认话语
+	if scare_crow_talks_list.size() == 0:
+		scare_crow_talks_list.append({
+			"content": "我是一个可爱的稻草人！",
+			"color": "#000000"
+		})
+	
+	# 重置话语索引和计时器
+	scare_crow_talk_index = 0
+	scare_crow_talk_timer = 0.0
+	
+	# 显示第一句话
+	_update_scare_crow_talk()
+
+# 更新稻草人当前说的话
+func _update_scare_crow_talk():
+	if scare_crow_talks_list.size() == 0:
+		return
+	
+	# 循环切换话语索引
+	if scare_crow_talk_index >= scare_crow_talks_list.size():
+		scare_crow_talk_index = 0
+	
+	# 获取当前话语
+	var current_talk = scare_crow_talks_list[scare_crow_talk_index]
+	var content = current_talk.get("content", "")
+	var color = current_talk.get("color", "#000000")
+	
+	# 更新显示
+	scare_crowtalks.text = "[color=" + color + "]" + content + "[/color]"
+	
+	# 切换到下一句话
+	scare_crow_talk_index += 1
+
+# 初始化稻草人配置（登录时调用）
+func init_scare_crow_config():
+	if login_data.has("稻草人配置"):
+		# 有稻草人配置，检查是否有已拥有的稻草人类型
+		var scare_crow_config = login_data["稻草人配置"]
+		var owned_types = scare_crow_config.get("已拥有稻草人类型", [])
+		
+		if owned_types.size() > 0:
+			# 有已拥有的稻草人，更新显示
+			update_scare_crow_display()
+			
+			# 传递配置给稻草人面板
+			if scare_crow_panel and scare_crow_panel.has_method("set_player_scare_crow_config"):
+				scare_crow_panel.set_player_scare_crow_config(scare_crow_config)
+		else:
+			# 没有已拥有的稻草人，隐藏稻草人
+			scare_crow.hide()
+	else:
+		# 没有稻草人配置，隐藏稻草人
+		scare_crow.hide()
+
+
+#打开农场稻草人设置面板
+func _on_scare_crow_pressed() -> void:
+	GlobalVariables.isZoomDisabled = true
+	scare_crow_panel.show()
+	scare_crow_panel.move_to_front()
+	pass 
+
+#====================================稻草人系统处理=========================================
+
 
 
 #===============================================道具使用处理===============================================
 # 在地块上使用道具
 func _use_item_on_lot(lot_index: int, item_name: String):
-	Toast.show("正在使用道具: " + item_name, Color.CYAN, 2.0, 1.0)
 	
 	# 检查地块索引是否有效
 	if lot_index < 0 or lot_index >= farm_lots.size():
@@ -2436,7 +3241,6 @@ func _use_fertilizer_item(lot_index: int, item_name: String, lot: Dictionary):
 	# 检查作物是否已成熟
 	var grow_time = float(lot.get("grow_time", 0))
 	var max_grow_time = float(lot.get("max_grow_time", 1))
-	print("调试：作物生长时间: ", grow_time, "/", max_grow_time)
 	if grow_time >= max_grow_time:
 		Toast.show("作物已成熟，无需施肥", Color.ORANGE, 2.0, 1.0)
 		return
@@ -2457,8 +3261,8 @@ func _use_fertilizer_item(lot_index: int, item_name: String, lot: Dictionary):
 		target_username = visited_player_data.get("user_name", "")
 
 	
-	if network_manager and network_manager.has_method("sendUseItem"):
-		if network_manager.sendUseItem(lot_index, item_name, "fertilize", target_username):
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendUseItem"):
+		if tcp_network_manager_panel.sendUseItem(lot_index, item_name, "fertilize", target_username):
 			# 取消道具选择状态
 			_clear_item_selection()
 			var action_text = "帮助施肥" if is_visiting_mode else "施肥"
@@ -2501,8 +3305,8 @@ func _use_watering_item(lot_index: int, item_name: String, lot: Dictionary):
 	if is_visiting_mode:
 		target_username = visited_player_data.get("user_name", "")
 	
-	if network_manager and network_manager.has_method("sendUseItem"):
-		if network_manager.sendUseItem(lot_index, item_name, "water", target_username):
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendUseItem"):
+		if tcp_network_manager_panel.sendUseItem(lot_index, item_name, "water", target_username):
 			# 取消道具选择状态
 			_clear_item_selection()
 			var action_text = "帮助浇水" if is_visiting_mode else "浇水"
@@ -2541,8 +3345,8 @@ func _use_removal_item(lot_index: int, item_name: String, lot: Dictionary):
 	if is_visiting_mode:
 		target_username = visited_player_data.get("user_name", "")
 	
-	if network_manager and network_manager.has_method("sendUseItem"):
-		if network_manager.sendUseItem(lot_index, item_name, "remove", target_username):
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendUseItem"):
+		if tcp_network_manager_panel.sendUseItem(lot_index, item_name, "remove", target_username):
 			# 取消道具选择状态
 			_clear_item_selection()
 			var action_text = "帮助铲除" if is_visiting_mode else "铲除"
@@ -2584,8 +3388,8 @@ func _use_weed_killer_item(lot_index: int, item_name: String, lot: Dictionary):
 	if is_visiting_mode:
 		target_username = visited_player_data.get("user_name", "")
 	
-	if network_manager and network_manager.has_method("sendUseItem"):
-		if network_manager.sendUseItem(lot_index, item_name, "weed_killer", target_username):
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendUseItem"):
+		if tcp_network_manager_panel.sendUseItem(lot_index, item_name, "weed_killer", target_username):
 			# 取消道具选择状态
 			_clear_item_selection()
 			var action_text = "帮助除草" if is_visiting_mode else "除草"
@@ -2629,8 +3433,8 @@ func _use_harvest_item(lot_index: int, item_name: String, lot: Dictionary):
 	if is_visiting_mode:
 		target_username = visited_player_data.get("user_name", "")
 	
-	if network_manager and network_manager.has_method("sendUseItem"):
-		if network_manager.sendUseItem(lot_index, item_name, "harvest", target_username):
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendUseItem"):
+		if tcp_network_manager_panel.sendUseItem(lot_index, item_name, "harvest", target_username):
 			# 取消道具选择状态
 			_clear_item_selection()
 			var action_text = "帮助收获" if is_visiting_mode else "收获"
@@ -2649,3 +3453,667 @@ func _clear_item_selection():
 	if item_bag_panel and item_bag_panel.has_method("_deselect_item"):
 		item_bag_panel._deselect_item()
 #===============================================道具使用处理===============================================
+
+
+
+
+#===============================================巡逻宠物管理===============================================
+
+# 当前巡逻宠物实例（只允许一个）
+var current_patrol_pet: CharacterBody2D = null
+
+# 初始化巡逻宠物（登录时调用）
+func init_patrol_pets():
+	# 确保巡逻宠物数组存在
+	if patrol_pets == null:
+		patrol_pets = []
+	
+	# 检查巡逻线设置
+	check_patrol_line_setup()
+	
+	# 更新巡逻宠物显示
+	update_patrol_pets()
+
+# 检查巡逻线设置
+func check_patrol_line_setup():
+	if not pet_patrol_path_line:
+		print("错误：找不到巡逻线节点 PetPatrolPathLine，请检查场景设置")
+		return
+	
+	print("巡逻线节点找到: " + pet_patrol_path_line.name)
+	print("巡逻路径点数: " + str(pet_patrol_path_line.points.size()))
+	
+	if pet_patrol_path_line.points.size() == 0:
+		print("警告：巡逻线没有设置路径点，将设置默认路径")
+		# 设置一个简单的矩形巡逻路径作为默认
+		pet_patrol_path_line.points = PackedVector2Array([
+			Vector2(100, 100),
+			Vector2(300, 100),
+			Vector2(300, 300),
+			Vector2(100, 300)
+		])
+		print("已设置默认矩形巡逻路径")
+	
+	# 设置巡逻线可见性和样式
+	pet_patrol_path_line.visible = true
+	pet_patrol_path_line.width = 3.0
+	pet_patrol_path_line.default_color = Color.YELLOW
+	pet_patrol_path_line.closed = true  # 闭合路径
+	
+	# 打印路径点信息
+	for i in range(pet_patrol_path_line.points.size()):
+		print("巡逻点 " + str(i) + ": " + str(pet_patrol_path_line.points[i]))
+	
+	print("巡逻线节点位置: " + str(pet_patrol_path_line.position))
+	print("巡逻线节点全局位置: " + str(pet_patrol_path_line.global_position))
+
+# 更新巡逻宠物显示（根据patrol_pets数组创建）
+func update_patrol_pets():
+	# 先清除现有巡逻宠物
+	clear_patrol_pets()
+	
+	if patrol_pets == null or patrol_pets.size() == 0:
+		print("没有巡逻宠物需要显示")
+		return
+	
+	# 目前只支持一个巡逻宠物，取第一个
+	var first_patrol_pet = patrol_pets[0]
+	var pet_id = first_patrol_pet.get("基本信息", {}).get("宠物ID", "")
+	
+	if pet_id != "":
+		# 直接根据巡逻宠物数据创建（不从宠物背包查找）
+		create_patrol_pet_from_data(first_patrol_pet)
+	else:
+		print("巡逻宠物ID为空")
+
+# 清除巡逻宠物实例
+func clear_patrol_pets():
+	if current_patrol_pet and is_instance_valid(current_patrol_pet):
+		current_patrol_pet.queue_free()
+		current_patrol_pet = null
+	
+	# 清除巡逻线节点下的所有宠物（确保完全清理）
+	if pet_patrol_path_line:
+		for child in pet_patrol_path_line.get_children():
+			if child is CharacterBody2D:
+				child.queue_free()
+	
+	print("已清除巡逻宠物")
+
+# 根据宠物ID设置巡逻宠物
+func set_patrol_pet_by_id(pet_id: String):
+	if pet_id == "":
+		print("警告：宠物ID为空，无法设置巡逻宠物")
+		return
+	
+	# 从宠物背包中查找宠物数据
+	var pet_data = find_pet_by_id(pet_id)
+	if pet_data.is_empty():
+		print("错误：在宠物背包中找不到ID为 " + pet_id + " 的宠物")
+		return
+	
+	# 检查巡逻线节点是否存在
+	if not pet_patrol_path_line:
+		print("错误：找不到巡逻线节点 PetPatrolPathLine")
+		return
+	
+	# 检查巡逻路径是否设置
+	if pet_patrol_path_line.points.size() < 2:
+		print("警告：巡逻路径点数少于2个，无法创建巡逻宠物")
+		return
+	
+	# 先清除现有巡逻宠物
+	clear_patrol_pets()
+	
+	# 等待一帧确保旧实例被清理
+	await get_tree().process_frame
+	
+	# 获取宠物场景路径
+	var scene_path = pet_data.get("场景路径", "")
+	if scene_path == "":
+		print("错误：宠物数据中没有场景路径")
+		return
+	
+	# 检查场景文件是否存在
+	if not ResourceLoader.exists(scene_path):
+		print("错误：宠物场景文件不存在: " + scene_path)
+		return
+	
+	# 加载宠物场景
+	var pet_scene = load(scene_path)
+	if not pet_scene:
+		print("错误：无法加载宠物场景: " + scene_path)
+		return
+	
+	var pet_instance = pet_scene.instantiate()
+	if not pet_instance:
+		print("错误：无法创建宠物实例")
+		return
+	
+	# 应用宠物数据到实例
+	apply_pet_data_to_patrol_instance(pet_instance, pet_data)
+	
+	# 设置巡逻状态和路径
+	pet_instance.is_patrolling = true
+	pet_instance.patrol_path = pet_patrol_path_line.points.duplicate()
+	pet_instance.patrol_speed = 80.0
+	pet_instance.current_patrol_index = 0
+	pet_instance.patrol_wait_time = 0.0
+	
+	# 添加到巡逻线节点下
+	pet_patrol_path_line.add_child(pet_instance)
+	current_patrol_pet = pet_instance
+	
+	# 设置初始位置
+	pet_instance.position = pet_patrol_path_line.points[0]
+	
+	var pet_name = pet_data.get("基本信息", {}).get("宠物名称", "未知")
+	print("创建巡逻宠物成功: " + pet_name + " (场景: " + scene_path + ")")
+
+# 在宠物背包中根据ID查找宠物数据
+func find_pet_by_id(pet_id: String) -> Dictionary:
+	if pet_bag == null:
+		return {}
+	
+	for pet_data in pet_bag:
+		var current_id = pet_data.get("基本信息", {}).get("宠物ID", "")
+		if current_id == pet_id:
+			return pet_data
+	
+	return {}
+
+# 应用宠物数据到巡逻实例
+func apply_pet_data_to_patrol_instance(pet_instance: CharacterBody2D, pet_data: Dictionary):
+	var basic_info = pet_data.get("基本信息", {})
+	var level_exp = pet_data.get("等级经验", {})
+	var health_defense = pet_data.get("生命与防御", {})
+	
+	# 设置基本信息
+	var original_name = basic_info.get("宠物名称", basic_info.get("宠物类型", "未知宠物"))
+	pet_instance.pet_name = "[巡逻] " + original_name  # 添加巡逻标识
+	pet_instance.pet_id = basic_info.get("宠物ID", "")
+	pet_instance.pet_type = basic_info.get("宠物类型", "")
+	pet_instance.pet_birthday = basic_info.get("生日", "")
+	pet_instance.pet_personality = basic_info.get("性格", "活泼")
+	pet_instance.pet_team = "patrol"  # 设置为巡逻队伍
+	
+	# 设置等级经验
+	pet_instance.pet_level = level_exp.get("宠物等级", 1)
+	pet_instance.pet_experience = level_exp.get("当前经验", 0.0)
+	pet_instance.max_experience = level_exp.get("最大经验", 100.0)
+	pet_instance.pet_intimacy = level_exp.get("亲密度", 0.0)
+	
+	# 设置生命防御
+	pet_instance.max_health = health_defense.get("最大生命值", 100.0)
+	pet_instance.current_health = health_defense.get("当前生命值", pet_instance.max_health)
+	pet_instance.max_shield = health_defense.get("最大护盾值", 0.0)
+	pet_instance.current_shield = health_defense.get("当前护盾值", 0.0)
+	pet_instance.max_armor = health_defense.get("最大护甲值", 0.0)
+	pet_instance.current_armor = health_defense.get("当前护甲值", 0.0)
+	
+	# 禁用战斗行为（巡逻宠物不参与战斗）
+	if pet_instance.has_method("set_combat_enabled"):
+		pet_instance.set_combat_enabled(false)
+	
+	# 显示宠物状态栏，让访问者看到宠物的强大！
+	if pet_instance.has_node("PetInformVBox"):
+		pet_instance.get_node("PetInformVBox").visible = true  # 显示状态栏
+	
+	# 设置宠物为稍小的比例
+	pet_instance.scale = Vector2(0.8, 0.8)
+	
+	# 设置宠物名称标签，并确保可见
+	if pet_instance.pet_name_rich_text:
+		pet_instance.pet_name_rich_text.text = pet_instance.pet_name
+		pet_instance.pet_name_rich_text.modulate = Color.YELLOW  # 巡逻宠物名称为黄色
+		pet_instance.pet_name_rich_text.visible = true
+
+# 根据巡逻宠物数据直接创建巡逻宠物（不依赖宠物背包）
+func create_patrol_pet_from_data(pet_data: Dictionary):
+	# 检查巡逻线节点是否存在
+	if not pet_patrol_path_line:
+		print("错误：找不到巡逻线节点 PetPatrolPathLine")
+		return
+	
+	# 检查巡逻路径是否设置
+	if pet_patrol_path_line.points.size() < 2:
+		print("警告：巡逻路径点数少于2个，无法创建巡逻宠物")
+		return
+	
+	# 获取宠物场景路径
+	var scene_path = pet_data.get("场景路径", "")
+	if scene_path == "":
+		print("错误：巡逻宠物数据中没有场景路径")
+		return
+	
+	# 检查场景文件是否存在
+	if not ResourceLoader.exists(scene_path):
+		print("错误：巡逻宠物场景文件不存在: " + scene_path)
+		return
+	
+	# 加载宠物场景
+	var pet_scene = load(scene_path)
+	if not pet_scene:
+		print("错误：无法加载巡逻宠物场景: " + scene_path)
+		return
+	
+	var pet_instance = pet_scene.instantiate()
+	if not pet_instance:
+		print("错误：无法创建巡逻宠物实例")
+		return
+	
+	# 应用宠物数据到实例
+	apply_pet_data_to_patrol_instance(pet_instance, pet_data)
+	
+	# 设置巡逻状态和路径
+	pet_instance.is_patrolling = true
+	pet_instance.patrol_path = pet_patrol_path_line.points.duplicate()
+	pet_instance.patrol_speed = 80.0
+	pet_instance.current_patrol_index = 0
+	pet_instance.patrol_wait_time = 0.0
+	
+	# 设置宠物状态为巡逻
+	pet_instance.current_state = pet_instance.PetState.PATROLLING
+	
+	# 添加到巡逻线节点下
+	pet_patrol_path_line.add_child(pet_instance)
+	current_patrol_pet = pet_instance
+	
+	# 设置初始位置
+	pet_instance.position = pet_patrol_path_line.points[0]
+	
+	var pet_name = pet_data.get("基本信息", {}).get("宠物名称", "未知")
+	print("从服务器数据创建巡逻宠物成功: " + pet_name + " (场景: " + scene_path + ")")
+
+
+
+#====================================偷菜被发现处理=========================================
+# 处理偷菜被发现响应
+func _handle_steal_caught_response(data: Dictionary):
+	var success = data.get("success", false)
+	var message = data.get("message", "")
+	var has_battle_pet = data.get("has_battle_pet", false)
+	
+	if not success:
+		if has_battle_pet:
+			# 有出战宠物，显示对战选择弹窗
+			var patrol_pet_data = data.get("patrol_pet_data", {})
+			var battle_pet_data = data.get("battle_pet_data", {})
+			var escape_cost = data.get("escape_cost", 1000)
+			var battle_cost = data.get("battle_cost", 1300)
+			var target_username = data.get("target_username", "")
+			var current_username = data.get("current_username", "")
+			
+			_show_steal_caught_dialog(
+				message, 
+				patrol_pet_data, 
+				battle_pet_data, 
+				escape_cost, 
+				battle_cost,
+				target_username,
+				current_username
+			)
+		else:
+			# 没有出战宠物，直接显示逃跑结果
+			var updated_data = data.get("updated_data", {})
+			if updated_data.has("money"):
+				money = updated_data["money"]
+				_update_ui()
+			Toast.show(message, Color.RED, 3.0)
+	else:
+		# 成功情况的处理（如果有的话）
+		Toast.show(message, Color.GREEN)
+
+# 显示偷菜被发现对话框
+func _show_steal_caught_dialog(message: String, patrol_pet_data: Dictionary, battle_pet_data: Dictionary, escape_cost: int, battle_cost: int, target_username: String, current_username: String):
+	# 使用AcceptDialog创建对战选择弹窗
+	if not accept_dialog:
+		print("错误：找不到AcceptDialog")
+		return
+	
+	# 获取巡逻宠物和出战宠物信息
+	var patrol_pet_name = patrol_pet_data.get("基本信息", {}).get("宠物名称", "未知宠物")
+	var patrol_pet_level = patrol_pet_data.get("等级经验", {}).get("宠物等级", 1)
+	var patrol_pet_type = patrol_pet_data.get("基本信息", {}).get("宠物类型", "未知类型")
+	
+	var battle_pet_name = battle_pet_data.get("基本信息", {}).get("宠物名称", "未知宠物")
+	var battle_pet_level = battle_pet_data.get("等级经验", {}).get("宠物等级", 1)
+	var battle_pet_type = battle_pet_data.get("基本信息", {}).get("宠物类型", "未知类型")
+	
+	# 构建对话框内容
+	var dialog_content = message + "\n\n"
+	dialog_content += "🛡️ " + target_username + "的巡逻宠物：\n"
+	dialog_content += "   " + patrol_pet_name + " (类型:" + patrol_pet_type + ", 等级:" + str(patrol_pet_level) + ")\n\n"
+	dialog_content += "⚔️ 你的出战宠物：\n"
+	dialog_content += "   " + battle_pet_name + " (类型:" + battle_pet_type + ", 等级:" + str(battle_pet_level) + ")\n\n"
+	dialog_content += "请选择你的行动：\n"
+	dialog_content += "💰 逃跑：支付 " + str(escape_cost) + " 金币\n"
+	dialog_content += "⚔️ 对战：如果失败支付 " + str(battle_cost) + " 金币"
+	
+	# 设置对话框
+	accept_dialog.set_dialog_title("偷菜被发现！")
+	accept_dialog.set_dialog_content(dialog_content)
+	accept_dialog.set_ok_text("宠物对战")
+	accept_dialog.set_cancel_text("逃跑")
+	
+	# 清除之前的信号连接
+	if accept_dialog.confirmed.is_connected(_on_steal_battle_confirmed):
+		accept_dialog.confirmed.disconnect(_on_steal_battle_confirmed)
+	if accept_dialog.canceled.is_connected(_on_steal_escape_confirmed):
+		accept_dialog.canceled.disconnect(_on_steal_escape_confirmed)
+	
+	# 连接新的信号处理
+	accept_dialog.confirmed.connect(_on_steal_battle_confirmed.bind(patrol_pet_data, battle_pet_data, target_username))
+	accept_dialog.canceled.connect(_on_steal_escape_confirmed.bind(escape_cost))
+	
+	# 居中显示对话框
+	var screen_size = get_viewport().get_visible_rect().size
+	var dialog_pos = Vector2(
+		(screen_size.x - 500) / 2,  # 假设对话框宽度为500
+		(screen_size.y - 400) / 2   # 假设对话框高度为400
+	)
+	accept_dialog.set_dialog_position(dialog_pos)
+	
+	# 显示对话框
+	accept_dialog.popup_centered()
+	print("显示偷菜被发现对话框")
+
+# 玩家选择宠物对战
+func _on_steal_battle_confirmed(patrol_pet_data: Dictionary, battle_pet_data: Dictionary, target_username: String):
+	print("玩家选择宠物对战")
+	
+	# 验证宠物数据完整性
+	var battle_pet_id = battle_pet_data.get("基本信息", {}).get("宠物ID", "")
+	var patrol_pet_id = patrol_pet_data.get("基本信息", {}).get("宠物ID", "")
+	
+	if battle_pet_id == "" or patrol_pet_id == "":
+		Toast.show("宠物数据不完整，无法开始对战", Color.RED, 3.0)
+		return
+	
+	# 检查是否为同一个宠物
+	if check_battle_patrol_conflict(battle_pet_id, patrol_pet_id):
+		Toast.show("出战宠物和巡逻宠物不能为同一个！", Color.RED, 3.0)
+		return
+	
+	# 停止宠物对战面板的自动对战逻辑
+	if pet_fight_panel and pet_fight_panel.has_method("stop_auto_battle"):
+		pet_fight_panel.stop_auto_battle()
+	
+	# 加载双方宠物数据到对战面板
+	if pet_fight_panel and pet_fight_panel.has_method("setup_steal_battle"):
+		pet_fight_panel.setup_steal_battle(battle_pet_data, patrol_pet_data, user_name, target_username)
+	
+	# 显示宠物对战面板
+	pet_fight_panel.show()
+	GlobalVariables.isZoomDisabled = true
+	
+	Toast.show("准备进入宠物对战！", Color.YELLOW, 2.0)
+
+# 玩家选择逃跑
+func _on_steal_escape_confirmed(escape_cost: int):
+	print("玩家选择逃跑，支付", escape_cost, "金币")
+	
+	# 检查金币是否足够
+	if money < escape_cost:
+		Toast.show("金币不足，无法逃跑！需要" + str(escape_cost) + "金币", Color.RED, 3.0)
+		return
+	
+	# 扣除金币
+	money -= escape_cost
+	_update_ui()
+	
+	Toast.show("支付了 " + str(escape_cost) + " 金币逃跑成功", Color.ORANGE, 3.0)
+#====================================偷菜被发现处理=========================================
+
+func _input(event):
+	if event is InputEventKey and event.pressed:
+		var key_code = event.keycode
+		
+		if key_code == KEY_F10:
+			# 显示调试面板
+			if debug_panel:
+				debug_panel.visible = !debug_panel.visible
+		elif key_code == KEY_F11:
+			# 切换全屏模式
+			if DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN:
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+			else:
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+		elif key_code == KEY_F12:
+			# 截图
+			print("截图功能暂未实现")
+
+
+# 检查出战宠物和巡逻宠物是否冲突
+func check_battle_patrol_conflict(battle_pet_id: String, patrol_pet_id: String) -> bool:
+	if battle_pet_id == "" or patrol_pet_id == "":
+		return false
+	return battle_pet_id == patrol_pet_id
+
+# 根据宠物ID获取完整的宠物数据
+func get_pet_data_by_id(pet_id: String) -> Dictionary:
+	for pet_data in pet_bag:
+		var current_id = pet_data.get("基本信息", {}).get("宠物ID", "")
+		if current_id == pet_id:
+			return pet_data
+	return {}
+
+#智慧树按钮点击
+func _on_wisdom_tree_pressed() -> void:
+	wisdom_tree_panel.show()
+	# 确保智慧树面板有正确的可见性处理
+	if wisdom_tree_panel.has_method("_on_visibility_changed"):
+		wisdom_tree_panel._on_visibility_changed()
+
+#=======================================智慧树系统=========================================
+# 更新智慧树显示
+func update_wisdom_tree_display():
+	if not login_data.has("智慧树配置"):
+		return
+	
+	var wisdom_tree_config = login_data["智慧树配置"]
+	
+	# 确保配置格式正确，兼容旧格式
+	wisdom_tree_config = _ensure_wisdom_tree_config_format(wisdom_tree_config)
+	
+	var level = wisdom_tree_config.get("等级", 1)
+	var height = wisdom_tree_config.get("高度", 20)
+	var current_health = wisdom_tree_config.get("当前生命值", 100)
+	var max_health = wisdom_tree_config.get("最大生命值", 100)
+	var anonymous_message = wisdom_tree_config.get("智慧树显示的话", "")
+	
+	# 更新智慧树状态显示
+	if tree_status:
+		tree_status.text = "等级lv：" + str(level) + "  高度：" + str(height) + "cm"
+	
+	# 更新智慧树图片大小（从0.5到1.6倍）
+	update_wisdom_tree_size()
+	
+	# 如果有匿名消息，显示在智慧树对话框中（访问模式下隐藏）
+	if anonymous_talk:
+		if is_visiting_mode:
+			# 访问模式下隐藏智慧树消息
+			anonymous_talk.hide()
+		elif anonymous_message != "":
+			anonymous_talk.show()
+			# 获取当前时间戳 - 显示完整时间
+			var current_time = Time.get_datetime_string_from_system()
+			var date_part = current_time.substr(0, 10)  # 年月日
+			var time_part = current_time.substr(11, 8)  # 时分秒
+			anonymous_talk.text = "[color=cyan][" + date_part + " " + time_part + "][/color] " + anonymous_message
+		else:
+			anonymous_talk.show()
+			anonymous_talk.text = "给未来的某个陌生人说一句话吧"
+
+# 更新智慧树显示（用于访问模式）
+func _update_wisdom_tree_display(wisdom_config: Dictionary):
+	if not wisdom_config:
+		return
+	
+	# 更新智慧树等级和高度
+	var level = wisdom_config.get("等级", 1)
+	var height = wisdom_config.get("高度", 20)
+	var current_health = wisdom_config.get("当前生命值", 100)
+	var max_health = wisdom_config.get("最大生命值", 100)
+	var current_exp = wisdom_config.get("当前经验值", 0)
+	var max_exp = wisdom_config.get("最大经验值", 100)
+	var wisdom_message = wisdom_config.get("智慧树显示的话", "")
+	
+	# 更新智慧树状态显示
+	if tree_status:
+		tree_status.text = "等级lv：" + str(level) + "  高度：" + str(height) + "cm"
+	
+	# 更新智慧树图片大小和位置（确保居中）
+	if wisdom_tree_image:
+		# 计算缩放比例（高度20cm对应0.5倍，最大1.6倍）
+		var min_height = 20.0
+		var max_height = 100.0
+		var min_scale = 0.5
+		var max_scale = 1.6
+		
+		# 确保高度在有效范围内
+		height = clamp(height, min_height, max_height)
+		
+		# 计算缩放比例
+		var scale_factor = min_scale + (max_scale - min_scale) * (height - min_height) / (max_height - min_height)
+		
+		
+		# 应用缩放，确保图片居中
+		wisdom_tree_image.scale = Vector2(scale_factor, scale_factor)
+		
+		# 根据生命值设置智慧树图片的颜色
+		if current_health <= 0:
+			wisdom_tree_image.self_modulate = Color(0.5, 0.5, 0.5, 1.0)  # 灰色表示死亡
+		elif current_health <= max_health * 0.3:  # 生命值低于30%
+			wisdom_tree_image.self_modulate = Color(1.0, 0.8, 0.8, 1.0)  # 浅红色表示生病
+		else:
+			wisdom_tree_image.self_modulate = Color(1.0, 1.0, 1.0, 1.0)  # 正常颜色
+	
+	# 更新智慧树消息显示
+	if wisdom_message != "" and anonymous_talk:
+		# 显示完整的时间格式
+		var current_time = Time.get_datetime_string_from_system()
+		var date_part = current_time.substr(0, 10)  # 年月日
+		var time_part = current_time.substr(11, 8)  # 时分秒
+		anonymous_talk.text = "[color=cyan][" + date_part + " " + time_part + "][/color] " + wisdom_message
+	
+
+# 更新智慧树图片大小
+func update_wisdom_tree_size():
+	if not login_data.has("智慧树配置") or not wisdom_tree_image:
+		return
+	
+	var wisdom_tree_config = login_data["智慧树配置"]
+	var height = wisdom_tree_config.get("高度", 20)
+	
+	# 计算缩放比例（高度20cm对应0.5倍，最大1.6倍）
+	# 高度范围：20-100cm，缩放范围：0.5-1.6倍
+	var min_height = 20.0
+	var max_height = 999999999999.0
+	var min_scale = 0.5
+	var max_scale = 1.6
+	
+	# 确保高度在有效范围内
+	height = clamp(height, min_height, max_height)
+	
+	# 计算缩放比例
+	var scale_factor = min_scale + (max_scale - min_scale) * (height - min_height) / (max_height - min_height)
+	
+	# 应用缩放
+	wisdom_tree_image.scale = Vector2(scale_factor, scale_factor)
+	
+	print("智慧树高度: ", height, "cm, 缩放比例: ", scale_factor)
+
+# 随机显示智慧树匿名消息（放音乐时调用）
+func show_random_wisdom_tree_message():
+	# 发送请求到服务器获取随机消息
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("send_wisdom_tree_operation"):
+		tcp_network_manager_panel.send_wisdom_tree_operation("get_random_message")
+
+# 智慧树生命值衰减现在完全由服务端处理，客户端不再处理
+
+
+# 智慧树护理时间更新（已移到服务端处理）
+func update_wisdom_tree_care_time():
+	# 护理时间更新现在由服务端处理
+	pass
+
+# 处理智慧树响应消息
+func handle_wisdom_tree_response(data: Dictionary):
+	var message_type = data.get("operation_type", "")
+	var message_content = data.get("random_message", "")
+	
+	if message_type == "play_music" and message_content != "":
+		# 显示随机获得的匿名消息
+		if anonymous_talk:
+			var current_time = Time.get_datetime_string_from_system()
+			var date_part = current_time.substr(0, 10)  # 年月日
+			var time_part = current_time.substr(11, 8)  # 时分秒
+			anonymous_talk.text = "[color=cyan][" + date_part + " " + time_part + "][/color] " + message_content
+		
+		# 保存到智慧树配置中
+		if login_data.has("智慧树配置"):
+			var wisdom_tree_config = login_data["智慧树配置"]
+			wisdom_tree_config["智慧树显示的话"] = message_content
+			login_data["智慧树配置"] = wisdom_tree_config
+
+# 确保智慧树配置格式正确，兼容旧格式
+func _ensure_wisdom_tree_config_format(wisdom_tree_config: Dictionary) -> Dictionary:
+	# 创建配置副本以避免修改原始数据
+	var config = wisdom_tree_config.duplicate()
+	
+	# 如果是旧格式，转换为新格式
+	if config.has("生命值") and not config.has("当前生命值"):
+		var old_health = config.get("生命值", 100)
+		config["当前生命值"] = old_health
+		config["最大生命值"] = 100
+		config.erase("生命值")
+	
+	if config.has("经验") and not config.has("当前经验值"):
+		var old_exp = config.get("经验", 0)
+		config["当前经验值"] = old_exp
+		var level = config.get("等级", 1)
+		# 使用动态公式计算最大经验值
+		var base_exp = 50
+		var exp_multiplier = 1.2
+		var level_factor = pow(level, 1.5)
+		var max_exp = int(base_exp * level_factor * exp_multiplier)
+		config["最大经验值"] = max_exp
+		config.erase("经验")
+	
+	# 确保所有必需字段存在
+	if not config.has("当前生命值"):
+		config["当前生命值"] = 100
+	if not config.has("最大生命值"):
+		config["最大生命值"] = 100
+	if not config.has("当前经验值"):
+		config["当前经验值"] = 0
+	if not config.has("最大经验值"):
+		var level = config.get("等级", 1)
+		var base_exp = 50
+		var exp_multiplier = 1.2
+		var level_factor = pow(level, 1.5)
+		var max_exp = int(base_exp * level_factor * exp_multiplier)
+		config["最大经验值"] = max_exp
+	
+	return config
+
+#处理智慧树配置响应
+func _handle_wisdom_tree_config_response(data):
+	var success = data.get("success", false)
+	if success:
+		var config = data.get("config", {})
+		# 确保配置格式正确
+		config = _ensure_wisdom_tree_config_format(config)
+		# 更新本地智慧树配置
+		login_data["智慧树配置"] = config
+		# 更新界面显示
+		update_wisdom_tree_display()
+		print("智慧树配置已更新")
+		
+		# 如果智慧树面板打开，也更新面板显示
+		var wisdom_tree_panel = get_node_or_null("BigPanel/SmallPanel/WisdomTreePanel")
+		if wisdom_tree_panel and wisdom_tree_panel.visible:
+			wisdom_tree_panel.wisdom_tree_config = config
+			wisdom_tree_panel.update_ui()
+#=======================================智慧树系统========================================= 
