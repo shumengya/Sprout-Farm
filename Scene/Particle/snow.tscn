@@ -1,0 +1,37 @@
+[gd_scene load_steps=7 format=3 uid="uid://b5j2tonaoiku5"]
+
+[ext_resource type="Texture2D" uid="uid://dk4yl4ghmxaa2" path="res://assets/天气系统图片/雪花.webp" id="1_nqr5d"]
+
+[sub_resource type="Curve" id="Curve_4ka7t"]
+_data = [Vector2(0, 0.951807), 0.0, 0.0, 0, 0, Vector2(0.0153846, 1), 0.0, 0.0, 0, 0, Vector2(0.0461538, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_nf3jg"]
+curve = SubResource("Curve_4ka7t")
+
+[sub_resource type="Gradient" id="Gradient_adtqp"]
+offsets = PackedFloat32Array(0.52, 0.697143)
+colors = PackedColorArray(1, 1, 1, 0.352941, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_5dq3w"]
+gradient = SubResource("Gradient_adtqp")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jiccn"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+gravity = Vector3(45, 98, 0)
+scale_min = 0.4
+scale_max = 0.8
+color_initial_ramp = SubResource("GradientTexture1D_5dq3w")
+alpha_curve = SubResource("CurveTexture_nf3jg")
+turbulence_enabled = true
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.08
+
+[node name="Snow" type="GPUParticles2D"]
+amount = 200
+texture = ExtResource("1_nqr5d")
+lifetime = 10.0
+preprocess = 30.0
+process_material = SubResource("ParticleProcessMaterial_jiccn")

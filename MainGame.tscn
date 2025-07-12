@@ -1,4 +1,4 @@
-[gd_scene load_steps=67 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=72 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
@@ -135,6 +135,34 @@ gravity = Vector3(0, 98, 0)
 scale_min = 0.5
 scale_max = 0.5
 turbulence_enabled = true
+
+[sub_resource type="Curve" id="Curve_4ka7t"]
+_data = [Vector2(0, 0.951807), 0.0, 0.0, 0, 0, Vector2(0.0153846, 1), 0.0, 0.0, 0, 0, Vector2(0.0461538, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_nf3jg"]
+curve = SubResource("Curve_4ka7t")
+
+[sub_resource type="Gradient" id="Gradient_adtqp"]
+offsets = PackedFloat32Array(0.52, 0.697143)
+colors = PackedColorArray(1, 1, 1, 0.352941, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_5dq3w"]
+gradient = SubResource("Gradient_adtqp")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jiccn"]
+lifetime_randomness = 0.07
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+gravity = Vector3(46, 80, 0)
+scale_min = 0.2
+scale_max = 0.3
+color_initial_ramp = SubResource("GradientTexture1D_5dq3w")
+alpha_curve = SubResource("CurveTexture_nf3jg")
+turbulence_enabled = true
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.08
 
 [node name="main" type="Node"]
 script = ExtResource("1_v3yaj")
@@ -4249,15 +4277,6 @@ vertical_alignment = 1
 
 [node name="WeatherSystem" type="Node2D" parent="."]
 
-[node name="Snow" type="GPUParticles2D" parent="WeatherSystem"]
-position = Vector2(-170, -272)
-amount = 16
-sub_emitter = NodePath(".")
-texture = ExtResource("53_4ka7t")
-lifetime = 15.0
-randomness = 0.5
-process_material = SubResource("ParticleProcessMaterial_nf3jg")
-
 [node name="Rain" type="GPUParticles2D" parent="WeatherSystem"]
 visible = false
 position = Vector2(-170, -272)
@@ -4267,6 +4286,18 @@ texture = ExtResource("53_4ka7t")
 lifetime = 15.0
 randomness = 0.5
 process_material = SubResource("ParticleProcessMaterial_nf3jg")
+
+[node name="Snow" type="GPUParticles2D" parent="WeatherSystem"]
+z_index = 10
+position = Vector2(249, -262)
+amount = 300
+texture = ExtResource("53_4ka7t")
+lifetime = 15.0
+preprocess = 30.0
+visibility_rect = Rect2(-900, 0, 2000, 2000)
+trail_sections = 2
+trail_section_subdivisions = 1
+process_material = SubResource("ParticleProcessMaterial_jiccn")
 
 [node name="DayNightSystem" type="Node2D" parent="."]
 

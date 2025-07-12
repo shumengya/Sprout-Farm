@@ -557,16 +557,13 @@
   "player_name": "树萌芽",
   "level": 63,
   "money": 615397111148,
-  "last_login_time": "2025年07月12日18时58分12秒",
-  "total_login_time": "161时31分59秒",
+  "last_login_time": "2025年07月12日19时41分20秒",
+  "total_login_time": "161时39分12秒",
   "user_name": "3205788256",
   "user_password": "tyh@19900420",
   "last_water_reset_date": "2025-06-06",
   "daily_likes": {},
   "last_check_in_date": "2025-06-01",
-  "check_in_count": 1,
-  "daily_check_in": {},
-  "lucky_draw_history": [],
   "total_likes": 1,
   "体力值": 20,
   "体力上次刷新时间": "2025-07-12",
@@ -574,7 +571,13 @@
   "new_player_gift_claimed": true,
   "new_player_gift_time": "2025-06-08 19:22:41",
   "session_start_time": 1749878790.288913,
-  "online_gift": {},
+  "online_gift": {
+    "2025-07-12": {
+      "start_time": 1752319030.8083963,
+      "claimed_gifts": {},
+      "total_online_time": 433.0
+    }
+  },
   "个人简介": "人生啊，就这样吧",
   "注册时间": "2025年05月21日15时00分00秒",
   "作物仓库": [],

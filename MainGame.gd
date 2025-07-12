@@ -1984,7 +1984,7 @@ func _handle_daily_check_in_response(response: Dictionary) -> void:
 	player_bag_panel.update_player_bag_ui()
 	
 	# 向签到面板传递响应
-	daily_check_in_panel.handle_check_in_response(response)
+	daily_check_in_panel.handle_daily_check_in_response(response)
 	
 	# 显示签到结果通知
 	var success = response.get("success", false)

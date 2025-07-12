@@ -1,13 +1,13 @@
 {
-  "experience": 1858,
-  "level": 26,
-  "money": 1223582,
+  "experience": 1826,
+  "level": 27,
+  "money": 1214966,
   "farm_name": "柚大青の小农场",
   "player_name": "柚大青",
   "user_name": "2143323382",
   "user_password": "tyh@19900420",
-  "last_login_time": "2025年07月09日19时17分38秒",
-  "total_login_time": "5时0分7秒",
+  "last_login_time": "2025年07月12日21时05分43秒",
+  "total_login_time": "5时10分30秒",
   "farm_lots": [
     {
       "crop_type": "",
@@ -560,286 +560,23 @@
       "土地等级": 0
     }
   ],
-  "player_bag": [],
+  "player_bag": [
+    {
+      "name": "稻谷",
+      "quality": "普通",
+      "count": 2
+    },
+    {
+      "name": "土豆",
+      "quality": "普通",
+      "count": 3
+    }
+  ],
   "total_likes": 3,
   "last_water_reset_date": "2025-06-05",
-  "daily_check_in": {
-    "2025-06-03": {
-      "rewards": {
-        "coins": 259,
-        "exp": 75,
-        "seeds": [
-          {
-            "name": "土豆",
-            "quantity": 5,
-            "quality": "普通"
-          },
-          {
-            "name": "小麦",
-            "quantity": 4,
-            "quality": "普通"
-          },
-          {
-            "name": "稻谷",
-            "quantity": 4,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 0,
-      "timestamp": 1748950405.029992
-    },
-    "2025-06-04": {
-      "rewards": {
-        "coins": 455,
-        "exp": 93,
-        "seeds": [
-          {
-            "name": "小麦",
-            "quantity": 3,
-            "quality": "普通"
-          },
-          {
-            "name": "胡萝卜",
-            "quantity": 3,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 1,
-      "timestamp": 1749033203.8079362
-    },
-    "2025-06-08": {
-      "rewards": {
-        "coins": 376,
-        "exp": 83,
-        "seeds": [
-          {
-            "name": "胡萝卜",
-            "quantity": 3,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 0,
-      "timestamp": 1749387590.7727287
-    },
-    "2025-06-15": {
-      "rewards": {
-        "coins": 329,
-        "exp": 58,
-        "seeds": [
-          {
-            "name": "胡萝卜",
-            "quantity": 3,
-            "quality": "普通"
-          },
-          {
-            "name": "稻谷",
-            "quantity": 2,
-            "quality": "普通"
-          },
-          {
-            "name": "土豆",
-            "quantity": 5,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 0,
-      "timestamp": 1749994853.8761835
-    },
-    "2025-06-16": {
-      "rewards": {
-        "coins": 219,
-        "exp": 107,
-        "seeds": [
-          {
-            "name": "稻谷",
-            "quantity": 5,
-            "quality": "普通"
-          },
-          {
-            "name": "胡萝卜",
-            "quantity": 4,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 1,
-      "timestamp": 1750048317.4814892
-    },
-    "2025-06-17": {
-      "rewards": {
-        "coins": 292,
-        "exp": 125,
-        "seeds": [
-          {
-            "name": "胡萝卜",
-            "quantity": 2,
-            "quality": "普通"
-          },
-          {
-            "name": "小麦",
-            "quantity": 4,
-            "quality": "普通"
-          },
-          {
-            "name": "土豆",
-            "quantity": 5,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 2,
-      "timestamp": 1750171931.7031996
-    },
-    "2025-06-19": {
-      "rewards": {
-        "coins": 325,
-        "exp": 93,
-        "seeds": [
-          {
-            "name": "小麦",
-            "quantity": 4,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 0,
-      "timestamp": 1750313565.2168045
-    },
-    "2025-06-20": {
-      "rewards": {
-        "coins": 491,
-        "exp": 119,
-        "seeds": [
-          {
-            "name": "稻谷",
-            "quantity": 3,
-            "quality": "普通"
-          },
-          {
-            "name": "胡萝卜",
-            "quantity": 3,
-            "quality": "普通"
-          },
-          {
-            "name": "小麦",
-            "quantity": 2,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 1,
-      "timestamp": 1750391114.5208066
-    },
-    "2025-06-21": {
-      "rewards": {
-        "coins": 419,
-        "exp": 111,
-        "seeds": [
-          {
-            "name": "小麦",
-            "quantity": 2,
-            "quality": "普通"
-          },
-          {
-            "name": "胡萝卜",
-            "quantity": 4,
-            "quality": "普通"
-          },
-          {
-            "name": "稻谷",
-            "quantity": 3,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 2,
-      "timestamp": 1750474647.3564475
-    },
-    "2025-06-22": {
-      "rewards": {
-        "coins": 312,
-        "exp": 128,
-        "seeds": [
-          {
-            "name": "番茄",
-            "quantity": 5,
-            "quality": "优良"
-          },
-          {
-            "name": "豌豆",
-            "quantity": 5,
-            "quality": "优良"
-          },
-          {
-            "name": "玉米",
-            "quantity": 2,
-            "quality": "优良"
-          }
-        ],
-        "bonus_coins": 100
-      },
-      "consecutive_days": 3,
-      "timestamp": 1750595733.8604188
-    },
-    "2025-06-23": {
-      "rewards": {
-        "coins": 403,
-        "exp": 67,
-        "seeds": [
-          {
-            "name": "大豆",
-            "quantity": 2,
-            "quality": "优良"
-          },
-          {
-            "name": "番茄",
-            "quantity": 4,
-            "quality": "优良"
-          }
-        ],
-        "bonus_coins": 100
-      },
-      "consecutive_days": 4,
-      "timestamp": 1750645219.0674949
-    },
-    "2025-06-25": {
-      "rewards": {
-        "coins": 285,
-        "exp": 71,
-        "seeds": [
-          {
-            "name": "胡萝卜",
-            "quantity": 2,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 0,
-      "timestamp": 1750843274.268298
-    },
-    "2025-06-27": {
-      "rewards": {
-        "coins": 264,
-        "exp": 71,
-        "seeds": [
-          {
-            "name": "土豆",
-            "quantity": 3,
-            "quality": "普通"
-          }
-        ]
-      },
-      "consecutive_days": 0,
-      "timestamp": 1750985100.9851904
-    }
-  },
   "体力值": 20,
-  "体力上次刷新时间": "2025-07-09",
-  "体力上次恢复时间": 1752023968.6234932,
+  "体力上次刷新时间": "2025-07-12",
+  "体力上次恢复时间": 1752323298.9468062,
   "new_player_gift_claimed": true,
   "new_player_gift_time": "2025-06-08 20:58:40",
   "daily_likes": {
@@ -971,6 +708,11 @@
       "start_time": 1752023968.623608,
       "claimed_gifts": {},
       "total_online_time": 1282.0
+    },
+    "2025-07-12": {
+      "start_time": 1752323298.9470074,
+      "claimed_gifts": {},
+      "total_online_time": 623.0
     }
   },
   "注册时间": "2025年05月21日15时00分00秒",
@@ -1083,12 +825,8 @@
       }
     }
   ],
-  "巡逻宠物": [
-    "1751716398095"
-  ],
-  "出战宠物": [
-    "1751716398095"
-  ],
+  "巡逻宠物": ["1751716398095"],
+  "出战宠物": ["1751716398095"],
   "稻草人配置": {
     "已拥有稻草人类型": [
       "稻草人1"
@@ -1126,5 +864,8 @@
     "最大经验值": 480,
     "最大生命值": 106,
     "当前生命值": 106
+  },
+  "签到历史": {
+    "2025年07月12日21时05分47秒": "金币249 经验75 土豆x3"
   }
 }

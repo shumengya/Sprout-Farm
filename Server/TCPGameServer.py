@@ -65,6 +65,7 @@ server_version: str = "2.0.1"
 # TCP游戏服务器类
 # ============================================================================
 class TCPGameServer(TCPServer):
+
     """
     萌芽农场TCP游戏服务器
     """
@@ -6206,6 +6207,39 @@ class TCPGameServer(TCPServer):
 
 
 #==========================每日签到处理==========================
+    #加载每日签到配置
+    def _load_daily_check_in_config(self):
+        """加载每日签到配置"""
+        try:
+            config_path = os.path.join(self.config_dir, "daily_checkin_config.json")
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except:
+            pass
+        
+        # 默认配置
+        return {
+            "基础奖励": {
+                "金币": {"最小值": 200, "最大值": 500, "图标": "💰", "颜色": "#FFD700"},
+                "经验": {"最小值": 50, "最大值": 120, "图标": "⭐", "颜色": "#00BFFF"}
+            },
+            "种子奖励": {
+                "普通": {"概率": 0.6, "数量范围": [2, 5], "种子池": ["小麦", "胡萝卜", "土豆", "稻谷"]},
+                "优良": {"概率": 0.25, "数量范围": [2, 4], "种子池": ["玉米", "番茄", "洋葱", "大豆", "豌豆", "黄瓜", "大白菜"]},
+                "稀有": {"概率": 0.12, "数量范围": [1, 3], "种子池": ["草莓", "花椰菜", "柿子", "蓝莓", "树莓"]},
+                "史诗": {"概率": 0.025, "数量范围": [1, 2], "种子池": ["葡萄", "南瓜", "芦笋", "茄子", "向日葵", "蕨菜"]},
+                "传奇": {"概率": 0.005, "数量范围": [1, 1], "种子池": ["西瓜", "甘蔗", "香草", "甜菜", "人参", "富贵竹", "芦荟", "哈密瓜"]}
+            },
+            "连续签到奖励": {
+                "第3天": {"额外金币": 100, "额外经验": 50, "描述": "连续签到奖励"},
+                "第7天": {"额外金币": 200, "额外经验": 100, "描述": "一周连击奖励"},
+                "第14天": {"额外金币": 500, "额外经验": 200, "描述": "半月连击奖励"},
+                "第21天": {"额外金币": 800, "额外经验": 300, "描述": "三周连击奖励"},
+                "第30天": {"额外金币": 1500, "额外经验": 500, "描述": "满月连击奖励"}
+            }
+        }
+    
     #处理每日签到请求
     def _handle_daily_check_in_request(self, client_id, message):
         """处理每日签到请求"""
@@ -6219,36 +6253,41 @@ class TCPGameServer(TCPServer):
         if not player_data:
             return self.send_data(client_id, response)
         
-        # 检查今日是否已签到
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        check_in_data = player_data.get("daily_check_in", {})
+        # 清理过期签到记录并使用新格式
+        self._cleanup_check_in_history(player_data)
         
-        if current_date in check_in_data:
-            return self.send_data(client_id, {
-                "type": "daily_check_in_response",
-                "success": False,
-                "message": "今日已签到，请明日再来",
-                "has_checked_in": True
-            })
+        # 检查今日是否已签到
+        current_time = datetime.datetime.now()
+        today_key = current_time.strftime("%Y年%m月%d日")
+        check_in_history = player_data.get("签到历史", {})
+        
+        # 检查今日是否已签到
+        for time_key in check_in_history.keys():
+            if time_key.startswith(today_key):
+                return self.send_data(client_id, {
+                    "type": "daily_check_in_response",
+                    "success": False,
+                    "message": "今日已签到，请明日再来",
+                    "has_checked_in": True
+                })
         
         # 计算连续签到天数
-        consecutive_days = self._calculate_consecutive_check_in_days(check_in_data, current_date)
+        consecutive_days = self._calculate_consecutive_check_in_days_new(check_in_history)
         
         # 生成签到奖励
-        rewards = self._generate_check_in_rewards(consecutive_days)
+        config = self._load_daily_check_in_config()
+        rewards = self._generate_check_in_rewards_new(consecutive_days, config)
         
         # 发放奖励
         self._apply_check_in_rewards(player_data, rewards)
         
-        # 保存签到记录
-        if "daily_check_in" not in player_data:
-            player_data["daily_check_in"] = {}
+        # 保存签到记录 - 使用新格式
+        if "签到历史" not in player_data:
+            player_data["签到历史"] = {}
         
-        player_data["daily_check_in"][current_date] = {
-            "rewards": rewards,
-            "consecutive_days": consecutive_days,
-            "timestamp": time.time()
-        }
+        time_key = current_time.strftime("%Y年%m月%d日%H时%M分%S秒")
+        reward_text = self._format_reward_text_simple(rewards)
+        player_data["签到历史"][time_key] = reward_text
         
         # 保存玩家数据
         self.save_player_data(username, player_data)
@@ -6282,143 +6321,200 @@ class TCPGameServer(TCPServer):
         if not player_data:
             return self.send_data(client_id, response)
         
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        check_in_data = player_data.get("daily_check_in", {})
+        # 清理过期签到记录
+        self._cleanup_check_in_history(player_data)
+        
+        check_in_history = player_data.get("签到历史", {})
         
         # 计算连续签到天数
-        consecutive_days = self._calculate_consecutive_check_in_days(check_in_data, current_date)
+        consecutive_days = self._calculate_consecutive_check_in_days_new(check_in_history)
         
         # 检查今日是否已签到
-        has_checked_in_today = current_date in check_in_data
+        current_time = datetime.datetime.now()
+        today_key = current_time.strftime("%Y年%m月%d日")
+        has_checked_in_today = any(time_key.startswith(today_key) for time_key in check_in_history.keys())
         
         return self.send_data(client_id, {
             "type": "check_in_data_response",
             "success": True,
-            "check_in_data": check_in_data,
+            "check_in_data": check_in_history,
             "consecutive_days": consecutive_days,
             "has_checked_in_today": has_checked_in_today,
-            "current_date": current_date
+            "current_date": current_time.strftime("%Y年%m月%d日")
         })
     
-    #计算连续签到天数
-    def _calculate_consecutive_check_in_days(self, check_in_data, current_date):
-        """计算连续签到天数"""
-        if not check_in_data:
+    #清理过期签到记录
+    def _cleanup_check_in_history(self, player_data):
+        """清理过期签到记录，只保留最近30天的记录"""
+        if "签到历史" not in player_data:
+            return
+        
+        current_time = datetime.datetime.now()
+        cutoff_time = current_time - datetime.timedelta(days=30)
+        
+        # 清理过期记录
+        history = player_data["签到历史"]
+        keys_to_remove = []
+        
+        for time_key in history.keys():
+            try:
+                # 解析时间字符串
+                check_time = datetime.datetime.strptime(time_key, "%Y年%m月%d日%H时%M分%S秒")
+                if check_time < cutoff_time:
+                    keys_to_remove.append(time_key)
+            except:
+                # 如果解析失败，删除这条记录
+                keys_to_remove.append(time_key)
+        
+        for key in keys_to_remove:
+            del history[key]
+    
+    #计算连续签到天数（新版本）
+    def _calculate_consecutive_check_in_days_new(self, check_in_history):
+        """计算连续签到天数（新版本）"""
+        if not check_in_history:
             return 0
         
-        # 获取所有签到日期并排序
-        sorted_dates = sorted(check_in_data.keys())
-        if not sorted_dates:
+        # 提取所有签到日期（只取日期部分）
+        check_dates = set()
+        for time_key in check_in_history.keys():
+            try:
+                check_time = datetime.datetime.strptime(time_key, "%Y年%m月%d日%H时%M分%S秒")
+                date_str = check_time.strftime("%Y-%m-%d")
+                check_dates.add(date_str)
+            except:
+                continue
+        
+        if not check_dates:
             return 0
         
-        # 从最新日期开始向前计算连续天数
+        # 从今天开始向前计算连续天数
         consecutive_days = 0
-        current_datetime = datetime.datetime.strptime(current_date, "%Y-%m-%d")
+        current_date = datetime.datetime.now()
         
-        # 如果今天已经签到，从今天开始计算，否则从昨天开始
-        if current_date in check_in_data:
-            check_date = current_datetime
+        # 检查今天是否已签到
+        today_str = current_date.strftime("%Y-%m-%d")
+        if today_str in check_dates:
+            consecutive_days += 1
+            check_date = current_date - datetime.timedelta(days=1)
         else:
-            check_date = current_datetime - datetime.timedelta(days=1)
+            check_date = current_date - datetime.timedelta(days=1)
         
         # 向前查找连续签到天数
         while True:
-            date_string = check_date.strftime("%Y-%m-%d")
-            if date_string in check_in_data:
+            date_str = check_date.strftime("%Y-%m-%d")
+            if date_str in check_dates:
                 consecutive_days += 1
                 check_date -= datetime.timedelta(days=1)
             else:
                 break
             
-            # 限制最大连续天数为30天，避免过度奖励
+            # 限制最大连续天数为30天
             if consecutive_days >= 30:
                 break
         
         return consecutive_days
     
-    #生成签到奖励
-    def _generate_check_in_rewards(self, consecutive_days):
-        """生成签到奖励"""
+    #生成签到奖励（新版本）
+    def _generate_check_in_rewards_new(self, consecutive_days, config):
+        """生成签到奖励（新版本）"""
         import random
-        
-        # 加载作物配置
-        crop_data = self._load_crop_data()
         
         rewards = {}
         
-        # 基础奖励倍数（根据连续签到天数）
-        base_multiplier = 1.0 + (consecutive_days - 1) * 0.1  # 每连续签到一天增加10%
-        max_multiplier = 3.0  # 最大3倍奖励
+        # 基础奖励倍数
+        base_multiplier = 1.0 + (consecutive_days - 1) * 0.1
+        max_multiplier = 3.0
         multiplier = min(base_multiplier, max_multiplier)
         
-        # 钱币奖励 (基础200-500，受连续签到影响)
-        base_coins = random.randint(200, 500)
+        # 基础金币奖励
+        coin_config = config.get("基础奖励", {}).get("金币", {})
+        base_coins = random.randint(coin_config.get("最小值", 200), coin_config.get("最大值", 500))
         rewards["coins"] = int(base_coins * multiplier)
         
-        # 经验奖励 (基础50-120，受连续签到影响)
-        base_exp = random.randint(50, 120)
+        # 基础经验奖励
+        exp_config = config.get("基础奖励", {}).get("经验", {})
+        base_exp = random.randint(exp_config.get("最小值", 50), exp_config.get("最大值", 120))
         rewards["exp"] = int(base_exp * multiplier)
         
-        # 种子奖励 (根据连续签到天数获得更好的种子)
-        seeds = self._generate_check_in_seeds(consecutive_days, crop_data)
+        # 种子奖励
+        seeds = self._generate_check_in_seeds_new(consecutive_days, config)
         if seeds:
             rewards["seeds"] = seeds
         
         # 连续签到特殊奖励
-        if consecutive_days >= 3:
-            rewards["bonus_coins"] = int(100 * (consecutive_days // 3))
-        
-        if consecutive_days >= 7:
-            rewards["bonus_exp"] = int(200 * (consecutive_days // 7))
+        consecutive_rewards = config.get("连续签到奖励", {})
+        for milestone, bonus in consecutive_rewards.items():
+            milestone_days = int(milestone.replace("第", "").replace("天", ""))
+            if consecutive_days >= milestone_days:
+                if "额外金币" in bonus:
+                    rewards["bonus_coins"] = bonus["额外金币"]
+                if "额外经验" in bonus:
+                    rewards["bonus_exp"] = bonus["额外经验"]
         
         return rewards
     
-    #生成签到种子奖励
-    def _generate_check_in_seeds(self, consecutive_days, crop_data):
-        """生成签到种子奖励"""
+    #生成签到种子奖励（新版本）
+    def _generate_check_in_seeds_new(self, consecutive_days, config):
+        """生成签到种子奖励（新版本）"""
         import random
         
         seeds = []
+        seed_configs = config.get("种子奖励", {})
         
-        # 根据连续签到天数确定种子类型和数量
+        # 根据连续签到天数确定种子稀有度
         if consecutive_days <= 2:
-            # 1-2天：普通种子
-            common_seeds = ["小麦", "胡萝卜", "土豆", "稻谷"]
+            rarity = "普通"
         elif consecutive_days <= 5:
-            # 3-5天：优良种子
-            common_seeds = ["玉米", "番茄", "洋葱", "大豆", "豌豆", "黄瓜", "大白菜"]
+            rarity = "优良"
         elif consecutive_days <= 10:
-            # 6-10天：稀有种子
-            common_seeds = ["草莓", "花椰菜", "柿子", "蓝莓", "树莓"]
+            rarity = "稀有"
         elif consecutive_days <= 15:
-            # 11-15天：史诗种子
-            common_seeds = ["葡萄", "南瓜", "芦笋", "茄子", "向日葵", "蕨菜"]
+            rarity = "史诗"
         else:
-            # 16天以上：传奇种子
-            common_seeds = ["西瓜", "甘蔗", "香草", "甜菜", "人参", "富贵竹", "芦荟", "哈密瓜"]
+            rarity = "传奇"
+        
+        # 获取对应稀有度的种子池
+        rarity_config = seed_configs.get(rarity, {})
+        seed_pool = rarity_config.get("种子池", [])
+        quantity_range = rarity_config.get("数量范围", [1, 2])
+        
+        if not seed_pool:
+            return seeds
         
         # 生成1-3个种子
-        seed_count = random.randint(1, min(3, len(common_seeds)))
-        selected_seeds = random.sample(common_seeds, seed_count)
+        seed_count = random.randint(1, min(3, len(seed_pool)))
+        selected_seeds = random.sample(seed_pool, seed_count)
         
         for seed_name in selected_seeds:
-            if seed_name in crop_data:
-                # 根据种子等级确定数量
-                seed_level = crop_data[seed_name].get("等级", 1)
-                if seed_level <= 2:
-                    quantity = random.randint(2, 5)
-                elif seed_level <= 4:
-                    quantity = random.randint(1, 3)
-                else:
-                    quantity = 1
-                
-                seeds.append({
-                    "name": seed_name,
-                    "quantity": quantity,
-                    "quality": crop_data[seed_name].get("品质", "普通")
-                })
+            quantity = random.randint(quantity_range[0], quantity_range[1])
+            seeds.append({
+                "name": seed_name,
+                "quantity": quantity,
+                "quality": rarity
+            })
         
         return seeds
+    
+    #格式化奖励文本（简单版本）
+    def _format_reward_text_simple(self, rewards):
+        """格式化奖励文本（简单版本）"""
+        parts = []
+        
+        if "coins" in rewards:
+            parts.append(f"金币{rewards['coins']}")
+        if "exp" in rewards:
+            parts.append(f"经验{rewards['exp']}")
+        if "bonus_coins" in rewards:
+            parts.append(f"额外金币{rewards['bonus_coins']}")
+        if "bonus_exp" in rewards:
+            parts.append(f"额外经验{rewards['bonus_exp']}")
+        
+        if "seeds" in rewards:
+            for seed in rewards["seeds"]:
+                parts.append(f"{seed['name']}x{seed['quantity']}")
+        
+        return " ".join(parts)
     
     #应用签到奖励到玩家数据
     def _apply_check_in_rewards(self, player_data, rewards):
@@ -6620,22 +6716,27 @@ class TCPGameServer(TCPServer):
             if not player_data:
                 return self.send_data(client_id, response)
             
+            # 删除历史记录（如果存在）
+            if "lucky_draw_history" in player_data:
+                del player_data["lucky_draw_history"]
+            
             draw_type = message.get("draw_type", "single")  # single, five, ten
-            draw_count = 1
-            base_cost = 800  # 基础抽奖费用
+            
+            # 从配置文件获取费用
+            config = self._load_lucky_draw_config()
+            costs = config.get("抽奖费用", {"单抽": 800, "五连抽": 3600, "十连抽": 6400})
             
             # 计算抽奖费用和数量
             if draw_type == "single":
                 draw_count = 1
-                total_cost = base_cost
+                total_cost = costs.get("单抽", 800)
             elif draw_type == "five":
                 draw_count = 5
-                total_cost = int(base_cost * 5 * 0.9)  # 五连抽九折
+                total_cost = costs.get("五连抽", 3600)
             elif draw_type == "ten":
                 draw_count = 10
-                total_cost = int(base_cost * 10 * 0.8)  # 十连抽八折
+                total_cost = costs.get("十连抽", 6400)
             else:
-                self.log('WARNING', f"玩家 {username} 使用了无效的抽奖类型: {draw_type}", 'SERVER')
                 return self.send_data(client_id, {
                     "type": "lucky_draw_response",
                     "success": False,
@@ -6644,43 +6745,20 @@ class TCPGameServer(TCPServer):
             
             # 检查玩家金钱是否足够
             if player_data.get("money", 0) < total_cost:
-                self.log('WARNING', f"玩家 {username} 金币不足进行{draw_type}抽奖，需要{total_cost}，当前{player_data.get('money', 0)}", 'SERVER')
                 return self.send_data(client_id, {
                     "type": "lucky_draw_response",
                     "success": False,
-                    "message": f"金钱不足，{draw_type}抽奖需要 {total_cost} 金币"
+                    "message": f"金钱不足，需要 {total_cost} 金币"
                 })
             
             # 扣除金钱
             player_data["money"] -= total_cost
             
             # 生成奖励
-            rewards = self._generate_lucky_draw_rewards(draw_count, draw_type)
-            
-            # 验证奖励格式
-            for reward in rewards:
-                if not reward.get("rarity"):
-                    reward["rarity"] = "普通"
-                    self.log('WARNING', f"奖励缺少稀有度字段，已设置为普通: {reward}", 'SERVER')
+            rewards = self._generate_lucky_draw_rewards(draw_count, draw_type, config)
             
             # 应用奖励到玩家数据
             self._apply_lucky_draw_rewards(player_data, rewards)
-            
-            # 记录抽奖历史
-            if "lucky_draw_history" not in player_data:
-                player_data["lucky_draw_history"] = []
-            
-            draw_record = {
-                "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                "type": draw_type,
-                "cost": total_cost,
-                "rewards": rewards
-            }
-            player_data["lucky_draw_history"].append(draw_record)
-            
-            # 只保留最近100次记录
-            if len(player_data["lucky_draw_history"]) > 100:
-                player_data["lucky_draw_history"] = player_data["lucky_draw_history"][-100:]
             
             # 保存玩家数据
             self.save_player_data(username, player_data)
@@ -6703,24 +6781,40 @@ class TCPGameServer(TCPServer):
             })
             
         except Exception as e:
-            # 捕获所有异常，防止服务器崩溃
             self.log('ERROR', f"处理玩家抽奖请求时出错: {str(e)}", 'SERVER')
             
-            # 尝试获取用户名
-            try:
-                username = self.user_data[client_id].get("username", "未知用户")
-            except:
-                username = "未知用户"
-            
-            # 发送错误响应
             return self.send_data(client_id, {
                 "type": "lucky_draw_response",
                 "success": False,
                 "message": "服务器处理抽奖时出现错误，请稍后重试"
             })
     
+    #加载抽奖配置
+    def _load_lucky_draw_config(self):
+        """加载抽奖配置"""
+        try:
+            config_path = os.path.join(self.config_dir, "lucky_draw_config.json")
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except:
+            pass
+        
+        # 默认配置
+        return {
+            "抽奖费用": {"单抽": 800, "五连抽": 3600, "十连抽": 6400},
+            "概率配置": {
+                "普通": {"概率": 0.45, "金币范围": [100, 300], "经验范围": [50, 150], "种子数量": [2, 4]},
+                "优良": {"概率": 0.25, "金币范围": [300, 600], "经验范围": [150, 300], "种子数量": [1, 3]},
+                "稀有": {"概率": 0.12, "金币范围": [600, 1000], "经验范围": [300, 500], "种子数量": [1, 2]},
+                "史诗": {"概率": 0.025, "金币范围": [1000, 1500], "经验范围": [500, 800], "种子数量": [1, 1]},
+                "传奇": {"概率": 0.005, "金币范围": [1500, 2500], "经验范围": [800, 1200], "种子数量": [1, 1]},
+                "空奖": {"概率": 0.15, "提示语": ["谢谢惠顾", "下次再来", "再试一次", "继续努力"]}
+            }
+        }
+    
     #生成幸运抽奖奖励
-    def _generate_lucky_draw_rewards(self, count: int, draw_type: str):
+    def _generate_lucky_draw_rewards(self, count: int, draw_type: str, config: dict):
         """生成幸运抽奖奖励"""
         import random
         
@@ -6730,42 +6824,28 @@ class TCPGameServer(TCPServer):
         rewards = []
         
         # 根据 crop_data.json 构建奖励池
-        common_seeds = []
-        good_seeds = []
-        rare_seeds = []
-        epic_seeds = []
-        legendary_seeds = []
+        seed_pools = {"普通": [], "优良": [], "稀有": [], "史诗": [], "传奇": []}
         
         for crop_name, crop_info in crop_data.items():
             if not crop_info.get("能否购买", True):
-                continue  # 跳过不能购买的作物
+                continue
                 
             quality = crop_info.get("品质", "普通")
-            if quality == "普通":
-                common_seeds.append(crop_name)
-            elif quality == "优良":
-                good_seeds.append(crop_name)
-            elif quality == "稀有":
-                rare_seeds.append(crop_name)
-            elif quality == "史诗":
-                epic_seeds.append(crop_name)
-            elif quality == "传奇":
-                legendary_seeds.append(crop_name)
+            if quality in seed_pools:
+                seed_pools[quality].append(crop_name)
         
-        # 十连抽保底机制：至少一个稀有以上
+        # 十连抽保底机制
         guaranteed_rare = (draw_type == "ten")
         rare_given = False
         
         for i in range(count):
             # 生成单个奖励
             reward = self._generate_single_lucky_reward(
-                common_seeds, good_seeds, rare_seeds, epic_seeds, legendary_seeds,
-                guaranteed_rare and i == count - 1 and not rare_given
+                seed_pools, config, guaranteed_rare and i == count - 1 and not rare_given
             )
             
-            # 检查是否给出了稀有奖励（使用安全的方式访问）
-            reward_rarity = reward.get("rarity", "普通")
-            if reward_rarity in ["稀有", "史诗", "传奇"]:
+            # 检查是否给出了稀有奖励
+            if reward.get("rarity", "普通") in ["稀有", "史诗", "传奇"]:
                 rare_given = True
             
             rewards.append(reward)
@@ -6773,278 +6853,166 @@ class TCPGameServer(TCPServer):
         return rewards
     
     #生成单个抽奖奖励
-    def _generate_single_lucky_reward(self, common_seeds, good_seeds, rare_seeds, epic_seeds, legendary_seeds, force_rare=False):
+    def _generate_single_lucky_reward(self, seed_pools: dict, config: dict, force_rare=False):
         """生成单个幸运抽奖奖励"""
         import random
         
-        # 概率配置
+        prob_config = config.get("概率配置", {})
+        
+        # 决定稀有度
         if force_rare:
             # 强制稀有：33%稀有，33%史诗，34%传奇
             rand = random.random()
             if rand < 0.33:
-                reward_type = "rare"
+                rarity = "稀有"
             elif rand < 0.66:
-                reward_type = "epic"
+                rarity = "史诗"
             else:
-                reward_type = "legendary"
+                rarity = "传奇"
         else:
-            # 正常概率：45%普通，25%优良，15%空奖，12%稀有，2.5%史诗，0.5%传奇
+            # 正常概率
             rand = random.random()
-            if rand < 0.45:
-                reward_type = "common"
-            elif rand < 0.70:
-                reward_type = "good"
-            elif rand < 0.85:
-                reward_type = "empty"
-            elif rand < 0.97:
-                reward_type = "rare"
-            elif rand < 0.995:
-                reward_type = "epic"
-            else:
-                reward_type = "legendary"
+            cumulative = 0
+            rarity = "普通"
+            
+            for r, config_data in prob_config.items():
+                prob = config_data.get("概率", 0)
+                cumulative += prob
+                if rand < cumulative:
+                    rarity = r
+                    break
         
-        reward = {}
-        
-        if reward_type == "empty":
-            # 谢谢惠顾
-            empty_messages = ["谢谢惠顾", "下次再来", "再试一次", "继续努力"]
-            reward = {
+        # 根据稀有度生成奖励
+        if rarity == "空奖":
+            empty_messages = prob_config.get("空奖", {}).get("提示语", ["谢谢惠顾"])
+            return {
                 "type": "empty",
                 "name": random.choice(empty_messages),
                 "rarity": "空奖",
                 "amount": 0
             }
         
-        elif reward_type == "common":
-            # 普通奖励：金币、经验或普通种子
-            reward_choice = random.choice(["coins", "exp", "seed"])
-            if reward_choice == "coins":
-                reward = {
+        # 获取稀有度配置
+        rarity_config = prob_config.get(rarity, {})
+        
+        # 根据奖励类型权重选择奖励类型
+        type_weights = config.get("奖励类型权重", {}).get(rarity, {"金币": 0.5, "经验": 0.3, "种子": 0.2})
+        
+        # 随机选择奖励类型
+        rand = random.random()
+        cumulative = 0
+        reward_type = "金币"
+        
+        for r_type, weight in type_weights.items():
+            cumulative += weight
+            if rand < cumulative:
+                reward_type = r_type
+                break
+        
+        # 生成具体奖励
+        if reward_type == "金币":
+            coin_range = rarity_config.get("金币范围", [100, 300])
+            return {
+                "type": "coins",
+                "name": "金币",
+                "rarity": rarity,
+                "amount": random.randint(coin_range[0], coin_range[1])
+            }
+        
+        elif reward_type == "经验":
+            exp_range = rarity_config.get("经验范围", [50, 150])
+            return {
+                "type": "exp",
+                "name": "经验",
+                "rarity": rarity,
+                "amount": random.randint(exp_range[0], exp_range[1])
+            }
+        
+        elif reward_type == "种子":
+            seeds = seed_pools.get(rarity, [])
+            if not seeds:
+                # 如果没有对应稀有度的种子，给金币
+                coin_range = rarity_config.get("金币范围", [100, 300])
+                return {
                     "type": "coins",
                     "name": "金币",
-                    "rarity": "普通",
-                    "amount": random.randint(100, 300)
+                    "rarity": rarity,
+                    "amount": random.randint(coin_range[0], coin_range[1])
                 }
-            elif reward_choice == "exp":
-                reward = {
-                    "type": "exp",
-                    "name": "经验",
-                    "rarity": "普通",
-                    "amount": random.randint(50, 150)
-                }
-            else:  # seed
-                if common_seeds:
-                    seed_name = random.choice(common_seeds)
-                    reward = {
-                        "type": "seed",
-                        "name": seed_name,
-                        "rarity": "普通",
-                        "amount": random.randint(2, 4)
-                    }
-                else:
-                    reward = {
-                        "type": "coins",
-                        "name": "金币",
-                        "rarity": "普通",
-                        "amount": random.randint(100, 300)
-                    }
+            
+            seed_count_range = rarity_config.get("种子数量", [1, 2])
+            return {
+                "type": "seed",
+                "name": random.choice(seeds),
+                "rarity": rarity,
+                "amount": random.randint(seed_count_range[0], seed_count_range[1])
+            }
         
-        elif reward_type == "good":
-            # 优良奖励：更多金币经验或优良种子
-            reward_choice = random.choice(["coins", "exp", "seed", "package"])
-            if reward_choice == "coins":
-                reward = {
+        elif reward_type == "礼包":
+            package_config = config.get("礼包配置", {})
+            package_names = [name for name, info in package_config.items() if info.get("稀有度") == rarity]
+            
+            if not package_names:
+                # 如果没有对应稀有度的礼包，给金币
+                coin_range = rarity_config.get("金币范围", [100, 300])
+                return {
                     "type": "coins",
                     "name": "金币",
-                    "rarity": "优良",
-                    "amount": random.randint(300, 600)
+                    "rarity": rarity,
+                    "amount": random.randint(coin_range[0], coin_range[1])
                 }
-            elif reward_choice == "exp":
-                reward = {
-                    "type": "exp",
-                    "name": "经验",
-                    "rarity": "优良",
-                    "amount": random.randint(150, 300)
-                }
-            elif reward_choice == "seed":
-                if good_seeds:
-                    seed_name = random.choice(good_seeds)
-                    reward = {
-                        "type": "seed",
-                        "name": seed_name,
-                        "rarity": "优良",
-                        "amount": random.randint(1, 3)
-                    }
-                else:
-                    reward = {
-                        "type": "coins",
-                        "name": "金币",
-                        "rarity": "优良",
-                        "amount": random.randint(300, 600)
-                    }
-            else:  # package
-                reward = {
-                    "type": "package",
-                    "name": "成长套餐",
-                    "rarity": "优良",
-                    "amount": 1,
-                    "contents": [
-                        {"type": "coins", "amount": random.randint(200, 400)},
-                        {"type": "exp", "amount": random.randint(100, 200)},
-                        {"type": "seed", "name": random.choice(common_seeds) if common_seeds else "小麦", "amount": random.randint(2, 3)}
-                    ]
-                }
-        
-        elif reward_type == "rare":
-            # 稀有奖励
-            reward_choice = random.choice(["coins", "exp", "seed", "package"])
-            if reward_choice == "coins":
-                reward = {
+            
+            package_name = random.choice(package_names)
+            package_info = package_config[package_name]
+            contents = []
+            
+            # 生成礼包内容
+            content_config = package_info.get("内容", {})
+            
+            if "金币" in content_config:
+                coin_range = content_config["金币"]
+                contents.append({
                     "type": "coins",
-                    "name": "金币",
-                    "rarity": "稀有",
-                    "amount": random.randint(600, 1000)
-                }
-            elif reward_choice == "exp":
-                reward = {
+                    "amount": random.randint(coin_range[0], coin_range[1]),
+                    "rarity": rarity
+                })
+            
+            if "经验" in content_config:
+                exp_range = content_config["经验"]
+                contents.append({
                     "type": "exp",
-                    "name": "经验",
-                    "rarity": "稀有",
-                    "amount": random.randint(300, 500)
-                }
-            elif reward_choice == "seed":
-                if rare_seeds:
-                    seed_name = random.choice(rare_seeds)
-                    reward = {
+                    "amount": random.randint(exp_range[0], exp_range[1]),
+                    "rarity": rarity
+                })
+            
+            if "种子数量" in content_config:
+                seed_count_range = content_config["种子数量"]
+                lower_rarity = {"优良": "普通", "稀有": "优良", "史诗": "稀有", "传奇": "史诗"}.get(rarity, "普通")
+                seeds = seed_pools.get(lower_rarity, [])
+                if seeds:
+                    contents.append({
                         "type": "seed",
-                        "name": seed_name,
-                        "rarity": "稀有",
-                        "amount": random.randint(1, 2)
-                    }
-                else:
-                    reward = {
-                        "type": "coins",
-                        "name": "金币",
-                        "rarity": "稀有",
-                        "amount": random.randint(600, 1000)
-                    }
-            else:  # package
-                reward = {
-                    "type": "package",
-                    "name": "稀有礼包",
-                    "rarity": "稀有",
-                    "amount": 1,
-                    "contents": [
-                        {"type": "coins", "amount": random.randint(400, 700)},
-                        {"type": "exp", "amount": random.randint(200, 350)},
-                        {"type": "seed", "name": random.choice(good_seeds) if good_seeds else "番茄", "amount": random.randint(2, 3)}
-                    ]
-                }
+                        "name": random.choice(seeds),
+                        "amount": random.randint(seed_count_range[0], seed_count_range[1]),
+                        "rarity": rarity
+                    })
+            
+            return {
+                "type": "package",
+                "name": package_name,
+                "rarity": rarity,
+                "amount": 1,
+                "contents": contents
+            }
         
-        elif reward_type == "epic":
-            # 史诗奖励
-            reward_choice = random.choice(["coins", "exp", "seed", "package"])
-            if reward_choice == "coins":
-                reward = {
-                    "type": "coins",
-                    "name": "金币",
-                    "rarity": "史诗",
-                    "amount": random.randint(1000, 1500)
-                }
-            elif reward_choice == "exp":
-                reward = {
-                    "type": "exp",
-                    "name": "经验",
-                    "rarity": "史诗",
-                    "amount": random.randint(500, 800)
-                }
-            elif reward_choice == "seed":
-                if epic_seeds:
-                    seed_name = random.choice(epic_seeds)
-                    reward = {
-                        "type": "seed",
-                        "name": seed_name,
-                        "rarity": "史诗",
-                        "amount": 1
-                    }
-                else:
-                    reward = {
-                        "type": "coins",
-                        "name": "金币",
-                        "rarity": "史诗",
-                        "amount": random.randint(1000, 1500)
-                    }
-            else:  # package
-                reward = {
-                    "type": "package",
-                    "name": "史诗礼包",
-                    "rarity": "史诗",
-                    "amount": 1,
-                    "contents": [
-                        {"type": "coins", "amount": random.randint(700, 1200)},
-                        {"type": "exp", "amount": random.randint(350, 600)},
-                        {"type": "seed", "name": random.choice(rare_seeds) if rare_seeds else "草莓", "amount": random.randint(1, 2)}
-                    ]
-                }
-        
-        else:  # legendary
-            # 传奇奖励
-            reward_choice = random.choice(["coins", "exp", "seed", "package"])
-            if reward_choice == "coins":
-                reward = {
-                    "type": "coins",
-                    "name": "金币",
-                    "rarity": "传奇",
-                    "amount": random.randint(1500, 2500)
-                }
-            elif reward_choice == "exp":
-                reward = {
-                    "type": "exp",
-                    "name": "经验",
-                    "rarity": "传奇",
-                    "amount": random.randint(800, 1200)
-                }
-            elif reward_choice == "seed":
-                if legendary_seeds:
-                    seed_name = random.choice(legendary_seeds)
-                    reward = {
-                        "type": "seed",
-                        "name": seed_name,
-                        "rarity": "传奇",
-                        "amount": 1
-                    }
-                else:
-                    reward = {
-                        "type": "coins",
-                        "name": "金币",
-                        "rarity": "传奇",
-                        "amount": random.randint(1500, 2500)
-                    }
-            else:  # package
-                reward = {
-                    "type": "package",
-                    "name": "传奇大礼包",
-                    "rarity": "传奇",
-                    "amount": 1,
-                    "contents": [
-                        {"type": "coins", "amount": random.randint(1000, 2000)},
-                        {"type": "exp", "amount": random.randint(600, 1000)},
-                        {"type": "seed", "name": random.choice(epic_seeds) if epic_seeds else "葡萄", "amount": 1},
-                        {"type": "seed", "name": random.choice(rare_seeds) if rare_seeds else "草莓", "amount": random.randint(2, 3)}
-                    ]
-                }
-        
-        # 确保所有奖励都有基本字段
-        if not reward.get("rarity"):
-            reward["rarity"] = "普通"
-        if not reward.get("amount"):
-            reward["amount"] = 0
-        if not reward.get("type"):
-            reward["type"] = "empty"
-        if not reward.get("name"):
-            reward["name"] = "未知奖励"
-        
-        return reward
+        # 默认给金币
+        coin_range = rarity_config.get("金币范围", [100, 300])
+        return {
+            "type": "coins",
+            "name": "金币",
+            "rarity": rarity,
+            "amount": random.randint(coin_range[0], coin_range[1])
+        }
     
     #应用幸运抽奖奖励到玩家数据
     def _apply_lucky_draw_rewards(self, player_data, rewards):
@@ -7640,6 +7608,10 @@ class TCPGameServer(TCPServer):
             "success": False,
             "message": message
         })
+#==========================稻草人系统处理==========================
+
+
+
 
 #==========================智慧树系统处理==========================
     def _handle_wisdom_tree_operation(self, client_id, message):
@@ -8303,7 +8275,6 @@ class TCPGameServer(TCPServer):
                 # 更新杀虫时间为当前时间，避免重复扣血
                 wisdom_tree_config["距离上一次杀虫时间"] = current_time
 #==========================智慧树系统处理==========================
-#==========================稻草人系统处理==========================
 
 
 
