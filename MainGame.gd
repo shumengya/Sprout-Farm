@@ -640,40 +640,12 @@ func _handle_crop_update(update_data):
 	# 更新UI显示
 	_update_farm_lots_state()
 
-# 修复背包数据，确保所有物品都有quality字段
-func _fix_player_bag_data():
-	if not player_bag:
-		return
-	
-	print("检查并修复背包数据...")
-	var fixed_count = 0
-	
-	for i in range(player_bag.size()):
-		var item = player_bag[i]
-		
-		# 如果物品缺少quality字段，尝试从作物数据中获取或设置默认值
-		if not item.has("quality"):
-			var item_name = item.get("name", "")
-			var quality = "普通"  # 默认质量
-			
-			# 尝试从作物数据中获取质量
-			if can_planted_crop.has(item_name):
-				quality = can_planted_crop[item_name].get("品质", "普通")
-			
-			item["quality"] = quality
-			fixed_count += 1
-			print("修复背包物品 [", item_name, "] 的质量字段为：", quality)
-	
-	if fixed_count > 0:
-		print("背包数据修复完成，共修复 ", fixed_count, " 个物品")
-	else:
-		print("背包数据检查完成，无需修复")
+# 原来的修复背包数据函数已移除，因为不再需要quality字段
 
 # 处理登录成功
 func handle_login_success(player_data: Dictionary):
 	
-	# 修复背包数据兼容性问题
-	_fix_player_bag_data()
+	# 背包数据兼容性处理已移除，品质信息直接从crop_data获取
 	
 	# 更新新手大礼包状态
 	new_player_gift_claimed = player_data.get("new_player_gift_claimed", false)
@@ -797,7 +769,11 @@ func _update_farm_lots_state():
 			digged_count += 1
 			label.show()
 			label.modulate = Color.NAVY_BLUE
-			label.text = "[" + lot["crop_type"] + "已死亡]"
+			var crop_name = lot["crop_type"]
+			var display_name = crop_name
+			if can_planted_crop.has(crop_name):
+				display_name = can_planted_crop[crop_name].get("作物名称", crop_name)
+			label.text = "[" + display_name + "已死亡]"
 			progressbar.hide()
 			status_label.text = ""
 			button.tooltip_text = ""
@@ -818,7 +794,8 @@ func _update_farm_lots_state():
 				
 				if can_planted_crop.has(crop_name):
 					var crop_quality = can_planted_crop[crop_name]["品质"]
-					label.text = "[" + crop_quality + "-" + crop_name + "]"
+					var display_name = can_planted_crop[crop_name].get("作物名称", crop_name)
+					label.text = "[" + crop_quality + "-" + display_name + "]"
 					label.modulate = quality_colors.get(crop_quality, Color.WHITE)
 				else:
 					label.text = "[" + crop_name + "]"
@@ -840,6 +817,7 @@ func _update_farm_lots_state():
 				
 				if can_planted_crop.has(crop_name):
 					var crop = can_planted_crop[crop_name]
+					var display_name = crop.get("作物名称", crop_name)
 					var grow_time = int(crop["生长时间"])
 					var days = grow_time / 86400
 					var hours = (grow_time % 86400) / 3600
@@ -853,7 +831,7 @@ func _update_farm_lots_state():
 					if seconds > 0: time_str += str(seconds) + "秒"
 					if time_str == "": time_str = "0秒"
 					
-					button.tooltip_text = "作物: " + crop_name + "\n品质: " + crop.get("品质", "未知") + "\n价格: " + str(crop["花费"]) + "元\n成熟时间: " + time_str + "\n收获收益: " + str(crop["收益"]) + "元\n需求等级: " + str(crop["等级"]) + "\n经验: " + str(crop["经验"]) + "点"
+					button.tooltip_text = "作物: " + display_name + "\n品质: " + crop.get("品质", "未知") + "\n价格: " + str(crop["花费"]) + "元\n成熟时间: " + time_str + "\n收获收益: " + str(crop["收益"]) + "元\n需求等级: " + str(crop["等级"]) + "\n经验: " + str(crop["经验"]) + "点"
 				else:
 					button.tooltip_text = "作物: " + crop_name + "\n作物数据未找到"
 
@@ -1998,7 +1976,6 @@ func _handle_daily_check_in_response(response: Dictionary) -> void:
 	experience = updated_data["experience"]
 	level = updated_data["level"]
 	player_bag = updated_data["player_bag"]
-	_fix_player_bag_data()
 	
 	# 更新UI
 	_update_ui()
@@ -2138,7 +2115,6 @@ func _handle_lucky_draw_response(response: Dictionary) -> void:
 	experience = updated_data["experience"]
 	level = updated_data["level"]
 	player_bag = updated_data["player_bag"]
-	_fix_player_bag_data()
 	
 	# 更新UI
 	_update_ui()
@@ -2343,7 +2319,6 @@ func _handle_new_player_gift_response(data):
 		experience = updated_data["experience"]
 		level = updated_data["level"]
 		player_bag = updated_data["player_bag"]
-		_fix_player_bag_data()
 		new_player_gift_claimed = updated_data["new_player_gift_claimed"]
 		pet_bag = updated_data["宠物背包"]
 		
@@ -2600,7 +2575,6 @@ func _handle_claim_online_gift_response(data: Dictionary):
 		experience = updated_data["experience"]
 		level = updated_data["level"]
 		player_bag = updated_data["player_bag"]
-		_fix_player_bag_data()
 		pet_bag = updated_data["宠物背包"]
 		
 		# 更新UI

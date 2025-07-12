@@ -24,8 +24,7 @@ extends Panel
 #预添加常用的面板
 @onready var main_game = get_node("/root/main")
 
-@onready var lucky_draw_panel: LuckyDrawPanel = $'../LuckyDrawPanel'
-@onready var daily_check_in_panel: DailyCheckInPanel = $'../DailyCheckInPanel'
+
 @onready var tcp_network_manager_panel: Panel = $'../TCPNetworkManagerPanel'
 @onready var item_store_panel: Panel = $'../ItemStorePanel'
 @onready var crop_warehouse_panel: Panel = $'../CropWarehousePanel'

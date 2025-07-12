@@ -1,5 +1,5 @@
 extends Panel
-
+#种子仓库面板
 # 背包格子容器
 @onready var player_bag_grid_container : GridContainer = $ScrollContainer/Bag_Grid
 @onready var quit_button : Button = $QuitButton
@@ -51,10 +51,10 @@ var one_click_plant_panel = null
 func _ready():
 	# 连接按钮信号
 	_connect_buttons()
-	
 	# 连接可见性改变信号
 	visibility_changed.connect(_on_visibility_changed)
 	
+
 	# 隐藏面板（初始默认隐藏）
 	self.hide()
 
@@ -80,10 +80,6 @@ func _connect_buttons():
 
 # 初始化玩家背包
 func init_player_bag():
-	# 清空玩家背包格子
-	for child in player_bag_grid_container.get_children():
-		child.queue_free()
-
 	# 显示背包中的种子
 	update_player_bag_ui()
 
@@ -99,14 +95,15 @@ func update_player_bag_ui():
 	# 为背包中的每个过滤后的种子创建按钮
 	for seed_item in filtered_seeds:
 		var crop_name = seed_item["name"]
-		var crop_quality = seed_item.get("quality", "普通")
+		var crop_quality = seed_item["quality"]
 		var crop_count = seed_item["count"]
-		#print("背包物品：", crop_name, " 数量：", crop_count)
 		# 创建种子按钮
 		var button = _create_crop_button(crop_name, crop_quality)
 		# 更新按钮文本显示数量
-		button.text = str(crop_quality + "-" + crop_name + "\n数量：" + str(crop_count))
-		
+		var display_name = crop_name
+		if main_game.can_planted_crop.has(crop_name):
+			display_name = main_game.can_planted_crop[crop_name].get("作物名称", crop_name)
+		button.text = str(crop_quality + "-" + display_name + "\n数量：" + str(crop_count))
 		# 根据是否处于访问模式连接不同的事件
 		if main_game.is_visiting_mode:
 			# 访问模式下，点击种子只显示信息，不能种植
@@ -123,8 +120,10 @@ func _get_filtered_and_sorted_seeds():
 	
 	# 收集符合条件的种子
 	for seed_item in main_game.player_bag:
-		# 安全获取品质字段（兼容老数据）
-		var item_quality = seed_item.get("quality", "普通")
+		# 从crop_data中获取品质信息
+		var item_quality = "普通"
+		if main_game.can_planted_crop.has(seed_item["name"]):
+			item_quality = main_game.can_planted_crop[seed_item["name"]].get("品质", "普通")
 		
 		# 品质过滤
 		if current_filter_quality != "" and item_quality != current_filter_quality:
@@ -199,7 +198,10 @@ func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
 	button.disabled = false
 	button.focus_mode = Control.FOCUS_ALL
 	# 设置按钮文本
-	button.text = str(crop_quality + "-" + crop_name)
+	var display_name = crop_name
+	if main_game.can_planted_crop.has(crop_name):
+		display_name = main_game.can_planted_crop[crop_name].get("作物名称", crop_name)
+	button.text = str(crop_quality + "-" + display_name)
 	
 	# 添加工具提示 (tooltip)
 	if main_game.can_planted_crop.has(crop_name):
@@ -235,7 +237,7 @@ func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
 			time_str += str(seconds) + "秒"
 		
 		button.tooltip_text = str(
-			"作物: " + crop_name + "\n" +
+			"作物: " + display_name + "\n" +
 			"品质: " + crop_quality + "\n" +
 			"价格: " + str(crop["花费"]) + "元\n" +
 			"成熟时间: " + time_str + "\n" +
@@ -302,39 +304,7 @@ func _on_bag_seed_selected(crop_name):
 
 # 访问模式下的种子点击处理
 func _on_visit_seed_selected(crop_name, crop_count):
-	# 显示种子信息
-	var info_text = ""
-	
-	if main_game.can_planted_crop.has(crop_name):
-		var crop = main_game.can_planted_crop[crop_name]
-		var quality = crop.get("品质", "未知")
-		var price = crop.get("花费", 0)
-		var grow_time = crop.get("生长时间", 0)
-		var profit = crop.get("收益", 0)
-		var level_req = crop.get("等级", 1)
-		
-		# 将成熟时间转换为可读格式
-		var time_str = ""
-		var total_seconds = int(grow_time)
-		var hours = total_seconds / 3600
-		var minutes = (total_seconds % 3600) / 60
-		var seconds = total_seconds % 60
-		
-		if hours > 0:
-			time_str += str(hours) + "小时"
-		if minutes > 0:
-			time_str += str(minutes) + "分钟"
-		if seconds > 0:
-			time_str += str(seconds) + "秒"
-		
-		info_text = quality + "-" + crop_name + " (数量: " + str(crop_count) + ")\n"
-		info_text += "价格: " + str(price) + "元, 收益: " + str(profit) + "元\n"
-		info_text += "成熟时间: " + time_str + ", 需求等级: " + str(level_req)
-	else:
-		info_text = crop_name + " (数量: " + str(crop_count) + ")"
-	
-	Toast.show(info_text, Color.CYAN, 3.0, 1.0)
-	print("查看种子信息: ", info_text)
+	pass
 
 # 从背包种植作物
 func _plant_crop_from_bag(index, crop_name, seed_index):
@@ -508,8 +478,6 @@ func _on_refresh_button_pressed() -> void:
 
 # 关闭面板
 func _on_quit_button_pressed():
-	#打开面板后暂时禁用相机功能
-	GlobalVariables.isZoomDisabled = false
 	# 退出种植模式（如果当前在种植模式下）
 	if is_planting_mode:
 		_exit_planting_mode()

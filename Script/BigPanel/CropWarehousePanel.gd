@@ -113,7 +113,7 @@ func update_crop_warehouse_ui():
 	# 为仓库中的每个过滤后的成熟物创建按钮
 	for crop_item in filtered_crops:
 		var crop_name = crop_item["name"]
-		var crop_quality = crop_item.get("quality", "普通")
+		var crop_quality = crop_item["quality"]
 		var crop_count = crop_item["count"]
 		# 创建成熟物按钮
 		var button = _create_crop_button(crop_name, crop_quality)
@@ -132,10 +132,24 @@ func update_crop_warehouse_ui():
 					effect_descriptions.append(effect_name + "+" + str(effect_value))
 			
 			var effect_text = " ".join(effect_descriptions) if effect_descriptions.size() > 0 else "无效果"
-			button.text = str(crop_quality + "-" + crop_name + "\n数量：" + str(crop_count) )
+			var display_name = crop_name
+			if main_game.can_planted_crop.has(crop_name):
+				var mature_name = main_game.can_planted_crop[crop_name].get("成熟物名称")
+				if mature_name != null and mature_name != "":
+					display_name = mature_name
+				else:
+					display_name = main_game.can_planted_crop[crop_name].get("作物名称", crop_name)
+			button.text = str(crop_quality + "-" + display_name + "\n数量：" + str(crop_count) )
 			button.pressed.connect(func(): _on_crop_feed_selected(crop_name, crop_count))
 		else:
-			button.text = str(crop_quality + "-" + crop_name + "\n数量：" + str(crop_count))
+			var display_name = crop_name
+			if main_game.can_planted_crop.has(crop_name):
+				var mature_name = main_game.can_planted_crop[crop_name].get("成熟物名称")
+				if mature_name != null and mature_name != "":
+					display_name = mature_name
+				else:
+					display_name = main_game.can_planted_crop[crop_name].get("作物名称", crop_name)
+			button.text = str(crop_quality + "-" + display_name + "\n数量：" + str(crop_count))
 			button.pressed.connect(func(): _on_crop_selected(crop_name, crop_count))
 		
 		crop_warehouse_grid_container.add_child(button)
@@ -147,8 +161,10 @@ func _get_filtered_and_sorted_crops():
 	
 	# 收集符合条件的成熟物
 	for crop_item in main_game.crop_warehouse:
-		# 安全获取品质字段（兼容老数据）
-		var item_quality = crop_item.get("quality", "普通")
+		# 从crop_data中获取品质信息
+		var item_quality = "普通"
+		if main_game.can_planted_crop.has(crop_item["name"]):
+			item_quality = main_game.can_planted_crop[crop_item["name"]].get("品质", "普通")
 		
 		# 品质过滤
 		if current_filter_quality != "" and item_quality != current_filter_quality:
@@ -228,7 +244,14 @@ func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
 	button.focus_mode = Control.FOCUS_ALL
 	
 	# 设置按钮文本
-	button.text = str(crop_quality + "-" + crop_name)
+	var display_name = crop_name
+	if main_game.can_planted_crop.has(crop_name):
+		var mature_name = main_game.can_planted_crop[crop_name].get("成熟物名称")
+		if mature_name != null and mature_name != "":
+			display_name = mature_name
+		else:
+			display_name = main_game.can_planted_crop[crop_name].get("作物名称", crop_name)
+	button.text = str(crop_quality + "-" + display_name)
 	
 	# 添加工具提示 (tooltip)
 	if main_game.can_planted_crop.has(crop_name):
@@ -264,7 +287,7 @@ func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
 			time_str += str(seconds) + "秒"
 		
 		button.tooltip_text = str(
-			"作物: " + crop_name + "\n" +
+			"作物: " + display_name + "\n" +
 			"品质: " + crop_quality + "\n" +
 			"原价格: " + str(crop["花费"]) + "元\n" +
 			"成熟时间: " + time_str + "\n" +
@@ -302,6 +325,12 @@ func _on_crop_selected(crop_name, crop_count):
 	
 	if main_game.can_planted_crop.has(crop_name):
 		var crop = main_game.can_planted_crop[crop_name]
+		var display_name = crop_name
+		var mature_name = crop.get("成熟物名称")
+		if mature_name != null and mature_name != "":
+			display_name = mature_name
+		else:
+			display_name = crop.get("作物名称", crop_name)
 		var quality = crop.get("品质", "未知")
 		var price = crop.get("花费", 0)
 		var grow_time = crop.get("生长时间", 0)
@@ -322,7 +351,7 @@ func _on_crop_selected(crop_name, crop_count):
 		if seconds > 0:
 			time_str += str(seconds) + "秒"
 		
-		info_text = quality + "-" + crop_name + " (数量: " + str(crop_count) + ")\n"
+		info_text = quality + "-" + display_name + " (数量: " + str(crop_count) + ")\n"
 		info_text += "原价格: " + str(price) + "元, 原收益: " + str(profit) + "元\n"
 		info_text += "成熟时间: " + time_str + ", 需求等级: " + str(level_req) + "\n"
 		info_text += "这是收获的成熟品，可以用于出售或其他用途"
@@ -338,6 +367,12 @@ func _on_visit_crop_selected(crop_name, crop_count):
 	
 	if main_game.can_planted_crop.has(crop_name):
 		var crop = main_game.can_planted_crop[crop_name]
+		var display_name = crop_name
+		var mature_name = crop.get("成熟物名称")
+		if mature_name != null and mature_name != "":
+			display_name = mature_name
+		else:
+			display_name = crop.get("作物名称", crop_name)
 		var quality = crop.get("品质", "未知")
 		var price = crop.get("花费", 0)
 		var grow_time = crop.get("生长时间", 0)
@@ -358,7 +393,7 @@ func _on_visit_crop_selected(crop_name, crop_count):
 		if seconds > 0:
 			time_str += str(seconds) + "秒"
 		
-		info_text = quality + "-" + crop_name + " (数量: " + str(crop_count) + ")\n"
+		info_text = quality + "-" + display_name + " (数量: " + str(crop_count) + ")\n"
 		info_text += "原价格: " + str(price) + "元, 原收益: " + str(profit) + "元\n"
 		info_text += "成熟时间: " + time_str + ", 需求等级: " + str(level_req)
 	else:
@@ -398,12 +433,21 @@ func _on_crop_feed_selected(crop_name: String, crop_count: int):
 	
 	var effect_text = "，".join(effect_descriptions) if effect_descriptions.size() > 0 else "无效果"
 	
+	# 获取显示名称
+	var display_name = crop_name
+	if main_game.can_planted_crop.has(crop_name):
+		var mature_name = main_game.can_planted_crop[crop_name].get("成熟物名称")
+		if mature_name != null and mature_name != "":
+			display_name = mature_name
+		else:
+			display_name = main_game.can_planted_crop[crop_name].get("作物名称", crop_name)
+	
 	# 显示确认对话框
 	var confirm_text = str(
 		"确认喂食 " + pet_name + " 吗？\n\n" +
-		"作物：" + crop_name + "\n" +
+		"作物：" + display_name + "\n" +
 		"效果：" + effect_text + "\n\n" +
-		"确认后将消耗1个" + crop_name
+		"确认后将消耗1个" + display_name
 	)
 	
 	_show_feed_confirmation_dialog(confirm_text, crop_name, pet_id, feed_effects)

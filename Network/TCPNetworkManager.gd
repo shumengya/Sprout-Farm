@@ -253,7 +253,9 @@ func _on_data_received(data):
 				main_game.money = updated_data["money"]
 				main_game.experience = updated_data["experience"]
 				main_game.level = updated_data["level"]
-				main_game.stamina = updated_data["体力值"]
+				# 只有偷菜时才会返回体力值，正常收获不会返回
+				if updated_data.has("体力值"):
+					main_game.stamina = updated_data["体力值"]
 				main_game.crop_warehouse = updated_data["作物仓库"]
 				main_game._update_ui()
 				main_game.crop_warehouse_panel.update_crop_warehouse_ui()

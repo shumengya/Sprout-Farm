@@ -122,7 +122,8 @@ func _create_store_button(crop_name: String, crop_quality: String) -> Button:
 	button.focus_mode = Control.FOCUS_ALL
 	
 	# 设置按钮文本，显示价格
-	button.text = str(crop_quality + "-" + crop_name + "\n价格: ¥" + str(crop["花费"]))
+	var display_name = crop.get("作物名称", crop_name)
+	button.text = str(crop_quality + "-" + display_name + "\n价格: ¥" + str(crop["花费"]))
 		
 	# 将成熟时间从秒转换为天时分秒格式
 	var total_seconds = int(crop["生长时间"])
@@ -154,7 +155,7 @@ func _create_store_button(crop_name: String, crop_quality: String) -> Button:
 		time_str += str(seconds) + "秒"
 		
 	button.tooltip_text = str(
-		"作物: " + crop_name + "\n" +
+		"作物: " + display_name + "\n" +
 		"品质: " + crop_quality + "\n" +
 		"价格: " + str(crop["花费"]) + "元\n" +
 		"成熟时间: " + time_str + "\n" +
