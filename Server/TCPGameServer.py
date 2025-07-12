@@ -81,6 +81,9 @@ class TCPGameServer(TCPServer):
         self.crop_timer = None  # 作物生长计时器
         self.weed_timer = None  # 杂草生长计时器
         
+        # 配置文件目录
+        self.config_dir = "config"  # 配置文件存储目录
+        
         # 性能优化相关配置
         self._init_performance_settings()
         
@@ -402,14 +405,7 @@ class TCPGameServer(TCPServer):
             # 更新总游玩时间
             self._update_total_play_time(player_data, play_time_seconds)
             
-            # 更新今日在线礼包累计时间
-            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-            online_gift_data = player_data.get("online_gift", {})
-            
-            if current_date in online_gift_data:
-                today_data = online_gift_data[current_date]
-                today_data["total_online_time"] = today_data.get("total_online_time", 0.0) + play_time_seconds
-                player_data["online_gift"] = online_gift_data
+            # 注意：在线礼包时间累计现在由新系统管理，此处不再需要更新旧格式
             
             self.save_player_data(username, player_data)
             self.log('INFO', f"用户 {username} 本次游玩时间: {play_time_seconds} 秒，总游玩时间: {player_data['total_login_time']}", 'SERVER')
@@ -463,6 +459,7 @@ class TCPGameServer(TCPServer):
             return False
 
 #=================================数据管理方法====================================
+
 
 
 #================================作物系统管理=========================================
@@ -854,24 +851,26 @@ class TCPGameServer(TCPServer):
             if stamina_updated:
                 self.log('INFO', f"玩家 {username} 体力值已更新：{player_data.get('体力值', 20)}", 'SERVER')
             
+            # 检查并更新每日点赞次数
+            likes_updated = self._check_and_update_daily_likes(player_data)
+            if likes_updated:
+                like_system = player_data.get("点赞系统", {})
+                remaining_likes = like_system.get("今日剩余点赞次数", 10)
+                self.log('INFO', f"玩家 {username} 每日点赞次数已重置：{remaining_likes}", 'SERVER')
+            
+            # 检查并清理在线礼包历史数据
+            self._cleanup_online_gift_history(player_data)
+            
+            # 检查并清理新手礼包历史数据
+            self._cleanup_new_player_gift_history(player_data)
+            
             # 检查并更新已存在玩家的注册时间
             self._check_and_update_register_time(player_data, username)
             
             # 检查并修复智慧树配置
             self._check_and_fix_wisdom_tree_config(player_data, username)
             
-            # 初始化今日在线礼包数据
-            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-            if "online_gift" not in player_data:
-                player_data["online_gift"] = {}
-            
-            online_gift_data = player_data["online_gift"]
-            if current_date not in online_gift_data:
-                online_gift_data[current_date] = {
-                    "start_time": time.time(),
-                    "claimed_gifts": {}
-                }
-                self.log('INFO', f"玩家 {username} 初始化今日在线礼包数据", 'SERVER')
+            # 注意：在线礼包数据已改为中文系统管理，不再需要初始化英文格式数据
             
             # 保存用户会话信息
             self.user_data[client_id] = {
@@ -893,11 +892,16 @@ class TCPGameServer(TCPServer):
             response_player_data["巡逻宠物"] = self._convert_patrol_pets_to_full_data(player_data)
             response_player_data["出战宠物"] = self._convert_battle_pets_to_full_data(player_data)
             
+            # 获取点赞系统信息
+            like_system = player_data.get("点赞系统", {})
+            remaining_likes = like_system.get("今日剩余点赞次数", 10)
+            
             response = {
                 "type": "login_response",
                 "status": "success",
                 "message": "登录成功",
-                "player_data": response_player_data
+                "player_data": response_player_data,
+                "remaining_likes": remaining_likes
             }
         else:
             # 登录失败
@@ -1812,6 +1816,7 @@ class TCPGameServer(TCPServer):
 #==========================杂草生长处理==========================
 
 
+
 #==========================种植作物处理==========================
     #处理种植作物请求 
     def _handle_plant_crop(self, client_id, message):
@@ -2102,6 +2107,7 @@ class TCPGameServer(TCPServer):
             self.log('ERROR', f"无法加载道具数据: {str(e)}", 'SERVER')
             return {}
 #==========================购买道具处理==========================
+
 
 
 #==========================购买宠物处理==========================
@@ -4607,7 +4613,9 @@ class TCPGameServer(TCPServer):
 #==========================宠物使用道具处理==========================
 
 
-    #==========================农场道具使用处理==========================
+
+
+#==========================农场道具使用处理==========================
     def _handle_use_farm_item(self, client_id, message):
         """处理农场道具使用请求"""
         # 检查用户是否已登录
@@ -4732,7 +4740,7 @@ class TCPGameServer(TCPServer):
             self.log('ERROR', f"处理农场道具效果失败: {str(e)}", 'FARM_ITEM')
             return False, "道具效果处理失败", {}
     
-    #==========================农场道具使用处理==========================
+#==========================农场道具使用处理==========================
 
 
 
@@ -4958,22 +4966,17 @@ class TCPGameServer(TCPServer):
                 "message": "不能给自己点赞"
             })
         
-        # 检查今天是否已经给这个玩家点过赞
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        # 检查并更新每日点赞次数
+        self._check_and_update_daily_likes(player_data)
         
-        # 初始化点赞记录
-        if "daily_likes" not in player_data:
-            player_data["daily_likes"] = {}
-        
-        # 检查今天的点赞记录
-        if current_date not in player_data["daily_likes"]:
-            player_data["daily_likes"][current_date] = []
-        
-        if target_username in player_data["daily_likes"][current_date]:
+        # 检查今日剩余点赞次数
+        like_system = player_data.get("点赞系统", {})
+        remaining_likes = like_system.get("今日剩余点赞次数", 10)
+        if remaining_likes <= 0:
             return self.send_data(client_id, {
                 "type": "like_player_response",
                 "success": False,
-                "message": f"今天已经给 {target_username} 点过赞了"
+                "message": "今日点赞次数已用完，明天再来吧！"
             })
         
         # 加载目标玩家数据
@@ -4986,25 +4989,120 @@ class TCPGameServer(TCPServer):
                 "message": f"无法找到玩家 {target_username} 的数据"
             })
         
-        # 记录点赞
-        player_data["daily_likes"][current_date].append(target_username)
+        # 扣除点赞次数
+        player_data["点赞系统"]["今日剩余点赞次数"] = remaining_likes - 1
         
         # 更新目标玩家的点赞数量
-        target_player_data["total_likes"] = target_player_data.get("total_likes", 0) + 1
+        target_player_data["点赞数"] = target_player_data.get("点赞数", 0) + 1
         
         # 保存两个玩家的数据
         self.save_player_data(username, player_data)
         self.save_player_data(target_username, target_player_data)
         
-        self.log('INFO', f"玩家 {username} 点赞了玩家 {target_username}，目标玩家总赞数：{target_player_data['total_likes']}", 'SERVER')
+        self.log('INFO', f"玩家 {username} 点赞了玩家 {target_username}，目标玩家点赞数：{target_player_data['点赞数']}，剩余点赞次数：{player_data['点赞系统']['今日剩余点赞次数']}", 'SERVER')
         
         return self.send_data(client_id, {
             "type": "like_player_response",
             "success": True,
-            "message": f"成功点赞玩家 {target_username}！",
-            "target_likes": target_player_data["total_likes"]
+            "message": f"成功点赞玩家 {target_username}！剩余点赞次数：{player_data['点赞系统']['今日剩余点赞次数']}",
+            "target_likes": target_player_data["点赞数"],
+            "remaining_likes": player_data["点赞系统"]["今日剩余点赞次数"]
         })
+    #检查并更新每日点赞次数
+    def _check_and_update_daily_likes(self, player_data):
+        """检查并更新每日点赞次数（每天重置为10次）"""
+        import datetime
+        
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        
+        # 初始化点赞系统
+        if "点赞系统" not in player_data:
+            player_data["点赞系统"] = {
+                "今日剩余点赞次数": 10,
+                "点赞上次刷新时间": current_date
+            }
+            return True  # 发生了初始化
+        
+        like_system = player_data["点赞系统"]
+        
+        # 确保必要字段存在
+        if "今日剩余点赞次数" not in like_system:
+            like_system["今日剩余点赞次数"] = 10
+        if "点赞上次刷新时间" not in like_system:
+            like_system["点赞上次刷新时间"] = current_date
+        
+        # 检查是否需要每日重置
+        last_refresh_date = like_system.get("点赞上次刷新时间", "")
+        if last_refresh_date != current_date:
+            # 新的一天，重置点赞次数
+            like_system["今日剩余点赞次数"] = 10
+            like_system["点赞上次刷新时间"] = current_date
+            return True  # 发生了重置
+        
+        return False  # 没有重置
+
+    #清理在线礼包历史数据
+    def _cleanup_online_gift_history(self, player_data):
+        """清理过期的在线礼包数据（只保留当天的数据）并删除旧的英文格式"""
+        import datetime
+        
+        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        
+        # 清理旧的英文格式数据
+        if "online_gift" in player_data:
+            del player_data["online_gift"]
+            self.log('INFO', f"已清理玩家数据中的旧英文在线礼包格式", 'SERVER')
+        
+        # 初始化在线礼包数据
+        if "在线礼包" not in player_data:
+            player_data["在线礼包"] = {
+                "当前日期": current_date,
+                "今日在线时长": 0.0,
+                "已领取礼包": [],
+                "登录时间": time.time()
+            }
+            return
+        
+        online_gift_data = player_data["在线礼包"]
+        
+        # 检查是否是新的一天
+        last_date = online_gift_data.get("当前日期", "")
+        if last_date != current_date:
+            # 新的一天，重置所有数据
+            player_data["在线礼包"] = {
+                "当前日期": current_date,
+                "今日在线时长": 0.0,
+                "已领取礼包": [],
+                "登录时间": time.time()
+            }
+            self.log('INFO', f"在线礼包数据已重置到新日期：{current_date}", 'SERVER')
     
+    #清理新手礼包历史数据
+    def _cleanup_new_player_gift_history(self, player_data):
+        """清理旧的英文新手礼包数据并转换为中文格式"""
+        import datetime
+        
+        # 检查是否有旧的英文数据
+        old_claimed = player_data.get("new_player_gift_claimed", False)
+        old_time = player_data.get("new_player_gift_time", "")
+        
+        if old_claimed or old_time:
+            # 转换为中文格式
+            if "新手礼包" not in player_data:
+                player_data["新手礼包"] = {}
+            
+            if old_claimed:
+                player_data["新手礼包"]["已领取"] = True
+                player_data["新手礼包"]["领取时间"] = old_time if old_time else datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            # 删除旧的英文字段
+            if "new_player_gift_claimed" in player_data:
+                del player_data["new_player_gift_claimed"]
+            if "new_player_gift_time" in player_data:
+                del player_data["new_player_gift_time"]
+            
+            self.log('INFO', f"已清理玩家数据中的旧英文新手礼包格式", 'SERVER')
+
 #==========================点赞玩家处理==========================
 
 
@@ -5352,7 +5450,7 @@ class TCPGameServer(TCPServer):
                         "last_login_timestamp": last_login_timestamp,
                         "total_login_time": total_time_str,
                         "total_time_seconds": total_time_seconds,
-                        "like_num": player_data.get("total_likes", 0),
+                        "like_num": player_data.get("点赞数", 0),
                         "is_online": is_online
                     }
                     
@@ -5596,42 +5694,30 @@ class TCPGameServer(TCPServer):
         if not player_data:
             return self.send_data(client_id, response)
         
-        # 获取今日在线礼包数据
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        online_gift_data = player_data.get("online_gift", {})
+        # 确保在线礼包数据已初始化
+        self._cleanup_online_gift_history(player_data)
         
-        # 检查是否是新的一天，如果是则重置领取状态和在线时间
-        if current_date not in online_gift_data:
-            online_gift_data[current_date] = {
-                "total_online_time": 0.0,  # 累计在线时间（秒）
-                "last_login_time": time.time(),  # 最后登录时间
-                "claimed_gifts": {}
-            }
-            player_data["online_gift"] = online_gift_data
-            self.save_player_data(username, player_data)
+        online_gift_data = player_data["在线礼包"]
         
-        today_data = online_gift_data[current_date]
-        
-        # 更新在线时间 - 只有当前用户在线时才累加时间
+        # 更新在线时间
         current_time = time.time()
-        if client_id in self.user_data and self.user_data[client_id].get("logged_in", False):
-            # 计算本次登录的在线时间并累加
-            login_time = self.user_data[client_id].get("login_timestamp", current_time)
-            session_online_time = current_time - login_time
-            # 更新最后登录时间为当前时间，以便下次计算
-            today_data["last_login_time"] = current_time
-        else:
-            session_online_time = 0
+        login_time = online_gift_data.get("登录时间", current_time)
         
-        # 获取总在线时长
-        online_duration = today_data.get("total_online_time", 0.0) + session_online_time
+        # 计算本次登录的在线时间并累加
+        if client_id in self.user_data and self.user_data[client_id].get("logged_in", False):
+            session_online_time = current_time - self.user_data[client_id].get("login_timestamp", current_time)
+            online_gift_data["今日在线时长"] += session_online_time
+            # 重置登录时间戳
+            self.user_data[client_id]["login_timestamp"] = current_time
+        
+        # 保存数据
+        self.save_player_data(username, player_data)
         
         return self.send_data(client_id, {
             "type": "online_gift_data_response",
             "success": True,
-            "online_start_time": today_data.get("last_login_time", current_time),
-            "current_online_duration": online_duration,
-            "claimed_gifts": today_data.get("claimed_gifts", {})
+            "current_online_duration": online_gift_data["今日在线时长"],
+            "claimed_gifts": {gift: True for gift in online_gift_data["已领取礼包"]}
         })
     
     #处理领取在线礼包请求
@@ -5655,132 +5741,55 @@ class TCPGameServer(TCPServer):
                 "message": "礼包名称不能为空"
             })
         
-        # 定义在线礼包配置
-        online_gift_config = {
-            "1分钟": {
-                "time_seconds": 60,
-                "rewards": {
-                    "money": 100,
-                    "experience": 50,
-                    "seeds": [{"name": "小麦", "count": 5}, {"name": "胡萝卜", "count": 3}]
-                }
-            },
-            "3分钟": {
-                "time_seconds": 180,
-                "rewards": {
-                    "money": 250,
-                    "experience": 150,
-                    "seeds": [{"name": "胡萝卜", "count": 5}, {"name": "玉米", "count": 3}]
-                }
-            },
-            "5分钟": {
-                "time_seconds": 300,
-                "rewards": {
-                    "money": 500,
-                    "experience": 250,
-                    "seeds": [{"name": "玉米", "count": 3}, {"name": "番茄", "count": 2}]
-                }
-            },
-            "10分钟": {
-                "time_seconds": 600,
-                "rewards": {
-                    "money": 500,
-                    "experience": 200,
-                    "seeds": [{"name": "玉米", "count": 3}, {"name": "番茄", "count": 2}]
-                }
-            },
-            "30分钟": {
-                "time_seconds": 1800,
-                "rewards": {
-                    "money": 1200,
-                    "experience": 500,
-                    "seeds": [{"name": "草莓", "count": 2}, {"name": "花椰菜", "count": 1}]
-                }
-            },
-            "1小时": {
-                "time_seconds": 3600,
-                "rewards": {
-                    "money": 2500,
-                    "experience": 1000,
-                    "seeds": [{"name": "葡萄", "count": 1}, {"name": "南瓜", "count": 1}, {"name": "咖啡豆", "count": 1}]
-                }
-            },
-            "3小时": {
-                "time_seconds": 10800,
-                "rewards": {
-                    "money": 6000,
-                    "experience": 2500,
-                    "seeds": [{"name": "人参", "count": 1}, {"name": "藏红花", "count": 1}]
-                }
-            },
-            "5小时": {
-                "time_seconds": 18000,
-                "rewards": {
-                    "money": 12000,
-                    "experience": 5000,
-                    "seeds": [{"name": "龙果", "count": 1}, {"name": "松露", "count": 1}, {"name": "月光草", "count": 1}]
-                }
-            }
-        }
+        # 加载在线礼包配置
+        config = self._load_online_gift_config()
+        gift_config = config.get("在线礼包配置", {})
         
-        if gift_name not in online_gift_config:
+        if gift_name not in gift_config:
             return self.send_data(client_id, {
                 "type": "claim_online_gift_response",
                 "success": False,
                 "message": "无效的礼包名称"
             })
         
-        # 获取今日在线礼包数据
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        online_gift_data = player_data.get("online_gift", {})
-        
-        if current_date not in online_gift_data:
-            return self.send_data(client_id, {
-                "type": "claim_online_gift_response",
-                "success": False,
-                "message": "在线礼包数据异常，请重新登录"
-            })
-        
-        today_data = online_gift_data[current_date]
+        # 确保在线礼包数据已初始化
+        self._cleanup_online_gift_history(player_data)
+        online_gift_data = player_data["在线礼包"]
         
         # 检查是否已领取
-        if gift_name in today_data.get("claimed_gifts", {}):
+        if gift_name in online_gift_data["已领取礼包"]:
             return self.send_data(client_id, {
                 "type": "claim_online_gift_response",
                 "success": False,
                 "message": "该礼包今日已领取"
             })
         
-        # 更新当前在线时间并检查是否满足条件
+        # 更新在线时间
         current_time = time.time()
-        
-        # 计算本次登录的在线时间
         if client_id in self.user_data and self.user_data[client_id].get("logged_in", False):
-            login_time = self.user_data[client_id].get("login_timestamp", current_time)
-            session_online_time = current_time - login_time
-            # 更新累计在线时间
-            today_data["total_online_time"] = today_data.get("total_online_time", 0.0) + session_online_time
-            # 重置登录时间
+            session_online_time = current_time - self.user_data[client_id].get("login_timestamp", current_time)
+            online_gift_data["今日在线时长"] += session_online_time
+            # 重置登录时间戳
             self.user_data[client_id]["login_timestamp"] = current_time
         
-        online_duration = today_data.get("total_online_time", 0.0)
-        required_time = online_gift_config[gift_name]["time_seconds"]
+        # 检查在线时长是否满足条件
+        gift_info = gift_config[gift_name]
+        required_time = gift_info["时长秒数"]
+        current_duration = online_gift_data["今日在线时长"]
         
-        if online_duration < required_time:
+        if current_duration < required_time:
             return self.send_data(client_id, {
                 "type": "claim_online_gift_response",
                 "success": False,
-                "message": f"在线时间不足，还需要 {self._format_time(required_time - online_duration)}"
+                "message": f"在线时间不足，还需要 {self._format_time(required_time - current_duration)}"
             })
         
         # 发放奖励
-        rewards = online_gift_config[gift_name]["rewards"]
-        self._apply_online_gift_rewards(player_data, rewards)
+        rewards = gift_info["奖励"]
+        self._apply_online_gift_rewards_new(player_data, rewards)
         
         # 记录领取状态
-        if "claimed_gifts" not in today_data:
-            today_data["claimed_gifts"] = {}
-        today_data["claimed_gifts"][gift_name] = time.time()
+        online_gift_data["已领取礼包"].append(gift_name)
         
         # 保存数据
         self.save_player_data(username, player_data)
@@ -5790,7 +5799,7 @@ class TCPGameServer(TCPServer):
         return self.send_data(client_id, {
             "type": "claim_online_gift_response",
             "success": True,
-            "message": f"成功领取{gift_name}在线礼包！",
+            "message": f"成功领取 {gift_name} 礼包！",
             "gift_name": gift_name,
             "rewards": rewards,
             "updated_data": {
@@ -5801,7 +5810,54 @@ class TCPGameServer(TCPServer):
             }
         })
     
-    #发放在线礼包奖励
+    #发放在线礼包奖励（新版本 - 支持中文配置）
+    def _apply_online_gift_rewards_new(self, player_data, rewards):
+        """发放在线礼包奖励（中文配置格式）"""
+        # 发放金币
+        if "金币" in rewards:
+            player_data["money"] = player_data.get("money", 0) + rewards["金币"]
+        
+        # 发放经验
+        if "经验" in rewards:
+            old_experience = player_data.get("experience", 0)
+            player_data["experience"] = old_experience + rewards["经验"]
+            
+            # 检查是否升级
+            self._check_level_up(player_data)
+        
+        # 发放种子
+        if "种子" in rewards:
+            player_bag = player_data.get("player_bag", [])
+            crop_data = self._load_crop_data()
+            
+            for seed_info in rewards["种子"]:
+                seed_name = seed_info["名称"]
+                seed_count = seed_info["数量"]
+                
+                # 从作物数据中获取品质信息
+                quality = "普通"  # 默认品质
+                if crop_data and seed_name in crop_data:
+                    quality = crop_data[seed_name].get("品质", "普通")
+                
+                # 查找是否已有该种子
+                found = False
+                for item in player_bag:
+                    if item.get("name") == seed_name:
+                        item["count"] += seed_count
+                        found = True
+                        break
+                
+                # 如果没有找到，添加新种子
+                if not found:
+                    player_bag.append({
+                        "name": seed_name,
+                        "quality": quality,
+                        "count": seed_count
+                    })
+            
+            player_data["player_bag"] = player_bag
+
+    #发放在线礼包奖励（旧版本）
     def _apply_online_gift_rewards(self, player_data, rewards):
         """发放在线礼包奖励"""
         # 发放金币
@@ -5869,35 +5925,28 @@ class TCPGameServer(TCPServer):
     
     #更新玩家今日在线时间
     def _update_daily_online_time(self, client_id, player_data):
-        """更新玩家今日在线时间"""
+        """更新玩家今日在线时间（现在由中文在线礼包系统管理）"""
         if client_id not in self.user_data or not self.user_data[client_id].get("logged_in", False):
-            return
+            return 0
         
-        current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        online_gift_data = player_data.get("online_gift", {})
-        
-        # 确保今日数据存在
-        if current_date not in online_gift_data:
-            online_gift_data[current_date] = {
-                "total_online_time": 0.0,
-                "last_login_time": time.time(),
-                "claimed_gifts": {}
-            }
-            player_data["online_gift"] = online_gift_data
-        
-        today_data = online_gift_data[current_date]
+        # 使用新的中文在线礼包系统
         current_time = time.time()
         login_time = self.user_data[client_id].get("login_timestamp", current_time)
         session_online_time = current_time - login_time
         
-        # 更新累计在线时间
-        today_data["total_online_time"] = today_data.get("total_online_time", 0.0) + session_online_time
-        today_data["last_login_time"] = current_time
-        
         # 重置用户登录时间戳
         self.user_data[client_id]["login_timestamp"] = current_time
         
-        return today_data["total_online_time"]
+        # 确保在线礼包数据存在
+        self._cleanup_online_gift_history(player_data)
+        online_gift_data = player_data.get("在线礼包", {})
+        
+        if online_gift_data:
+            # 更新中文在线礼包系统的在线时长
+            online_gift_data["今日在线时长"] = online_gift_data.get("今日在线时长", 0.0) + session_online_time
+            return online_gift_data["今日在线时长"]
+        
+        return session_online_time
 
     #格式化时间显示
     def _format_time(self, seconds):
@@ -6587,33 +6636,30 @@ class TCPGameServer(TCPServer):
             if not player_data:
                 return self.send_data(client_id, response)
             
+            # 加载新手礼包配置
+            config = self._load_new_player_config()
+            gift_config = config.get("新手礼包配置", {})
+            
             # 检查是否已经领取过新手大礼包
-            if player_data.get("new_player_gift_claimed", False):
+            new_player_gift_data = player_data.get("新手礼包", {})
+            if new_player_gift_data.get("已领取", False):
                 return self.send_data(client_id, {
                     "type": "new_player_gift_response",
                     "success": False,
-                    "message": "新手大礼包已经领取过了"
+                    "message": gift_config.get("提示消息", {}).get("已领取", "新手大礼包已经领取过了")
                 })
             
-            # 新手大礼包内容
-            gift_contents = {
-                "coins": 6000,
-                "experience": 1000,
-                "seeds": [
-                    {"name": "龙果", "quality": "传奇", "count": 1},
-                    {"name": "杂交树1", "quality": "传奇", "count": 1},
-                    {"name": "杂交树2", "quality": "传奇", "count": 1}
-                ]
-            }
+            # 获取新手大礼包内容
+            reward_content = gift_config.get("奖励内容", {})
             
             # 应用奖励
-            self._apply_new_player_gift_rewards(player_data, gift_contents)
+            self._apply_new_player_gift_rewards_new(player_data, reward_content)
             
             # 标记已领取
-            player_data["new_player_gift_claimed"] = True
-            
-            # 记录领取时间
-            player_data["new_player_gift_time"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            player_data["新手礼包"] = {
+                "已领取": True,
+                "领取时间": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            }
             
             # 保存玩家数据
             self.save_player_data(username, player_data)
@@ -6623,26 +6669,21 @@ class TCPGameServer(TCPServer):
             return self.send_data(client_id, {
                 "type": "new_player_gift_response",
                 "success": True,
-                "message": "新手大礼包领取成功！获得6000金币、1000经验和3个传奇种子",
-                "gift_contents": gift_contents,
+                "message": gift_config.get("提示消息", {}).get("成功", "新手大礼包领取成功！"),
+                "gift_contents": reward_content,
                 "updated_data": {
                     "money": player_data["money"],
                     "experience": player_data["experience"],
                     "level": player_data["level"],
                     "player_bag": player_data.get("player_bag", []),
-                    "new_player_gift_claimed": True
+                    "宠物背包": player_data.get("宠物背包", []),
+                    "新手礼包": player_data["新手礼包"]
                 }
             })
             
         except Exception as e:
             # 捕获所有异常，防止服务器崩溃
             self.log('ERROR', f"处理新手大礼包请求时出错: {str(e)}", 'SERVER')
-            
-            # 尝试获取用户名
-            try:
-                username = self.user_data[client_id].get("username", "未知用户")
-            except:
-                username = "未知用户"
             
             # 发送错误响应
             return self.send_data(client_id, {
@@ -6653,7 +6694,7 @@ class TCPGameServer(TCPServer):
     
     #应用新手大礼包奖励到玩家数据
     def _apply_new_player_gift_rewards(self, player_data, gift_contents):
-        """应用新手大礼包奖励到玩家数据"""
+        """应用新手大礼包奖励到玩家数据（旧格式，保留兼容性）"""
         # 应用金币奖励
         if "coins" in gift_contents:
             player_data["money"] = player_data.get("money", 0) + gift_contents["coins"]
@@ -6678,6 +6719,52 @@ class TCPGameServer(TCPServer):
                 seed_name = seed_reward["name"]
                 quantity = seed_reward["count"]
                 quality = seed_reward["quality"]
+                
+                # 查找背包中是否已有该种子
+                found = False
+                for item in player_data["player_bag"]:
+                    if item.get("name") == seed_name:
+                        item["count"] += quantity
+                        found = True
+                        break
+                
+                # 如果背包中没有，添加新条目
+                if not found:
+                    player_data["player_bag"].append({
+                        "name": seed_name,
+                        "quality": quality,
+                        "count": quantity
+                    })
+    
+    #应用新手大礼包奖励到玩家数据（新中文格式）
+    def _apply_new_player_gift_rewards_new(self, player_data, reward_content):
+        """应用新手大礼包奖励到玩家数据（新中文格式）"""
+        # 应用金币奖励
+        if "金币" in reward_content:
+            player_data["money"] = player_data.get("money", 0) + reward_content["金币"]
+        
+        # 应用经验奖励
+        if "经验" in reward_content:
+            player_data["experience"] = player_data.get("experience", 0) + reward_content["经验"]
+            
+            # 检查升级
+            while True:
+                level_up_experience = 100 * player_data.get("level", 1)
+                if player_data.get("experience", 0) >= level_up_experience:
+                    player_data["level"] = player_data.get("level", 1) + 1
+                    player_data["experience"] -= level_up_experience
+                else:
+                    break
+        
+        # 应用种子奖励
+        if "种子" in reward_content:
+            if "player_bag" not in player_data:
+                player_data["player_bag"] = []
+            
+            for seed_reward in reward_content["种子"]:
+                seed_name = seed_reward["名称"]
+                quantity = seed_reward["数量"]
+                quality = seed_reward["品质"]
                 
                 # 查找背包中是否已有该种子
                 found = False
@@ -6810,6 +6897,59 @@ class TCPGameServer(TCPServer):
                 "史诗": {"概率": 0.025, "金币范围": [1000, 1500], "经验范围": [500, 800], "种子数量": [1, 1]},
                 "传奇": {"概率": 0.005, "金币范围": [1500, 2500], "经验范围": [800, 1200], "种子数量": [1, 1]},
                 "空奖": {"概率": 0.15, "提示语": ["谢谢惠顾", "下次再来", "再试一次", "继续努力"]}
+            }
+        }
+
+    #加载在线礼包配置
+    def _load_online_gift_config(self):
+        """加载在线礼包配置"""
+        try:
+            config_path = os.path.join(self.config_dir, "online_gift_config.json")
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except Exception as e:
+            self.log('ERROR', f"加载在线礼包配置失败: {str(e)}", 'SERVER')
+            pass
+        
+        # 默认配置
+        return {
+            "在线礼包配置": {
+                "1分钟": {"时长秒数": 60, "奖励": {"金币": 100, "经验": 50, "种子": [{"名称": "小麦", "数量": 5}]}},
+                "5分钟": {"时长秒数": 300, "奖励": {"金币": 500, "经验": 250, "种子": [{"名称": "玉米", "数量": 3}]}},
+                "30分钟": {"时长秒数": 1800, "奖励": {"金币": 1500, "经验": 750, "种子": [{"名称": "草莓", "数量": 2}]}},
+                "1小时": {"时长秒数": 3600, "奖励": {"金币": 3000, "经验": 1500, "种子": [{"名称": "葡萄", "数量": 2}]}}
+            },
+            "每日重置": True
+        }
+    
+    #加载新手礼包配置
+    def _load_new_player_config(self):
+        """加载新手礼包配置"""
+        try:
+            config_path = os.path.join(self.config_dir, "new_player_config.json")
+            if os.path.exists(config_path):
+                with open(config_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except Exception as e:
+            self.log('ERROR', f"加载新手礼包配置失败: {str(e)}", 'SERVER')
+        
+        # 默认配置
+        return {
+            "新手礼包配置": {
+                "奖励内容": {
+                    "金币": 6000,
+                    "经验": 1000,
+                    "种子": [
+                        {"名称": "龙果", "品质": "传奇", "数量": 1},
+                        {"名称": "杂交树1", "品质": "传奇", "数量": 1},
+                        {"名称": "杂交树2", "品质": "传奇", "数量": 1}
+                    ]
+                },
+                "提示消息": {
+                    "成功": "新手大礼包领取成功！获得6000金币、1000经验和3个传奇种子",
+                    "已领取": "新手大礼包已经领取过了"
+                }
             }
         }
     
@@ -8276,9 +8416,6 @@ class TCPGameServer(TCPServer):
                 wisdom_tree_config["距离上一次杀虫时间"] = current_time
 #==========================智慧树系统处理==========================
 
-
-
-# ================================账户设置处理方法================================
 
 # 控制台命令系统
 class ConsoleCommands:

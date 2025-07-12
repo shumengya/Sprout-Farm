@@ -214,6 +214,16 @@ func _on_data_received(data):
 		var status = data.get("status", "")
 		var message = data.get("message", "")
 		var player_data = data.get("player_data", {})
+		var remaining_likes = data.get("remaining_likes", 10)
+		
+		# 在登录成功时显示剩余点赞次数并更新主游戏数据
+		if status == "success":
+			var likes_message = "今日剩余点赞次数：" + str(remaining_likes)
+			Toast.show(likes_message, Color.CYAN)
+			
+			# 更新主游戏中的剩余点赞次数
+			main_game.remaining_likes = remaining_likes
+		
 		login_panel._on_login_response_received(status == "success", message, player_data)
 		return
 	

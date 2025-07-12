@@ -315,6 +315,9 @@ func _on_login_response_received(success: bool, message: String, user_data: Dict
 		# 保存登录数据到主游戏
 		main_game.login_data = user_data.duplicate()
 		
+		# 保存剩余点赞次数
+		main_game.remaining_likes = user_data.get("今日剩余点赞次数", 10)
+		
 		# 更新主游戏数据
 		main_game.experience = user_data.get("experience", 0)
 		main_game.farm_lots = user_data.get("farm_lots", [])

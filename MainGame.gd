@@ -123,6 +123,7 @@ var login_data : Dictionary = {}
 #var data : Dictionary = {}
 
 var start_game : bool = false
+var remaining_likes : int = 10  # 今日剩余点赞次数
 # 种子背包数据
 var player_bag : Array = []  
 # 作物仓库数据
@@ -416,7 +417,7 @@ func _handle_visit_player_response(data):
 		show_farm_name.text = "农场名称：" + target_player_data.get("farm_name", "未知农场")
 		
 		# 显示被访问玩家的点赞数
-		var target_likes = target_player_data.get("total_likes", 0)
+		var target_likes = target_player_data.get("点赞数", 0)
 		show_like.text = "点赞数：" + str(int(target_likes))
 		
 		_update_ui()
@@ -493,8 +494,8 @@ func _handle_return_my_farm_response(data):
 		show_farm_name.text = "农场名称：" + player_data.get("farm_name", "我的农场")
 		
 		# 显示自己的点赞数
-		var my_likes = player_data.get("total_likes", 0)
-		show_like.text = "总赞数：" + str(int(my_likes))
+		var my_likes = player_data.get("点赞数", 0)
+		show_like.text = "点赞数：" + str(int(my_likes))
 		
 		# 退出访问模式
 		is_visiting_mode = false
@@ -680,7 +681,6 @@ func handle_login_success(player_data: Dictionary):
 
 
 
-
 #创建作物按钮
 func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
 	# 根据品质选择相应的进度条
@@ -727,6 +727,7 @@ func _create_farm_buttons():
 		button.connect("pressed", Callable(self, "_on_item_selected").bind(i))
 		
 		grid_container.add_child(button)
+
 
 # 更新农场地块状态
 func _update_farm_lots_state():
@@ -851,7 +852,7 @@ func _update_ui():
 	show_level.text = "等级：" + str(level) + " 级"
 	show_hunger_value.text = "体力值：" + str(stamina)
 	# 显示点赞数
-	var my_likes = login_data.get("total_likes", 0)
+	var my_likes = login_data.get("点赞数", 0)
 	show_like.text = "点赞数：" + str(int(my_likes))
 
 
@@ -2181,6 +2182,11 @@ func _on_like_button_pressed() -> void:
 		Toast.show("只能在访问其他玩家农场时点赞", Color.ORANGE)
 		return
 	
+	# 检查剩余点赞次数
+	if remaining_likes <= 0:
+		Toast.show("今日点赞次数已用完，明天再来吧！", Color.ORANGE)
+		return
+	
 	# 获取被访问玩家的用户名
 	var target_username = visited_player_data.get("user_name", "")
 	if target_username == "":
@@ -2190,7 +2196,7 @@ func _on_like_button_pressed() -> void:
 	# 发送点赞请求
 	var success = tcp_network_manager_panel.sendLikePlayer(target_username)
 	if success:
-		print("已发送点赞请求给玩家：", target_username)
+		print("已发送点赞请求给玩家：", target_username, "，剩余点赞次数：", remaining_likes)
 	else:
 		Toast.show("网络未连接，无法点赞", Color.RED)
 		print("发送点赞请求失败，网络未连接")
@@ -2202,13 +2208,24 @@ func _handle_like_player_response(data):
 	
 	if success:
 		var target_likes = data.get("target_likes", 0)
+		var remaining_likes_from_server = data.get("remaining_likes", 0)
+		
+		# 更新本地剩余点赞次数
+		remaining_likes = remaining_likes_from_server
+		
+		# 显示成功消息，包含剩余次数
 		Toast.show(message, Color.PINK)
 		
 		# 更新被访问玩家的点赞数显示
-		visited_player_data["total_likes"] = target_likes
+		visited_player_data["点赞数"] = target_likes
 		show_like.text = "点赞数：" + str(int(target_likes))
 		
-		print("点赞成功，目标玩家总赞数：", target_likes)
+		# 显示剩余点赞次数提示
+		if remaining_likes > 0:
+			print("点赞成功，目标玩家点赞数：", target_likes, "，您今日还可点赞", remaining_likes, "次")
+		else:
+			print("点赞成功，目标玩家点赞数：", target_likes, "，您今日点赞次数已用完")
+			Toast.show("今日点赞次数已用完，明天再来吧！", Color.ORANGE)
 	else:
 		Toast.show(message, Color.RED)
 		print("点赞失败：", message)
@@ -2315,21 +2332,28 @@ func _handle_new_player_gift_response(data):
 	
 	if success:
 		# 更新玩家数据
-		money = updated_data["money"]
-		experience = updated_data["experience"]
-		level = updated_data["level"]
-		player_bag = updated_data["player_bag"]
-		new_player_gift_claimed = updated_data["new_player_gift_claimed"]
-		pet_bag = updated_data["宠物背包"]
+		money = updated_data.get("money", money)
+		experience = updated_data.get("experience", experience)
+		level = updated_data.get("level", level)
 		
-		# 隐藏新手大礼包按钮
-		new_player_gift_button.hide()
+		# 安全更新背包数据
+		if updated_data.has("player_bag"):
+			player_bag = updated_data["player_bag"]
+		if updated_data.has("宠物背包"):
+			pet_bag = updated_data["宠物背包"]
+		
+		# 获取新手礼包状态
+		var new_player_gift_data = updated_data.get("新手礼包", {})
+		if new_player_gift_data.get("已领取", false):
+			new_player_gift_claimed = true
+			new_player_gift_button.hide()
 		
 		# 更新UI
 		_update_ui()
 		
 		# 更新宠物背包UI
-		pet_bag_panel.update_pet_bag_ui()
+		if updated_data.has("宠物背包"):
+			pet_bag_panel.update_pet_bag_ui()
 		
 		# 显示成功消息
 		Toast.show(message, Color.GOLD, 3.0, 1.0)
@@ -2575,13 +2599,10 @@ func _handle_claim_online_gift_response(data: Dictionary):
 		experience = updated_data["experience"]
 		level = updated_data["level"]
 		player_bag = updated_data["player_bag"]
-		pet_bag = updated_data["宠物背包"]
 		
 		# 更新UI
 		_update_ui()
 		player_bag_panel.update_player_bag_ui()
-		# 更新宠物背包UI
-		pet_bag_panel.update_pet_bag_ui()
 	
 	# 将响应传递给在线礼包面板处理UI更新
 	online_gift_panel.handle_claim_online_gift_response(data)
@@ -2633,17 +2654,19 @@ func _handle_use_pet_item_response(data: Dictionary):
 	var updated_data = data.get("updated_data", {})
 	
 	if success:
-		# 更新宠物背包数据
-		pet_bag = updated_data["宠物背包"]
-			
-		# 更新宠物背包UI
-		pet_bag_panel.update_pet_bag_ui()
+		# 安全更新宠物背包数据
+		if updated_data.has("宠物背包"):
+			pet_bag = updated_data["宠物背包"]
+			# 更新宠物背包UI
+			if pet_bag_panel and pet_bag_panel.has_method("update_pet_bag_ui"):
+				pet_bag_panel.update_pet_bag_ui()
 		
-		# 更新道具背包数据
-		item_bag = updated_data["道具背包"]
-			
-		# 更新道具背包UI
-		item_bag_panel.update_item_bag_ui()
+		# 安全更新道具背包数据
+		if updated_data.has("道具背包"):
+			item_bag = updated_data["道具背包"]
+			# 更新道具背包UI
+			if item_bag_panel and item_bag_panel.has_method("update_item_bag_ui"):
+				item_bag_panel.update_item_bag_ui()
 		
 		# 刷新宠物信息面板（如果当前有显示的宠物）
 		var pet_inform_panel = get_node_or_null("UI/SmallPanel/PetInformPanel")
@@ -2669,16 +2692,21 @@ func _handle_use_farm_item_response(data: Dictionary):
 	var updated_data = data.get("updated_data", {})
 	
 	if success:
-		# 更新金币
-		money = updated_data["money"]
-		# 更新经验
-		experience = updated_data["experience"]
-		# 更新等级
-		level = updated_data["level"]
-		# 更新道具背包数据
-		item_bag = updated_data["道具背包"]
-		# 更新道具背包UI
-		item_bag_panel.update_item_bag_ui()
+		# 安全更新金币
+		if updated_data.has("money"):
+			money = updated_data["money"]
+		# 安全更新经验
+		if updated_data.has("experience"):
+			experience = updated_data["experience"]
+		# 安全更新等级
+		if updated_data.has("level"):
+			level = updated_data["level"]
+		# 安全更新道具背包数据
+		if updated_data.has("道具背包"):
+			item_bag = updated_data["道具背包"]
+			# 更新道具背包UI
+			if item_bag_panel and item_bag_panel.has_method("update_item_bag_ui"):
+				item_bag_panel.update_item_bag_ui()
 		# 更新UI显示
 		_update_ui()
 		

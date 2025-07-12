@@ -22,73 +22,17 @@ extends Panel
 
 
 
-# 在线礼包数据结构
-var online_gift_config = {
-	"1分钟": {
-		"time_seconds": 60,
-		"rewards": {
-			"money": 100,
-			"experience": 50,
-			"seeds": [{"name": "小麦", "count": 5}, {"name": "胡萝卜", "count": 3}]
-		}
-	},
-	"3分钟": {
-		"time_seconds": 180,
-		"rewards": {
-			"money": 250,
-			"experience": 150,
-			"seeds": [{"name": "胡萝卜", "count": 5}, {"name": "玉米", "count": 3}]
-		}
-	},
-	"5分钟": {
-		"time_seconds": 300,
-		"rewards": {
-			"money": 500,
-			"experience": 250,
-			"seeds": [{"name": "玉米", "count": 3}, {"name": "番茄", "count": 2}]
-		}
-	},
-
-	"10分钟": {
-		"time_seconds": 600,
-		"rewards": {
-			"money": 500,
-			"experience": 200,
-			"seeds": [{"name": "玉米", "count": 3}, {"name": "番茄", "count": 2}]
-		}
-	},
-	"30分钟": {
-		"time_seconds": 1800,
-		"rewards": {
-			"money": 1200,
-			"experience": 500,
-			"seeds": [{"name": "草莓", "count": 2}, {"name": "花椰菜", "count": 1}]
-		}
-	},
-	"1小时": {
-		"time_seconds": 3600,
-		"rewards": {
-			"money": 2500,
-			"experience": 1000,
-			"seeds": [{"name": "葡萄", "count": 1}, {"name": "南瓜", "count": 1}, {"name": "咖啡豆", "count": 1}]
-		}
-	},
-	"3小时": {
-		"time_seconds": 10800,
-		"rewards": {
-			"money": 6000,
-			"experience": 2500,
-			"seeds": [{"name": "人参", "count": 1}, {"name": "藏红花", "count": 1}]
-		}
-	},
-	"5小时": {
-		"time_seconds": 18000,
-		"rewards": {
-			"money": 12000,
-			"experience": 5000,
-			"seeds": [{"name": "龙果", "count": 1}, {"name": "松露", "count": 1}, {"name": "月光草", "count": 1}]
-		}
-	}
+# 在线礼包配置（从服务器动态获取）
+var online_gift_config = {}
+var gift_time_config = {
+	"1分钟": 60,
+	"3分钟": 180,
+	"5分钟": 300,
+	"10分钟": 600,
+	"30分钟": 1800,
+	"1小时": 3600,
+	"3小时": 10800,
+	"5小时": 18000
 }
 
 # 按钮映射
@@ -136,14 +80,12 @@ func disable_all_buttons():
 			
 #更新按钮状态
 func update_button_status():
-	for gift_name in online_gift_config.keys():
-		var config = online_gift_config[gift_name]
-		var button = button_mapping[gift_name]
-		
+	for gift_name in gift_time_config.keys():
+		var button = button_mapping.get(gift_name)
 		if not button:
 			continue
 		
-		var required_time = config["time_seconds"]
+		var required_time = gift_time_config[gift_name]
 		var is_claimed = gift_claimed_status.get(gift_name, false)
 		
 		if is_claimed:
@@ -218,6 +160,16 @@ func handle_claim_online_gift_response(data: Dictionary):
 		var rewards = data.get("rewards", {})
 		var reward_text = "获得奖励: "
 		
+		# 处理中文配置格式的奖励
+		if rewards.has("金币"):
+			reward_text += "金币+" + str(rewards["金币"]) + " "
+		if rewards.has("经验"):
+			reward_text += "经验+" + str(rewards["经验"]) + " "
+		if rewards.has("种子"):
+			for seed in rewards["种子"]:
+				reward_text += seed["名称"] + "x" + str(seed["数量"]) + " "
+		
+		# 兼容老格式
 		if rewards.has("money"):
 			reward_text += "金币+" + str(rewards["money"]) + " "
 		if rewards.has("experience"):
