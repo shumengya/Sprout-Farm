@@ -9,20 +9,33 @@ extends Panel
 @onready var response_label = $Scroll/ResponseLabel
 @onready var connection_button = $ConnectionButton
 
-#所有面板
+#==========================所有面板=================================
+#大面板
 @onready var main_game = get_node("/root/main")
 @onready var lucky_draw_panel: LuckyDrawPanel = $'../LuckyDrawPanel'
 @onready var daily_check_in_panel: DailyCheckInPanel = $'../DailyCheckInPanel'
-@onready var item_store_panel: Panel = $'../ItemStorePanel'
-@onready var item_bag_panel: Panel = $'../ItemBagPanel'
-@onready var player_bag_panel: Panel = $'../PlayerBagPanel'
-@onready var crop_warehouse_panel: Panel = $'../CropWarehousePanel'
-@onready var crop_store_panel: Panel = $'../CropStorePanel'
 @onready var player_ranking_panel: Panel = $'../PlayerRankingPanel'
+@onready var item_store_panel: Panel = $'../ItemStorePanel'
+@onready var crop_warehouse_panel: Panel = $'../CropWarehousePanel'
 @onready var login_panel: PanelContainer = $'../LoginPanel'
+@onready var player_bag_panel: Panel = $'../PlayerBagPanel'
+@onready var crop_store_panel: Panel = $'../CropStorePanel'
+@onready var item_bag_panel: Panel = $'../ItemBagPanel'
+@onready var pet_store_panel: Panel = $'../PetStorePanel'
+@onready var pet_bag_panel: Panel = $'../PetBagPanel'
+@onready var pet_fight_panel: Panel = $'../PetFightPanel'
+#小面板
+@onready var land_panel: Panel = $'../../SmallPanel/LandPanel'
+@onready var load_progress_panel: Panel = $'../../SmallPanel/LoadProgressPanel'
+@onready var account_setting_panel: Panel = $'../../SmallPanel/AccountSettingPanel'
+@onready var one_click_plant_panel: Panel = $'../../SmallPanel/OneClickPlantPanel'
+@onready var online_gift_panel: Panel = $'../../SmallPanel/OnlineGiftPanel'
+@onready var debug_panel: Panel = $'../../SmallPanel/DebugPanel'
+@onready var pet_inform_panel: Panel = $'../../SmallPanel/PetInformPanel'
+@onready var global_server_broadcast_panel: Panel = $'../../SmallPanel/GlobalServerBroadcastPanel'
+@onready var scare_crow_panel: Panel = $'../../SmallPanel/ScareCrowPanel'
 @onready var wisdom_tree_panel: Panel = $'../../SmallPanel/WisdomTreePanel'
-
-
+#==========================所有面板=================================
 
 # TCP客户端
 var client: TCPClient = TCPClient.new()
@@ -81,8 +94,8 @@ func _process(delta):
 			connection_button.text = "连接"
 			
 			# 通知主游戏更新在线人数显示
-			if main_game and main_game.has_method("_update_online_players_display"):
-				main_game._update_online_players_display(0, false, false)
+			
+			main_game._update_online_players_display(0, false, false)
 	
 	# 处理延迟测量
 	if client.is_client_connected():
@@ -109,9 +122,10 @@ func _process(delta):
 		# 更新状态显示
 		update_connection_status()
 
+#连接成功后处理
 func _on_connected():
 	print("成功连接到服务器: ", server_configs[current_server_index]["name"])
-	status_label.text = "已连接 ..."
+	status_label.text = "已连接"
 	status_label.modulate = Color.GREEN
 	connection_button.text = "断开"
 	is_trying_to_connect = false
@@ -128,6 +142,7 @@ func _on_connected():
 		"content": "你好，服务器！"
 	})
 	
+#===================请求数据=======================
 	# 连接成功后立即请求作物数据
 	sendGetCropData()
 	
@@ -139,7 +154,10 @@ func _on_connected():
 	
 	# 立即开始第一次ping测量
 	send_ping()
+#===================请求数据=======================
 
+
+#连接失败后处理
 func _on_connection_failed():
 	print("连接失败: ", server_configs[current_server_index]["name"])
 	status_label.text = "连接失败 - " + server_configs[current_server_index]["name"]
@@ -154,8 +172,10 @@ func _on_connection_failed():
 	
 	# 通知主游戏更新在线人数显示
 	main_game._update_online_players_display(0, false, false)
+	# 通知主游戏连接已断开，显示登录面板，以便重新登录
+	main_game._on_connection_lost()
 	
-
+#连接断开后处理
 func _on_connection_closed():
 	print("连接断开: ", server_configs[current_server_index]["name"])
 	status_label.text = "连接断开 "
@@ -169,418 +189,310 @@ func _on_connection_closed():
 	ping_timer = 0.0
 	
 	# 通知主游戏更新在线人数显示
-	if main_game and main_game.has_method("_update_online_players_display"):
-		main_game._update_online_players_display(0, false, false)
-	
-	# 通知主游戏连接已断开，显示登录面板
+	main_game._update_online_players_display(0, false, false)
+	# 通知主游戏连接已断开，显示登录面板，以便重新登录
 	main_game._on_connection_lost()
 	
 	
-#=========================客户端与服务端通信核心=========================================
+# ============================= 客户端与服务端通信核心 =====================================
 func _on_data_received(data):
 	# 根据数据类型处理数据
 	response_label.text = "收到: %s" % JSON.stringify(data)
-	match typeof(data):
+	
+	# 只处理字典类型的数据
+	if typeof(data) != TYPE_DICTIONARY:
+		return
+	
+	var message_type = data.get("type", "")
+	
+	# 基础消息类型
+	if message_type == "ping" || message_type == "response":
+		return
+	
+	# 登录相关消息
+	if message_type == "login_response":
+		var status = data.get("status", "")
+		var message = data.get("message", "")
+		var player_data = data.get("player_data", {})
+		login_panel._on_login_response_received(status == "success", message, player_data)
+		return
+	
+	if message_type == "register_response":
+		var status = data.get("status", "")
+		var message = data.get("message", "")
+		login_panel._on_register_response_received(status == "success", message)
+		return
+	
+	if message_type == "verification_code_response":
+		var success = data.get("success", false)
+		var message = data.get("message", "")
+		login_panel._on_verification_code_response(success, message)
+		return
+	
+	if message_type == "verify_code_response":
+		var success = data.get("success", false)
+		var message = data.get("message", "")
+		login_panel._on_verify_code_response(success, message)
+		return
+	
+	# 游戏数据更新消息
+	if message_type == "crop_update":
+		main_game._handle_crop_update(data)
+		return
+	
+	# 玩家操作响应消息
+	if message_type == "action_response":
+		var action_type = data.get("action_type", "")
+		var success = data.get("success", false)
+		var message = data.get("message", "")
+		var updated_data = data.get("updated_data", {})
+		
+		# 收获作物响应
+		if action_type == "harvest_crop":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.experience = updated_data["experience"]
+				main_game.level = updated_data["level"]
+				main_game.stamina = updated_data["体力值"]
+				main_game.crop_warehouse = updated_data["作物仓库"]
+				main_game._update_ui()
+				main_game.crop_warehouse_panel.update_crop_warehouse_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 种植作物响应
+		elif action_type == "plant_crop":
+			if success:
+				main_game.player_bag = updated_data["player_bag"]
+				main_game.player_bag_panel.update_player_bag_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 购买种子响应
+		elif action_type == "buy_seed":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.player_bag = updated_data["player_bag"]
+				main_game._update_ui()
+				main_game.player_bag_panel.update_player_bag_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 购买道具响应
+		elif action_type == "buy_item":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.item_bag = updated_data["道具背包"]
+				main_game._update_ui()
+				main_game.item_bag_panel.update_item_bag_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 购买宠物响应
+		elif action_type == "buy_pet":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.pet_bag = updated_data["宠物背包"]
+				main_game._update_ui()
+				main_game.pet_bag_panel.update_pet_bag_ui()
+				Toast.show(message, Color.MAGENTA)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 重命名宠物响应
+		elif action_type == "rename_pet":
+			if success:
+				main_game.pet_bag = updated_data["宠物背包"]
+				main_game.pet_bag_panel.update_pet_bag_ui()
+				
+				var pet_id = data.get("pet_id", "")
+				var new_name = data.get("new_name", "")
+				pet_inform_panel.on_rename_pet_success(pet_id, new_name)
+				
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 设置巡逻宠物响应
+		elif action_type == "set_patrol_pet":
+			if success:
+				main_game.patrol_pets = updated_data["巡逻宠物"]
+				main_game.update_patrol_pets()
+				pet_inform_panel._refresh_patrol_button()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 使用道具响应
+		elif action_type == "use_item":
+			if success:
+				main_game.item_bag = updated_data["道具背包"]
+				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.experience = updated_data["experience"]
+				main_game.level = updated_data["level"]
+				main_game._update_ui()
+				main_game._update_farm_lots_state()
+				main_game.item_bag_panel.update_item_bag_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 开垦土地响应
+		elif action_type == "dig_ground":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.experience = updated_data["experience"]
+				main_game.level = updated_data["level"]
+				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.player_bag = updated_data["player_bag"]
+				main_game._update_ui()
+				main_game._update_farm_lots_state()
+				main_game.player_bag_panel.update_player_bag_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 铲除作物响应
+		elif action_type == "remove_crop":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.farm_lots = updated_data["farm_lots"]
+				main_game._update_ui()
+				main_game._update_farm_lots_state()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 浇水响应
+		elif action_type == "water_crop":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.experience = updated_data["experience"]
+				main_game.level = updated_data["level"]
+				main_game._update_ui()
+				main_game._update_farm_lots_state()
+				Toast.show(message, Color.CYAN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 施肥响应
+		elif action_type == "fertilize_crop":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.experience = updated_data["experience"]
+				main_game.level = updated_data["level"]
+				main_game._update_ui()
+				main_game._update_farm_lots_state()
+				Toast.show(message, Color.PURPLE)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 升级土地响应
+		elif action_type == "upgrade_land":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.farm_lots = updated_data["farm_lots"]
+				main_game._update_ui()
+				main_game._update_farm_lots_state()
+				Toast.show(message, Color.GOLD)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 添加新土地响应
+		elif action_type == "buy_new_ground":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.farm_lots = updated_data["farm_lots"]
+				main_game._create_farm_buttons()
+				main_game._update_farm_lots_state()
+				main_game._update_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		return
+	
+	# 游戏功能响应消息
+	if message_type == "play_time_response":
+		main_game._handle_play_time_response(data)
+	elif message_type == "player_rankings_response":
+		main_game._handle_player_rankings_response(data)
+	elif message_type == "crop_data_response":
+		main_game._handle_crop_data_response(data)
+	elif message_type == "item_config_response":
+		main_game._handle_item_config_response(data)
+	elif message_type == "visit_player_response":
+		main_game._handle_visit_player_response(data)
+	elif message_type == "return_my_farm_response":
+		main_game._handle_return_my_farm_response(data)
+	elif message_type == "like_player_response":
+		main_game._handle_like_player_response(data)
+	elif message_type == "online_players_response":
+		main_game._handle_online_players_response(data)
+	elif message_type == "daily_check_in_response":
+		main_game._handle_daily_check_in_response(data)
+	elif message_type == "check_in_data_response":
+		main_game._handle_check_in_data_response(data)
+	elif message_type == "lucky_draw_response":
+		main_game._handle_lucky_draw_response(data)
+	elif message_type == "new_player_gift_response":
+		main_game._handle_new_player_gift_response(data)
+	elif message_type == "online_gift_data_response":
+		main_game._handle_online_gift_data_response(data)
+	elif message_type == "claim_online_gift_response":
+		main_game._handle_claim_online_gift_response(data)
+	elif message_type == "pong":
+		handle_pong_response(data)
+	elif message_type == "modify_account_info_response":
+		main_game._handle_account_setting_response(data)
+	elif message_type == "delete_account_response":
+		main_game._handle_account_setting_response(data)
+	elif message_type == "refresh_player_info_response":
+		main_game._handle_account_setting_response(data)
+	elif message_type == "steal_caught":
+		main_game._handle_steal_caught_response(data)
+	elif message_type == "global_broadcast_message":
+		main_game._handle_global_broadcast_message(data)
+	elif message_type == "global_broadcast_response":
+		main_game._handle_global_broadcast_response(data)
+	elif message_type == "broadcast_history_response":
+		main_game._handle_broadcast_history_response(data)
+	elif message_type == "use_pet_item_response":
+		main_game._handle_use_pet_item_response(data)
+	elif message_type == "use_farm_item_response":
+		main_game._handle_use_farm_item_response(data)
+	elif message_type == "buy_scare_crow_response":
+		main_game._handle_buy_scare_crow_response(data)
+	elif message_type == "modify_scare_crow_config_response":
+		main_game._handle_modify_scare_crow_config_response(data)
+	elif message_type == "get_scare_crow_config_response":
+		main_game._handle_get_scare_crow_config_response(data)
+	
+	# 智慧树相关响应
+	elif message_type == "wisdom_tree_operation_response":
+		var success = data.get("success", false)
+		var message = data.get("message", "")
+		var operation_type = data.get("operation_type", "")
+		var updated_data = data.get("updated_data", {})
+		wisdom_tree_panel.handle_wisdom_tree_operation_response(success, message, operation_type, updated_data)
+	
+	elif message_type == "wisdom_tree_message_response":
+		var success = data.get("success", false)
+		var message = data.get("message", "")
+		var updated_data = data.get("updated_data", {})
+		wisdom_tree_panel.handle_wisdom_tree_message_response(success, message, updated_data)
+	
+	elif message_type == "wisdom_tree_config_response":
+		main_game._handle_wisdom_tree_config_response(data)
+# ============================= 客户端与服务端通信核心 =====================================
 
-		TYPE_DICTIONARY:
-			# 处理JSON对象
-			var message_type = data.get("type", "")
-			
-			match message_type:
-				"ping":							#ping是否在线
-					return
-				"response":						#服务器通用响应
-					return
-				"login_response":				#登录响应
-					var status = data.get("status", "")
-					var message = data.get("message", "")
-					var player_data = data.get("player_data", {})
-					if login_panel:
-						login_panel._on_login_response_received(status == "success", message, player_data)
-				"register_response":			#注册响应
-					var status = data.get("status", "")
-					var message = data.get("message", "")
-					if login_panel:
-						login_panel._on_register_response_received(status == "success", message)
-				"verification_code_response":	#验证码发送响应
-					var success = data.get("success", false)
-					var message = data.get("message", "")
-					if login_panel:
-						login_panel._on_verification_code_response(success, message)
-				"verify_code_response":			#验证码验证响应
-					var success = data.get("success", false)
-					var message = data.get("message", "")
-					if login_panel:
-						login_panel._on_verify_code_response(success, message)
-				"crop_update":					#作物更新响应
-					if main_game:
-						main_game._handle_crop_update(data)
-				"action_response":				#玩家操作响应
-					if main_game:
-						# 处理玩家动作到服务端响应消息
-						var action_type = data.get("action_type", "")
-						var success = data.get("success", false)
-						var message = data.get("message", "")
-						var updated_data = data.get("updated_data", {})
-						
-						match action_type:
-							"harvest_crop":#处理收获作物响应
-								if success:
-									# 更新玩家数据
-									if updated_data.has("money"):
-										main_game.money = updated_data["money"]
-									if updated_data.has("experience"):
-										main_game.experience = updated_data["experience"]
-									if updated_data.has("level"):
-										main_game.level = updated_data["level"]
-									if updated_data.has("体力值"):
-										main_game.stamina = updated_data["体力值"]
-									if updated_data.has("作物仓库"):
-										main_game.crop_warehouse = updated_data["作物仓库"]
-									
-									# 更新UI
-									main_game._update_ui()
-									# 更新作物仓库UI
-									if main_game.crop_warehouse_panel:
-										main_game.crop_warehouse_panel.update_crop_warehouse_ui()
-									Toast.show(message, Color.GREEN)
-								else:
-									Toast.show(message, Color.RED)
-							"plant_crop":#处理种植作物响应
-								if success:
-									# 更新玩家背包
-									if updated_data.has("player_bag"):
-										main_game.player_bag = updated_data["player_bag"]
-									
-									# 更新玩家背包UI
-									main_game.player_bag_panel.update_player_bag_ui()
-									Toast.show(message, Color.GREEN)
-								else:
-									Toast.show(message, Color.RED)
-							"buy_seed":#处理购买种子响应
-								if success:
-									# 更新玩家数据
-									if updated_data.has("money"):
-										main_game.money = updated_data["money"]
-									if updated_data.has("player_bag"):
-										main_game.player_bag = updated_data["player_bag"]
-									
-									# 更新UI
-									main_game._update_ui()
-									main_game.player_bag_panel.update_player_bag_ui()
-									Toast.show(message, Color.GREEN)
-								else:
-									Toast.show(message, Color.RED)
-							"buy_item":#处理购买道具响应
-								if success:
-									# 更新玩家数据
-									if updated_data.has("money"):
-										main_game.money = updated_data["money"]
-									if updated_data.has("道具背包"):
-										main_game.item_bag = updated_data["道具背包"]
-									
-									# 更新UI
-									main_game._update_ui()
-									if main_game.item_bag_panel:
-										main_game.item_bag_panel.update_item_bag_ui()
-									Toast.show(message, Color.GREEN)
-								else:
-									Toast.show(message, Color.RED)
-							"buy_pet":#处理购买宠物响应
-								if success:
-									# 更新玩家数据
-									if updated_data.has("money"):
-										main_game.money = updated_data["money"]
-									if updated_data.has("宠物背包"):
-										main_game.pet_bag = updated_data["宠物背包"]
-									
-									# 更新UI
-									main_game._update_ui()
-									if main_game.pet_bag_panel:
-										main_game.pet_bag_panel.update_pet_bag_ui()
-									Toast.show(message, Color.MAGENTA)
-								else:
-									Toast.show(message, Color.RED)
-							"rename_pet":#处理重命名宠物响应
-								if success:
-									# 更新玩家数据
-									if updated_data.has("宠物背包"):
-										main_game.pet_bag = updated_data["宠物背包"]
-									
-									# 更新UI
-									if main_game.pet_bag_panel:
-										main_game.pet_bag_panel.update_pet_bag_ui()
-									
-									# 通知宠物信息面板更新
-									var pet_inform_panel = get_node_or_null("/root/main/BigPanel/SmallPanel/PetInformPanel")
-									if pet_inform_panel and pet_inform_panel.has_method("on_rename_pet_success"):
-										var pet_id = data.get("pet_id", "")
-										var new_name = data.get("new_name", "")
-										pet_inform_panel.on_rename_pet_success(pet_id, new_name)
-									
-									Toast.show(message, Color.GREEN)
-								else:
-									Toast.show(message, Color.RED)
-							"set_patrol_pet":#处理设置巡逻宠物响应
-								if success:
-									# 更新巡逻宠物数据
-									if updated_data.has("巡逻宠物"):
-										main_game.patrol_pets = updated_data["巡逻宠物"]
-									
-									# 更新巡逻宠物显示
-									if main_game.has_method("update_patrol_pets"):
-										main_game.update_patrol_pets()
-									
-									# 更新巡逻按钮状态
-									var pet_inform_panel = get_node_or_null("/root/main/BigPanel/SmallPanel/PetInformPanel")
-									if pet_inform_panel and pet_inform_panel.has_method("_refresh_patrol_button"):
-										pet_inform_panel._refresh_patrol_button()
-									
-									Toast.show(message, Color.GREEN)
-								else:
-									Toast.show(message, Color.RED)
-							"use_item":#处理使用道具响应
-								print("调试：收到道具使用响应")
-								print("  - success: ", success)
-								print("  - message: ", message)
-								print("  - updated_data: ", updated_data)
-								
-								if success:
-									print("调试：道具使用成功，开始更新数据")
-									# 更新玩家数据
-									if updated_data.has("道具背包"):
-										main_game.item_bag = updated_data["道具背包"]
-										print("调试：更新道具背包")
-									if updated_data.has("farm_lots"):
-										print("调试：更新地块数据")
-										main_game.farm_lots = updated_data["farm_lots"]
-									if updated_data.has("experience"):
-										main_game.experience = updated_data["experience"]
-										print("调试：更新经验值: ", main_game.experience)
-									if updated_data.has("level"):
-										main_game.level = updated_data["level"]
-										print("调试：更新等级: ", main_game.level)
-									
-									# 更新UI
-									print("调试：开始更新UI")
-									main_game._update_ui()
-									main_game._update_farm_lots_state()
-									if main_game.item_bag_panel:
-										main_game.item_bag_panel.update_item_bag_ui()
-									print("调试：UI更新完成")
-									Toast.show(message, Color.GREEN)
-								else:
-									print("错误：道具使用失败: ", message)
-									Toast.show(message, Color.RED)
-							"dig_ground":#处理开垦土地
-								if success:
-									# 更新玩家数据
-									if updated_data.has("money"):
-										main_game.money = updated_data["money"]
-									if updated_data.has("experience"):
-										main_game.experience = updated_data["experience"]
-									if updated_data.has("level"):
-										main_game.level = updated_data["level"]
-									if updated_data.has("farm_lots"):
-										main_game.farm_lots = updated_data["farm_lots"]
-									if updated_data.has("player_bag"):
-										main_game.player_bag = updated_data["player_bag"]
-									
-									# 更新UI
-									main_game._update_ui()
-									main_game._update_farm_lots_state()
-									# 更新背包UI
-									if main_game.player_bag_panel:
-										main_game.player_bag_panel.update_player_bag_ui()
-									Toast.show(message, Color.GREEN, 3.0, 1.0)
-								else:
-									Toast.show(message, Color.RED)
-							"remove_crop":#处理铲除作物
-								if success:
-									# 更新玩家数据
-									if updated_data.has("money"):
-										main_game.money = updated_data["money"]
-									if updated_data.has("farm_lots"):
-										main_game.farm_lots = updated_data["farm_lots"]
-									
-									# 更新UI
-									main_game._update_ui()
-									main_game._update_farm_lots_state()
-									Toast.show(message, Color.GREEN)
-								else:
-									Toast.show(message, Color.RED)
-							"water_crop":#处理浇水
-								if success:
-									# 更新玩家数据
-									if updated_data.has("money"):
-										main_game.money = updated_data["money"]
-									if updated_data.has("farm_lots"):
-										main_game.farm_lots = updated_data["farm_lots"]
-									if updated_data.has("experience"):
-										main_game.experience = updated_data["experience"]
-									if updated_data.has("level"):
-										main_game.level = updated_data["level"]
-									
-									# 更新UI
-									main_game._update_ui()
-									main_game._update_farm_lots_state()
-									Toast.show(message, Color.CYAN)
-								else:
-									Toast.show(message, Color.RED)
-							"fertilize_crop":#处理施肥	
-								if success:
-									# 更新玩家数据
-									if updated_data.has("money"):
-										main_game.money = updated_data["money"]
-									if updated_data.has("farm_lots"):
-										main_game.farm_lots = updated_data["farm_lots"]
-									if updated_data.has("experience"):
-										main_game.experience = updated_data["experience"]
-									if updated_data.has("level"):
-										main_game.level = updated_data["level"]
-									
-									# 更新UI
-									main_game._update_ui()
-									main_game._update_farm_lots_state()
-									Toast.show(message, Color.PURPLE)
-								else:
-									Toast.show(message, Color.RED)
-							"upgrade_land":#处理升级土地	
-								if success:
-									# 更新玩家数据
-									if updated_data.has("money"):
-										main_game.money = updated_data["money"]
-									if updated_data.has("farm_lots"):
-										main_game.farm_lots = updated_data["farm_lots"]
-									
-									# 更新UI
-									main_game._update_ui()
-									main_game._update_farm_lots_state()
-									Toast.show(message, Color.GOLD)
-								else:
-									Toast.show(message, Color.RED)
-							"buy_new_ground":#处理添加新土地
-								if success:
-									# 更新玩家数据
-									if updated_data.has("money"):
-										main_game.money = updated_data["money"]
-									if updated_data.has("farm_lots"):
-										main_game.farm_lots = updated_data["farm_lots"]
-									
-									# 重新创建UI来显示新地块
-									main_game._create_farm_buttons()
-									main_game._update_farm_lots_state()
-									main_game._update_ui()
-									Toast.show(message, Color.GREEN)
-								else:
-									Toast.show(message, Color.RED)
-				"play_time_response":			#游玩时间统计响应
-					if main_game and main_game.has_method("_handle_play_time_response"):
-						main_game._handle_play_time_response(data)
-				"player_rankings_response":		#玩家排行榜响应
-					if main_game and main_game.has_method("_handle_player_rankings_response"):
-						main_game._handle_player_rankings_response(data)
-				"crop_data_response":			#作物数据更新响应
-					if main_game and main_game.has_method("_handle_crop_data_response"):
-						main_game._handle_crop_data_response(data)
-				"item_config_response":			#道具配置数据响应
-					if main_game and main_game.has_method("_handle_item_config_response"):
-						main_game._handle_item_config_response(data)
-				"visit_player_response":		#访问玩家响应
-					if main_game and main_game.has_method("_handle_visit_player_response"):
-						main_game._handle_visit_player_response(data)
-				"return_my_farm_response":		#返回我的农场响应
-					if main_game and main_game.has_method("_handle_return_my_farm_response"):
-						main_game._handle_return_my_farm_response(data)
-				"like_player_response":			#点赞玩家响应
-					if main_game and main_game.has_method("_handle_like_player_response"):
-						main_game._handle_like_player_response(data)
-				"online_players_response":		#玩家在线响应
-					if main_game and main_game.has_method("_handle_online_players_response"):
-						main_game._handle_online_players_response(data)
-				"daily_check_in_response":		#每日签到响应
-					if main_game and main_game.has_method("_handle_daily_check_in_response"):
-						main_game._handle_daily_check_in_response(data)
-				"check_in_data_response":		#获取签到数据响应
-					if main_game and main_game.has_method("_handle_check_in_data_response"):
-						main_game._handle_check_in_data_response(data)
-				"lucky_draw_response":			#幸运抽奖响应
-					if main_game and main_game.has_method("_handle_lucky_draw_response"):
-						main_game._handle_lucky_draw_response(data)
-				"new_player_gift_response":		#新手大礼包响应
-					if main_game and main_game.has_method("_handle_new_player_gift_response"):
-						main_game._handle_new_player_gift_response(data)
-				"online_gift_data_response":	#在线礼包数据响应
-					if main_game and main_game.has_method("_handle_online_gift_data_response"):
-						main_game._handle_online_gift_data_response(data)
-				"claim_online_gift_response":	#领取在线礼包响应
-					if main_game and main_game.has_method("_handle_claim_online_gift_response"):
-						main_game._handle_claim_online_gift_response(data)
-				"pong":							#延迟检测响应
-					handle_pong_response(data)
-				"modify_account_info_response":	#修改账号信息响应
-					if main_game and main_game.has_method("_handle_account_setting_response"):
-						main_game._handle_account_setting_response(data)
-				"delete_account_response":		#删除账号响应
-					if main_game and main_game.has_method("_handle_account_setting_response"):
-						main_game._handle_account_setting_response(data)
-				"refresh_player_info_response":	#刷新玩家信息响应
-					if main_game and main_game.has_method("_handle_account_setting_response"):
-						main_game._handle_account_setting_response(data)
-				"steal_caught":					#偷菜被发现响应
-					if main_game and main_game.has_method("_handle_steal_caught_response"):
-						main_game._handle_steal_caught_response(data)
-				"global_broadcast_message":		#全服大喇叭消息
-					if main_game and main_game.has_method("_handle_global_broadcast_message"):
-						main_game._handle_global_broadcast_message(data)
-				"global_broadcast_response":	#全服大喇叭发送响应
-					if main_game and main_game.has_method("_handle_global_broadcast_response"):
-						main_game._handle_global_broadcast_response(data)
-				"broadcast_history_response":	#全服大喇叭历史消息响应
-					if main_game and main_game.has_method("_handle_broadcast_history_response"):
-						main_game._handle_broadcast_history_response(data)
-				"use_pet_item_response":		#宠物使用道具响应
-					if main_game and main_game.has_method("_handle_use_pet_item_response"):
-						main_game._handle_use_pet_item_response(data)
-				"use_farm_item_response":		#农场道具使用响应
-					if main_game and main_game.has_method("_handle_use_farm_item_response"):
-						main_game._handle_use_farm_item_response(data)
-				"buy_scare_crow_response":		#购买稻草人响应
-					if main_game and main_game.has_method("_handle_buy_scare_crow_response"):
-						main_game._handle_buy_scare_crow_response(data)
-				"modify_scare_crow_config_response":	#修改稻草人配置响应
-					if main_game and main_game.has_method("_handle_modify_scare_crow_config_response"):
-						main_game._handle_modify_scare_crow_config_response(data)
-				"get_scare_crow_config_response":	#获取稻草人配置响应
-					if main_game and main_game.has_method("_handle_get_scare_crow_config_response"):
-						main_game._handle_get_scare_crow_config_response(data)
-				"wisdom_tree_operation_response":	#智慧树操作响应
-					var success = data.get("success", false)
-					var message = data.get("message", "")
-					var operation_type = data.get("operation_type", "")
-					var updated_data = data.get("updated_data", {})
-					
-					if wisdom_tree_panel and wisdom_tree_panel.has_method("handle_wisdom_tree_operation_response"):
-						wisdom_tree_panel.handle_wisdom_tree_operation_response(success, message, operation_type, updated_data)
-				"wisdom_tree_message_response":		#智慧树消息发送响应
-					var success = data.get("success", false)
-					var message = data.get("message", "")
-					var updated_data = data.get("updated_data", {})
-					
-					if wisdom_tree_panel and wisdom_tree_panel.has_method("handle_wisdom_tree_message_response"):
-						wisdom_tree_panel.handle_wisdom_tree_message_response(success, message, updated_data)
-				"wisdom_tree_config_response":		#智慧树配置响应
-					if main_game and main_game.has_method("_handle_wisdom_tree_config_response"):
-						main_game._handle_wisdom_tree_config_response(data)
-				_:
-					# 显示其他类型的消息
-					return
-		_:
-			# 处理非JSON数据
-			return
-#=========================客户端与服务端通信核心=========================================
 
-#=====================================网络连接基本处理=========================================
 
 
 
@@ -604,15 +516,11 @@ func connect_to_current_server():
 	status_label.text = "正在连接 " + config["name"] + "..."
 	status_label.modulate = Color.YELLOW
 	
-	print("=== 尝试连接服务器 ===")
-	print("服务器名称: ", config["name"])
-	print("服务器地址: ", config["host"], ":", config["port"])
-	print("服务器索引: ", current_server_index, "/", server_configs.size() - 1)
-	
 	is_trying_to_connect = true
 	connection_start_time = Time.get_unix_time_from_system()
 	
 	client.connect_to_server(config["host"], config["port"])
+
 #手动发送消息处理
 func _on_send_button_pressed():
 	if not client.is_client_connected():
@@ -634,6 +542,7 @@ func _on_send_button_pressed():
 	# 清空输入
 	message_input.text = "" 
 #=====================================网络操作处理=========================================
+
 
 
 #=====================================客户端向服务端发送消息处理=========================================
@@ -1180,8 +1089,7 @@ func handle_pong_response(data = null):
 		var current_time = Time.get_unix_time_from_system()
 		current_ping = int((current_time - ping_start_time) * 1000)  # 转换为毫秒
 		is_measuring_ping = false
-		#print("延迟: ", current_ping, "ms")
-		
+
 		# 更新连接状态显示
 		update_connection_status()
 

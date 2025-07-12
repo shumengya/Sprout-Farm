@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=67 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
@@ -47,8 +47,20 @@
 [ext_resource type="Script" uid="uid://dwf28j01ckg3y" path="res://Script/SmallPanel/WisdomTreePanel.gd" id="39_np7ck"]
 [ext_resource type="Texture2D" uid="uid://bt1i2yhhlor5e" path="res://assets/地块/土块1.webp" id="41_cdkxt"]
 [ext_resource type="Texture2D" uid="uid://3ff2lnbc0op7" path="res://assets/稻草人图片/稻草人1.webp" id="43_6rkns"]
-[ext_resource type="Texture2D" uid="uid://nci8k65dcm6b" path="res://assets/草地图片/草地1.webp" id="43_jbja5"]
 [ext_resource type="Texture2D" uid="uid://cbdm5e6s8bf6l" path="res://assets/智慧树图片/智慧树4.webp" id="45_xvovi"]
+[ext_resource type="Texture2D" uid="uid://dilipbs0lncpd" path="res://assets/草地图片/草地10.webp" id="48_2i8fe"]
+[ext_resource type="Texture2D" uid="uid://du34yctd8bd8m" path="res://assets/灌木丛图片/灌木丛1.webp" id="49_xjiif"]
+[ext_resource type="Texture2D" uid="uid://dswjorjhf1i6f" path="res://assets/灌木丛图片/灌木丛2.webp" id="50_sqnmr"]
+[ext_resource type="Texture2D" uid="uid://go3n3qnpancf" path="res://assets/灌木丛图片/灌木丛3.webp" id="51_2i8fe"]
+[ext_resource type="Texture2D" uid="uid://dk4yl4ghmxaa2" path="res://assets/天气系统图片/雪花.webp" id="53_4ka7t"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5dq3w"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nf3jg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_adtqp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4ka7t"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n03md"]
 border_width_left = 5
@@ -68,6 +80,8 @@ border_width_top = 10
 border_width_right = 10
 border_width_bottom = 10
 corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2i8fe"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k1sw4"]
 bg_color = Color(0.6, 0.6, 0.6, 0.984314)
@@ -111,6 +125,16 @@ corner_radius_bottom_left = 20
 corner_detail = 20
 shadow_size = 20
 shadow_offset = Vector2(3, 3)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_nf3jg"]
+lifetime_randomness = 1.0
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+gravity = Vector3(0, 98, 0)
+scale_min = 0.5
+scale_max = 0.5
+turbulence_enabled = true
 
 [node name="main" type="Node"]
 script = ExtResource("1_v3yaj")
@@ -536,6 +560,7 @@ offset_left = 425.0
 offset_top = 2.0
 offset_right = 1025.0
 offset_bottom = 722.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_5dq3w")
 
 [node name="DailyCheckInPanel" parent="UI/BigPanel" instance=ExtResource("18_m6fch")]
 visible = false
@@ -543,17 +568,21 @@ offset_left = 442.0
 offset_top = 3.0
 offset_right = 1042.0
 offset_bottom = 723.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_nf3jg")
 
 [node name="TCPNetworkManagerPanel" parent="UI/BigPanel" instance=ExtResource("7_401ut")]
 visible = false
 offset_top = 97.0
 offset_bottom = 97.0
 scale = Vector2(0.7, 0.7)
+theme_override_styles/panel = SubResource("StyleBoxFlat_adtqp")
 
 [node name="PlayerRankingPanel" parent="UI/BigPanel" instance=ExtResource("16_n03md")]
 visible = false
-offset_left = 0.0
-offset_right = 1400.0
+offset_left = 73.0
+offset_top = 28.0
+offset_right = 1473.0
+offset_bottom = 748.0
 
 [node name="ItemStorePanel" parent="UI/BigPanel" instance=ExtResource("21_uhubb")]
 offset_left = 80.0
@@ -570,6 +599,7 @@ offset_left = 342.0
 offset_top = 40.0
 offset_right = 1092.0
 offset_bottom = 700.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_4ka7t")
 
 [node name="PlayerBagPanel" parent="UI/BigPanel" instance=ExtResource("19_8kysg")]
 visible = false
@@ -660,32 +690,13 @@ visible = false
 
 [node name="SmallPanel" type="CanvasLayer" parent="UI"]
 
-[node name="LandPanel" parent="UI/SmallPanel" instance=ExtResource("12_y1hsh")]
-visible = false
-offset_left = 442.0
-offset_top = 77.0
-offset_right = 958.0
-offset_bottom = 548.0
-
 [node name="LoadProgressPanel" parent="UI/SmallPanel" instance=ExtResource("27_vygm6")]
 
 [node name="AccountSettingPanel" parent="UI/SmallPanel" instance=ExtResource("26_uc6q1")]
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 911.0
-offset_bottom = 647.0
-
-[node name="OneClickPlantPanel" parent="UI/SmallPanel" instance=ExtResource("15_8kysg")]
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 516.0
-offset_bottom = 250.0
-
-[node name="OnlineGiftPanel" parent="UI/SmallPanel" instance=ExtResource("14_5b81d")]
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 521.0
-offset_bottom = 250.0
+offset_left = 219.0
+offset_top = 45.0
+offset_right = 1130.0
+offset_bottom = 692.0
 
 [node name="DebugPanel" type="Panel" parent="UI/SmallPanel"]
 visible = false
@@ -729,6 +740,7 @@ visible = false
 offset_left = 342.0
 offset_right = 1022.0
 offset_bottom = 723.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_2i8fe")
 script = ExtResource("31_vygm6")
 
 [node name="Title" type="Label" parent="UI/SmallPanel/PetInformPanel"]
@@ -927,10 +939,21 @@ text = "查看更多"
 
 [node name="ScareCrowPanel" type="Panel" parent="UI/SmallPanel"]
 visible = false
-offset_right = 1402.0
-offset_bottom = 723.0
+offset_left = 122.0
+offset_top = 68.0
+offset_right = 1524.0
+offset_bottom = 791.0
+scale = Vector2(0.8, 0.8)
 theme_override_styles/panel = SubResource("StyleBoxFlat_jyxgm")
 script = ExtResource("35_6ylhg")
+
+[node name="Background" type="ColorRect" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_left = -150.0
+offset_top = -80.0
+offset_right = 1597.0
+offset_bottom = 810.0
+color = Color(1, 1, 1, 0)
 
 [node name="Title" type="Label" parent="UI/SmallPanel/ScareCrowPanel"]
 layout_mode = 0
@@ -1134,10 +1157,21 @@ text = "确认修改"
 
 [node name="WisdomTreePanel" type="Panel" parent="UI/SmallPanel"]
 visible = false
-offset_right = 1400.0
-offset_bottom = 720.0
+offset_left = 129.0
+offset_top = 63.0
+offset_right = 1529.0
+offset_bottom = 783.0
+scale = Vector2(0.8, 0.8)
 theme_override_styles/panel = SubResource("StyleBoxFlat_np7ck")
 script = ExtResource("39_np7ck")
+
+[node name="Background" type="ColorRect" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = -156.0
+offset_top = -76.0
+offset_right = 1589.0
+offset_bottom = 821.0
+color = Color(1, 1, 1, 0)
 
 [node name="Title" type="Label" parent="UI/SmallPanel/WisdomTreePanel"]
 layout_mode = 0
@@ -1307,6 +1341,19 @@ offset_bottom = 85.0
 theme_override_font_sizes/font_size = 40
 text = "X"
 
+[node name="LandPanel" parent="UI/SmallPanel" instance=ExtResource("12_y1hsh")]
+visible = false
+
+[node name="OnlineGiftPanel" parent="UI/SmallPanel" instance=ExtResource("14_5b81d")]
+visible = false
+
+[node name="OneClickPlantPanel" parent="UI/SmallPanel" instance=ExtResource("15_8kysg")]
+visible = false
+offset_left = 371.0
+offset_top = 166.0
+offset_right = 979.0
+offset_bottom = 482.0
+
 [node name="DiaLog" type="CanvasLayer" parent="UI"]
 
 [node name="AcceptDialog" parent="UI/DiaLog" instance=ExtResource("16_0igvr")]
@@ -1376,7 +1423,7 @@ self_modulate = Color(0.5, 0.5, 0.5, 1)
 [node name="PetPatrolPathLine" type="Line2D" parent="."]
 position = Vector2(-52.4841, -115.095)
 scale = Vector2(0.92426, 0.816774)
-points = PackedVector2Array(-40, -100, -40, 1100, 1400, 1100, 1400, -100)
+points = PackedVector2Array(-200, -100, -200, 1500, 1500, 1500, 1500, -100)
 closed = true
 width = 5.0
 default_color = Color(0, 1, 1, 1)
@@ -2791,17 +2838,17 @@ texture = ExtResource("41_cdkxt")
 [node name="Decoration" type="Node2D" parent="."]
 
 [node name="ScareCrow" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
-offset_left = 2.0
 offset_top = -108.0
-offset_right = 266.0
+offset_right = 264.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
 [node name="GrassGroundImage" type="Sprite2D" parent="Decoration/ScareCrow"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
-texture = ExtResource("43_jbja5")
+texture = ExtResource("48_2i8fe")
 
 [node name="ScareCrowImage" type="Sprite2D" parent="Decoration/ScareCrow"]
 position = Vector2(132, 48)
@@ -2848,26 +2895,26 @@ autowrap_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScareCrow2" type="Button" parent="Decoration"]
+[node name="Decoration1" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
-offset_left = 108.0
+offset_left = 122.0
 offset_top = -108.0
-offset_right = 372.0
+offset_right = 386.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/ScareCrow2"]
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration1"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
-texture = ExtResource("43_jbja5")
+texture = ExtResource("48_2i8fe")
 
-[node name="ScareCrowImage" type="Sprite2D" parent="Decoration/ScareCrow2"]
-visible = false
+[node name="Image" type="Sprite2D" parent="Decoration/Decoration1"]
 position = Vector2(132, 48)
 scale = Vector2(1.2, 1.2)
-texture = ExtResource("43_6rkns")
+texture = ExtResource("49_xjiif")
 
-[node name="ScareCrowName" type="RichTextLabel" parent="Decoration/ScareCrow2"]
+[node name="Name" type="RichTextLabel" parent="Decoration/Decoration1"]
 visible = false
 layout_mode = 0
 offset_left = -65.0
@@ -2884,43 +2931,235 @@ text = "稻草人"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BackgroundPanel" type="Panel" parent="Decoration/ScareCrow2"]
+[node name="Decoration2" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 244.0
+offset_top = -108.0
+offset_right = 508.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration2"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/Decoration2"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("50_sqnmr")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/Decoration2"]
 visible = false
 layout_mode = 0
 offset_left = -65.0
-offset_top = -265.0
+offset_top = -145.0
 offset_right = 339.0
-offset_bottom = -145.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_6ylhg")
-
-[node name="ScareCrowtalks" type="RichTextLabel" parent="Decoration/ScareCrow2/BackgroundPanel"]
-layout_mode = 0
-offset_left = 13.0
-offset_right = 390.0
-offset_bottom = 113.0
-theme_override_font_sizes/bold_italics_font_size = 35
-theme_override_font_sizes/italics_font_size = 35
-theme_override_font_sizes/mono_font_size = 35
-theme_override_font_sizes/normal_font_size = 35
-theme_override_font_sizes/bold_font_size = 35
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
-text = "臭小子不要偷我的菜，被我逮到你就完蛋了！"
-autowrap_mode = 2
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration3" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 366.0
+offset_top = -108.0
+offset_right = 630.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration3"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/Decoration3"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("51_2i8fe")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/Decoration3"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration4" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 488.0
+offset_top = -108.0
+offset_right = 752.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration4"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/Decoration4"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("50_sqnmr")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/Decoration4"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration5" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 610.0
+offset_top = -108.0
+offset_right = 874.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration5"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/Decoration5"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/Decoration5"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration6" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 732.0
+offset_top = -108.0
+offset_right = 996.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration6"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/Decoration6"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/Decoration6"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration7" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 854.0
+offset_top = -108.0
+offset_right = 1118.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration7"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/Decoration7"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("50_sqnmr")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/Decoration7"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="WisdomTree" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
-offset_left = 928.0
+offset_left = 976.0
 offset_top = -108.0
-offset_right = 1192.0
+offset_right = 1240.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
 [node name="GrassGroundImage" type="Sprite2D" parent="Decoration/WisdomTree"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
-texture = ExtResource("43_jbja5")
+texture = ExtResource("48_2i8fe")
 
 [node name="WisdomTreeImage" type="Sprite2D" parent="Decoration/WisdomTree"]
 position = Vector2(126, 82)
@@ -2974,6 +3213,1063 @@ autowrap_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Decoration2" type="Node2D" parent="."]
+
+[node name="Decoration1" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = -108.0
+offset_right = 142.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration1"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration1"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration1"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration2" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_right = 142.0
+offset_bottom = 264.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration2"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration2"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration2"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration3" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 108.0
+offset_right = 142.0
+offset_bottom = 372.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration3"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration3"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration3"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration4" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 216.0
+offset_right = 142.0
+offset_bottom = 480.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration4"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration4"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration4"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration5" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 324.0
+offset_right = 142.0
+offset_bottom = 588.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration5"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration5"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration5"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration6" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 432.0
+offset_right = 142.0
+offset_bottom = 696.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration6"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration6"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration6"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration7" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 540.0
+offset_right = 142.0
+offset_bottom = 804.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration7"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration7"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration7"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration8" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 648.0
+offset_right = 142.0
+offset_bottom = 912.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration8"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration8"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration8"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration9" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 756.0
+offset_right = 142.0
+offset_bottom = 1020.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration9"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration9"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration9"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration10" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 864.0
+offset_right = 142.0
+offset_bottom = 1128.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration10"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration10"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration10"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration3" type="Node2D" parent="."]
+position = Vector2(1220, 0)
+
+[node name="Decoration1" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = -108.0
+offset_right = 142.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration1"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration1"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration1"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration2" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_right = 142.0
+offset_bottom = 264.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration2"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration2"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration2"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration3" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 108.0
+offset_right = 142.0
+offset_bottom = 372.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration3"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration3"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration3"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration4" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 216.0
+offset_right = 142.0
+offset_bottom = 480.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration4"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration4"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration4"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration5" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 324.0
+offset_right = 142.0
+offset_bottom = 588.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration5"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration5"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration5"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration6" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 432.0
+offset_right = 142.0
+offset_bottom = 696.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration6"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration6"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration6"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration7" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 540.0
+offset_right = 142.0
+offset_bottom = 804.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration7"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration7"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration7"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration8" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 648.0
+offset_right = 142.0
+offset_bottom = 912.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration8"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration8"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration8"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration9" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 756.0
+offset_right = 142.0
+offset_bottom = 1020.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration9"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration9"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration9"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration10" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 864.0
+offset_right = 142.0
+offset_bottom = 1128.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration10"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration10"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration10"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration4" type="Node2D" parent="."]
+position = Vector2(0, 976)
+
+[node name="ScareCrow" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_top = -108.0
+offset_right = 264.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/ScareCrow"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/ScareCrow"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/ScareCrow"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration1" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 122.0
+offset_top = -108.0
+offset_right = 386.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration1"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/Decoration1"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration1"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration2" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 244.0
+offset_top = -108.0
+offset_right = 508.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration2"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/Decoration2"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("50_sqnmr")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration2"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration3" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 366.0
+offset_top = -108.0
+offset_right = 630.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration3"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/Decoration3"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("51_2i8fe")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration3"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration4" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 488.0
+offset_top = -108.0
+offset_right = 752.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration4"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/Decoration4"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("50_sqnmr")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration4"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration5" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 610.0
+offset_top = -108.0
+offset_right = 874.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration5"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/Decoration5"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration5"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration6" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 732.0
+offset_top = -108.0
+offset_right = 996.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration6"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/Decoration6"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration6"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration7" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 854.0
+offset_top = -108.0
+offset_right = 1118.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration7"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/Decoration7"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("50_sqnmr")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration7"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WisdomTree" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 976.0
+offset_top = -108.0
+offset_right = 1240.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="Image" type="Sprite2D" parent="Decoration4/WisdomTree"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Name" type="Label" parent="Decoration4/WisdomTree"]
+self_modulate = Color(2, 2, 2, 1)
+layout_mode = 0
+offset_top = -145.0
+offset_right = 265.0
+offset_bottom = -96.0
+theme_override_font_sizes/font_size = 35
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WeatherSystem" type="Node2D" parent="."]
+
+[node name="Snow" type="GPUParticles2D" parent="WeatherSystem"]
+position = Vector2(-170, -272)
+amount = 16
+sub_emitter = NodePath(".")
+texture = ExtResource("53_4ka7t")
+lifetime = 15.0
+randomness = 0.5
+process_material = SubResource("ParticleProcessMaterial_nf3jg")
+
+[node name="Rain" type="GPUParticles2D" parent="WeatherSystem"]
+visible = false
+position = Vector2(-170, -272)
+amount = 16
+sub_emitter = NodePath(".")
+texture = ExtResource("53_4ka7t")
+lifetime = 15.0
+randomness = 0.5
+process_material = SubResource("ParticleProcessMaterial_nf3jg")
+
+[node name="DayNightSystem" type="Node2D" parent="."]
+
 [connection signal="pressed" from="UI/GUI/GameInfoHBox3/WatchBroadcast" to="." method="_on_watch_broadcast_button_pressed"]
 [connection signal="pressed" from="UI/GUI/FarmVBox/SeedStoreButton" to="." method="_on_open_store_button_pressed"]
 [connection signal="pressed" from="UI/GUI/FarmVBox/SeedWarehouseButton" to="." method="_on_seed_warehouse_button_pressed"]
@@ -3001,5 +4297,6 @@ vertical_alignment = 1
 [connection signal="pressed" from="UI/GUI/OtherVBox/ScareCrowButton" to="." method="_on_my_pet_button_pressed"]
 [connection signal="pressed" from="UI/SmallPanel/DebugPanel/QuitButton" to="UI/SmallPanel/DebugPanel" method="_on_quit_button_pressed"]
 [connection signal="pressed" from="Decoration/ScareCrow" to="." method="_on_scare_crow_pressed"]
-[connection signal="pressed" from="Decoration/ScareCrow2" to="." method="_on_scare_crow_pressed"]
 [connection signal="pressed" from="Decoration/WisdomTree" to="." method="_on_wisdom_tree_pressed"]
+[connection signal="pressed" from="Decoration4/ScareCrow" to="." method="_on_scare_crow_pressed"]
+[connection signal="pressed" from="Decoration4/WisdomTree" to="." method="_on_wisdom_tree_pressed"]

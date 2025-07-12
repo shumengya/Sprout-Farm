@@ -105,15 +105,7 @@ func _ready() -> void:
 func load_wisdom_tree_data():
 	if main_game and main_game.login_data.has("智慧树配置"):
 		wisdom_tree_config = main_game.login_data["智慧树配置"]
-	else:
-		# 如果没有数据，使用默认值
-		wisdom_tree_config = {
-			"智慧树显示的话": "",
-			"等级": 1,
-			"经验": 0,
-			"生命值": 100,
-			"高度": 20
-		}
+
 
 # 更新UI显示
 func update_ui():
@@ -129,8 +121,6 @@ func update_ui():
 	experience.text = "经验: " + str(current_exp) + "/" + str(max_exp)
 	height.text = "高度: " + str(wisdom_tree_config["高度"]) + "cm"
 	
-	# 检查是否处于访问模式
-	var is_visiting_mode = main_game and main_game.is_visiting_mode
 	
 	# 根据生命值设置颜色
 	if current_health <= 0:
@@ -141,24 +131,14 @@ func update_ui():
 	elif current_health <= max_health * 0.3:  # 生命值低于30%
 		health.modulate = Color.ORANGE
 		revive_button.hide()
-		_set_buttons_enabled(not is_visiting_mode)  # 访问模式下禁用按钮
 	else:
 		health.modulate = Color.GREEN
 		revive_button.hide()
-		_set_buttons_enabled(not is_visiting_mode)  # 访问模式下禁用按钮
 	
-	# 访问模式下的特殊处理
-	if is_visiting_mode:
-		revive_button.hide()
-		talk_input.editable = false
-		talk_input.placeholder_text = "访问模式下无法发送消息"
-		send_button.disabled = true
-		send_button.text = "访问模式"
-	else:
-		talk_input.editable = true
-		talk_input.placeholder_text = "在这里输入(*´∀ ˋ*)"
-		send_button.disabled = false
-		send_button.text = "发送"
+	talk_input.editable = true
+	talk_input.placeholder_text = "在这里输入(*´∀ ˋ*)"
+	send_button.disabled = false
+	send_button.text = "发送"
 
 # 获取下一等级需要的经验
 func get_next_level_experience() -> int:
@@ -198,96 +178,38 @@ func _on_operation_confirmed(operation_type: String):
 
 # 浇水按钮
 func _on_water_button_pressed():
-	# 检查是否处于访问模式
-	if main_game and main_game.is_visiting_mode:
-		Toast.show("访问模式下无法操作智慧树！", Color.YELLOW)
-		return
-	
-	if wisdom_tree_config["当前生命值"] <= 0:
-		Toast.show("智慧树已死亡，请先复活！", Color.RED)
-		return
-	
 	show_operation_confirm("water", 100, "给智慧树浇水")
 
 # 施肥按钮
 func _on_fertilize_button_pressed():
-	# 检查是否处于访问模式
-	if main_game and main_game.is_visiting_mode:
-		Toast.show("访问模式下无法操作智慧树！", Color.YELLOW)
-		return
-	
-	if wisdom_tree_config["当前生命值"] <= 0:
-		Toast.show("智慧树已死亡，请先复活！", Color.RED)
-		return
-	
 	show_operation_confirm("fertilize", 200, "给智慧树施肥")
 
 # 除草按钮
 func _on_kill_grass_button_pressed():
-	# 检查是否处于访问模式
-	if main_game and main_game.is_visiting_mode:
-		Toast.show("访问模式下无法操作智慧树！", Color.YELLOW)
-		return
-	
-	if wisdom_tree_config["当前生命值"] <= 0:
-		Toast.show("智慧树已死亡，请先复活！", Color.RED)
-		return
-	
 	show_operation_confirm("kill_grass", 150, "给智慧树除草")
 
 # 杀虫按钮
 func _on_kill_bug_button_pressed():
-	# 检查是否处于访问模式
-	if main_game and main_game.is_visiting_mode:
-		Toast.show("访问模式下无法操作智慧树！", Color.YELLOW)
-		return
-	
-	if wisdom_tree_config["当前生命值"] <= 0:
-		Toast.show("智慧树已死亡，请先复活！", Color.RED)
-		return
-	
 	show_operation_confirm("kill_bug", 150, "给智慧树杀虫")
 
 # 放音乐按钮
 func _on_play_music_button_pressed():
-	# 检查是否处于访问模式
-	if main_game and main_game.is_visiting_mode:
-		Toast.show("访问模式下无法操作智慧树！", Color.YELLOW)
-		return
-	
-	if wisdom_tree_config["当前生命值"] <= 0:
-		Toast.show("智慧树已死亡，请先复活！", Color.RED)
-		return
-	
 	show_operation_confirm("play_music", 100, "给智慧树放音乐")
 
 # 复活按钮
 func _on_revive_button_pressed():
-	# 检查是否处于访问模式
-	if main_game and main_game.is_visiting_mode:
-		Toast.show("访问模式下无法操作智慧树！", Color.YELLOW)
-		return
-	
-	if wisdom_tree_config["当前生命值"] > 0:
-		Toast.show("智慧树还活着，不需要复活！", Color.YELLOW)
-		return
-	
 	show_operation_confirm("revive", 1000, "复活智慧树")
 
 # 发送消息按钮
 func _on_send_button_pressed():
-	# 检查是否处于访问模式
-	if main_game and main_game.is_visiting_mode:
-		Toast.show("访问模式下无法发送消息！", Color.YELLOW)
-		return
 	
 	var message = talk_input.text.strip_edges()
 	if message.is_empty():
 		Toast.show("请输入要发送的消息！", Color.YELLOW)
 		return
 	
-	if message.length() > 100:
-		Toast.show("消息长度不能超过100个字符！", Color.RED)
+	if message.length() > 50:
+		Toast.show("消息长度不能超过50个字符！", Color.RED)
 		return
 	
 	# 发送消息到服务器
@@ -315,7 +237,7 @@ func handle_wisdom_tree_operation_response(success: bool, message: String, opera
 			main_game.money = updated_data["money"]
 			main_game._update_ui()
 		
-		# 更新面板UI
+		# 更新智慧树设置面板UI
 		update_ui()
 		
 		# 同步更新MainGame中的智慧树显示
@@ -375,10 +297,6 @@ func handle_wisdom_tree_message_response(success: bool, message: String, updated
 	else:
 		Toast.show(message, Color.RED)
 
-# 检查等级是否提升（此函数已不再需要，服务器端处理）
-func check_level_up():
-	# 等级提升现在由服务器端处理，客户端只需要接收更新后的数据
-	pass
 
 # 面板显示与隐藏切换处理
 func _on_visibility_changed():

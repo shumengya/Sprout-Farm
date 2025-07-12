@@ -435,7 +435,6 @@ func _on_quit_button_pressed():
 	
 #刷新面板信息
 func _on_refresh_button_pressed() -> void:
-	print("刷新土地面板信息")
 	_update_panel_information()
 	Toast.show("面板信息已刷新", Color.GREEN, 1.5, 1.0)
 	

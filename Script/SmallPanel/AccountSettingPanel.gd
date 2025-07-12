@@ -187,7 +187,7 @@ func _refresh_player_info():
 	user_password_input.text = main_game.user_password if main_game.user_password != "" else ""
 	
 	# 优先从 login_data 获取数据，如果没有则从 data 获取
-	var player_data = main_game.login_data if main_game.login_data.size() > 0 else main_game.data
+	var player_data = main_game.login_data #if main_game.login_data.size() > 0 else main_game.data
 	
 	player_name_input.text = player_data.get("player_name", "")
 	farm_name_input.text = player_data.get("farm_name", "")

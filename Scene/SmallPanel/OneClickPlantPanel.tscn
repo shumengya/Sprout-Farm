@@ -1,28 +1,41 @@
-[gd_scene load_steps=2 format=3 uid="uid://4rwitowdt4h"]
+[gd_scene load_steps=3 format=3 uid="uid://4rwitowdt4h"]
 
 [ext_resource type="Script" uid="uid://rlk8e51pibtm" path="res://Script/SmallPanel/OneClickPlantPanel.gd" id="1_cvoer"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cvoer"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
+
 [node name="OneClickPlantPanel" type="Panel"]
-visible = false
-offset_left = 450.0
-offset_top = 77.0
-offset_right = 966.0
-offset_bottom = 327.0
+offset_left = 467.0
+offset_top = 125.0
+offset_right = 1075.0
+offset_bottom = 441.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_cvoer")
 script = ExtResource("1_cvoer")
 
 [node name="Quit_Button" type="Button" parent="."]
 layout_mode = 0
-offset_left = 465.0
-offset_right = 515.0
-offset_bottom = 50.0
+offset_left = 535.0
+offset_top = 21.0
+offset_right = 585.0
+offset_bottom = 71.0
 theme_override_font_sizes/font_size = 30
 text = "X"
 
 [node name="Title" type="Label" parent="."]
 self_modulate = Color(0.431373, 0.498039, 1, 1)
 layout_mode = 2
-offset_right = 516.0
-offset_bottom = 42.0
+offset_right = 608.0
+offset_bottom = 71.0
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 3
@@ -36,9 +49,10 @@ vertical_alignment = 1
 
 [node name="Grid" type="GridContainer" parent="."]
 layout_mode = 2
-offset_top = 46.0
-offset_right = 500.0
-offset_bottom = 210.0
+offset_left = 47.0
+offset_top = 87.0
+offset_right = 563.0
+offset_bottom = 291.0
 columns = 5
 
 [node name="FullScreenPlantBtn" type="Button" parent="Grid"]

@@ -1,20 +1,33 @@
-[gd_scene load_steps=2 format=3 uid="uid://dpiy0aim20n2h"]
+[gd_scene load_steps=3 format=3 uid="uid://dpiy0aim20n2h"]
 
 [ext_resource type="Script" uid="uid://ccaqrb6sdwbux" path="res://Script/SmallPanel/OnlineGiftPanel.gd" id="1_i0ga4"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i0ga4"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
+
 [node name="OnlineGiftPanel" type="Panel"]
-visible = false
-offset_left = 449.0
-offset_top = 77.0
-offset_right = 970.0
-offset_bottom = 327.0
+offset_left = 395.0
+offset_top = 140.0
+offset_right = 1008.0
+offset_bottom = 474.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_i0ga4")
 script = ExtResource("1_i0ga4")
 
 [node name="Quit_Button" type="Button" parent="."]
 layout_mode = 0
-offset_left = 465.0
-offset_right = 515.0
-offset_bottom = 50.0
+offset_left = 543.0
+offset_top = 21.0
+offset_right = 593.0
+offset_bottom = 71.0
 theme_override_font_sizes/font_size = 30
 text = "X"
 
@@ -26,8 +39,8 @@ offset_bottom = 40.0
 [node name="Title" type="Label" parent="."]
 modulate = Color(0.996846, 0.629335, 1, 1)
 layout_mode = 2
-offset_right = 516.0
-offset_bottom = 42.0
+offset_right = 613.0
+offset_bottom = 65.0
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 3
@@ -41,9 +54,10 @@ vertical_alignment = 1
 
 [node name="Grid" type="GridContainer" parent="."]
 layout_mode = 2
-offset_top = 46.0
-offset_right = 500.0
-offset_bottom = 210.0
+offset_left = 49.0
+offset_top = 93.0
+offset_right = 565.0
+offset_bottom = 297.0
 columns = 5
 
 [node name="OneMinute" type="Button" parent="Grid"]

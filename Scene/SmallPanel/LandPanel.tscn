@@ -1,27 +1,38 @@
-[gd_scene load_steps=3 format=3 uid="uid://dckc8nrn7p425"]
+[gd_scene load_steps=4 format=3 uid="uid://dckc8nrn7p425"]
 
 [ext_resource type="Script" uid="uid://bljtkxil64h14" path="res://Script/SmallPanel/LandPanel.gd" id="1_nmy5p"]
 [ext_resource type="Texture2D" uid="uid://2sdfbvf1isif" path="res://icon.svg" id="2_07q41"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_03j44"]
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+corner_detail = 20
 
 [node name="LandPanel" type="Panel"]
 offset_left = 385.0
 offset_top = 69.0
 offset_right = 901.0
 offset_bottom = 540.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_03j44")
 script = ExtResource("1_nmy5p")
 
 [node name="Quit_Button" type="Button" parent="."]
 layout_mode = 0
-offset_left = 475.0
-offset_right = 515.0
-offset_bottom = 43.0
+offset_left = 466.0
+offset_top = 10.0
+offset_right = 506.0
+offset_bottom = 53.0
 theme_override_font_sizes/font_size = 25
 text = "X"
 
 [node name="Refresh_Button" type="Button" parent="."]
 layout_mode = 0
-offset_right = 58.0
-offset_bottom = 43.0
+offset_left = 9.0
+offset_top = 10.0
+offset_right = 67.0
+offset_bottom = 53.0
 theme_override_font_sizes/font_size = 25
 text = "刷新"
 
@@ -41,18 +52,17 @@ text = "土地面板"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="GroundFunctionGrid" type="GridContainer" parent="."]
-layout_mode = 2
-offset_top = 42.0
-offset_right = 516.0
-offset_bottom = 142.0
-columns = 5
+[node name="GroundFunctionGrid" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 84.0
+offset_right = 505.0
+offset_bottom = 184.0
 
 [node name="Dig_Button" type="Button" parent="GroundFunctionGrid"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
+size_flags_horizontal = 3
 theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
@@ -68,7 +78,7 @@ expand_icon = true
 [node name="Plant_Button" type="Button" parent="GroundFunctionGrid"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
@@ -84,7 +94,7 @@ expand_icon = true
 [node name="Harvest_Button" type="Button" parent="GroundFunctionGrid"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
 theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
@@ -100,7 +110,7 @@ expand_icon = true
 [node name="Upgrade_Button" type="Button" parent="GroundFunctionGrid"]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.0705882, 0.411765, 0.87451, 1)
 theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
@@ -112,9 +122,10 @@ expand_icon = true
 
 [node name="CropImageVBox" type="VBoxContainer" parent="."]
 layout_mode = 2
-offset_top = 280.0
-offset_right = 512.0
-offset_bottom = 408.0
+offset_left = 9.0
+offset_top = 330.0
+offset_right = 503.0
+offset_bottom = 458.0
 alignment = 1
 
 [node name="CropTextureRect" type="TextureRect" parent="CropImageVBox"]
@@ -127,16 +138,18 @@ stretch_mode = 5
 
 [node name="InformVBox" type="VBoxContainer" parent="."]
 layout_mode = 0
-offset_top = 142.0
-offset_right = 1280.0
-offset_bottom = 483.0
+offset_left = 9.0
+offset_top = 197.0
+offset_right = 1249.0
+offset_bottom = 479.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GroundInformVBox" type="VBoxContainer" parent="InformVBox"]
+[node name="GroundInformVBox" type="HBoxContainer" parent="InformVBox"]
 layout_mode = 2
 
 [node name="GroundLevel" type="Label" parent="InformVBox/GroundInformVBox"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 40
 text = "土地等级："
 horizontal_alignment = 1
@@ -144,6 +157,7 @@ vertical_alignment = 1
 
 [node name="GroundFunction" type="Label" parent="InformVBox/GroundInformVBox"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 40
 text = "土地功能："
 horizontal_alignment = 1
@@ -230,7 +244,7 @@ modulate = Color(0.988235, 0.831373, 1, 1)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 40
-text = "描述：啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"
+text = "描述：啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"
 
 [connection signal="pressed" from="Quit_Button" to="." method="_on_quit_button_pressed"]
 [connection signal="pressed" from="Refresh_Button" to="." method="_on_refresh_button_pressed"]

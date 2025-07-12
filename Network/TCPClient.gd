@@ -70,7 +70,6 @@ func _update_connection_status():
 			if not is_connected:
 				is_connected = true
 				tcp.set_no_delay(true) # 禁用Nagle算法提高响应速度
-				print("已连接到服务器")
 				emit_signal("connected_to_server")
 				
 		StreamPeerTCP.STATUS_ERROR:
@@ -109,11 +108,8 @@ func _process_buffer():
 			
 			if error == OK:
 				var data = json.get_data()
-				#print("收到JSON数据: ", data)
 				emit_signal("data_received", data)
 			else:
-				# 非JSON格式数据，直接传递
-				#print("收到原始数据: ", message_text)
 				emit_signal("data_received", message_text)
 
 func send_data(data):
