@@ -849,7 +849,9 @@ class TCPGameServer(TCPServer):
             # 检查并更新体力值
             stamina_updated = self._check_and_update_stamina(player_data)
             if stamina_updated:
-                self.log('INFO', f"玩家 {username} 体力值已更新：{player_data.get('体力值', 20)}", 'SERVER')
+                stamina_system = player_data.get("体力系统", {})
+                current_stamina = stamina_system.get("当前体力值", 20)
+                self.log('INFO', f"玩家 {username} 体力值已更新：{current_stamina}", 'SERVER')
             
             # 检查并更新每日点赞次数
             likes_updated = self._check_and_update_daily_likes(player_data)
@@ -863,6 +865,9 @@ class TCPGameServer(TCPServer):
             
             # 检查并清理新手礼包历史数据
             self._cleanup_new_player_gift_history(player_data)
+            
+            # 检查并清理体力系统历史数据
+            self._cleanup_stamina_system_history(player_data)
             
             # 检查并更新已存在玩家的注册时间
             self._check_and_update_register_time(player_data, username)
@@ -5103,6 +5108,62 @@ class TCPGameServer(TCPServer):
             
             self.log('INFO', f"已清理玩家数据中的旧英文新手礼包格式", 'SERVER')
 
+    def _cleanup_stamina_system_history(self, player_data):
+        """清理旧的体力系统数据，迁移到新的"体力系统"对象"""
+        if "体力值" in player_data or "体力上次刷新时间" in player_data or "体力上次恢复时间" in player_data:
+            # 加载体力系统配置
+            stamina_config = self._load_stamina_config()
+            max_stamina = stamina_config.get("最大体力值", 20)
+            
+            # 保存旧的体力数据
+            old_stamina = player_data.get("体力值", 20)
+            old_refresh_time = player_data.get("体力上次刷新时间", "")
+            old_recovery_time = player_data.get("体力上次恢复时间", 0)
+            
+            # 创建新的体力系统对象
+            if "体力系统" not in player_data:
+                player_data["体力系统"] = {}
+            
+            stamina_system = player_data["体力系统"]
+            
+            # 迁移数据到新格式
+            stamina_system["当前体力值"] = old_stamina
+            stamina_system["最大体力值"] = max_stamina
+            stamina_system["上次刷新时间"] = old_refresh_time
+            stamina_system["上次恢复时间"] = old_recovery_time
+            
+            # 移除旧的体力数据
+            if "体力值" in player_data:
+                del player_data["体力值"]
+            if "体力上次刷新时间" in player_data:
+                del player_data["体力上次刷新时间"]
+            if "体力上次恢复时间" in player_data:
+                del player_data["体力上次恢复时间"]
+                
+            self.log('INFO', f"已清理玩家数据中的旧体力系统格式，迁移到新的体力系统对象", 'SERVER')
+
+    def _load_stamina_config(self):
+        """加载体力系统配置"""
+        try:
+            config_path = os.path.join(os.path.dirname(__file__), "config", "stamina_config.json")
+            with open(config_path, 'r', encoding='utf-8') as file:
+                config_data = json.load(file)
+                return config_data.get("体力系统配置", {})
+        except FileNotFoundError:
+            self.log('WARNING', f"体力系统配置文件未找到，使用默认配置", 'SERVER')
+            return {
+                "最大体力值": 20,
+                "每小时恢复体力": 1,
+                "恢复间隔秒数": 3600,
+                "新玩家初始体力": 20
+            }
+        except json.JSONDecodeError as e:
+            self.log('ERROR', f"体力系统配置文件格式错误: {e}", 'SERVER')
+            return {}
+        except Exception as e:
+            self.log('ERROR', f"加载体力系统配置时发生错误: {e}", 'SERVER')
+            return {}
+
 #==========================点赞玩家处理==========================
 
 
@@ -5131,37 +5192,50 @@ class TCPGameServer(TCPServer):
         current_time = time.time()
         current_date = datetime.datetime.now().strftime("%Y-%m-%d")
         
-        # 初始化体力值相关字段
-        if "体力值" not in player_data:
-            player_data["体力值"] = 20
-        if "体力上次刷新时间" not in player_data:
-            player_data["体力上次刷新时间"] = current_date
-        if "体力上次恢复时间" not in player_data:
-            player_data["体力上次恢复时间"] = current_time
+        # 加载体力系统配置
+        stamina_config = self._load_stamina_config()
+        max_stamina = stamina_config.get("最大体力值", 20)
+        recovery_amount = stamina_config.get("每小时恢复体力", 1)
+        recovery_interval = stamina_config.get("恢复间隔秒数", 3600)
+        initial_stamina = stamina_config.get("新玩家初始体力", 20)
+        
+        # 获取或创建体力系统对象
+        if "体力系统" not in player_data:
+            player_data["体力系统"] = {
+                "当前体力值": initial_stamina,
+                "最大体力值": max_stamina,
+                "上次刷新时间": current_date,
+                "上次恢复时间": current_time
+            }
+        
+        stamina_system = player_data["体力系统"]
+        
+        # 确保最大体力值与配置同步
+        stamina_system["最大体力值"] = max_stamina
         
         # 检查是否需要每日重置
-        last_refresh_date = player_data.get("体力上次刷新时间", "")
+        last_refresh_date = stamina_system.get("上次刷新时间", "")
         if last_refresh_date != current_date:
             # 新的一天，重置体力值
-            player_data["体力值"] = 20
-            player_data["体力上次刷新时间"] = current_date
-            player_data["体力上次恢复时间"] = current_time
+            stamina_system["当前体力值"] = max_stamina
+            stamina_system["上次刷新时间"] = current_date
+            stamina_system["上次恢复时间"] = current_time
             return True  # 发生了重置
         
         # 检查每小时恢复
-        last_recovery_time = player_data.get("体力上次恢复时间", current_time)
+        last_recovery_time = stamina_system.get("上次恢复时间", current_time)
         time_diff = current_time - last_recovery_time
         
-        # 如果超过1小时（3600秒），恢复体力值
-        if time_diff >= 3600:
-            hours_passed = int(time_diff // 3600)
-            current_stamina = player_data.get("体力值", 0)
+        # 如果超过恢复间隔时间，恢复体力值
+        if time_diff >= recovery_interval:
+            recovery_cycles = int(time_diff // recovery_interval)
+            current_stamina = stamina_system.get("当前体力值", 0)
             
-            # 体力值恢复，但不能超过20
-            new_stamina = min(20, current_stamina + hours_passed)
+            # 体力值恢复，但不能超过最大值
+            new_stamina = min(max_stamina, current_stamina + (recovery_cycles * recovery_amount))
             if new_stamina > current_stamina:
-                player_data["体力值"] = new_stamina
-                player_data["体力上次恢复时间"] = current_time
+                stamina_system["当前体力值"] = new_stamina
+                stamina_system["上次恢复时间"] = current_time
                 return True  # 发生了恢复
         
         return False  # 没有变化
@@ -5169,18 +5243,20 @@ class TCPGameServer(TCPServer):
     #消耗体力值
     def _consume_stamina(self, player_data, amount, action_name):
         """消耗体力值"""
-        current_stamina = player_data.get("体力值", 20)
+        stamina_system = player_data.get("体力系统", {})
+        current_stamina = stamina_system.get("当前体力值", 20)
         
         if current_stamina < amount:
             return False, f"体力值不足！{action_name}需要 {amount} 点体力，当前体力：{current_stamina}"
         
-        player_data["体力值"] = current_stamina - amount
-        return True, f"消耗 {amount} 点体力，剩余体力：{player_data['体力值']}"
+        stamina_system["当前体力值"] = current_stamina - amount
+        return True, f"消耗 {amount} 点体力，剩余体力：{stamina_system['当前体力值']}"
     
     #检查体力值是否足够
     def _check_stamina_sufficient(self, player_data, amount):
         """检查体力值是否足够"""
-        current_stamina = player_data.get("体力值", 20)
+        stamina_system = player_data.get("体力系统", {})
+        current_stamina = stamina_system.get("当前体力值", 20)
         return current_stamina >= amount
     
     def _check_and_update_register_time(self, player_data, username):
@@ -5437,6 +5513,9 @@ class TCPGameServer(TCPServer):
                     last_login_timestamp = self._parse_login_time_to_timestamp(last_login_str)
                     
                     # 获取所需的玩家信息
+                    stamina_system = player_data.get("体力系统", {})
+                    current_stamina = stamina_system.get("当前体力值", 20)
+                    
                     player_info = {
                         "user_name": player_data.get("user_name", account_id),
                         "player_name": player_data.get("player_name", player_data.get("user_name", account_id)),
@@ -5444,7 +5523,7 @@ class TCPGameServer(TCPServer):
                         "level": player_data.get("level", 1),
                         "money": player_data.get("money", 0),
                         "experience": player_data.get("experience", 0),
-                        "体力值": player_data.get("体力值", 20),
+                        "体力值": current_stamina,
                         "seed_count": seed_count,
                         "last_login_time": last_login_str,
                         "last_login_timestamp": last_login_timestamp,
@@ -5591,6 +5670,9 @@ class TCPGameServer(TCPServer):
         self._check_and_fix_wisdom_tree_config(target_player_data, target_username)
         
         # 返回目标玩家的农场数据（只返回可见的数据，不包含敏感信息如密码）
+        target_stamina_system = target_player_data.get("体力系统", {})
+        target_current_stamina = target_stamina_system.get("当前体力值", 20)
+        
         safe_player_data = {
             "user_name": target_player_data.get("user_name", target_username),
             "player_name": target_player_data.get("player_name", target_username),
@@ -5598,7 +5680,7 @@ class TCPGameServer(TCPServer):
             "level": target_player_data.get("level", 1),
             "money": target_player_data.get("money", 0),
             "experience": target_player_data.get("experience", 0),
-            "体力值": target_player_data.get("体力值", 20),
+            "体力值": target_current_stamina,
             "farm_lots": target_player_data.get("farm_lots", []),
             "player_bag": target_player_data.get("player_bag", []),
             "作物仓库": target_player_data.get("作物仓库", []),
@@ -5653,6 +5735,9 @@ class TCPGameServer(TCPServer):
         self.log('INFO', f"玩家 {username} 返回了自己的农场", 'SERVER')
         
         # 返回玩家自己的农场数据
+        my_stamina_system = player_data.get("体力系统", {})
+        my_current_stamina = my_stamina_system.get("当前体力值", 20)
+        
         return self.send_data(client_id, {
             "type": "return_my_farm_response",
             "success": True,
@@ -5664,7 +5749,7 @@ class TCPGameServer(TCPServer):
                 "level": player_data.get("level", 1),
                 "money": player_data.get("money", 0),
                 "experience": player_data.get("experience", 0),
-                "体力值": player_data.get("体力值", 20),
+                "体力值": my_current_stamina,
                 "farm_lots": player_data.get("farm_lots", []),
                 "player_bag": player_data.get("player_bag", []),
                 "宠物背包": player_data.get("宠物背包", []),

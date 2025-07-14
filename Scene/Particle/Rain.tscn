@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://3cr6q4he2y0x"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jiccn"]
+lifetime_randomness = 0.6
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 100.0
+initial_velocity_max = 400.0
+gravity = Vector3(0, 98, 0)
+scale_min = 4.0
+scale_max = 6.0
+color = Color(0, 0.380392, 1, 1)
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.08
+
+[node name="Rain" type="GPUParticles2D"]
+visible = false
+z_index = 10
+amount = 450
+lifetime = 10.0
+preprocess = 20.0
+speed_scale = 1.5
+visibility_rect = Rect2(-900, 0, 2000, 2000)
+trail_lifetime = 0.01
+process_material = SubResource("ParticleProcessMaterial_jiccn")

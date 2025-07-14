@@ -15,7 +15,7 @@ extends Camera2D
 @export var bounds_min: Vector2 = Vector2(-1000, -1000)
 @export var bounds_max: Vector2 = Vector2(1000, 1000)
 
-var current_zoom_level: float = 2
+var current_zoom_level: float = 1.6
 
 # 触摸相关变量
 var is_dragging: bool = false

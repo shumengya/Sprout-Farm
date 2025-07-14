@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvg38nsrm77jy"]
+
+[ext_resource type="Texture2D" uid="uid://bnv6wb0k443fv" path="res://assets/天气系统图片/柳叶2.webp" id="1_tq8cs"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tdq2s"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+gravity = Vector3(-30, 80, 0)
+scale_min = 0.4
+scale_max = 0.5
+turbulence_enabled = true
+turbulence_noise_speed = Vector3(10, 0, 0)
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.07
+
+[node name="WillowLeafRain1" type="GPUParticles2D"]
+self_modulate = Color(0.7, 0.7, 0.7, 1)
+z_index = 10
+amount = 50
+texture = ExtResource("1_tq8cs")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_tdq2s")
