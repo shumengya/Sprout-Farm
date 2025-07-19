@@ -98,7 +98,12 @@ func _update_performance_data():
 	# 从主游戏获取加载信息
 	if main_game and main_game.crop_texture_manager:
 		var manager = main_game.crop_texture_manager
-		performance_data["loaded_textures"] = manager.texture_cache.size() + manager.mature_texture_cache.size()
+		# 计算所有加载的纹理数量（新的三阶段系统）
+		var total_textures = 0
+		for crop_name in manager.texture_cache.keys():
+			total_textures += manager.texture_cache[crop_name].size()
+		total_textures += manager.default_textures.size()
+		performance_data["loaded_textures"] = total_textures
 		performance_data["failed_textures"] = manager.failed_resources.size()
 		
 		# 加载进度

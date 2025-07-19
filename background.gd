@@ -16,6 +16,7 @@ var backgrounds :Array = [
 
 # 当前显示的背景索引
 var current_index = -1
+
 # 过渡动画的持续时间（秒）
 @export var transition_duration: float = 1.5
 

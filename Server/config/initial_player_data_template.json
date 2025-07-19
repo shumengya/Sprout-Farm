@@ -68,18 +68,5 @@
   "道具背包": [],
   "宠物背包":[],
   "巡逻宠物":[],
-  "出战宠物":[],
-
-  "last_water_reset_date": "",
-  "daily_likes": {},
-  "seeds": {},
-  "last_check_in_date": "",
-  "check_in_count": 0,
-  "daily_check_in": {},
-  "lucky_draw_history": [],
-  "total_likes": 0,
-  "new_player_gift_claimed": false,
-  "new_player_gift_time": "",
-  "session_start_time": 0,
-  "online_gift": {}
+  "出战宠物":[]
 }

@@ -1,35 +1,52 @@
 #玩家登录注册面板
 extends PanelContainer
 
-#玩家登录账号，用QQ号代替
-@onready var username_input : LineEdit = $VBox/UserName/username_input
-#用户登录密码
-@onready var password_input : LineEdit = $VBox/Password1/password_input
-#登录按钮
-@onready var login_button : Button = $VBox/LoginRegister/login_button
+#默认显示登录面板（登录面板可以进入注册面板和忘记密码面板）
+@onready var login_v_box: VBoxContainer = $LoginVBox #显示或隐藏登录面板
+@onready var user_name: HBoxContainer = $LoginVBox/UserName #玩家账号
+@onready var password: HBoxContainer = $LoginVBox/Password #玩家密码
+@onready var login_button: Button = $LoginVBox/LoginButton #登录按钮
+@onready var register_button: Button = $LoginVBox/RegisterButton #注册按钮，点击后隐藏登录面板显示注册面板
+@onready var forget_passwd_button: Button = $LoginVBox/ForgetPasswdButton #忘记密码按钮，点击后隐藏登录面板显示忘记密码面板
+@onready var status_label: Label = $LoginVBox/status_label #登录状态
 
-#下面是注册相关的
-#注册按钮
-@onready var register_button : Button = $VBox/LoginRegister/register_button
-#注册账号时二次确认密码
-@onready var password_input_2 : LineEdit = $VBox/Password2/password_input2
-#农场名称
-@onready var farmname_input : LineEdit = $VBox/FarmName/farmname_input
-#玩家昵称
-@onready var playername_input :LineEdit = $VBox/PlayerName/playername_input
-#邮箱验证码
-@onready var verificationcode_input :LineEdit = $VBox/VerificationCode/verificationcode_input
-#发送验证码按钮
-@onready var send_button :Button = $VBox/VerificationCode/SendButton
-#状态提示标签
-@onready var status_label : Label = $VBox/status_label
+# 登录面板输入框
+@onready var username_input: LineEdit = $LoginVBox/UserName/username_input
+@onready var password_input: LineEdit = $LoginVBox/Password/password_input
 
+#注册面板，注册成功跳转回登录面板
+@onready var register_vbox: VBoxContainer = $RegisterVbox #显示或隐藏注册面板
+@onready var register_user_name: HBoxContainer = $RegisterVbox/RegisterUserName #注册玩家账号
+@onready var password_1: HBoxContainer = $RegisterVbox/Password1 #注册密码
+@onready var password_2: HBoxContainer = $RegisterVbox/Password2 #二次确认密码
+@onready var player_name: HBoxContainer = $RegisterVbox/PlayerName #注册玩家昵称
+@onready var farm_name: HBoxContainer = $RegisterVbox/FarmName #注册玩家农场名称
+@onready var verification_code: HBoxContainer = $RegisterVbox/VerificationCode #注册所需验证码
+@onready var register_button_2: Button = $RegisterVbox/RegisterButton2 #注册按钮
+@onready var status_label_2: Label = $RegisterVbox/status_label2 #注册状态
 
-@onready var password_2: HBoxContainer = $VBox/Password2
-@onready var verification_code: HBoxContainer = $VBox/VerificationCode
-@onready var player_name: HBoxContainer = $VBox/PlayerName
-@onready var farm_name: HBoxContainer = $VBox/FarmName
+# 注册面板输入框
+@onready var register_username_input: LineEdit = $RegisterVbox/RegisterUserName/username_input
+@onready var password_input_1: LineEdit = $RegisterVbox/Password1/password_input
+@onready var password_input_2: LineEdit = $RegisterVbox/Password2/password_input2
+@onready var playername_input: LineEdit = $RegisterVbox/PlayerName/playername_input
+@onready var farmname_input: LineEdit = $RegisterVbox/FarmName/farmname_input
+@onready var verificationcode_input: LineEdit = $RegisterVbox/VerificationCode/verificationcode_input
+@onready var send_button: Button = $RegisterVbox/VerificationCode/SendButton
 
+#忘记密码面板，设置新密码成功后同样跳转到登录面板
+@onready var forget_password_vbox: VBoxContainer = $ForgetPasswordVbox #显示或隐藏忘记密码面板
+@onready var forget_password_user_name: HBoxContainer = $ForgetPasswordVbox/ForgetPasswordUserName #忘记密码的玩家账号
+@onready var new_password: HBoxContainer = $ForgetPasswordVbox/NewPassword #设置该账号新的密码
+@onready var verification_code_2: HBoxContainer = $ForgetPasswordVbox/VerificationCode2 #忘记密码所需验证码
+@onready var forget_password_button: Button = $ForgetPasswordVbox/ForgetPasswordButton #设置新密码确认按钮
+@onready var status_label_3: Label = $ForgetPasswordVbox/status_label3 #设置新密码状态
+
+# 忘记密码面板输入框
+@onready var forget_username_input: LineEdit = $ForgetPasswordVbox/ForgetPasswordUserName/username_input
+@onready var new_password_input: LineEdit = $ForgetPasswordVbox/NewPassword/password_input
+@onready var forget_verificationcode_input: LineEdit = $ForgetPasswordVbox/VerificationCode2/verificationcode_input
+@onready var forget_send_button: Button = $ForgetPasswordVbox/VerificationCode2/SendButton
 
 
 # 记住密码选项
@@ -53,22 +70,43 @@ var remember_password : bool = true  # 默认记住密码
 # 准备函数
 func _ready():
 	self.show()
-	#隐藏注册相关UI
-	password_2.hide()
-	verification_code.hide()
-	player_name.hide()
-	farm_name.hide()
+	
+	# 初始状态：只显示登录面板，隐藏注册和忘记密码面板
+	login_v_box.show()
+	register_vbox.hide()
+	forget_password_vbox.hide()
 	
 	# 连接按钮信号
 	login_button.pressed.connect(self._on_login_button_pressed)
-	register_button.pressed.connect(self._on_register_button_pressed)
+	register_button.pressed.connect(self._on_show_register_panel)
+	forget_passwd_button.pressed.connect(self._on_forget_password_button_pressed)
+	register_button_2.pressed.connect(self._on_register_button_2_pressed)
+	forget_password_button.pressed.connect(self._on_forget_password_confirm_pressed)
 	send_button.pressed.connect(self._on_send_button_pressed)
+	forget_send_button.pressed.connect(self._on_forget_send_button_pressed)
 	
 	# 加载保存的登录信息
 	_load_login_info()
 	
 	# 显示客户端版本号
 	_display_version_info()
+
+# 面板切换函数
+func _on_show_register_panel():
+	"""切换到注册面板"""
+	login_v_box.hide()
+	register_vbox.show()
+	forget_password_vbox.hide()
+	status_label_2.text = "请填写注册信息"
+	status_label_2.modulate = Color.WHITE
+
+func _on_forget_password_button_pressed():
+	"""切换到忘记密码面板"""
+	login_v_box.hide()
+	register_vbox.hide()
+	forget_password_vbox.show()
+	status_label_3.text = "请输入账号和新密码"
+	status_label_3.modulate = Color.WHITE
 
 # 处理登录按钮点击
 func _on_login_button_pressed():
@@ -129,32 +167,30 @@ func _on_login_button_pressed():
 
 # 处理验证码发送按钮点击
 func _on_send_button_pressed():
-	
-	
-	var user_name = username_input.text.strip_edges()
+	var user_name = register_username_input.text.strip_edges()
 	
 	if user_name == "":
-		status_label.text = "请输入QQ号以接收验证码！"
-		status_label.modulate = Color.RED
+		status_label_2.text = "请输入QQ号以接收验证码！"
+		status_label_2.modulate = Color.RED
 		return
 		
 	if !is_valid_qq_number(user_name):
-		status_label.text = "请输入正确的QQ号码（5-12位数字）！"
-		status_label.modulate = Color.RED
+		status_label_2.text = "请输入正确的QQ号码（5-12位数字）！"
+		status_label_2.modulate = Color.RED
 		return
 	
 	# 检查网络连接状态
 	if !tcp_network_manager_panel.client.is_client_connected():
-		status_label.text = "未连接到服务器，正在尝试连接..."
-		status_label.modulate = Color.YELLOW
+		status_label_2.text = "未连接到服务器，正在尝试连接..."
+		status_label_2.modulate = Color.YELLOW
 		# 尝试自动连接到服务器
 		tcp_network_manager_panel.connect_to_current_server()
 		await get_tree().create_timer(2.0).timeout
 		
 		# 再次检查连接状态
 		if !tcp_network_manager_panel.client.is_client_connected():
-			status_label.text = "连接服务器失败，正在尝试其他服务器..."
-			status_label.modulate = Color.YELLOW
+			status_label_2.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label_2.modulate = Color.YELLOW
 			# 等待自动服务器切换完成
 			await get_tree().create_timer(3.0).timeout
 			
@@ -162,8 +198,8 @@ func _on_send_button_pressed():
 	# 禁用按钮，防止重复点击
 	send_button.disabled = true
 	
-	status_label.text = "正在发送验证码，请稍候..."
-	status_label.modulate = Color.YELLOW
+	status_label_2.text = "正在发送验证码，请稍候..."
+	status_label_2.modulate = Color.YELLOW
 	
 	# 发送验证码请求
 	tcp_network_manager_panel.sendVerificationCodeRequest(user_name)
@@ -179,19 +215,14 @@ func _on_send_button_pressed():
 		send_button.disabled = false
 		send_button.text = "发送验证码"
 		
-		if status_label.text == "正在发送验证码，请稍候...":
-			status_label.text = "验证码发送超时，请重试！"
-			status_label.modulate = Color.RED
+		if status_label_2.text == "正在发送验证码，请稍候...":
+			status_label_2.text = "验证码发送超时，请重试！"
+			status_label_2.modulate = Color.RED
 
 # 处理注册按钮点击
-func _on_register_button_pressed():
-	password_2.show()
-	verification_code.show()
-	player_name.show()
-	farm_name.show()
-	
-	var user_name = username_input.text.strip_edges()
-	var user_password = password_input.text.strip_edges()
+func _on_register_button_2_pressed():
+	var user_name = register_username_input.text.strip_edges()
+	var user_password = password_input_1.text.strip_edges()
 	var user_password_2 = password_input_2.text.strip_edges()
 	var farmname = farmname_input.text.strip_edges()
 	var player_name = playername_input.text.strip_edges()
@@ -199,69 +230,180 @@ func _on_register_button_pressed():
 	
 	# 检查密码格式（只允许数字和字母）
 	if not is_valid_password(user_password):
-		status_label.text = "密码只能包含数字和字母！"
-		status_label.modulate = Color.RED
+		status_label_2.text = "密码只能包含数字和字母！"
+		status_label_2.modulate = Color.RED
 		return
 	
 	if user_name == "" or user_password == "":
-		status_label.text = "用户名或密码不能为空！"
-		status_label.modulate = Color.RED
+		status_label_2.text = "用户名或密码不能为空！"
+		status_label_2.modulate = Color.RED
 		return
 	if farmname == "":
-		status_label.text = "农场名称不能为空！"
-		status_label.modulate = Color.RED
+		status_label_2.text = "农场名称不能为空！"
+		status_label_2.modulate = Color.RED
 		return 
 	if user_password != user_password_2:
-		status_label.text = "两次输入的密码不一致！"
-		status_label.modulate = Color.RED
+		status_label_2.text = "两次输入的密码不一致！"
+		status_label_2.modulate = Color.RED
 		return 
 		
 	if !is_valid_qq_number(user_name):
-		status_label.text = "请输入正确的QQ号码（5-12位数字）！"
-		status_label.modulate = Color.RED
+		status_label_2.text = "请输入正确的QQ号码（5-12位数字）！"
+		status_label_2.modulate = Color.RED
 		return
 		
 	if verification_code == "":
-		status_label.text = "请输入验证码！"
-		status_label.modulate = Color.RED
+		status_label_2.text = "请输入验证码！"
+		status_label_2.modulate = Color.RED
 		return
 		
-	# 检查网络连接状态
+			# 检查网络连接状态
 	if !tcp_network_manager_panel.client.is_client_connected():
-		status_label.text = "未连接到服务器，正在尝试连接..."
-		status_label.modulate = Color.YELLOW
+		status_label_2.text = "未连接到服务器，正在尝试连接..."
+		status_label_2.modulate = Color.YELLOW
 		# 尝试自动连接到服务器
 		tcp_network_manager_panel.connect_to_current_server()
 		await get_tree().create_timer(2.0).timeout
 		
 		# 再次检查连接状态
 		if !tcp_network_manager_panel.client.is_client_connected():
-			status_label.text = "连接服务器失败，正在尝试其他服务器..."
-			status_label.modulate = Color.YELLOW
+			status_label_2.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label_2.modulate = Color.YELLOW
 			# 等待自动服务器切换完成
 			await get_tree().create_timer(3.0).timeout
 			
 	
 	# 禁用按钮，防止重复点击
-	register_button.disabled = true
+	register_button_2.disabled = true
 	
-	status_label.text = "正在注册，请稍候..."
-	status_label.modulate = Color.YELLOW
+	status_label_2.text = "正在注册，请稍候..."
+	status_label_2.modulate = Color.YELLOW
 	
-	# 发送注册请求
+		# 发送注册请求
 	tcp_network_manager_panel.sendRegisterInfo(user_name, user_password, farmname, player_name, verification_code)
-	
+
 	# 更新主游戏数据
 	main_game.user_name = user_name
 	main_game.user_password = user_password
-	main_game.farmname = farmname
+	# farmname 直接在注册成功后通过UI更新，这里不需要设置
 	
 	# 5秒后重新启用按钮（如果没有收到响应）
 	await get_tree().create_timer(5.0).timeout
-	if register_button.disabled:
-		register_button.disabled = false
-		status_label.text = "注册超时，请重试！"
-		status_label.modulate = Color.RED
+	if register_button_2.disabled:
+		register_button_2.disabled = false
+		status_label_2.text = "注册超时，请重试！"
+		status_label_2.modulate = Color.RED
+
+# 忘记密码发送验证码按钮处理
+func _on_forget_send_button_pressed():
+	var user_name = forget_username_input.text.strip_edges()
+	
+	if user_name == "":
+		status_label_3.text = "请输入QQ号以接收验证码！"
+		status_label_3.modulate = Color.RED
+		return
+		
+	if !is_valid_qq_number(user_name):
+		status_label_3.text = "请输入正确的QQ号码（5-12位数字）！"
+		status_label_3.modulate = Color.RED
+		return
+	
+	# 检查网络连接状态
+	if !tcp_network_manager_panel.client.is_client_connected():
+		status_label_3.text = "未连接到服务器，正在尝试连接..."
+		status_label_3.modulate = Color.YELLOW
+		# 尝试自动连接到服务器
+		tcp_network_manager_panel.connect_to_current_server()
+		await get_tree().create_timer(2.0).timeout
+		
+		# 再次检查连接状态
+		if !tcp_network_manager_panel.client.is_client_connected():
+			status_label_3.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label_3.modulate = Color.YELLOW
+			# 等待自动服务器切换完成
+			await get_tree().create_timer(3.0).timeout
+	
+	# 禁用按钮，防止重复点击
+	forget_send_button.disabled = true
+	
+	status_label_3.text = "正在发送验证码，请稍候..."
+	status_label_3.modulate = Color.YELLOW
+	
+	# 发送验证码请求（用于忘记密码）
+	tcp_network_manager_panel.sendForgetPasswordVerificationCode(user_name)
+	
+	# 60秒后重新启用按钮
+	var timer = 60
+	while timer > 0 and forget_send_button.disabled:
+		forget_send_button.text = "重新发送(%d)" % timer
+		await get_tree().create_timer(1.0).timeout
+		timer -= 1
+	
+	if forget_send_button.disabled:
+		forget_send_button.disabled = false
+		forget_send_button.text = "发送验证码"
+		
+		if status_label_3.text == "正在发送验证码，请稍候...":
+			status_label_3.text = "验证码发送超时，请重试！"
+			status_label_3.modulate = Color.RED
+
+# 忘记密码确认按钮处理
+func _on_forget_password_confirm_pressed():
+	var user_name = forget_username_input.text.strip_edges()
+	var new_password = new_password_input.text.strip_edges()
+	var verification_code = forget_verificationcode_input.text.strip_edges()
+	
+	# 检查密码格式（只允许数字和字母）
+	if not is_valid_password(new_password):
+		status_label_3.text = "密码只能包含数字和字母！"
+		status_label_3.modulate = Color.RED
+		return
+	
+	if user_name == "" or new_password == "":
+		status_label_3.text = "用户名或新密码不能为空！"
+		status_label_3.modulate = Color.RED
+		return
+		
+	if !is_valid_qq_number(user_name):
+		status_label_3.text = "请输入正确的QQ号码（5-12位数字）！"
+		status_label_3.modulate = Color.RED
+		return
+		
+	if verification_code == "":
+		status_label_3.text = "请输入验证码！"
+		status_label_3.modulate = Color.RED
+		return
+	
+	# 检查网络连接状态
+	if !tcp_network_manager_panel.client.is_client_connected():
+		status_label_3.text = "未连接到服务器，正在尝试连接..."
+		status_label_3.modulate = Color.YELLOW
+		# 尝试自动连接到服务器
+		tcp_network_manager_panel.connect_to_current_server()
+		await get_tree().create_timer(2.0).timeout
+		
+		# 再次检查连接状态
+		if !tcp_network_manager_panel.client.is_client_connected():
+			status_label_3.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label_3.modulate = Color.YELLOW
+			# 等待自动服务器切换完成
+			await get_tree().create_timer(3.0).timeout
+	
+	# 禁用按钮，防止重复点击
+	forget_password_button.disabled = true
+	
+	status_label_3.text = "正在重置密码，请稍候..."
+	status_label_3.modulate = Color.YELLOW
+	
+	# 发送忘记密码请求
+	tcp_network_manager_panel.sendForgetPasswordRequest(user_name, new_password, verification_code)
+	
+	# 5秒后重新启用按钮（如果没有收到响应）
+	await get_tree().create_timer(5.0).timeout
+	if forget_password_button.disabled:
+		forget_password_button.disabled = false
+		status_label_3.text = "重置密码超时，请重试！"
+		status_label_3.modulate = Color.RED
 
 # 处理验证码发送响应
 func _on_verification_code_response(success: bool, message: String):
@@ -390,24 +532,67 @@ func _on_login_response_received(success: bool, message: String, user_data: Dict
 # 处理注册响应
 func _on_register_response_received(success: bool, message: String):
 	# 启用按钮
-	register_button.disabled = false
+	register_button_2.disabled = false
 	
 	if success:
-		status_label.text = "注册成功！请登录游戏"
-		status_label.modulate = Color.GREEN
+		status_label_2.text = "注册成功！请登录游戏"
+		status_label_2.modulate = Color.GREEN
 		
 		# 注册成功后，如果启用了记住密码，保存登录信息
 		if remember_password:
-			var user_name = username_input.text.strip_edges()
-			var user_password = password_input.text.strip_edges()
+			var user_name = register_username_input.text.strip_edges()
+			var user_password = password_input_1.text.strip_edges()
 			_save_login_info(user_name, user_password)
 		
 		# 清除注册相关的输入框
 		password_input_2.text = ""
 		verificationcode_input.text = ""
+		
+		# 切换回登录面板
+		register_vbox.hide()
+		forget_password_vbox.hide()
+		login_v_box.show()
+		
+		# 如果记住密码，自动填充登录信息
+		if remember_password:
+			username_input.text = register_username_input.text
+			password_input.text = password_input_1.text
 	else:
-		status_label.text = "注册失败：" + message
-		status_label.modulate = Color.RED
+		status_label_2.text = "注册失败：" + message
+		status_label_2.modulate = Color.RED
+
+# 处理忘记密码响应
+func _on_forget_password_response_received(success: bool, message: String):
+	# 启用按钮
+	forget_password_button.disabled = false
+	
+	if success:
+		status_label_3.text = "密码重置成功！请使用新密码登录"
+		status_label_3.modulate = Color.GREEN
+		
+		# 保存新的登录信息
+		if remember_password:
+			var user_name = forget_username_input.text.strip_edges()
+			var new_password = new_password_input.text.strip_edges()
+			_save_login_info(user_name, new_password)
+		
+		# 清除输入框
+		forget_verificationcode_input.text = ""
+		
+		# 切换回登录面板并自动填充账号信息
+		forget_password_vbox.hide()
+		register_vbox.hide()
+		login_v_box.show()
+		
+		# 自动填充登录信息
+		username_input.text = forget_username_input.text
+		password_input.text = new_password_input.text
+		
+		status_label.text = "密码已重置，请登录"
+		status_label.modulate = Color.GREEN
+	else:
+		status_label_3.text = "密码重置失败：" + message
+		status_label_3.modulate = Color.RED
 
 # 保存登录信息到JSON文件
 func _save_login_info(user_name: String, password: String):

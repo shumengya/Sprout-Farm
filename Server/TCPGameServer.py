@@ -94,6 +94,7 @@ class TCPGameServer(TCPServer):
         self.start_batch_save_timer()
         self.start_weed_growth_timer()
         self.start_wisdom_tree_health_decay_timer()
+        self.start_verification_code_cleanup_timer()
     
     #初始化性能操作
     def _init_performance_settings(self):
@@ -170,6 +171,20 @@ class TCPGameServer(TCPServer):
         self.wisdom_tree_decay_timer.daemon = True
         self.wisdom_tree_decay_timer.start()
     
+    def start_verification_code_cleanup_timer(self):
+        """启动验证码清理定时器"""
+        try:
+            from QQEmailSend import EmailVerification
+            EmailVerification.clean_expired_codes()
+            self.log('INFO', "验证码清理完成", 'SERVER')
+        except Exception as e:
+            self.log('ERROR', f"验证码清理时出错: {str(e)}", 'SERVER')
+        
+        # 创建下一个验证码清理计时器（每30分钟检查一次）
+        self.verification_cleanup_timer = threading.Timer(1800, self.start_verification_code_cleanup_timer)  # 每30分钟清理一次
+        self.verification_cleanup_timer.daemon = True
+        self.verification_cleanup_timer.start()
+    
     #获取服务器统计信息
     def get_server_stats(self):
         """获取服务器统计信息"""
@@ -202,6 +217,12 @@ class TCPGameServer(TCPServer):
             self.wisdom_tree_decay_timer.cancel()
             self.wisdom_tree_decay_timer = None
             self.log('INFO', "智慧树生命值衰减计时器已停止", 'SERVER')
+        
+        # 停止验证码清理定时器
+        if hasattr(self, 'verification_cleanup_timer') and self.verification_cleanup_timer:
+            self.verification_cleanup_timer.cancel()
+            self.verification_cleanup_timer = None
+            self.log('INFO', "验证码清理定时器已停止", 'SERVER')
         
         # 强制保存所有缓存数据
         self.log('INFO', "正在保存所有玩家数据...", 'SERVER')
@@ -678,6 +699,10 @@ class TCPGameServer(TCPServer):
             return self._handle_register(client_id, message)
         elif message_type == "request_verification_code":#验证码请求
             return self._handle_verification_code_request(client_id, message)
+        elif message_type == "request_forget_password_verification_code":#忘记密码验证码请求
+            return self._handle_forget_password_verification_code_request(client_id, message)
+        elif message_type == "reset_password":#重置密码
+            return self._handle_reset_password_request(client_id, message)
         elif message_type == "verify_code":#验证码
             return self._handle_verify_code(client_id, message)
         
@@ -775,6 +800,16 @@ class TCPGameServer(TCPServer):
             return self._handle_wisdom_tree_message(client_id, message)
         elif message_type == "get_wisdom_tree_config":#获取智慧树配置
             return self._handle_get_wisdom_tree_config(client_id, message)
+        elif message_type == "sell_crop":#出售作物
+            return self._handle_sell_crop(client_id, message)
+        elif message_type == "add_product_to_store":#添加商品到小卖部
+            return self._handle_add_product_to_store(client_id, message)
+        elif message_type == "remove_store_product":#下架小卖部商品
+            return self._handle_remove_store_product(client_id, message)
+        elif message_type == "buy_store_product":#购买小卖部商品
+            return self._handle_buy_store_product(client_id, message)
+        elif message_type == "buy_store_booth":#购买小卖部格子
+            return self._handle_buy_store_booth(client_id, message)
         #---------------------------------------------------------------------------
 
         elif message_type == "message":#处理聊天消息（暂未实现）
@@ -982,9 +1017,12 @@ class TCPGameServer(TCPServer):
         # 验证验证码
         if verification_code:
             from QQEmailSend import EmailVerification
-            success, verify_message = EmailVerification.verify_code(username, verification_code)
+            success, verify_message = EmailVerification.verify_code(username, verification_code, "register")
             if not success:
+                self.log('WARNING', f"QQ号 {username} 注册验证码验证失败: {verify_message}", 'SERVER')
                 return self._send_register_error(client_id, f"验证码错误: {verify_message}")
+            else:
+                self.log('INFO', f"QQ号 {username} 注册验证码验证成功", 'SERVER')
         
         # 检查用户是否已存在
         file_path = os.path.join("game_saves", f"{username}.json")
@@ -1114,9 +1152,9 @@ class TCPGameServer(TCPServer):
         success, send_message = EmailVerification.send_verification_email(qq_number, verification_code)
         
         if success:
-            # 保存验证码
-            EmailVerification.save_verification_code(qq_number, verification_code)
-            self.log('INFO', f"已向QQ号 {qq_number} 发送验证码", 'SERVER')
+            # 保存验证码（注册类型）
+            EmailVerification.save_verification_code(qq_number, verification_code, 300, "register")
+            self.log('INFO', f"已向QQ号 {qq_number} 发送注册验证码: {verification_code}", 'SERVER')
             
             return self.send_data(client_id, {
                 "type": "verification_code_response",
@@ -1166,6 +1204,127 @@ class TCPGameServer(TCPServer):
     
         #验证QQ号格式
     
+    #处理忘记密码验证码请求
+    def _handle_forget_password_verification_code_request(self, client_id, message):
+        """处理忘记密码验证码请求"""
+        from QQEmailSend import EmailVerification
+        
+        qq_number = message.get("qq_number", "")
+        
+        # 验证QQ号
+        if not self._validate_qq_number(qq_number):
+            return self.send_data(client_id, {
+                "type": "forget_password_verification_code_response",
+                "success": False,
+                "message": "QQ号格式无效，请输入5-12位数字"
+            })
+        
+        # 检查账号是否存在
+        player_data = self.load_player_data(qq_number)
+        if not player_data:
+            return self.send_data(client_id, {
+                "type": "forget_password_verification_code_response",
+                "success": False,
+                "message": "该账号不存在，请检查QQ号是否正确"
+            })
+        
+        # 生成验证码
+        verification_code = EmailVerification.generate_verification_code()
+        
+        # 发送验证码邮件（专门用于密码重置）
+        success, send_message = EmailVerification.send_verification_email(qq_number, verification_code, "reset_password")
+        
+        if success:
+            # 保存验证码（密码重置类型）
+            EmailVerification.save_verification_code(qq_number, verification_code, 300, "reset_password")
+            self.log('INFO', f"已向QQ号 {qq_number} 发送密码重置验证码: {verification_code}", 'SERVER')
+            
+            return self.send_data(client_id, {
+                "type": "forget_password_verification_code_response",
+                "success": True,
+                "message": "密码重置验证码已发送到您的QQ邮箱，请查收"
+            })
+        else:
+            self.log('ERROR', f"发送密码重置验证码失败: {send_message}", 'SERVER')
+            return self.send_data(client_id, {
+                "type": "forget_password_verification_code_response",
+                "success": False,
+                "message": f"发送验证码失败: {send_message}"
+            })
+
+    #处理重置密码请求
+    def _handle_reset_password_request(self, client_id, message):
+        """处理重置密码请求"""
+        from QQEmailSend import EmailVerification
+        
+        username = message.get("username", "")
+        new_password = message.get("new_password", "")
+        verification_code = message.get("verification_code", "")
+        
+        # 验证必填字段
+        if not username or not new_password or not verification_code:
+            return self.send_data(client_id, {
+                "type": "reset_password_response",
+                "success": False,
+                "message": "用户名、新密码或验证码不能为空"
+            })
+        
+        # 验证QQ号格式
+        if not self._validate_qq_number(username):
+            return self.send_data(client_id, {
+                "type": "reset_password_response",
+                "success": False,
+                "message": "用户名必须是5-12位的QQ号码"
+            })
+        
+        # 检查账号是否存在
+        player_data = self.load_player_data(username)
+        if not player_data:
+            return self.send_data(client_id, {
+                "type": "reset_password_response",
+                "success": False,
+                "message": "该账号不存在，请检查QQ号是否正确"
+            })
+        
+        # 验证验证码（密码重置类型）
+        success, verify_message = EmailVerification.verify_code(username, verification_code, "reset_password")
+        if not success:
+            self.log('WARNING', f"QQ号 {username} 密码重置验证码验证失败: {verify_message}", 'SERVER')
+            return self.send_data(client_id, {
+                "type": "reset_password_response",
+                "success": False,
+                "message": f"验证码错误: {verify_message}"
+            })
+        else:
+            self.log('INFO', f"QQ号 {username} 密码重置验证码验证成功", 'SERVER')
+        
+        # 更新密码
+        try:
+            player_data["user_password"] = new_password
+            
+            # 保存到缓存和文件
+            self.player_cache[username] = player_data
+            self.dirty_players.add(username)
+            
+            # 立即保存重要的账户信息
+            self.save_player_data_immediate(username)
+            
+            self.log('INFO', f"用户 {username} 密码重置成功", 'ACCOUNT')
+            
+            return self.send_data(client_id, {
+                "type": "reset_password_response",
+                "success": True,
+                "message": "密码重置成功，请使用新密码登录"
+            })
+            
+        except Exception as e:
+            self.log('ERROR', f"重置密码时出错: {str(e)}", 'ACCOUNT')
+            return self.send_data(client_id, {
+                "type": "reset_password_response",
+                "success": False,
+                "message": "密码重置失败，请稍后重试"
+            })
+
     #辅助函数-验证QQ号格式
     def _validate_qq_number(self, qq_number):
         """验证QQ号格式"""
@@ -5675,6 +5834,7 @@ class TCPGameServer(TCPServer):
         
         safe_player_data = {
             "user_name": target_player_data.get("user_name", target_username),
+            "username": target_username,  # 添加username字段，用于购买商品时标识卖家
             "player_name": target_player_data.get("player_name", target_username),
             "farm_name": target_player_data.get("farm_name", ""),
             "level": target_player_data.get("level", 1),
@@ -5690,6 +5850,9 @@ class TCPGameServer(TCPServer):
             "出战宠物": self._convert_battle_pets_to_full_data(target_player_data),
             "稻草人配置": target_player_data.get("稻草人配置", {}),
             "智慧树配置": target_player_data.get("智慧树配置", {}),
+            "玩家小卖部": target_player_data.get("玩家小卖部", []),  # 添加小卖部数据
+            "小卖部格子数": target_player_data.get("小卖部格子数", 10),  # 添加小卖部格子数
+            "点赞数": target_player_data.get("点赞数", 0),  # 添加点赞数
             "last_login_time": target_player_data.get("last_login_time", "未知"),
             "total_login_time": target_player_data.get("total_login_time", "0时0分0秒"),
             "total_likes": target_player_data.get("total_likes", 0)
@@ -8502,6 +8665,454 @@ class TCPGameServer(TCPServer):
 #==========================智慧树系统处理==========================
 
 
+#==========================作物出售处理==========================
+    def _handle_sell_crop(self, client_id, message):
+        """处理作物出售请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "出售作物", "sell_crop")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "sell_crop")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        crop_name = message.get("crop_name", "")
+        sell_count = message.get("sell_count", 1)
+        unit_price = message.get("unit_price", 0)
+        
+        # 验证参数
+        if not crop_name:
+            return self._send_action_error(client_id, "sell_crop", "作物名称不能为空")
+        
+        if sell_count <= 0:
+            return self._send_action_error(client_id, "sell_crop", "出售数量必须大于0")
+        
+        if unit_price <= 0:
+            return self._send_action_error(client_id, "sell_crop", "单价必须大于0")
+        
+        # 检查作物仓库中是否有足够的作物
+        crop_warehouse = player_data.get("作物仓库", [])
+        crop_found = False
+        crop_index = -1
+        available_count = 0
+        
+        for i, crop_item in enumerate(crop_warehouse):
+            if crop_item.get("name") == crop_name:
+                crop_found = True
+                crop_index = i
+                available_count = crop_item.get("count", 0)
+                break
+        
+        if not crop_found:
+            return self._send_action_error(client_id, "sell_crop", f"作物仓库中没有 {crop_name}")
+        
+        if available_count < sell_count:
+            return self._send_action_error(client_id, "sell_crop", f"作物数量不足，仓库中只有 {available_count} 个 {crop_name}")
+        
+        # 验证价格（防止客户端篡改价格）
+        crop_data = self._load_crop_data()
+        if crop_name in crop_data:
+            expected_price = crop_data[crop_name].get("收益", 0)
+            if unit_price != expected_price:
+                return self._send_action_error(client_id, "sell_crop", f"价格验证失败，{crop_name} 的正确价格应为 {expected_price} 元/个")
+        else:
+            return self._send_action_error(client_id, "sell_crop", f"未知的作物类型：{crop_name}")
+        
+        # 计算总收入
+        total_income = sell_count * unit_price
+        
+        # 执行出售操作
+        player_data["money"] += total_income
+        
+        # 从作物仓库中减少数量
+        crop_warehouse[crop_index]["count"] -= sell_count
+        
+        # 如果数量为0，从仓库中移除该作物
+        if crop_warehouse[crop_index]["count"] <= 0:
+            crop_warehouse.pop(crop_index)
+        
+        # 给予少量出售经验
+        sell_experience = max(1, sell_count // 5)  # 每5个作物给1点经验
+        player_data["experience"] += sell_experience
+        
+        # 检查是否升级
+        self._check_level_up(player_data)
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        # 获取显示名称
+        display_name = crop_name
+        if crop_name in crop_data:
+            mature_name = crop_data[crop_name].get("成熟物名称")
+            if mature_name:
+                display_name = mature_name
+            else:
+                display_name = crop_data[crop_name].get("作物名称", crop_name)
+        
+        self.log('INFO', f"玩家 {username} 出售了 {sell_count} 个 {crop_name}，获得 {total_income} 金币和 {sell_experience} 经验", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "sell_crop",
+            "success": True,
+            "message": f"成功出售 {sell_count} 个 {display_name}，获得 {total_income} 金币和 {sell_experience} 经验",
+            "updated_data": {
+                "money": player_data["money"],
+                "experience": player_data["experience"],
+                "level": player_data["level"],
+                "作物仓库": player_data["作物仓库"]
+            }
+        })
+#==========================作物出售处理==========================
+
+
+#==========================小卖部管理处理==========================
+    def _handle_add_product_to_store(self, client_id, message):
+        """处理添加商品到小卖部请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "添加商品到小卖部", "add_product_to_store")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "add_product_to_store")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        product_type = message.get("product_type", "")
+        product_name = message.get("product_name", "")
+        product_count = message.get("product_count", 1)
+        product_price = message.get("product_price", 0)
+        
+        # 验证参数
+        if not product_type or not product_name:
+            return self._send_action_error(client_id, "add_product_to_store", "商品类型或名称不能为空")
+        
+        if product_count <= 0:
+            return self._send_action_error(client_id, "add_product_to_store", "商品数量必须大于0")
+        
+        if product_price <= 0:
+            return self._send_action_error(client_id, "add_product_to_store", "商品价格必须大于0")
+        
+        # 初始化小卖部数据
+        if "玩家小卖部" not in player_data:
+            player_data["玩家小卖部"] = []
+        if "小卖部格子数" not in player_data:
+            player_data["小卖部格子数"] = 10
+        
+        player_store = player_data["玩家小卖部"]
+        max_slots = player_data["小卖部格子数"]
+        
+        # 检查小卖部格子是否已满
+        if len(player_store) >= max_slots:
+            return self._send_action_error(client_id, "add_product_to_store", f"小卖部格子已满({len(player_store)}/{max_slots})")
+        
+        # 检查作物仓库中是否有足够的商品
+        if product_type == "作物":
+            crop_warehouse = player_data.get("作物仓库", [])
+            crop_found = False
+            crop_index = -1
+            available_count = 0
+            
+            for i, crop_item in enumerate(crop_warehouse):
+                if crop_item.get("name") == product_name:
+                    crop_found = True
+                    crop_index = i
+                    available_count = crop_item.get("count", 0)
+                    break
+            
+            if not crop_found:
+                return self._send_action_error(client_id, "add_product_to_store", f"作物仓库中没有 {product_name}")
+            
+            if available_count < product_count:
+                return self._send_action_error(client_id, "add_product_to_store", f"作物数量不足，仓库中只有 {available_count} 个 {product_name}")
+            
+            # 从作物仓库中扣除商品
+            crop_warehouse[crop_index]["count"] -= product_count
+            if crop_warehouse[crop_index]["count"] <= 0:
+                crop_warehouse.pop(crop_index)
+        
+        # 添加商品到小卖部
+        new_product = {
+            "商品类型": product_type,
+            "商品名称": product_name,
+            "商品价格": product_price,
+            "商品数量": product_count
+        }
+        player_store.append(new_product)
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 添加商品到小卖部: {product_name} x{product_count}, 价格 {product_price}元/个", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "add_product_to_store",
+            "success": True,
+            "message": f"成功添加 {product_count} 个 {product_name} 到小卖部",
+            "updated_data": {
+                "玩家小卖部": player_data["玩家小卖部"],
+                "作物仓库": player_data.get("作物仓库", [])
+            }
+        })
+    
+    def _handle_remove_store_product(self, client_id, message):
+        """处理下架小卖部商品请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "下架小卖部商品", "remove_store_product")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "remove_store_product")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        slot_index = message.get("slot_index", -1)
+        
+        # 验证参数
+        if slot_index < 0:
+            return self._send_action_error(client_id, "remove_store_product", "无效的商品槽位")
+        
+        # 检查小卖部数据
+        player_store = player_data.get("玩家小卖部", [])
+        if slot_index >= len(player_store):
+            return self._send_action_error(client_id, "remove_store_product", "商品槽位不存在")
+        
+        # 获取要下架的商品信息
+        product_data = player_store[slot_index]
+        product_type = product_data.get("商品类型", "")
+        product_name = product_data.get("商品名称", "")
+        product_count = product_data.get("商品数量", 0)
+        
+        # 将商品返回到对应仓库
+        if product_type == "作物":
+            # 返回到作物仓库
+            if "作物仓库" not in player_data:
+                player_data["作物仓库"] = []
+            
+            crop_warehouse = player_data["作物仓库"]
+            # 查找是否已有该作物
+            crop_found = False
+            for crop_item in crop_warehouse:
+                if crop_item.get("name") == product_name:
+                    crop_item["count"] += product_count
+                    crop_found = True
+                    break
+            
+            if not crop_found:
+                # 添加新的作物条目
+                crop_data = self._load_crop_data()
+                quality = "普通"
+                if crop_data and product_name in crop_data:
+                    quality = crop_data[product_name].get("品质", "普通")
+                
+                crop_warehouse.append({
+                    "name": product_name,
+                    "quality": quality,
+                    "count": product_count
+                })
+        
+        # 从小卖部移除商品
+        player_store.pop(slot_index)
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 下架小卖部商品: {product_name} x{product_count}", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "remove_store_product",
+            "success": True,
+            "message": f"成功下架 {product_count} 个 {product_name}，已返回仓库",
+            "updated_data": {
+                "玩家小卖部": player_data["玩家小卖部"],
+                "作物仓库": player_data.get("作物仓库", [])
+            }
+        })
+    
+    def _handle_buy_store_product(self, client_id, message):
+        """处理购买小卖部商品请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "购买小卖部商品", "buy_store_product")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取买家数据
+        buyer_data, buyer_username, response = self._load_player_data_with_check(client_id, "buy_store_product")
+        if not buyer_data:
+            return self.send_data(client_id, response)
+        
+        seller_username = message.get("seller_username", "")
+        slot_index = message.get("slot_index", -1)
+        product_name = message.get("product_name", "")
+        unit_price = message.get("unit_price", 0)
+        quantity = message.get("quantity", 1)
+        
+        # 验证参数
+        if not seller_username:
+            return self._send_action_error(client_id, "buy_store_product", "卖家用户名不能为空")
+        
+        if slot_index < 0:
+            return self._send_action_error(client_id, "buy_store_product", "无效的商品槽位")
+        
+        if quantity <= 0:
+            return self._send_action_error(client_id, "buy_store_product", "购买数量必须大于0")
+        
+        # 检查是否是自己购买自己的商品
+        if buyer_username == seller_username:
+            return self._send_action_error(client_id, "buy_store_product", "不能购买自己的商品")
+        
+        # 加载卖家数据
+        seller_data = self.load_player_data(seller_username)
+        if not seller_data:
+            return self._send_action_error(client_id, "buy_store_product", f"卖家 {seller_username} 不存在")
+        
+        # 检查卖家小卖部
+        seller_store = seller_data.get("玩家小卖部", [])
+        if slot_index >= len(seller_store):
+            return self._send_action_error(client_id, "buy_store_product", "商品不存在")
+        
+        product_data = seller_store[slot_index]
+        product_type = product_data.get("商品类型", "")
+        store_product_name = product_data.get("商品名称", "")
+        store_unit_price = product_data.get("商品价格", 0)
+        available_count = product_data.get("商品数量", 0)
+        
+        # 验证商品信息
+        if store_product_name != product_name:
+            return self._send_action_error(client_id, "buy_store_product", "商品名称不匹配")
+        
+        if store_unit_price != unit_price:
+            return self._send_action_error(client_id, "buy_store_product", "商品价格已变更，请刷新重试")
+        
+        if available_count < quantity:
+            return self._send_action_error(client_id, "buy_store_product", f"商品库存不足，仅剩 {available_count} 个")
+        
+        # 计算总价
+        total_cost = quantity * unit_price
+        
+        # 检查买家金钱是否足够
+        if buyer_data["money"] < total_cost:
+            return self._send_action_error(client_id, "buy_store_product", f"金钱不足，需要 {total_cost} 元")
+        
+        # 执行交易
+        buyer_data["money"] -= total_cost
+        seller_data["money"] += total_cost
+        
+        # 扣除卖家商品
+        seller_store[slot_index]["商品数量"] -= quantity
+        if seller_store[slot_index]["商品数量"] <= 0:
+            seller_store.pop(slot_index)
+        
+        # 给买家添加商品
+        if product_type == "作物":
+            if "作物仓库" not in buyer_data:
+                buyer_data["作物仓库"] = []
+            
+            buyer_warehouse = buyer_data["作物仓库"]
+            # 查找是否已有该作物
+            crop_found = False
+            for crop_item in buyer_warehouse:
+                if crop_item.get("name") == product_name:
+                    crop_item["count"] += quantity
+                    crop_found = True
+                    break
+            
+            if not crop_found:
+                # 添加新的作物条目
+                crop_data = self._load_crop_data()
+                quality = "普通"
+                if crop_data and product_name in crop_data:
+                    quality = crop_data[product_name].get("品质", "普通")
+                
+                buyer_warehouse.append({
+                    "name": product_name,
+                    "quality": quality,
+                    "count": quantity
+                })
+        
+        # 保存两个玩家的数据
+        self.save_player_data(buyer_username, buyer_data)
+        self.save_player_data(seller_username, seller_data)
+        
+        self.log('INFO', f"玩家 {buyer_username} 从 {seller_username} 的小卖部购买了 {quantity} 个 {product_name}，花费 {total_cost} 元", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "buy_store_product",
+            "success": True,
+            "message": f"成功购买 {quantity} 个 {product_name}，花费 {total_cost} 元",
+            "updated_data": {
+                "money": buyer_data["money"],
+                "作物仓库": buyer_data.get("作物仓库", [])
+            }
+        })
+    
+    def _handle_buy_store_booth(self, client_id, message):
+        """处理购买小卖部格子请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "购买小卖部格子", "buy_store_booth")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "buy_store_booth")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        cost = message.get("cost", 0)
+        
+        # 验证参数
+        if cost <= 0:
+            return self._send_action_error(client_id, "buy_store_booth", "无效的购买费用")
+        
+        # 初始化小卖部数据
+        if "小卖部格子数" not in player_data:
+            player_data["小卖部格子数"] = 10
+        
+        current_slots = player_data["小卖部格子数"]
+        
+        # 检查是否已达上限
+        if current_slots >= 40:
+            return self._send_action_error(client_id, "buy_store_booth", "小卖部格子数已达上限(40)")
+        
+        # 验证费用
+        expected_cost = 1000 + (current_slots - 10) * 500
+        if cost != expected_cost:
+            return self._send_action_error(client_id, "buy_store_booth", f"费用不正确，应为 {expected_cost} 元")
+        
+        # 检查玩家金钱是否足够
+        if player_data["money"] < cost:
+            return self._send_action_error(client_id, "buy_store_booth", f"金钱不足，需要 {cost} 元")
+        
+        # 执行购买
+        player_data["money"] -= cost
+        player_data["小卖部格子数"] += 1
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 购买小卖部格子，花费 {cost} 元，格子数：{current_slots} -> {player_data['小卖部格子数']}", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "buy_store_booth",
+            "success": True,
+            "message": f"成功购买格子，花费 {cost} 元，当前格子数：{player_data['小卖部格子数']}",
+            "updated_data": {
+                "money": player_data["money"],
+                "小卖部格子数": player_data["小卖部格子数"]
+            }
+        })
+#==========================小卖部管理处理==========================
+
+
 # 控制台命令系统
 class ConsoleCommands:
     """控制台命令处理类"""
@@ -8516,6 +9127,7 @@ class ConsoleCommands:
             "lsplayer": self.cmd_list_players,
             "playerinfo": self.cmd_player_info,
             "resetland": self.cmd_reset_land,
+            "weather": self.cmd_weather,
             "help": self.cmd_help,
             "stop": self.cmd_stop,
             "save": self.cmd_save_all,
@@ -8790,6 +9402,51 @@ class ConsoleCommands:
         else:
             print("❌ 初始化模板中没有找到土地数据")
     
+    def cmd_weather(self, args):
+        """天气控制命令: /weather <天气类型>"""
+        if len(args) != 1:
+            print("❌ 用法: /weather <天气类型>")
+            print("   可用天气: clear, rain, snow, cherry, gardenia, willow")
+            return
+            
+        weather_type = args[0].lower()
+        
+        # 定义可用的天气类型映射
+        weather_map = {
+            "clear": "晴天",
+            "rain": "下雨", 
+            "snow": "下雪",
+            "cherry": "樱花雨",
+            "gardenia": "栀子花雨", 
+            "willow": "柳叶雨",
+            "stop": "停止天气"
+        }
+        
+        if weather_type not in weather_map:
+            print("❌ 无效的天气类型")
+            print("   可用天气: clear, rain, snow, cherry, gardenia, willow, stop")
+            return
+            
+        # 广播天气变更消息给所有在线客户端
+        weather_message = {
+            "type": "weather_change",
+            "weather_type": weather_type,
+            "weather_name": weather_map[weather_type]
+        }
+        
+        # 发送给所有连接的客户端
+        for client_id in list(self.server.clients.keys()):
+            try:
+                self.server.send_data(client_id, weather_message)
+            except Exception as e:
+                print(f"⚠️  向客户端 {client_id} 发送天气消息失败: {str(e)}")
+        
+        print(f"🌤️  已将天气切换为: {weather_map[weather_type]}")
+        if len(self.server.clients) > 0:
+            print(f"   已通知 {len(self.server.clients)} 个在线客户端")
+        else:
+            print("   当前无在线客户端")
+    
     def cmd_help(self, args):
         """显示帮助信息"""
         print("🌱 萌芽农场服务器控制台命令帮助")
@@ -8802,6 +9459,10 @@ class ConsoleCommands:
         print("  /lsplayer                   - 列出所有已注册玩家")
         print("  /playerinfo <QQ号>          - 查看玩家详细信息")
         print("  /resetland <QQ号>           - 重置玩家土地状态")
+        print("")
+        print("游戏控制命令:")
+        print("  /weather <类型>             - 控制全服天气")
+        print("     可用类型: clear, rain, snow, cherry, gardenia, willow, stop")
         print("")
         print("服务器管理命令:")
         print("  /save                       - 立即保存所有玩家数据")
@@ -8840,6 +9501,7 @@ class ConsoleCommands:
         print("✅ 服务器已停止")
         import sys
         sys.exit(0)
+
 
 def console_input_thread(server):
     """控制台输入处理线程"""

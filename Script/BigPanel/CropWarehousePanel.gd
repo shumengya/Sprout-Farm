@@ -320,45 +320,51 @@ func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
 
 # 正常模式下的成熟物点击处理
 func _on_crop_selected(crop_name, crop_count):
-	# 显示成熟物信息
-	var info_text = ""
-	
-	if main_game.can_planted_crop.has(crop_name):
-		var crop = main_game.can_planted_crop[crop_name]
-		var display_name = crop_name
-		var mature_name = crop.get("成熟物名称")
-		if mature_name != null and mature_name != "":
-			display_name = mature_name
-		else:
-			display_name = crop.get("作物名称", crop_name)
-		var quality = crop.get("品质", "未知")
-		var price = crop.get("花费", 0)
-		var grow_time = crop.get("生长时间", 0)
-		var profit = crop.get("收益", 0)
-		var level_req = crop.get("等级", 1)
-		
-		# 将成熟时间转换为可读格式
-		var time_str = ""
-		var total_seconds = int(grow_time)
-		var hours = total_seconds / 3600
-		var minutes = (total_seconds % 3600) / 60
-		var seconds = total_seconds % 60
-		
-		if hours > 0:
-			time_str += str(hours) + "小时"
-		if minutes > 0:
-			time_str += str(minutes) + "分钟"
-		if seconds > 0:
-			time_str += str(seconds) + "秒"
-		
-		info_text = quality + "-" + display_name + " (数量: " + str(crop_count) + ")\n"
-		info_text += "原价格: " + str(price) + "元, 原收益: " + str(profit) + "元\n"
-		info_text += "成熟时间: " + time_str + ", 需求等级: " + str(level_req) + "\n"
-		info_text += "这是收获的成熟品，可以用于出售或其他用途"
+	# 获取作物信息面板的引用
+	var crop_inform_panel = get_node("/root/main/UI/SmallPanel/CropInformPanel")
+	if crop_inform_panel and crop_inform_panel.has_method("show_crop_info"):
+		# 打开作物信息面板并传递作物数据
+		crop_inform_panel.show_crop_info(crop_name, crop_count)
 	else:
-		info_text = crop_name + " (数量: " + str(crop_count) + ")"
-	
-	Toast.show(info_text, Color.GOLD, 3.0, 1.0)
+		# 如果作物信息面板不可用，显示Toast作为后备方案
+		var info_text = ""
+		
+		if main_game.can_planted_crop.has(crop_name):
+			var crop = main_game.can_planted_crop[crop_name]
+			var display_name = crop_name
+			var mature_name = crop.get("成熟物名称")
+			if mature_name != null and mature_name != "":
+				display_name = mature_name
+			else:
+				display_name = crop.get("作物名称", crop_name)
+			var quality = crop.get("品质", "未知")
+			var price = crop.get("花费", 0)
+			var grow_time = crop.get("生长时间", 0)
+			var profit = crop.get("收益", 0)
+			var level_req = crop.get("等级", 1)
+			
+			# 将成熟时间转换为可读格式
+			var time_str = ""
+			var total_seconds = int(grow_time)
+			var hours = total_seconds / 3600
+			var minutes = (total_seconds % 3600) / 60
+			var seconds = total_seconds % 60
+			
+			if hours > 0:
+				time_str += str(hours) + "小时"
+			if minutes > 0:
+				time_str += str(minutes) + "分钟"
+			if seconds > 0:
+				time_str += str(seconds) + "秒"
+			
+			info_text = quality + "-" + display_name + " (数量: " + str(crop_count) + ")\n"
+			info_text += "原价格: " + str(price) + "元, 原收益: " + str(profit) + "元\n"
+			info_text += "成熟时间: " + time_str + ", 需求等级: " + str(level_req) + "\n"
+			info_text += "这是收获的成熟品，可以用于出售或其他用途"
+		else:
+			info_text = crop_name + " (数量: " + str(crop_count) + ")"
+		
+		Toast.show(info_text, Color.GOLD, 3.0, 1.0)
 
 # 访问模式下的成熟物点击处理
 func _on_visit_crop_selected(crop_name, crop_count):

@@ -11,7 +11,7 @@ extends Node
 @onready var show_level : Label =   $UI/GUI/GameInfoHBox1/level				# 显示当前玩家的等级
 @onready var show_tip : Label =  $UI/GUI/GameInfoHBox3/tip					# 显示小提示
 @onready var show_like: Label = $UI/GUI/GameInfoHBox1/like					# 显示别人给自己点赞的总赞数
-@onready var show_onlineplayer: Label = $UI/GUI/GameInfoHBox2/onlineplayer	# 显示服务器在线人数
+@onready var show_onlineplayer: Label = $UI/GUI/GameInfoHBox3/onlineplayer	# 显示服务器在线人数
 @onready var show_player_name : Label =  $UI/GUI/GameInfoHBox2/player_name	# 显示玩家昵称
 @onready var show_farm_name : Label = $UI/GUI/GameInfoHBox2/farm_name		# 显示农场名称
 @onready var show_status_label : Label = $UI/GUI/GameInfoHBox2/StatusLabel	# 显示与服务器连接状态
@@ -67,6 +67,7 @@ extends Node
 @onready var pet_store_panel: Panel = $UI/BigPanel/PetStorePanel  #宠物商店面板
 @onready var pet_fight_panel: Panel = $UI/BigPanel/PetFightPanel  #宠物战斗面板
 @onready var pet_inform_panel: Panel = $UI/SmallPanel/PetInformPanel #宠物信息面板
+@onready var player_store_panel: Panel = $UI/BigPanel/PlayerStorePanel #玩家小卖部面板
 
 
 #小面板
@@ -91,6 +92,9 @@ extends Node
 @onready var wisdom_tree_image: Sprite2D = $Decoration/WisdomTree/WisdomTreeImage #智慧树图片从大小从0.5变到1.6
 @onready var tree_status: Label = $Decoration/WisdomTree/TreeStatus #智慧树状态 只显示 等级和高度
 @onready var anonymous_talk: RichTextLabel = $Decoration/WisdomTree/BackgroundPanel/AnonymousTalk #给智慧树听音乐100%会刷新 施肥浇水
+
+#天气系统
+@onready var weather_system: Node2D = $WeatherSystem #天气系统节点
 
 
 #各种弹窗
@@ -200,10 +204,6 @@ func _ready():
 	
 	# 初始化调试面板（默认隐藏）
 	debug_panel.hide()
-	debug_panel_script = debug_panel
-	
-	# 在加载进度面板上添加调试按钮
-	_add_debug_button_to_loading_panel()
 	
 	#未登录时隐藏所有UI
 	game_info_h_box_1.hide()
@@ -1158,15 +1158,16 @@ func _handle_item_config_response(response_data):
 
 
 #===============================================作物图片缓存系统===============================================
-
 ## 优化的作物图片缓存和管理系统
 class CropTextureManager:
 	
-	# 缓存字典
-	var texture_cache: Dictionary = {}          # 序列帧缓存 {crop_name: [Texture2D]}
-	var mature_texture_cache: Dictionary = {}   # 成熟图片缓存 {crop_name: Texture2D}
-	var frame_counts: Dictionary = {}           # 帧数记录 {crop_name: int}
+	# 缓存字典 - 改为三阶段图片缓存
+	var texture_cache: Dictionary = {}          # 阶段图片缓存 {crop_name: {"幼苗": Texture2D, "未成熟": Texture2D, "成熟": Texture2D}}
+	var default_textures: Dictionary = {}       # 默认图片缓存 {"幼苗": Texture2D, "未成熟": Texture2D, "成熟": Texture2D}
 	var failed_resources: Array = []           # 记录加载失败的资源路径
+	
+	# 三个生长阶段
+	const GROWTH_STAGES = ["幼苗", "未成熟", "成熟"]
 	
 	# 加载状态
 	var is_loading: bool = false
@@ -1183,9 +1184,6 @@ class CropTextureManager:
 	var results_mutex: Mutex
 	var completed_results: Array = []
 	
-	# 调试面板引用
-	var debug_panel_ref = null
-	
 	# 内存管理
 	var max_cache_size: int = 300  # 最大缓存图片数量
 	var cache_access_order: Array = []  # LRU缓存访问顺序
@@ -1196,8 +1194,6 @@ class CropTextureManager:
 		results_mutex = Mutex.new()
 		# 根据设备性能动态调整线程数
 		_adjust_thread_count()
-		# 尝试获取调试面板引用
-		_connect_debug_panel()
 	
 	## 根据设备性能调整线程数
 	func _adjust_thread_count():
@@ -1216,28 +1212,8 @@ class CropTextureManager:
 		
 		print("[CropTextureManager] 设备: %s, CPU核心: %d, 使用线程数: %d" % [platform, processor_count, max_threads])
 	
-	## 连接调试面板
-	func _connect_debug_panel():
-		# 延迟获取调试面板引用，因为初始化时可能还未创建
-		call_deferred("_try_get_debug_panel")
-	
-	## 尝试获取调试面板引用
-	func _try_get_debug_panel():
-		var main_node = Engine.get_main_loop().current_scene
-		if main_node:
-			debug_panel_ref = main_node.get_node_or_null("UI/SmallPanel/DebugPanel")
-			if debug_panel_ref:
-				print("[CropTextureManager] 已连接到调试面板")
-	
-	## 向调试面板发送消息
-	func _send_debug_message(message: String, color: Color = Color.WHITE):
-		if debug_panel_ref and debug_panel_ref.has_method("add_debug_message"):
-			debug_panel_ref.add_debug_message(message, color)
-	
-	## 设置当前加载项目
-	func _set_current_loading_item(item_name: String):
-		if debug_panel_ref and debug_panel_ref.has_method("set_current_loading_item"):
-			debug_panel_ref.set_current_loading_item(item_name)
+
+
 	
 	## 异步预加载所有作物图片 - 主要入口函数
 	func preload_all_textures_async(crop_data: Dictionary, progress_callback: Callable) -> void:
@@ -1254,23 +1230,18 @@ class CropTextureManager:
 		completed_results.clear()
 		
 		print("[CropTextureManager] 开始预加载 %d 种作物图片" % total_crops)
-		_send_debug_message("开始预加载 %d 种作物图片" % total_crops, Color.CYAN)
 		
 		# 阶段1：加载默认图片 (0-10%)
 		progress_callback.call(0, "正在加载默认图片...")
-		_send_debug_message("阶段1: 加载默认图片", Color.YELLOW)
 		await _load_default_textures_async()
 		progress_callback.call(10, "默认图片加载完成")
-		_send_debug_message("默认图片加载完成", Color.GREEN)
 		
 		# 阶段2：多线程批量加载作物图片 (10-90%)
-		_send_debug_message("阶段2: 多线程加载作物图片", Color.YELLOW)
 		await _load_crops_multithreaded_async(crop_data, progress_callback)
 		
 		# 阶段3：完成 (90-100%)
 		progress_callback.call(100, "所有作物图片加载完成！")
 		_print_cache_stats()
-		_send_debug_message("所有作物图片加载完成！", Color.GREEN)
 		
 		# 清理线程
 		await _cleanup_threads()
@@ -1278,28 +1249,23 @@ class CropTextureManager:
 		is_loading = false
 		var success_message = "预加载完成，成功: %d, 失败: %d" % [loaded_crops, failed_crops]
 		print("[CropTextureManager] " + success_message)
-		_send_debug_message(success_message, Color.CYAN)
 	
 	## 多线程批量异步加载作物图片
 	func _load_crops_multithreaded_async(crop_data: Dictionary, progress_callback: Callable) -> void:
 		var crop_names = crop_data.keys()
 		
-		# 准备加载队列
+		# 准备加载队列 - 为每个作物的每个阶段创建任务
 		loading_mutex.lock()
 		loading_queue.clear()
 		for crop_name in crop_names:
-			loading_queue.append({
-				"crop_name": crop_name,
-				"type": "sequence"
-			})
-			loading_queue.append({
-				"crop_name": crop_name,
-				"type": "mature"
-			})
+			for stage in GROWTH_STAGES:
+				loading_queue.append({
+					"crop_name": crop_name,
+					"stage": stage
+				})
 		loading_mutex.unlock()
 		
 		# 启动工作线程
-		_send_debug_message("启动 %d 个工作线程" % max_threads, Color.CYAN)
 		for i in range(max_threads):
 			var thread = Thread.new()
 			worker_threads.append(thread)
@@ -1363,66 +1329,42 @@ class CropTextureManager:
 	## 执行单个纹理加载任务
 	func _load_texture_task(task: Dictionary) -> Dictionary:
 		var crop_name = task["crop_name"]
-		var task_type = task["type"]
+		var stage = task["stage"]
 		var result = {
 			"crop_name": crop_name,
-			"type": task_type,
+			"stage": stage,
 			"success": false,
-			"textures": [],
 			"texture": null,
 			"error": ""
 		}
 		
-		if task_type == "sequence":
-			result["textures"] = _load_crop_textures_threadsafe(crop_name)
-			result["success"] = result["textures"].size() > 0
-		elif task_type == "mature":
-			result["texture"] = _load_mature_texture_threadsafe(crop_name)
-			result["success"] = result["texture"] != null
+		result["texture"] = _load_stage_texture_threadsafe(crop_name, stage)
+		result["success"] = result["texture"] != null
 		
 		# 检查加载是否成功
 		if not result["success"]:
-			result["error"] = "加载失败: " + crop_name
-			failed_resources.append(crop_name)
+			result["error"] = "加载失败: %s - %s" % [crop_name, stage]
+			failed_resources.append(crop_name + "/" + stage)
 		
 		return result
 	
-	## 线程安全的作物序列帧加载
-	func _load_crop_textures_threadsafe(crop_name: String) -> Array:
-		var textures = []
+	## 线程安全的阶段图片加载
+	func _load_stage_texture_threadsafe(crop_name: String, stage: String) -> Texture2D:
 		var crop_path = "res://assets/作物/" + crop_name + "/"
+		var texture_path = crop_path + stage + ".webp"
 		
-		# 检查作物文件夹是否存在
-		if not DirAccess.dir_exists_absolute(crop_path):
-			return []
-		
-		# 使用ResourceLoader.load_threaded_request进行异步加载
-		var frame_index = 0
-		var max_frames = 20  # 限制最大帧数，避免无限循环
-		
-		while frame_index < max_frames:
-			var texture_path = crop_path + str(frame_index) + ".webp"
-			
-			if not ResourceLoader.exists(texture_path):
-				break
-			
-			# 使用线程安全的资源加载
+		# 首先尝试加载作物特定的阶段图片
+		if ResourceLoader.exists(texture_path):
 			var texture = _load_resource_safe(texture_path)
 			if texture:
-				textures.append(texture)
-				frame_index += 1
-			else:
-				break
+				return texture
 		
-		return textures
-	
-	## 线程安全的成熟图片加载
-	func _load_mature_texture_threadsafe(crop_name: String) -> Texture2D:
-		var crop_path = "res://assets/作物/" + crop_name + "/"
-		var mature_path = crop_path + "成熟.webp"
-		
-		if ResourceLoader.exists(mature_path):
-			return _load_resource_safe(mature_path)
+		# 如果没有找到，尝试使用默认图片
+		var default_path = "res://assets/作物/默认/" + stage + ".webp"
+		if ResourceLoader.exists(default_path):
+			var default_texture = _load_resource_safe(default_path)
+			if default_texture:
+				return default_texture
 		
 		return null
 	
@@ -1448,76 +1390,41 @@ class CropTextureManager:
 	## 应用加载结果到缓存
 	func _apply_loading_result(result: Dictionary):
 		var crop_name = result["crop_name"]
-		var task_type = result["type"]
+		var stage = result["stage"]
 		var success = result["success"]
 		
 		if not success:
-			var error_msg = "加载失败: %s (%s)" % [crop_name, task_type]
-			_send_debug_message(error_msg, Color.RED)
 			return
 		
-		if task_type == "sequence":
-			var textures = result["textures"]
-			if textures.size() > 0:
-				texture_cache[crop_name] = textures
-				frame_counts[crop_name] = textures.size()
-				_update_cache_access(crop_name)
-				_send_debug_message("✓ %s: %d帧" % [crop_name, textures.size()], Color.GREEN)
-		elif task_type == "mature":
-			var texture = result["texture"]
-			if texture:
-				mature_texture_cache[crop_name] = texture
-				_update_cache_access(crop_name + "_mature")
-				_send_debug_message("✓ %s: 成熟图片" % crop_name, Color.GREEN)
+		var texture = result["texture"]
+		if texture:
+			# 确保作物有缓存字典
+			if not texture_cache.has(crop_name):
+				texture_cache[crop_name] = {}
+			
+			# 缓存阶段图片
+			texture_cache[crop_name][stage] = texture
+			_update_cache_access(crop_name + "_" + stage)
 		
 		# 检查缓存大小，必要时清理
 		_check_and_cleanup_cache()
 	
 	## 立即加载默认图片（同步，但优化）
 	func _load_default_textures_async() -> void:
-		const DEFAULT_CROP = "默认"
 		const DEFAULT_PATH = "res://assets/作物/默认/"
 		
-		if texture_cache.has(DEFAULT_CROP):
+		if default_textures.size() > 0:
 			return
 		
-		var textures = []
-		var frame_index = 0
-		
-		# 限制默认图片帧数
-		while frame_index < 10:
-			var texture_path = DEFAULT_PATH + str(frame_index) + ".webp"
+		# 加载三个阶段的默认图片
+		for stage in GROWTH_STAGES:
+			var texture_path = DEFAULT_PATH + stage + ".webp"
 			if ResourceLoader.exists(texture_path):
 				var texture = _load_resource_safe(texture_path)
 				if texture:
-					textures.append(texture)
-					frame_index += 1
-				else:
-					break
-			else:
-				break
+					default_textures[stage] = texture
 		
-		# 如果没有序列帧，尝试加载单个图片
-		if textures.size() == 0:
-			var single_path = DEFAULT_PATH + "0.webp"
-			if ResourceLoader.exists(single_path):
-				var texture = _load_resource_safe(single_path)
-				if texture:
-					textures.append(texture)
-		
-		# 缓存结果
-		if textures.size() > 0:
-			texture_cache[DEFAULT_CROP] = textures
-			frame_counts[DEFAULT_CROP] = textures.size()
-		
-		# 加载默认成熟图片
-		var mature_path = DEFAULT_PATH + "成熟.webp"
-		if ResourceLoader.exists(mature_path):
-			var mature_texture = _load_resource_safe(mature_path)
-			if mature_texture:
-				mature_texture_cache[DEFAULT_CROP] = mature_texture
-		
-		print("[CropTextureManager] 默认图片加载完成：%d 帧" % textures.size())
+		print("[CropTextureManager] 默认图片加载完成：%d 个阶段" % default_textures.size())
 		
 		# 让出一帧
 		await Engine.get_main_loop().process_frame
@@ -1530,62 +1437,81 @@ class CropTextureManager:
 	
 	## 检查并清理缓存
 	func _check_and_cleanup_cache():
-		var total_cached = texture_cache.size() + mature_texture_cache.size()
+		var total_cached = 0
+		for crop_name in texture_cache.keys():
+			total_cached += texture_cache[crop_name].size()
 		
 		if total_cached > max_cache_size:
 			var to_remove = total_cached - max_cache_size + 10  # 多清理一些
-			_send_debug_message("⚠ 缓存超限，开始清理 %d 个项目" % to_remove, Color.ORANGE)
 			
 			for i in range(min(to_remove, cache_access_order.size())):
 				var key = cache_access_order[i]
 				
-				# 不清理默认图片
+				# 不清理默认图片相关的键
 				if key.begins_with("默认"):
 					continue
 				
-				if key.ends_with("_mature"):
-					var crop_name = key.replace("_mature", "")
-					mature_texture_cache.erase(crop_name)
-				else:
-					texture_cache.erase(key)
-					frame_counts.erase(key)
+				# 解析键：crop_name_stage
+				var parts = key.split("_")
+				if parts.size() >= 2:
+					var stage = parts[-1]
+					var crop_name = "_".join(parts.slice(0, -1))
+					
+					if texture_cache.has(crop_name) and texture_cache[crop_name].has(stage):
+						texture_cache[crop_name].erase(stage)
+						
+						# 如果作物的所有阶段都被清理，删除作物条目
+						if texture_cache[crop_name].is_empty():
+							texture_cache.erase(crop_name)
 			
 			# 更新访问顺序
 			cache_access_order = cache_access_order.slice(to_remove)
 			
-			var current_size = texture_cache.size() + mature_texture_cache.size()
+			var current_size = 0
+			for crop_name in texture_cache.keys():
+				current_size += texture_cache[crop_name].size()
 			var cleanup_msg = "缓存清理完成，当前缓存: %d" % current_size
 			print("[CropTextureManager] " + cleanup_msg)
-			_send_debug_message(cleanup_msg, Color.YELLOW)
 	
 	## 根据生长进度获取作物图片（带缓存优化）
 	func get_texture_by_progress(crop_name: String, progress: float) -> Texture2D:
+		# 根据进度确定阶段
+		var stage = ""
+		if progress < 0.33:
+			stage = "幼苗"
+		elif progress < 0.85:
+			stage = "未成熟"
+		else:
+			stage = "成熟"
+		
 		# 更新访问记录
-		_update_cache_access(crop_name)
+		var access_key = crop_name + "_" + stage
+		_update_cache_access(access_key)
 		
-		# 100%成熟时优先使用成熟图片
-		if progress >= 1.0:
-			var mature_texture = mature_texture_cache.get(crop_name, null)
-			if mature_texture:
-				_update_cache_access(crop_name + "_mature")
-				return mature_texture
+		# 尝试获取作物特定的阶段图片
+		if texture_cache.has(crop_name) and texture_cache[crop_name].has(stage):
+			var texture = texture_cache[crop_name][stage]
+			if texture:
+				return texture
 		
-		# 使用序列帧图片
-		var textures = texture_cache.get(crop_name, [])
-		if textures.size() == 0:
-			# 如果没有缓存，尝试使用默认图片
-			textures = texture_cache.get("默认", [])
-			if textures.size() == 0:
-				return null
+		# 如果没有缓存，尝试直接从文件夹加载
+		var direct_texture = _load_stage_texture_threadsafe(crop_name, stage)
+		if direct_texture:
+			# 将直接加载的图片加入缓存，避免下次再次加载
+			if not texture_cache.has(crop_name):
+				texture_cache[crop_name] = {}
+			texture_cache[crop_name][stage] = direct_texture
+			_update_cache_access(crop_name + "_" + stage)
+			return direct_texture
 		
-		if textures.size() == 1:
-			return textures[0]
+		# 最后才回退到默认图片
+		if default_textures.has(stage):
+			var default_texture = default_textures[stage]
+			if default_texture:
+				return default_texture
 		
-		# 根据进度计算帧索引
-		var frame_index = int(progress * (textures.size() - 1))
-		frame_index = clamp(frame_index, 0, textures.size() - 1)
-		
-		return textures[frame_index]
+		# 如果都没有，返回null
+		return null
 	
 	## 清理线程
 	func _cleanup_threads() -> void:
@@ -1599,8 +1525,7 @@ class CropTextureManager:
 	func clear_cache() -> void:
 		await _cleanup_threads()
 		texture_cache.clear()
-		mature_texture_cache.clear()
-		frame_counts.clear()
+		default_textures.clear()
 		cache_access_order.clear()
 		failed_resources.clear()
 		print("[CropTextureManager] 缓存已清理")
@@ -1608,13 +1533,13 @@ class CropTextureManager:
 	## 打印缓存统计信息
 	func _print_cache_stats() -> void:
 		print("[CropTextureManager] 缓存统计:")
-		print("  - 序列帧缓存: %d 种作物" % texture_cache.size())
-		print("  - 成熟图片缓存: %d 种作物" % mature_texture_cache.size())
+		print("  - 阶段图片缓存: %d 种作物" % texture_cache.size())
+		print("  - 默认图片缓存: %d 个阶段" % default_textures.size())
 		print("  - 加载失败: %d 个资源" % failed_resources.size())
-		var total_frames = 0
-		for count in frame_counts.values():
-			total_frames += count
-		print("  - 总图片帧数: %d 帧" % total_frames)
+		var total_stages = 0
+		for crop_name in texture_cache.keys():
+			total_stages += texture_cache[crop_name].size()
+		print("  - 总阶段图片数: %d 个" % total_stages)
 		
 		if failed_resources.size() > 0:
 			print("  - 失败的资源:")
@@ -1625,12 +1550,14 @@ class CropTextureManager:
 	func get_cache_info() -> String:
 		var info = "作物图片缓存详情:\n"
 		for crop_name in texture_cache.keys():
-			var frame_count = frame_counts.get(crop_name, 0)
-			var has_mature = mature_texture_cache.has(crop_name)
-			info += "  - %s: %d帧" % [crop_name, frame_count]
-			if has_mature:
-				info += " (含成熟图片)"
+			var stages = texture_cache[crop_name].keys()
+			info += "  - %s: %s" % [crop_name, "/".join(stages)]
 			info += "\n"
+		
+		if default_textures.size() > 0:
+			info += "\n默认图片:\n"
+			for stage in default_textures.keys():
+				info += "  - " + stage + "\n"
 		
 		if failed_resources.size() > 0:
 			info += "\n加载失败的资源:\n"
@@ -1645,24 +1572,18 @@ class CropTextureManager:
 		for crop_name in common_crops:
 			# 确保常用作物在缓存中
 			if not texture_cache.has(crop_name):
-				var textures = _load_crop_textures_threadsafe(crop_name)
-				if textures.size() > 0:
-					texture_cache[crop_name] = textures
-					frame_counts[crop_name] = textures.size()
-			
-			if not mature_texture_cache.has(crop_name):
-				var mature = _load_mature_texture_threadsafe(crop_name)
-				if mature:
-					mature_texture_cache[crop_name] = mature
+				texture_cache[crop_name] = {}
+				
+				# 加载各个阶段的图片
+				for stage in GROWTH_STAGES:
+					var texture = _load_stage_texture_threadsafe(crop_name, stage)
+					if texture:
+						texture_cache[crop_name][stage] = texture
+	
+
 
 # 全局作物图片管理器实例
 var crop_texture_manager: CropTextureManager
-
-# 资源加载调试器（可选，用于调试）
-var resource_debugger = null
-
-# 调试面板脚本引用
-var debug_panel_script = null
 
 #===============================================作物图片缓存系统===============================================
 
@@ -1724,11 +1645,7 @@ func _update_load_progress(progress: int, message: String = "") -> void:
 	if message_label and message != "":
 		message_label.text = message
 	
-	# 向调试面板发送进度信息
-	if debug_panel_script and debug_panel_script.has_method("add_debug_message"):
-		if message != "":
-			#debug_panel_script.add_debug_message("进度 %d%%: %s" % [progress, message], Color.CYAN)
-			pass
+
 	# 检测卡顿
 	_check_loading_stuck(progress)
 	
@@ -1748,8 +1665,7 @@ func _check_loading_stuck(progress: int):
 	if progress == last_progress_value:
 		var stuck_time = current_time - last_progress_time
 		if stuck_time > 5.0:  # 5秒没有进度变化
-			if debug_panel_script and debug_panel_script.has_method("add_debug_message"):
-				debug_panel_script.add_debug_message("⚠ 加载卡顿检测: 在 %d%% 停留了 %.1f 秒" % [progress, stuck_time], Color.ORANGE)
+			print("⚠ 加载卡顿检测: 在 %d%% 停留了 %.1f 秒" % [progress, stuck_time])
 	else:
 		# 进度有变化，更新记录
 		last_progress_value = progress
@@ -1797,95 +1713,7 @@ func _wait_for_crop_data() -> void:
 
 #===============================================调试和维护工具===============================================
 
-## 调试：打印缓存信息
-func _debug_print_crop_cache() -> void:
-	if crop_texture_manager:
-		print(crop_texture_manager.get_cache_info())
-	else:
-		print("[调试] 作物图片管理器未初始化")
 
-## 调试：强制刷新所有图片
-func _debug_refresh_all_crop_sprites() -> void:
-	print("[调试] 强制刷新所有地块图片...")
-	_refresh_all_crop_sprites()
-	print("[调试] 图片刷新完成")
-
-## 调试：清理图片缓存
-func _debug_clear_crop_cache() -> void:
-	if crop_texture_manager:
-		crop_texture_manager.clear_cache()
-		print("[调试] 图片缓存已清理")
-
-## 调试：启用资源加载调试器
-func _debug_enable_resource_debugger() -> void:
-	if not resource_debugger:
-		resource_debugger = preload("res://GlobalScript/ResourceLoadingDebugger.gd").new()
-		add_child(resource_debugger)
-		print("[调试] 资源加载调试器已启用")
-	else:
-		print("[调试] 资源加载调试器已经在运行")
-
-## 调试：生成资源加载报告
-func _debug_generate_loading_report() -> void:
-	if resource_debugger:
-		var report = resource_debugger.generate_loading_report()
-		print(report)
-		resource_debugger.export_debug_data_to_file()
-	else:
-		print("[调试] 资源加载调试器未启用，请先调用 _debug_enable_resource_debugger()")
-
-## 调试：检测设备能力
-func _debug_detect_device_capabilities() -> void:
-	if resource_debugger:
-		var capabilities = resource_debugger.detect_device_capabilities()
-		print("[调试] 设备能力检测结果:")
-		for key in capabilities:
-			print("  %s: %s" % [key, str(capabilities[key])])
-	else:
-		print("[调试] 资源加载调试器未启用")
-
-## 调试：强制触发低内存模式
-func _debug_trigger_low_memory_mode() -> void:
-	if crop_texture_manager:
-		# 临时降低缓存大小来模拟低内存环境
-		crop_texture_manager.max_cache_size = 50
-		crop_texture_manager._check_and_cleanup_cache()
-		print("[调试] 已触发低内存模式，缓存大小限制为50")
-
-## 调试：恢复正常内存模式
-func _debug_restore_normal_memory_mode() -> void:
-	if crop_texture_manager:
-		crop_texture_manager.max_cache_size = 200
-		print("[调试] 已恢复正常内存模式，缓存大小限制为200")
-
-## 在加载进度面板上添加调试按钮
-func _add_debug_button_to_loading_panel():
-	# 创建调试按钮
-	var debug_button = Button.new()
-	debug_button.text = "调试信息"
-	debug_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	debug_button.position = Vector2(10, 500)  # 左下角位置
-	debug_button.size = Vector2(120, 40)
-	
-	# 设置按钮样式
-	debug_button.modulate = Color(0.8, 0.8, 1.0, 0.9)  # 半透明蓝色
-	
-	# 连接点击信号
-	debug_button.pressed.connect(_on_debug_button_pressed)
-	
-	# 添加到加载进度面板
-	load_progress_panel.add_child(debug_button)
-	
-	print("[MainGame] 调试按钮已添加到加载进度面板")
-
-## 调试按钮点击处理
-func _on_debug_button_pressed():
-	if debug_panel.visible:
-		debug_panel.hide()
-	else:
-		debug_panel.show()
-		debug_panel.move_to_front()
-	print("[MainGame] 调试面板切换显示状态")
 
 #===============================================调试和维护工具===============================================
 
@@ -1894,8 +1722,14 @@ func _on_debug_button_pressed():
 #===============================================向后兼容性===============================================
 # 为了保持向后兼容，保留一些原来的函数名
 func _load_crop_textures(crop_name: String) -> Array:
-	if crop_texture_manager:
-		return crop_texture_manager._load_crop_textures_threadsafe(crop_name)
+	# 返回所有阶段的图片
+	if crop_texture_manager and crop_texture_manager.texture_cache.has(crop_name):
+		var stages = crop_texture_manager.texture_cache[crop_name]
+		var textures = []
+		for stage in crop_texture_manager.GROWTH_STAGES:
+			if stages.has(stage):
+				textures.append(stages[stage])
+		return textures
 	return []
 
 func _get_crop_texture_by_progress(crop_name: String, progress: float) -> Texture2D:
@@ -2398,12 +2232,11 @@ func _handle_broadcast_history_response(data: Dictionary):
 		# 更新主界面大喇叭显示为最新消息
 		if global_server_broadcast:
 			var latest_message = global_server_broadcast_panel.get_latest_message()
-			if latest_message != "暂无消息":
+			if latest_message != "全服大喇叭":
 				global_server_broadcast.text = latest_message
 				print("主界面大喇叭已更新为: ", latest_message)
 			else:
-				global_server_broadcast.text = ""
-				print("没有消息，清空主界面大喇叭显示")
+				global_server_broadcast.text = "全服大喇叭"
 
 
 # 初始化大喇叭显示
@@ -3479,3 +3312,39 @@ func _handle_wisdom_tree_config_response(data):
 			wisdom_tree_panel.wisdom_tree_config = config
 			wisdom_tree_panel.update_ui()
 # ======================================= 智慧树系统 ========================================= 
+
+
+# ======================================= 天气系统 =========================================
+# 处理天气变更
+func _handle_weather_change(weather_type: String, weather_name: String):
+	"""处理服务器发送的天气变更消息"""
+	if weather_system and weather_system.has_method("set_weather"):
+		weather_system.set_weather(weather_type)
+		Toast.show("天气已变更为：" + weather_name, Color.CYAN, 3.0)
+		print("天气已切换为：", weather_name)
+	else:
+		print("天气系统不可用")
+# ======================================= 天气系统 =========================================
+
+
+#打开小卖部面板
+func _on_my_store_button_pressed() -> void:
+	player_store_panel.show()
+	pass
+
+#打开小卖部面板
+func _on_player_store_pressed() -> void:
+	player_store_panel.show()
+	pass 
+
+func _on_seed_store_pressed() -> void:
+	crop_store_panel.show()
+	pass 
+
+func _on_item_store_pressed() -> void:
+	item_store_panel.show()
+	pass 
+
+func _on_pet_store_pressed() -> void:
+	pet_store_panel.show()
+	pass 

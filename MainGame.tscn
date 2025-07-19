@@ -1,8 +1,9 @@
-[gd_scene load_steps=85 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=96 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
 [ext_resource type="PackedScene" uid="uid://bkivlkirrx6u8" path="res://CopyItems/crop_item.tscn" id="3_isiom"]
+[ext_resource type="FontFile" uid="uid://dl31rnmd4lia" path="res://assets/字体/MapleMono-NF-CN-Bold.ttf" id="3_t4s8j"]
 [ext_resource type="Texture2D" uid="uid://ftv231igtdoq" path="res://assets/游戏UI/等级.webp" id="3_y1hsh"]
 [ext_resource type="Texture2D" uid="uid://bqib5y8uwg6hx" path="res://assets/游戏UI/钱币.webp" id="4_ql8k3"]
 [ext_resource type="Texture2D" uid="uid://waqbwo2r33j3" path="res://assets/游戏UI/小提示.webp" id="5_5b81d"]
@@ -31,6 +32,7 @@
 [ext_resource type="PackedScene" uid="uid://j4ft87o7jk14" path="res://Scene/BigPanel/ItemStorePanel.tscn" id="21_uhubb"]
 [ext_resource type="PackedScene" uid="uid://cw8am7nnbgca5" path="res://Scene/Pet/PetFightPanel.tscn" id="23_n03md"]
 [ext_resource type="Script" uid="uid://bdhwvqsmakna2" path="res://Script/BigPanel/PetBagPanel.gd" id="23_uc6q1"]
+[ext_resource type="Script" uid="uid://bdavskipn547h" path="res://Script/BigPanel/PlayerStorePanel.gd" id="24_dygid"]
 [ext_resource type="PackedScene" uid="uid://cnjidcwuv4nn4" path="res://Scene/BigPanel/PetStorePanel.tscn" id="24_uc6q1"]
 [ext_resource type="PackedScene" uid="uid://d3i0l6ysrde6o" path="res://Scene/SmallPanel/AccountSettingPanel.tscn" id="26_uc6q1"]
 [ext_resource type="PackedScene" uid="uid://d1lu2yg4xl382" path="res://Scene/SmallPanel/LoadProgressPanel.tscn" id="27_vygm6"]
@@ -46,32 +48,46 @@
 [ext_resource type="PackedScene" uid="uid://ibl5wbbw3pwc" path="res://CopyItems/item_button.tscn" id="39_cdkxt"]
 [ext_resource type="Script" uid="uid://dwf28j01ckg3y" path="res://Script/SmallPanel/WisdomTreePanel.gd" id="39_np7ck"]
 [ext_resource type="Texture2D" uid="uid://bt1i2yhhlor5e" path="res://assets/地块/土块1.webp" id="41_cdkxt"]
+[ext_resource type="Script" uid="uid://b185o1hjnlrv5" path="res://Script/SmallPanel/CropInformPanel.gd" id="41_iluto"]
 [ext_resource type="Texture2D" uid="uid://3ff2lnbc0op7" path="res://assets/稻草人图片/稻草人1.webp" id="43_6rkns"]
+[ext_resource type="Script" uid="uid://dsmmxivba06ab" path="res://Script/Dialog/BatchSellPopup.gd" id="44_av1bx"]
 [ext_resource type="Texture2D" uid="uid://cbdm5e6s8bf6l" path="res://assets/智慧树图片/智慧树4.webp" id="45_xvovi"]
+[ext_resource type="Script" uid="uid://cha0uw4ra1trr" path="res://Script/Dialog/AddProduct2StorePopup.gd" id="46_8d602"]
 [ext_resource type="Texture2D" uid="uid://dilipbs0lncpd" path="res://assets/草地图片/草地10.webp" id="48_2i8fe"]
 [ext_resource type="Texture2D" uid="uid://du34yctd8bd8m" path="res://assets/灌木丛图片/灌木丛1.webp" id="49_xjiif"]
 [ext_resource type="Texture2D" uid="uid://dswjorjhf1i6f" path="res://assets/灌木丛图片/灌木丛2.webp" id="50_sqnmr"]
 [ext_resource type="Texture2D" uid="uid://go3n3qnpancf" path="res://assets/灌木丛图片/灌木丛3.webp" id="51_2i8fe"]
 [ext_resource type="Texture2D" uid="uid://dk4yl4ghmxaa2" path="res://assets/天气系统图片/雪花.webp" id="53_4ka7t"]
-[ext_resource type="PackedScene" uid="uid://cvg38nsrm77jy" path="res://Scene/Particle/WillowLeafRain.tscn" id="53_nf3jg"]
 [ext_resource type="Texture2D" uid="uid://chcgrmluhfxuk" path="res://assets/天气系统图片/樱花1.webp" id="53_tdq2s"]
 [ext_resource type="Texture2D" uid="uid://c1qqalp7owgy2" path="res://assets/天气系统图片/栀子花1.webp" id="53_xyeuq"]
+[ext_resource type="Texture2D" uid="uid://b7g5ut03rm53n" path="res://assets/装饰物图片/小卖部.webp" id="54_06tja"]
 [ext_resource type="Texture2D" uid="uid://dfkgmj7e0555q" path="res://assets/天气系统图片/樱花2.webp" id="54_dygjy"]
 [ext_resource type="Texture2D" uid="uid://bfducebx4c4il" path="res://assets/天气系统图片/柳叶3.webp" id="54_jiccn"]
 [ext_resource type="Texture2D" uid="uid://cd7x78uyi2csh" path="res://assets/天气系统图片/栀子花2.webp" id="54_t4s8j"]
 [ext_resource type="Texture2D" uid="uid://dl58ie2lneq77" path="res://assets/天气系统图片/柳叶1.webp" id="55_e8wx8"]
 [ext_resource type="Texture2D" uid="uid://q0difb6wjkgm" path="res://assets/天气系统图片/樱花3.webp" id="55_edvcq"]
+[ext_resource type="Texture2D" uid="uid://j3h0ocagxf8" path="res://assets/装饰物图片/种子商店.webp" id="55_g4i0f"]
 [ext_resource type="Texture2D" uid="uid://cqqyc3ddwtvpn" path="res://assets/天气系统图片/栀子花3.webp" id="55_iluto"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5dq3w"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nf3jg"]
+[ext_resource type="Texture2D" uid="uid://d4e54gh5iccul" path="res://assets/装饰物图片/道具商店.webp" id="56_rlmnt"]
+[ext_resource type="Texture2D" uid="uid://deow5dqdm412v" path="res://assets/装饰物图片/宠物商店.webp" id="57_rlmnt"]
+[ext_resource type="Script" uid="uid://o4mcuqoivqri" path="res://GameManager/WeatherSystem.gd" id="62_uyv6e"]
+[ext_resource type="Texture2D" uid="uid://bnv6wb0k443fv" path="res://assets/天气系统图片/柳叶2.webp" id="69_uyv6e"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_adtqp"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4ka7t"]
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n03md"]
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8d602"]
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
@@ -116,10 +132,22 @@ corner_radius_bottom_left = 20
 corner_detail = 20
 shadow_size = 30
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xyeuq"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t4s8j"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+
 [sub_resource type="Environment" id="Environment_m6fch"]
 background_mode = 3
 ambient_light_energy = 0.0
-glow_enabled = true
 glow_intensity = 1.0
 glow_bloom = 0.3
 glow_blend_mode = 0
@@ -159,6 +187,18 @@ emission_box_extents = Vector3(1000, 1, 1)
 gravity = Vector3(-30, 80, 0)
 scale_min = 0.2
 scale_max = 0.3
+turbulence_enabled = true
+turbulence_noise_speed = Vector3(10, 0, 0)
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.07
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6fhdl"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+gravity = Vector3(-30, 80, 0)
+scale_min = 0.4
+scale_max = 0.5
 turbulence_enabled = true
 turbulence_noise_speed = Vector3(10, 0, 0)
 turbulence_influence_min = 0.02
@@ -243,7 +283,7 @@ anchors_preset = 0
 
 [node name="GameInfoHBox1" type="HBoxContainer" parent="UI/GUI"]
 layout_mode = 0
-offset_right = 1400.0
+offset_right = 1339.0
 offset_bottom = 35.0
 
 [node name="experience_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
@@ -261,8 +301,10 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
 text = "经验：999"
+vertical_alignment = 1
 
 [node name="level_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
 layout_mode = 2
@@ -278,6 +320,7 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
 text = "等级：100"
 
@@ -295,6 +338,7 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
 text = "钱币：999"
 
@@ -312,6 +356,7 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
 text = "体力值：20"
 
@@ -329,13 +374,14 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
 text = "点赞数：0"
 
 [node name="GameInfoHBox2" type="HBoxContainer" parent="UI/GUI"]
 layout_mode = 0
 offset_top = 35.0
-offset_right = 1400.0
+offset_right = 1336.0
 offset_bottom = 70.0
 
 [node name="player_name_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
@@ -352,8 +398,9 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
-text = "玩家昵称：树萌芽"
+text = "玩家昵称:树萌芽"
 
 [node name="farm_name_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
 layout_mode = 2
@@ -369,6 +416,7 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
 text = "农场名称：树萌芽的农场"
 
@@ -385,6 +433,7 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
 text = "服务器状态：正在检测中"
 
@@ -402,31 +451,15 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
 text = "FPS：0"
-
-[node name="onlineplayer_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
-layout_mode = 2
-texture = ExtResource("10_vygm6")
-expand_mode = 2
-
-[node name="onlineplayer" type="Label" parent="UI/GUI/GameInfoHBox2"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.423529, 1, 0.533333, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 3
-theme_override_constants/shadow_offset_y = 3
-theme_override_constants/outline_size = 10
-theme_override_constants/shadow_outline_size = 10
-theme_override_font_sizes/font_size = 25
-text = "检测中..."
 
 [node name="GameInfoHBox3" type="HBoxContainer" parent="UI/GUI"]
 layout_mode = 0
 offset_top = 70.0
-offset_right = 1400.0
-offset_bottom = 105.0
+offset_right = 1335.0
+offset_bottom = 113.0
 
 [node name="tip_image" type="TextureRect" parent="UI/GUI/GameInfoHBox3"]
 layout_mode = 2
@@ -442,6 +475,7 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
 text = "游戏小提示"
 
@@ -460,6 +494,7 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
 theme_override_font_sizes/font_size = 25
 text = "全服大喇叭"
 vertical_alignment = 1
@@ -473,6 +508,24 @@ theme_override_constants/outline_size = 10
 theme_override_font_sizes/font_size = 25
 text = "查看"
 
+[node name="onlineplayer_image" type="TextureRect" parent="UI/GUI/GameInfoHBox3"]
+layout_mode = 2
+texture = ExtResource("10_vygm6")
+expand_mode = 2
+
+[node name="onlineplayer" type="Label" parent="UI/GUI/GameInfoHBox3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.423529, 1, 0.533333, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "检测中..."
+
 [node name="FarmVBox" type="VBoxContainer" parent="UI/GUI"]
 layout_mode = 0
 offset_left = 4.0
@@ -483,6 +536,7 @@ scale = Vector2(0.8, 0.8)
 alignment = 2
 
 [node name="SeedStoreButton" type="Button" parent="UI/GUI/FarmVBox"]
+visible = false
 modulate = Color(1, 0.564706, 0.647059, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
@@ -501,6 +555,7 @@ theme_override_font_sizes/font_size = 40
 text = "作物仓库"
 
 [node name="ItemStoreButton" type="Button" parent="UI/GUI/FarmVBox"]
+visible = false
 modulate = Color(0.231373, 0.772549, 1, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
@@ -559,6 +614,13 @@ offset_right = 1446.0
 offset_bottom = 408.0
 scale = Vector2(0.8, 0.8)
 alignment = 2
+
+[node name="MyStoreButton" type="Button" parent="UI/GUI/OtherVBox"]
+visible = false
+modulate = Color(0.917346, 0.737213, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "我的小卖部"
 
 [node name="AccountSettingButton" type="Button" parent="UI/GUI/OtherVBox"]
 modulate = Color(0.843137, 0.772549, 1, 1)
@@ -636,6 +698,7 @@ theme_override_font_sizes/font_size = 40
 text = "宠物背包"
 
 [node name="PetStoreButton" type="Button" parent="UI/GUI/OtherVBox"]
+visible = false
 modulate = Color(0.992157, 0.482353, 0.870588, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
@@ -649,22 +712,6 @@ theme_override_font_sizes/font_size = 40
 text = "稻草人"
 
 [node name="BigPanel" type="CanvasLayer" parent="UI"]
-
-[node name="LuckyDrawPanel" parent="UI/BigPanel" instance=ExtResource("17_f21le")]
-visible = false
-offset_left = 425.0
-offset_top = 2.0
-offset_right = 1025.0
-offset_bottom = 722.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_5dq3w")
-
-[node name="DailyCheckInPanel" parent="UI/BigPanel" instance=ExtResource("18_m6fch")]
-visible = false
-offset_left = 442.0
-offset_top = 3.0
-offset_right = 1042.0
-offset_bottom = 723.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_nf3jg")
 
 [node name="TCPNetworkManagerPanel" parent="UI/BigPanel" instance=ExtResource("7_401ut")]
 visible = false
@@ -688,15 +735,6 @@ offset_bottom = 797.0
 
 [node name="CropWarehousePanel" parent="UI/BigPanel" instance=ExtResource("18_5b81d")]
 
-[node name="LoginPanel" parent="UI/BigPanel" instance=ExtResource("11_6jgly")]
-visible = false
-top_level = true
-offset_left = 342.0
-offset_top = 40.0
-offset_right = 1092.0
-offset_bottom = 700.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_4ka7t")
-
 [node name="PlayerBagPanel" parent="UI/BigPanel" instance=ExtResource("19_8kysg")]
 visible = false
 
@@ -705,6 +743,88 @@ visible = false
 
 [node name="ItemBagPanel" parent="UI/BigPanel" instance=ExtResource("20_n03md")]
 visible = false
+
+[node name="PlayerStorePanel" type="Panel" parent="UI/BigPanel"]
+visible = false
+offset_left = 69.0
+offset_top = 56.0
+offset_right = 1635.0
+offset_bottom = 836.0
+scale = Vector2(0.8, 0.8)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
+script = ExtResource("24_dygid")
+
+[node name="TMBackGround" type="ColorRect" parent="UI/BigPanel/PlayerStorePanel"]
+layout_mode = 0
+offset_left = -90.0
+offset_top = -71.0
+offset_right = 1672.0
+offset_bottom = 831.0
+color = Color(1, 1, 1, 0)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/BigPanel/PlayerStorePanel"]
+layout_mode = 2
+offset_left = 28.0
+offset_top = 95.0
+offset_right = 3805.0
+offset_bottom = 1723.0
+scale = Vector2(0.4, 0.4)
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Store_Grid" type="GridContainer" parent="UI/BigPanel/PlayerStorePanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+columns = 8
+
+[node name="Title" type="Label" parent="UI/BigPanel/PlayerStorePanel"]
+layout_mode = 2
+offset_right = 1566.0
+offset_bottom = 69.0
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 0.807843, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 50
+text = "玩家小卖部"
+horizontal_alignment = 1
+
+[node name="QuitButton" type="Button" parent="UI/BigPanel/PlayerStorePanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 1478.75
+offset_top = 20.0
+offset_right = 1538.75
+offset_bottom = 83.0
+theme_override_font_sizes/font_size = 40
+text = "X"
+
+[node name="RefreshButton" type="Button" parent="UI/BigPanel/PlayerStorePanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 27.5
+offset_top = 16.25
+offset_right = 115.5
+offset_bottom = 79.25
+theme_override_font_sizes/font_size = 40
+text = "刷新"
+
+[node name="BuyProductBoothButton" type="Button" parent="UI/BigPanel/PlayerStorePanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 207.5
+offset_top = 17.5
+offset_right = 535.5
+offset_bottom = 80.5
+theme_override_font_sizes/font_size = 40
+text = "购买商品摊位"
 
 [node name="PetStorePanel" parent="UI/BigPanel" instance=ExtResource("24_uc6q1")]
 visible = false
@@ -718,7 +838,7 @@ offset_bottom = 836.0
 scale = Vector2(0.8, 0.8)
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
+theme_override_styles/panel = SubResource("StyleBoxFlat_8d602")
 script = ExtResource("23_uc6q1")
 
 [node name="TMBackGround" type="ColorRect" parent="UI/BigPanel/PetBagPanel"]
@@ -783,6 +903,14 @@ text = "刷新"
 
 [node name="PetFightPanel" parent="UI/BigPanel" instance=ExtResource("23_n03md")]
 visible = false
+
+[node name="DailyCheckInPanel" parent="UI/BigPanel" instance=ExtResource("18_m6fch")]
+visible = false
+
+[node name="LuckyDrawPanel" parent="UI/BigPanel" instance=ExtResource("17_f21le")]
+visible = false
+
+[node name="LoginPanel" parent="UI/BigPanel" instance=ExtResource("11_6jgly")]
 
 [node name="SmallPanel" type="CanvasLayer" parent="UI"]
 
@@ -1450,6 +1578,101 @@ offset_top = 166.0
 offset_right = 979.0
 offset_bottom = 482.0
 
+[node name="CropInformPanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_left = 330.0
+offset_right = 958.0
+offset_bottom = 723.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_xyeuq")
+script = ExtResource("41_iluto")
+
+[node name="Title" type="Label" parent="UI/SmallPanel/CropInformPanel"]
+layout_mode = 0
+offset_top = 17.0
+offset_right = 628.0
+offset_bottom = 74.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 35
+text = "作物信息"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/CropInformPanel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 561.0
+offset_top = 17.0
+offset_right = 611.0
+offset_bottom = 67.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="VBox" type="VBoxContainer" parent="UI/SmallPanel/CropInformPanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 74.0
+offset_right = 615.0
+offset_bottom = 708.0
+
+[node name="CropImage" type="TextureRect" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+texture = ExtResource("31_uc6q1")
+stretch_mode = 3
+
+[node name="CropName" type="Label" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "名称："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CropDescription" type="Label" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "描述："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CropPrice" type="Label" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "收购价："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CropQuality" type="Label" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "品质："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 10
+alignment = 1
+
+[node name="SaleProduct" type="Button" parent="UI/SmallPanel/CropInformPanel/VBox/HBox"]
+custom_minimum_size = Vector2(120, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+theme_override_font_sizes/font_size = 30
+text = "直接出售"
+
+[node name="AddToStore" type="Button" parent="UI/SmallPanel/CropInformPanel/VBox/HBox"]
+custom_minimum_size = Vector2(120, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+theme_override_font_sizes/font_size = 30
+text = "放入小卖部"
+
 [node name="DiaLog" type="CanvasLayer" parent="UI"]
 
 [node name="AcceptDialog" parent="UI/DiaLog" instance=ExtResource("16_0igvr")]
@@ -1461,6 +1684,7 @@ offset_left = 426.0
 offset_top = 90.0
 offset_right = 928.0
 offset_bottom = 556.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_t4s8j")
 script = ExtResource("29_5b81d")
 
 [node name="VBox" type="VBoxContainer" parent="UI/DiaLog/BatchBuyPopup"]
@@ -1494,6 +1718,145 @@ theme_override_font_sizes/font_size = 30
 text = "确定"
 
 [node name="CancelButton" type="Button" parent="UI/DiaLog/BatchBuyPopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "取消"
+
+[node name="BatchSellPopup" type="PanelContainer" parent="UI/DiaLog"]
+visible = false
+offset_left = 391.0
+offset_top = 95.0
+offset_right = 893.0
+offset_bottom = 561.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_t4s8j")
+script = ExtResource("44_av1bx")
+
+[node name="VBox" type="VBoxContainer" parent="UI/DiaLog/BatchSellPopup"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/DiaLog/BatchSellPopup/VBox"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 40
+text = "请选择出售数量"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Contents" type="Label" parent="UI/DiaLog/BatchSellPopup/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 20
+text = "这是说明内容"
+horizontal_alignment = 1
+
+[node name="SellNumEdit" type="LineEdit" parent="UI/DiaLog/BatchSellPopup/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+
+[node name="HBox" type="HBoxContainer" parent="UI/DiaLog/BatchSellPopup/VBox"]
+layout_mode = 2
+
+[node name="SureButton" type="Button" parent="UI/DiaLog/BatchSellPopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "确定"
+
+[node name="CancelButton" type="Button" parent="UI/DiaLog/BatchSellPopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "取消"
+
+[node name="AddProductToStorePopup" type="PanelContainer" parent="UI/DiaLog"]
+visible = false
+offset_left = 426.0
+offset_top = 59.0
+offset_right = 1026.0
+offset_bottom = 559.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_t4s8j")
+script = ExtResource("46_8d602")
+
+[node name="VBox" type="VBoxContainer" parent="UI/DiaLog/AddProductToStorePopup"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 40
+text = "弹窗标题"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Contents" type="Label" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.762404, 0.762404, 0.762404, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 24
+text = "弹窗内容"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SellNum" type="Label" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 24
+text = "请选择售卖的数量"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SellNumInput" type="LineEdit" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+
+[node name="SellPrice" type="Label" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 24
+text = "请选择售卖的价格"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SellPriceInput" type="LineEdit" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+
+[node name="HBox" type="HBoxContainer" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+
+[node name="SureButton" type="Button" parent="UI/DiaLog/AddProductToStorePopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "确定"
+
+[node name="CancelButton" type="Button" parent="UI/DiaLog/AddProductToStorePopup/VBox/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
@@ -2991,7 +3354,7 @@ autowrap_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Decoration1" type="Button" parent="Decoration"]
+[node name="PlayerStore" type="Button" parent="Decoration"]
 self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_left = 122.0
@@ -3000,18 +3363,17 @@ offset_right = 386.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration1"]
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/PlayerStore"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("48_2i8fe")
 
-[node name="Image" type="Sprite2D" parent="Decoration/Decoration1"]
-position = Vector2(132, 48)
-scale = Vector2(1.2, 1.2)
-texture = ExtResource("49_xjiif")
+[node name="Image" type="Sprite2D" parent="Decoration/PlayerStore"]
+position = Vector2(140, 57.5)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("54_06tja")
 
-[node name="Name" type="RichTextLabel" parent="Decoration/Decoration1"]
-visible = false
+[node name="Name" type="RichTextLabel" parent="Decoration/PlayerStore"]
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3023,11 +3385,11 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
-text = "稻草人"
+text = "小卖部"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Decoration2" type="Button" parent="Decoration"]
+[node name="SeedStore" type="Button" parent="Decoration"]
 self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_left = 244.0
@@ -3036,18 +3398,17 @@ offset_right = 508.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration2"]
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/SeedStore"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("48_2i8fe")
 
-[node name="Image" type="Sprite2D" parent="Decoration/Decoration2"]
+[node name="Image" type="Sprite2D" parent="Decoration/SeedStore"]
 position = Vector2(132, 48)
-scale = Vector2(1.2, 1.2)
-texture = ExtResource("50_sqnmr")
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("55_g4i0f")
 
-[node name="Name" type="RichTextLabel" parent="Decoration/Decoration2"]
-visible = false
+[node name="Name" type="RichTextLabel" parent="Decoration/SeedStore"]
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3059,11 +3420,11 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
-text = "稻草人"
+text = "种子商店"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Decoration3" type="Button" parent="Decoration"]
+[node name="ItemStore" type="Button" parent="Decoration"]
 self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_left = 366.0
@@ -3072,18 +3433,17 @@ offset_right = 630.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration3"]
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/ItemStore"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("48_2i8fe")
 
-[node name="Image" type="Sprite2D" parent="Decoration/Decoration3"]
+[node name="Image" type="Sprite2D" parent="Decoration/ItemStore"]
 position = Vector2(132, 48)
-scale = Vector2(1.2, 1.2)
-texture = ExtResource("51_2i8fe")
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("56_rlmnt")
 
-[node name="Name" type="RichTextLabel" parent="Decoration/Decoration3"]
-visible = false
+[node name="Name" type="RichTextLabel" parent="Decoration/ItemStore"]
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3095,11 +3455,11 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
-text = "稻草人"
+text = "道具商店"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Decoration4" type="Button" parent="Decoration"]
+[node name="PetStore" type="Button" parent="Decoration"]
 self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_left = 488.0
@@ -3108,18 +3468,17 @@ offset_right = 752.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/Decoration4"]
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/PetStore"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("48_2i8fe")
 
-[node name="Image" type="Sprite2D" parent="Decoration/Decoration4"]
+[node name="Image" type="Sprite2D" parent="Decoration/PetStore"]
 position = Vector2(132, 48)
-scale = Vector2(1.2, 1.2)
-texture = ExtResource("50_sqnmr")
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("57_rlmnt")
 
-[node name="Name" type="RichTextLabel" parent="Decoration/Decoration4"]
-visible = false
+[node name="Name" type="RichTextLabel" parent="Decoration/PetStore"]
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3131,7 +3490,7 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
-text = "稻草人"
+text = "宠物商店"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -4344,9 +4703,11 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="WeatherSystem" type="Node2D" parent="."]
+script = ExtResource("62_uyv6e")
 
 [node name="CherryBlossomRain" type="Node2D" parent="WeatherSystem"]
 visible = false
+z_index = 10
 position = Vector2(934, -469)
 
 [node name="CherryBlossomRain1" type="GPUParticles2D" parent="WeatherSystem/CherryBlossomRain"]
@@ -4383,6 +4744,8 @@ visibility_rect = Rect2(-900, 0, 2300, 2000)
 process_material = SubResource("ParticleProcessMaterial_tdq2s")
 
 [node name="GardeniaRain" type="Node2D" parent="WeatherSystem"]
+visible = false
+z_index = 10
 position = Vector2(759, -370)
 
 [node name="WillowLeafRain1" type="GPUParticles2D" parent="WeatherSystem/GardeniaRain"]
@@ -4417,13 +4780,20 @@ process_material = SubResource("ParticleProcessMaterial_dygjy")
 
 [node name="WillowLeafRain" type="Node2D" parent="WeatherSystem"]
 visible = false
+z_index = 10
 position = Vector2(882, -469)
 
-[node name="WillowLeafRain1" parent="WeatherSystem/WillowLeafRain" instance=ExtResource("53_nf3jg")]
-visible = false
+[node name="WillowLeafRain1" type="GPUParticles2D" parent="WeatherSystem/WillowLeafRain"]
+self_modulate = Color(0.7, 0.7, 0.7, 1)
+z_index = 10
+amount = 50
+texture = ExtResource("69_uyv6e")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_6fhdl")
 
 [node name="WillowLeafRain2" type="GPUParticles2D" parent="WeatherSystem/WillowLeafRain"]
-visible = false
 self_modulate = Color(0.7, 0.7, 0.7, 1)
 z_index = 10
 amount = 50
@@ -4457,6 +4827,7 @@ process_material = SubResource("ParticleProcessMaterial_jiccn")
 
 [node name="Snow" type="GPUParticles2D" parent="WeatherSystem"]
 visible = false
+z_index = 10
 position = Vector2(16, -520)
 amount = 300
 texture = ExtResource("53_4ka7t")
@@ -4478,6 +4849,7 @@ process_material = SubResource("ParticleProcessMaterial_nf3jg")
 [connection signal="pressed" from="UI/GUI/FarmVBox/AddNewGroundButton" to="." method="_on_add_new_ground_button_pressed"]
 [connection signal="pressed" from="UI/GUI/VisitVBox/LikeButton" to="." method="_on_like_button_pressed"]
 [connection signal="pressed" from="UI/GUI/VisitVBox/ReturnMyFarmButton" to="." method="_on_return_my_farm_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/MyStoreButton" to="." method="_on_my_store_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/AccountSettingButton" to="." method="_on_account_setting_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/OnlineGiftButton" to="." method="_on_online_gift_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/NewPlayerGiftButton" to="." method="_on_new_player_gift_button_pressed"]
@@ -4494,6 +4866,10 @@ process_material = SubResource("ParticleProcessMaterial_nf3jg")
 [connection signal="pressed" from="UI/GUI/OtherVBox/ScareCrowButton" to="." method="_on_my_pet_button_pressed"]
 [connection signal="pressed" from="UI/SmallPanel/DebugPanel/QuitButton" to="UI/SmallPanel/DebugPanel" method="_on_quit_button_pressed"]
 [connection signal="pressed" from="Decoration/ScareCrow" to="." method="_on_scare_crow_pressed"]
+[connection signal="pressed" from="Decoration/PlayerStore" to="." method="_on_player_store_pressed"]
+[connection signal="pressed" from="Decoration/SeedStore" to="." method="_on_seed_store_pressed"]
+[connection signal="pressed" from="Decoration/ItemStore" to="." method="_on_item_store_pressed"]
+[connection signal="pressed" from="Decoration/PetStore" to="." method="_on_pet_store_pressed"]
 [connection signal="pressed" from="Decoration/WisdomTree" to="." method="_on_wisdom_tree_pressed"]
 [connection signal="pressed" from="Decoration4/ScareCrow" to="." method="_on_scare_crow_pressed"]
 [connection signal="pressed" from="Decoration4/WisdomTree" to="." method="_on_wisdom_tree_pressed"]

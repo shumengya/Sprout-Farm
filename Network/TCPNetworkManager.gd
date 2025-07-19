@@ -239,6 +239,18 @@ func _on_data_received(data):
 		login_panel._on_verification_code_response(success, message)
 		return
 	
+	if message_type == "forget_password_verification_code_response":
+		var success = data.get("success", false)
+		var message = data.get("message", "")
+		login_panel._on_verification_code_response(success, message)
+		return
+	
+	if message_type == "reset_password_response":
+		var success = data.get("success", false)
+		var message = data.get("message", "")
+		login_panel._on_forget_password_response_received(success, message)
+		return
+	
 	if message_type == "verify_code_response":
 		var success = data.get("success", false)
 		var message = data.get("message", "")
@@ -428,6 +440,88 @@ func _on_data_received(data):
 			else:
 				Toast.show(message, Color.RED)
 		
+		# 出售作物响应
+		elif action_type == "sell_crop":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.crop_warehouse = updated_data["作物仓库"]
+				main_game.experience = updated_data.get("experience", main_game.experience)
+				main_game.level = updated_data.get("level", main_game.level)
+				main_game._update_ui()
+				main_game.crop_warehouse_panel.update_crop_warehouse_ui()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 添加商品到小卖部响应
+		elif action_type == "add_product_to_store":
+			if success:
+				main_game.login_data["玩家小卖部"] = updated_data["玩家小卖部"]
+				main_game.crop_warehouse = updated_data["作物仓库"]
+				
+				# 更新UI
+				main_game.crop_warehouse_panel.update_crop_warehouse_ui()
+				var player_store_panel = get_node_or_null("/root/main/UI/BigPanel/PlayerStorePanel")
+				if player_store_panel and player_store_panel.has_method("update_player_store_ui"):
+					player_store_panel.update_player_store_ui()
+				
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 下架小卖部商品响应
+		elif action_type == "remove_store_product":
+			if success:
+				main_game.login_data["玩家小卖部"] = updated_data["玩家小卖部"]
+				main_game.crop_warehouse = updated_data["作物仓库"]
+				
+				# 更新UI
+				main_game.crop_warehouse_panel.update_crop_warehouse_ui()
+				var player_store_panel = get_node_or_null("/root/main/UI/BigPanel/PlayerStorePanel")
+				if player_store_panel and player_store_panel.has_method("update_player_store_ui"):
+					player_store_panel.update_player_store_ui()
+				
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 购买小卖部商品响应
+		elif action_type == "buy_store_product":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.crop_warehouse = updated_data["作物仓库"]
+				
+				# 更新UI
+				main_game._update_ui()
+				main_game.crop_warehouse_panel.update_crop_warehouse_ui()
+				
+				# 如果在访问模式下，刷新被访问玩家的小卖部（通过重新请求访问）
+				if main_game.is_visiting_mode:
+					var visited_username = main_game.visited_player_data.get("username", "")
+					if visited_username != "":
+						# 重新访问玩家以刷新数据
+						sendVisitPlayer(visited_username)
+				
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 购买小卖部格子响应
+		elif action_type == "buy_store_booth":
+			if success:
+				main_game.money = updated_data["money"]
+				main_game.login_data["小卖部格子数"] = updated_data["小卖部格子数"]
+				
+				# 更新UI
+				main_game._update_ui()
+				var player_store_panel = get_node_or_null("/root/main/UI/BigPanel/PlayerStorePanel")
+				if player_store_panel and player_store_panel.has_method("update_player_store_ui"):
+					player_store_panel.update_player_store_ui()
+				
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
 		return
 	
 	# 游戏功能响应消息
@@ -502,6 +596,12 @@ func _on_data_received(data):
 	
 	elif message_type == "wisdom_tree_config_response":
 		main_game._handle_wisdom_tree_config_response(data)
+	
+	# 天气变更消息
+	elif message_type == "weather_change":
+		var weather_type = data.get("weather_type", "clear")
+		var weather_name = data.get("weather_name", "晴天")
+		main_game._handle_weather_change(weather_type, weather_name)
 # ============================= 客户端与服务端通信核心 =====================================
 
 
@@ -767,6 +867,32 @@ func sendVerificationCodeRequest(qq_number):
 	client.send_data({
 		"type": "request_verification_code",
 		"qq_number": qq_number,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送忘记密码验证码请求
+func sendForgetPasswordVerificationCode(qq_number):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "request_forget_password_verification_code",
+		"qq_number": qq_number,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送忘记密码请求
+func sendForgetPasswordRequest(username, new_password, verification_code):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "reset_password",
+		"username": username,
+		"new_password": new_password,
+		"verification_code": verification_code,
 		"timestamp": Time.get_unix_time_from_system()
 	})
 	return true
