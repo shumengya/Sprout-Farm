@@ -68,6 +68,7 @@ extends Node
 @onready var pet_fight_panel: Panel = $UI/BigPanel/PetFightPanel  #宠物战斗面板
 @onready var pet_inform_panel: Panel = $UI/SmallPanel/PetInformPanel #宠物信息面板
 @onready var player_store_panel: Panel = $UI/BigPanel/PlayerStorePanel #玩家小卖部面板
+@onready var game_setting_panel: Panel = $UI/BigPanel/GameSettingPanel #游戏设置面板
 
 
 #小面板
@@ -225,6 +226,7 @@ func _ready():
 	one_click_plant_panel.hide()
 	account_setting_panel.hide()
 	global_server_broadcast_panel.hide()
+	game_setting_panel.hide()
 	accept_dialog.hide()
 	
 
@@ -865,9 +867,9 @@ func _on_player_ranking_button_pressed() -> void:
 	pass 
 
 
-#打开设置面板 暂时没想到可以设置什么
+#打开设置面板
 func _on_setting_button_pressed() -> void:
-	pass
+	game_setting_panel.show()
 
 #查看全服大喇叭按钮点击事件
 func _on_watch_broadcast_button_pressed() -> void:
@@ -1708,14 +1710,6 @@ func _wait_for_crop_data() -> void:
 	else:
 		print("[主游戏] 作物数据加载完成，共 %d 种作物" % can_planted_crop.size())
 #===============================================加载进度管理============================================
-
-
-
-#===============================================调试和维护工具===============================================
-
-
-
-#===============================================调试和维护工具===============================================
 
 
 
@@ -3320,11 +3314,31 @@ func _handle_weather_change(weather_type: String, weather_name: String):
 	"""处理服务器发送的天气变更消息"""
 	if weather_system and weather_system.has_method("set_weather"):
 		weather_system.set_weather(weather_type)
-		Toast.show("天气已变更为：" + weather_name, Color.CYAN, 3.0)
 		print("天气已切换为：", weather_name)
 	else:
 		print("天气系统不可用")
 # ======================================= 天气系统 =========================================
+
+
+# ======================================= 游戏设置系统 =========================================
+# 处理游戏设置保存响应
+func _handle_save_game_settings_response(data):
+	"""处理服务器返回的游戏设置保存响应"""
+	var success = data.get("success", false)
+	var message = data.get("message", "")
+	var settings = data.get("settings", {})
+	
+	if success:
+		# 设置保存成功，更新本地设置面板
+		if game_setting_panel and game_setting_panel.has_method("apply_settings_from_server"):
+			game_setting_panel.apply_settings_from_server(settings)
+		
+		Toast.show("游戏设置保存成功", Color.GREEN)
+		print("游戏设置保存成功: ", settings)
+	else:
+		Toast.show("游戏设置保存失败: " + message, Color.RED)
+		print("游戏设置保存失败: ", message)
+# ======================================= 游戏设置系统 =========================================
 
 
 #打开小卖部面板

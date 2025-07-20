@@ -602,6 +602,10 @@ func _on_data_received(data):
 		var weather_type = data.get("weather_type", "clear")
 		var weather_name = data.get("weather_name", "晴天")
 		main_game._handle_weather_change(weather_type, weather_name)
+	
+	# 游戏设置响应
+	elif message_type == "save_game_settings_response":
+		main_game._handle_save_game_settings_response(data)
 # ============================= 客户端与服务端通信核心 =====================================
 
 

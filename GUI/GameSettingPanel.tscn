@@ -23,8 +23,10 @@ corner_radius_bottom_left = 10
 corner_detail = 20
 
 [node name="GameSettingPanel" type="Panel"]
-offset_right = 1398.0
-offset_bottom = 720.0
+offset_left = 151.0
+offset_top = 74.0
+offset_right = 1549.0
+offset_bottom = 794.0
 scale = Vector2(0.8, 0.8)
 theme_override_styles/panel = SubResource("StyleBoxFlat_0c52c")
 script = ExtResource("1_0c52c")
@@ -78,18 +80,84 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="Scroll/Panel"]
+[node name="BackgroundMusicLabel" type="Label" parent="Scroll/Panel"]
 layout_mode = 2
-offset_right = 210.0
-offset_bottom = 42.0
-theme_override_font_sizes/font_size = 30
+offset_left = -1.52588e-05
+offset_right = 245.0
+offset_bottom = 49.0
+theme_override_font_sizes/font_size = 35
 text = "背景音乐音量："
 
-[node name="HSlider" type="HSlider" parent="Scroll/Panel"]
-layout_mode = 0
-offset_left = 210.0
-offset_top = 15.0
-offset_right = 573.0
-offset_bottom = 31.0
+[node name="BackgroundMusicHSlider" type="HSlider" parent="Scroll/Panel"]
+layout_mode = 2
+offset_left = 245.0
+offset_right = 574.0
+offset_bottom = 49.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
 
-[connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]
+[node name="WeatherSystemLabel" type="Label" parent="Scroll/Panel"]
+layout_mode = 2
+offset_left = -0.249969
+offset_top = 48.75
+offset_right = 209.75
+offset_bottom = 97.75
+theme_override_font_sizes/font_size = 35
+text = "关闭天气显示："
+
+[node name="WeatherSystemCheck" type="CheckButton" parent="Scroll/Panel"]
+layout_mode = 2
+offset_left = 244.75
+offset_top = 48.75
+offset_right = 288.75
+offset_bottom = 72.75
+scale = Vector2(2, 2)
+theme_override_font_sizes/font_size = 100
+
+[node name="HBox" type="HBoxContainer" parent="Scroll/Panel"]
+visible = false
+layout_mode = 0
+offset_top = 97.0
+offset_right = 853.0
+offset_bottom = 154.0
+
+[node name="ChangeServer" type="Label" parent="Scroll/Panel/HBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "切换服务器"
+
+[node name="IPInput" type="LineEdit" parent="Scroll/Panel/HBox"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+placeholder_text = "请输入服务器IP地址"
+
+[node name="PortInput" type="LineEdit" parent="Scroll/Panel/HBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+placeholder_text = "端口"
+alignment = 1
+
+[node name="ChangeButton" type="Button" parent="Scroll/Panel/HBox"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "切换"
+
+[node name="SureButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 647.5
+offset_top = 635.0
+offset_right = 815.5
+offset_bottom = 698.0
+theme_override_font_sizes/font_size = 40
+text = "确认修改"
+
+[node name="RefreshButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 27.5001
+offset_top = 25.0001
+offset_right = 195.5
+offset_bottom = 88.0001
+theme_override_font_sizes/font_size = 40
+text = "刷新"

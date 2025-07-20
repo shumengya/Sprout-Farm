@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bypjb28h4ntdr"]
+[gd_scene load_steps=11 format=3 uid="uid://bypjb28h4ntdr"]
 
 [ext_resource type="Script" uid="uid://badqjgdfhg7vt" path="res://GUI/MainMenuPanel.gd" id="1_wpehy"]
 [ext_resource type="Texture2D" uid="uid://ddcmrh50o1y0q" path="res://assets/菜单UI/背景1.webp" id="2_eghpk"]
@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://dgdootc5bny5q" path="res://assets/菜单UI/QQ群.webp" id="4_eghpk"]
 [ext_resource type="Script" uid="uid://kj7v1uxk2i6h" path="res://GUI/GameUpdatePanel.gd" id="4_fys16"]
 [ext_resource type="Texture2D" uid="uid://ccav04woielxa" path="res://assets/菜单UI/柚小青装饰品.webp" id="5_6jmhb"]
-[ext_resource type="PackedScene" uid="uid://dos15dmc1b6bt" path="res://GUI/GameSettingPanel.tscn" id="6_eghpk"]
 [ext_resource type="Script" uid="uid://ciwjx67wjubdy" path="res://GUI/CheckUpdatePanel.gd" id="9_6jmhb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eghpk"]
@@ -129,6 +128,7 @@ theme_override_font_sizes/font_size = 40
 text = "开始游戏"
 
 [node name="GameSettingButton" type="Button" parent="VBox"]
+visible = false
 custom_minimum_size = Vector2(168, 63)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -140,7 +140,7 @@ custom_minimum_size = Vector2(168, 63)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 40
-text = "游戏更新"
+text = "更新"
 
 [node name="GameAboutButton" type="Button" parent="VBox"]
 custom_minimum_size = Vector2(168, 63)
@@ -155,14 +155,6 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 40
 text = "退出游戏"
-
-[node name="GameSettingPanel" parent="." instance=ExtResource("6_eghpk")]
-visible = false
-layout_mode = 0
-offset_left = 138.0
-offset_top = 80.0
-offset_right = 1536.0
-offset_bottom = 800.0
 
 [node name="GameAboutPanel" type="Panel" parent="."]
 visible = false

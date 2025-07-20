@@ -39,7 +39,6 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ground_sprite" type="Sprite2D" parent="."]
-modulate = Color(0.8, 0.8, 0.8, 1)
 material = SubResource("ShaderMaterial_v46ok")
 position = Vector2(50, 63)
 scale = Vector2(0.135, 0.135)
@@ -49,11 +48,6 @@ texture = ExtResource("1_bns1c")
 material = SubResource("ShaderMaterial_s5pb0")
 position = Vector2(51, 45)
 scale = Vector2(0.339844, 0.363281)
-
-[node name="old_crop_sprite" type="Sprite2D" parent="."]
-material = SubResource("ShaderMaterial_s5pb0")
-position = Vector2(51, 39)
-scale = Vector2(0.06, 0.06)
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 visible = false

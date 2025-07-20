@@ -521,6 +521,10 @@ func _on_login_response_received(success: bool, message: String, user_data: Dict
 		
 		# 调用主游戏的登录成功处理函数
 		main_game.handle_login_success(user_data)
+		
+		# 初始化游戏设置
+		if main_game.game_setting_panel and main_game.game_setting_panel.has_method("refresh_settings"):
+			main_game.game_setting_panel.refresh_settings()
 	else:
 		status_label.text = "登录失败：" + message
 		status_label.modulate = Color.RED

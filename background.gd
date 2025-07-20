@@ -1,5 +1,5 @@
 extends Sprite2D
-
+#昼夜循环只需调节该节点的modulate值即可
 # 存储背景图片的路径数组
 var backgrounds :Array = [  	
 	"res://assets/背景图片/背景1.webp",

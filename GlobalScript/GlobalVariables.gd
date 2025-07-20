@@ -12,3 +12,6 @@ const  server_configs = [
 	#{"host": "47.108.90.0", "port": 4040, "name": "成都内网穿透"}#成都内网穿透
 	#{"host": "47.108.90.0", "port": 6060, "name": "成都公网"}#成都服务器
 ]
+
+const DisableWeatherDisplay :bool = false #是否禁止显示天气
+const BackgroundMusicVolume = 1.0 #背景音乐音量

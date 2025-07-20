@@ -1,4 +1,5 @@
 from TCPServer import TCPServer
+from SMYMongoDBAPI import SMYMongoDBAPI
 import time
 import json
 import os
@@ -84,8 +85,16 @@ class TCPGameServer(TCPServer):
         # 配置文件目录
         self.config_dir = "config"  # 配置文件存储目录
         
+        # 初始化MongoDB API（优先使用MongoDB，失败则使用JSON文件）
+        self._init_mongodb_api()
+        
         # 性能优化相关配置
         self._init_performance_settings()
+        
+        # 数据缓存
+        self.crop_data_cache = None
+        self.crop_data_cache_time = 0
+        self.cache_expire_duration = 300  # 缓存过期时间5分钟
         
         self.log('INFO', f"萌芽农场TCP游戏服务器初始化完成 - 版本: {server_version}", 'SERVER')
         
@@ -95,6 +104,28 @@ class TCPGameServer(TCPServer):
         self.start_weed_growth_timer()
         self.start_wisdom_tree_health_decay_timer()
         self.start_verification_code_cleanup_timer()
+    
+    #初始化MongoDB API
+    def _init_mongodb_api(self):
+        """初始化MongoDB API连接"""
+        try:
+            # 根据配置决定使用测试环境还是生产环境
+            # 这里默认使用测试环境，实际部署时可以修改为 "production"
+            environment = "test"  # 或者从配置文件读取
+            
+            self.mongo_api = SMYMongoDBAPI(environment)
+            if self.mongo_api.is_connected():
+                self.use_mongodb = True
+                self.log('INFO', f"MongoDB API初始化成功 [{environment}]", 'SERVER')
+            else:
+                self.use_mongodb = False
+                self.mongo_api = None
+                self.log('WARNING', "MongoDB连接失败，将使用JSON配置文件", 'SERVER')
+                
+        except Exception as e:
+            self.use_mongodb = False
+            self.mongo_api = None
+            self.log('ERROR', f"MongoDB API初始化异常: {e}，将使用JSON配置文件", 'SERVER')
     
     #初始化性能操作
     def _init_performance_settings(self):
@@ -400,12 +431,22 @@ class TCPGameServer(TCPServer):
         
         return player_data, username, None
     
-    #加载作物配置数据
+    #加载作物配置数据（优化版本）
     def _load_crop_data(self):
-        """加载作物配置数据"""
+        """加载作物配置数据（带缓存优化）"""
+        current_time = time.time()
+        
+        # 检查缓存是否有效
+        if (self.crop_data_cache is not None and 
+            current_time - self.crop_data_cache_time < self.cache_expire_duration):
+            return self.crop_data_cache
+        
+        # 缓存过期或不存在，重新加载
         try:
             with open("config/crop_data.json", 'r', encoding='utf-8') as file:
-                return json.load(file)
+                self.crop_data_cache = json.load(file)
+                self.crop_data_cache_time = current_time
+                return self.crop_data_cache
         except Exception as e:
             self.log('ERROR', f"无法加载作物数据: {str(e)}", 'SERVER')
             return {}
@@ -810,6 +851,8 @@ class TCPGameServer(TCPServer):
             return self._handle_buy_store_product(client_id, message)
         elif message_type == "buy_store_booth":#购买小卖部格子
             return self._handle_buy_store_booth(client_id, message)
+        elif message_type == "save_game_settings":#保存游戏设置
+            return self._handle_save_game_settings(client_id, message)
         #---------------------------------------------------------------------------
 
         elif message_type == "message":#处理聊天消息（暂未实现）
@@ -1340,7 +1383,7 @@ class TCPGameServer(TCPServer):
 #==========================收获作物处理==========================
     #处理收获作物请求
     def _handle_harvest_crop(self, client_id, message):
-        """处理收获作物请求"""
+        """处理收获作物请求（优化版本）"""
         # 检查用户是否已登录
         logged_in, response = self._check_user_logged_in(client_id, "收获作物", "harvest_crop")
         if not logged_in:
@@ -1353,6 +1396,11 @@ class TCPGameServer(TCPServer):
         
         lot_index = message.get("lot_index", -1)
         target_username = message.get("target_username", "")
+        
+        # 预加载作物配置数据（只加载一次）
+        crop_data = self._load_crop_data()
+        if not crop_data:
+            return self._send_action_error(client_id, "harvest_crop", "无法加载作物配置数据")
         
         # 确定操作目标：如果有target_username就是访问模式（偷菜），否则是自己的农场
         if target_username and target_username != current_username:
@@ -1396,7 +1444,7 @@ class TCPGameServer(TCPServer):
                 return self._send_action_error(client_id, "harvest_crop", "作物尚未成熟，无法偷菜")
             
             # 处理偷菜
-            return self._process_steal_crop(client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index)
+            return self._process_steal_crop_optimized(client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, crop_data)
         else:
             # 正常模式：收获自己的作物
             # 验证地块索引
@@ -1434,55 +1482,55 @@ class TCPGameServer(TCPServer):
                 return self._send_action_error(client_id, "harvest_crop", "作物尚未成熟")
             
             # 处理正常收获
-            return self._process_harvest(client_id, current_player_data, current_username, lot, lot_index)
+            return self._process_harvest_optimized(client_id, current_player_data, current_username, lot, lot_index, crop_data)
 
-    #辅助函数-处理作物收获
-    def _process_harvest(self, client_id, player_data, username, lot, lot_index):
-        """处理作物收获逻辑"""
-        # 读取作物配置
-        crop_data = self._load_crop_data()
-        
-        # 获取作物类型和经验
+    #辅助函数-处理作物收获（优化版本）
+    def _process_harvest_optimized(self, client_id, player_data, username, lot, lot_index, crop_data):
+        """处理作物收获逻辑（优化版本）"""
+        # 获取作物类型和基本信息
         crop_type = lot["crop_type"]
+        crop_info = crop_data.get(crop_type, {})
         
         # 检查是否为杂草类型（杂草不能收获，只能铲除）
-        if crop_type in crop_data:
-            crop_info = crop_data[crop_type]
-            is_weed = crop_info.get("是否杂草", False)
-            
-            if is_weed:
-                return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能收获，只能铲除！请使用铲除功能清理杂草。")
-            
-            crop_exp = crop_info.get("经验", 10)
-            
-            # 额外检查：如果作物收益为负数，也视为杂草
-            crop_income = crop_info.get("收益", 100) + crop_info.get("花费", 0)
-            if crop_income < 0:
-                return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能收获，只能铲除！请使用铲除功能清理杂草。")
-        else:
-            # 默认经验
-            crop_exp = 10
+        is_weed = crop_info.get("是否杂草", False)
+        if is_weed:
+            return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能收获，只能铲除！请使用铲除功能清理杂草。")
+        
+        # 额外检查：如果作物收益为负数，也视为杂草
+        crop_income = crop_info.get("收益", 100) + crop_info.get("花费", 0)
+        if crop_income < 0:
+            return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能收获，只能铲除！请使用铲除功能清理杂草。")
+        
+        # 获取作物经验
+        crop_exp = crop_info.get("经验", 10)
         
         # 生成成熟物收获（1-5个）
         import random
         harvest_count = random.randint(1, 5)
-        crop_harvest = {
-            "name": crop_type,
-            "count": harvest_count
-        }
         
         # 10%概率获得1-2个该作物的种子
-        seed_reward = self._generate_harvest_seed_reward(crop_type)
+        seed_reward = None
+        if random.random() <= 0.1:
+            seed_reward = {
+                "name": crop_type,
+                "count": random.randint(1, 2)
+            }
         
-        # 更新玩家经验（不再直接给钱）
+        # 更新玩家经验
         player_data["experience"] += crop_exp
         
-        # 添加成熟物到作物仓库
-        self._add_crop_to_warehouse(player_data, crop_harvest)
+        # 检查是否会获得成熟物
+        mature_name = crop_info.get("成熟物名称")
+        will_get_mature_item = mature_name is not None
+        mature_item_name = mature_name if mature_name and mature_name.strip() else crop_type
+        
+        # 添加成熟物到作物仓库（如果允许）
+        if will_get_mature_item:
+            self._add_crop_to_warehouse_optimized(player_data, {"name": crop_type, "count": harvest_count}, mature_item_name, crop_info.get("品质", "普通"))
         
         # 添加种子奖励到背包
         if seed_reward:
-            self._add_seeds_to_bag(player_data, seed_reward)
+            self._add_seeds_to_bag_optimized(player_data, seed_reward, crop_info.get("品质", "普通"))
         
         # 检查升级
         level_up_experience = 100 * player_data["level"]
@@ -1491,12 +1539,14 @@ class TCPGameServer(TCPServer):
             player_data["experience"] -= level_up_experience
             self.log('INFO', f"玩家 {username} 升级到 {player_data['level']} 级", 'SERVER')
         
-        # 清理地块
-        lot["is_planted"] = False
-        lot["crop_type"] = ""
-        lot["grow_time"] = 0
-        lot["已浇水"] = False
-        lot["已施肥"] = False
+        # 清理地块（批量更新）
+        lot.update({
+            "is_planted": False,
+            "crop_type": "",
+            "grow_time": 0,
+            "已浇水": False,
+            "已施肥": False
+        })
         
         # 清除施肥时间戳
         if "施肥时间" in lot:
@@ -1509,7 +1559,11 @@ class TCPGameServer(TCPServer):
         self._push_crop_update_to_player(username, player_data)
         
         # 构建消息
-        message = f"收获成功，获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验"
+        if will_get_mature_item:
+            message = f"收获成功，获得 {mature_item_name} x{harvest_count} 和 {crop_exp} 经验"
+        else:
+            message = f"收获成功，获得 {crop_exp} 经验（{crop_type}无成熟物产出）"
+        
         if seed_reward:
             message += f"，额外获得 {seed_reward['name']} 种子 x{seed_reward['count']}"
         
@@ -1529,9 +1583,9 @@ class TCPGameServer(TCPServer):
             }
         })
     
-    #辅助函数-处理偷菜逻辑（访问模式下收获其他玩家作物的操作）
-    def _process_steal_crop(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index):
-        """处理偷菜逻辑（收益给当前玩家，清空目标玩家的作物）"""
+    #辅助函数-处理偷菜逻辑（访问模式下收获其他玩家作物的操作）（优化版本）
+    def _process_steal_crop_optimized(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, crop_data):
+        """处理偷菜逻辑（收益给当前玩家，清空目标玩家的作物）（优化版本）"""
         # 偷菜体力值消耗
         stamina_cost = 2
         
@@ -1554,40 +1608,34 @@ class TCPGameServer(TCPServer):
                     target_player_data, target_username, patrol_pets[0]
                 )
         
-        # 读取作物配置
-        crop_data = self._load_crop_data()
-        
-        # 获取作物类型和经验（偷菜获得的经验稍微少一些，比如50%）
+        # 获取作物类型和基本信息
         crop_type = target_lot["crop_type"]
+        crop_info = crop_data.get(crop_type, {})
         
         # 检查是否为杂草类型（杂草不能偷取，只能铲除）
-        if crop_type in crop_data:
-            crop_info = crop_data[crop_type]
-            is_weed = crop_info.get("是否杂草", False)
-            
-            if is_weed:
-                return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能偷取，只能铲除！这是杂草，没有收益价值。")
-            
-            crop_exp = int(crop_info.get("经验", 10) * 0.5)  # 偷菜获得50%经验
-            
-            # 额外检查：如果作物收益为负数，也视为杂草
-            crop_income = crop_info.get("收益", 100) + crop_info.get("花费", 0)
-            if crop_income < 0:
-                return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能偷取，只能铲除！这是杂草，没有收益价值。")
-        else:
-            # 默认经验
-            crop_exp = 5
+        is_weed = crop_info.get("是否杂草", False)
+        if is_weed:
+            return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能偷取，只能铲除！这是杂草，没有收益价值。")
+        
+        # 额外检查：如果作物收益为负数，也视为杂草
+        crop_income = crop_info.get("收益", 100) + crop_info.get("花费", 0)
+        if crop_income < 0:
+            return self._send_action_error(client_id, "harvest_crop", f"{crop_type}不能偷取，只能铲除！这是杂草，没有收益价值。")
+        
+        # 获取作物经验（偷菜获得50%经验）
+        crop_exp = int(crop_info.get("经验", 10) * 0.5)
         
         # 生成成熟物收获（偷菜获得较少，1-3个）
         import random
         harvest_count = random.randint(1, 3)
-        crop_harvest = {
-            "name": crop_type,
-            "count": harvest_count
-        }
         
         # 10%概率获得1-2个该作物的种子（偷菜也有机会获得种子）
-        seed_reward = self._generate_harvest_seed_reward(crop_type)
+        seed_reward = None
+        if random.random() <= 0.1:
+            seed_reward = {
+                "name": crop_type,
+                "count": random.randint(1, 2)
+            }
         
         # 消耗当前玩家的体力值
         stamina_success, stamina_message = self._consume_stamina(current_player_data, stamina_cost, "偷菜")
@@ -1597,12 +1645,18 @@ class TCPGameServer(TCPServer):
         # 更新当前玩家数据（获得经验）
         current_player_data["experience"] += crop_exp
         
-        # 添加成熟物到作物仓库
-        self._add_crop_to_warehouse(current_player_data, crop_harvest)
+        # 检查是否会获得成熟物
+        mature_name = crop_info.get("成熟物名称")
+        will_get_mature_item = mature_name is not None
+        mature_item_name = mature_name if mature_name and mature_name.strip() else crop_type
+        
+        # 添加成熟物到作物仓库（如果允许）
+        if will_get_mature_item:
+            self._add_crop_to_warehouse_optimized(current_player_data, {"name": crop_type, "count": harvest_count}, mature_item_name, crop_info.get("品质", "普通"))
         
         # 添加种子奖励到背包
         if seed_reward:
-            self._add_seeds_to_bag(current_player_data, seed_reward)
+            self._add_seeds_to_bag_optimized(current_player_data, seed_reward, crop_info.get("品质", "普通"))
         
         # 检查当前玩家升级
         level_up_experience = 100 * current_player_data["level"]
@@ -1611,12 +1665,14 @@ class TCPGameServer(TCPServer):
             current_player_data["experience"] -= level_up_experience
             self.log('INFO', f"玩家 {current_username} 升级到 {current_player_data['level']} 级", 'SERVER')
         
-        # 清理目标玩家的地块
-        target_lot["is_planted"] = False
-        target_lot["crop_type"] = ""
-        target_lot["grow_time"] = 0
-        target_lot["已浇水"] = False
-        target_lot["已施肥"] = False
+        # 清理目标玩家的地块（批量更新）
+        target_lot.update({
+            "is_planted": False,
+            "crop_type": "",
+            "grow_time": 0,
+            "已浇水": False,
+            "已施肥": False
+        })
         
         # 清除施肥时间戳
         if "施肥时间" in target_lot:
@@ -1630,7 +1686,11 @@ class TCPGameServer(TCPServer):
         self._push_crop_update_to_player(target_username, target_player_data)
         
         # 构建消息
-        message = f"偷菜成功！从 {target_username} 那里获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验，{stamina_message}"
+        if will_get_mature_item:
+            message = f"偷菜成功！从 {target_username} 那里获得 {mature_item_name} x{harvest_count} 和 {crop_exp} 经验，{stamina_message}"
+        else:
+            message = f"偷菜成功！从 {target_username} 那里获得 {crop_exp} 经验，{stamina_message}（{crop_type}无成熟物产出）"
+        
         if seed_reward:
             message += f"，额外获得 {seed_reward['name']} 种子 x{seed_reward['count']}"
         
@@ -1810,6 +1870,24 @@ class TCPGameServer(TCPServer):
         crop_name = crop_harvest["name"]
         crop_count = crop_harvest["count"]
         
+        # 从作物数据检查"成熟物名称"字段
+        crop_data = self._load_crop_data()
+        if crop_data and crop_name in crop_data:
+            mature_name = crop_data[crop_name].get("成熟物名称")
+            # 如果成熟物名称为null，则不添加成熟物到仓库
+            if mature_name is None:
+                self.log('DEBUG', f"作物 {crop_name} 的成熟物名称为null，跳过添加到作物仓库", 'SERVER')
+                return
+            
+            # 如果有指定的成熟物名称，使用它作为仓库中的名称
+            if mature_name and mature_name.strip():
+                warehouse_item_name = mature_name
+            else:
+                warehouse_item_name = crop_name
+        else:
+            # 如果作物数据中没有该作物，使用原名称
+            warehouse_item_name = crop_name
+        
         # 确保作物仓库存在
         if "作物仓库" not in player_data:
             player_data["作物仓库"] = []
@@ -1817,7 +1895,7 @@ class TCPGameServer(TCPServer):
         # 查找仓库中是否已有该成熟物
         crop_found = False
         for item in player_data["作物仓库"]:
-            if item.get("name") == crop_name:
+            if item.get("name") == warehouse_item_name:
                 item["count"] += crop_count
                 crop_found = True
                 break
@@ -1825,16 +1903,65 @@ class TCPGameServer(TCPServer):
         # 如果仓库中没有该成熟物，添加新条目
         if not crop_found:
             # 从作物数据获取品质信息
-            crop_data = self._load_crop_data()
             quality = "普通"
             if crop_data and crop_name in crop_data:
                 quality = crop_data[crop_name].get("品质", "普通")
             
             player_data["作物仓库"].append({
-                "name": crop_name,
+                "name": warehouse_item_name,
                 "quality": quality,
                 "count": crop_count
             })
+    
+    # 添加种子到玩家背包（优化版本）
+    def _add_seeds_to_bag_optimized(self, player_data, seed_reward, quality="普通"):
+        """将种子奖励添加到玩家背包（优化版本）"""
+        if not seed_reward:
+            return
+        
+        seed_name = seed_reward["name"]
+        seed_count = seed_reward["count"]
+        
+        # 确保背包存在
+        if "player_bag" not in player_data:
+            player_data["player_bag"] = []
+        
+        # 查找背包中是否已有该种子
+        for item in player_data["player_bag"]:
+            if item.get("name") == seed_name:
+                item["count"] += seed_count
+                return
+        
+        # 如果背包中没有该种子，添加新条目
+        player_data["player_bag"].append({
+            "name": seed_name,
+            "quality": quality,
+            "count": seed_count
+        })
+    
+    def _add_crop_to_warehouse_optimized(self, player_data, crop_harvest, warehouse_item_name, quality="普通"):
+        """将成熟物添加到玩家作物仓库（优化版本）"""
+        if not crop_harvest:
+            return
+        
+        crop_count = crop_harvest["count"]
+        
+        # 确保作物仓库存在
+        if "作物仓库" not in player_data:
+            player_data["作物仓库"] = []
+        
+        # 查找仓库中是否已有该成熟物
+        for item in player_data["作物仓库"]:
+            if item.get("name") == warehouse_item_name:
+                item["count"] += crop_count
+                return
+        
+        # 如果仓库中没有该成熟物，添加新条目
+        player_data["作物仓库"].append({
+            "name": warehouse_item_name,
+            "quality": quality,
+            "count": crop_count
+        })
 
 #==========================收获作物处理==========================
 
@@ -4427,8 +4554,21 @@ class TCPGameServer(TCPServer):
         # 检查是否升级
         self._check_level_up(player_data)
         
-        # 添加成熟物到作物仓库
-        self._add_crop_to_warehouse(player_data, crop_harvest)
+        # 检查是否会获得成熟物
+        crop_data = self._load_crop_data()
+        will_get_mature_item = True
+        mature_item_name = crop_type
+        
+        if crop_data and crop_type in crop_data:
+            mature_name = crop_data[crop_type].get("成熟物名称")
+            if mature_name is None:
+                will_get_mature_item = False
+            elif mature_name and mature_name.strip():
+                mature_item_name = mature_name
+        
+        # 添加成熟物到作物仓库（如果允许）
+        if will_get_mature_item:
+            self._add_crop_to_warehouse(player_data, crop_harvest)
         
         # 添加种子奖励到背包
         if seed_reward:
@@ -4452,7 +4592,11 @@ class TCPGameServer(TCPServer):
         self._push_crop_update_to_player(username, player_data)
         
         # 构建消息
-        message = f"使用 {item_name} 收获成功，获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验{message_suffix}"
+        if will_get_mature_item:
+            message = f"使用 {item_name} 收获成功，获得 {mature_item_name} x{harvest_count} 和 {crop_exp} 经验{message_suffix}"
+        else:
+            message = f"使用 {item_name} 收获成功，获得 {crop_exp} 经验{message_suffix}（{crop_type}无成熟物产出）"
+        
         if seed_reward:
             message += f"，额外获得 {seed_reward['name']} x{seed_reward['count']}"
         
@@ -4546,8 +4690,21 @@ class TCPGameServer(TCPServer):
         # 检查当前玩家是否升级
         self._check_level_up(current_player_data)
         
-        # 收获物给当前玩家
-        self._add_crop_to_warehouse(current_player_data, crop_harvest)
+        # 检查是否会获得成熟物
+        crop_data = self._load_crop_data()
+        will_get_mature_item = True
+        mature_item_name = crop_type
+        
+        if crop_data and crop_type in crop_data:
+            mature_name = crop_data[crop_type].get("成熟物名称")
+            if mature_name is None:
+                will_get_mature_item = False
+            elif mature_name and mature_name.strip():
+                mature_item_name = mature_name
+        
+        # 收获物给当前玩家（如果允许）
+        if will_get_mature_item:
+            self._add_crop_to_warehouse(current_player_data, crop_harvest)
         
         # 种子奖励给当前玩家
         if seed_reward:
@@ -4572,7 +4729,11 @@ class TCPGameServer(TCPServer):
         self._push_crop_update_to_player(target_username, target_player_data)
         
         # 构建消息
-        message = f"使用 {item_name} 帮助收获成功！从 {target_username} 那里获得 {crop_type} x{harvest_count} 和 {crop_exp} 经验{message_suffix}"
+        if will_get_mature_item:
+            message = f"使用 {item_name} 帮助收获成功！从 {target_username} 那里获得 {mature_item_name} x{harvest_count} 和 {crop_exp} 经验{message_suffix}"
+        else:
+            message = f"使用 {item_name} 帮助收获成功！从 {target_username} 那里获得 {crop_exp} 经验{message_suffix}（{crop_type}无成熟物产出）"
+        
         if seed_reward:
             message += f"，额外获得 {seed_reward['name']} x{seed_reward['count']}"
         
@@ -5417,7 +5578,8 @@ class TCPGameServer(TCPServer):
         stamina_system = player_data.get("体力系统", {})
         current_stamina = stamina_system.get("当前体力值", 20)
         return current_stamina >= amount
-    
+
+
     def _check_and_update_register_time(self, player_data, username):
         """检查并更新已存在玩家的注册时间"""
         default_register_time = "2025年05月21日15时00分00秒"
@@ -5514,6 +5676,81 @@ class TCPGameServer(TCPServer):
     
 #==========================玩家体力值处理==========================
 
+
+
+#==========================游戏设置处理==========================
+    def _handle_save_game_settings(self, client_id, message):
+        """处理保存游戏设置请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "保存游戏设置", "save_game_settings")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "save_game_settings")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        # 获取设置数据
+        settings = message.get("settings", {})
+        if not settings:
+            return self.send_data(client_id, {
+                "type": "save_game_settings_response",
+                "success": False,
+                "message": "设置数据为空"
+            })
+        
+        # 验证设置数据格式
+        valid_settings = {}
+        
+        # 验证背景音乐音量 (0.0-1.0)
+        if "背景音乐音量" in settings:
+            volume = settings["背景音乐音量"]
+            if isinstance(volume, (int, float)) and 0.0 <= volume <= 1.0:
+                valid_settings["背景音乐音量"] = float(volume)
+            else:
+                return self.send_data(client_id, {
+                    "type": "save_game_settings_response",
+                    "success": False,
+                    "message": "背景音乐音量值无效，应在0.0-1.0之间"
+                })
+        
+        # 验证天气显示设置
+        if "天气显示" in settings:
+            weather_display = settings["天气显示"]
+            if isinstance(weather_display, bool):
+                valid_settings["天气显示"] = weather_display
+            else:
+                return self.send_data(client_id, {
+                    "type": "save_game_settings_response",
+                    "success": False,
+                    "message": "天气显示设置值无效，应为布尔值"
+                })
+        
+        # 保存设置到玩家数据
+        if "游戏设置" not in player_data:
+            player_data["游戏设置"] = {}
+        
+        player_data["游戏设置"].update(valid_settings)
+        
+        # 保存到数据库
+        if self.save_player_data(username, player_data):
+            self.log('INFO', f"用户 {username} 保存游戏设置: {valid_settings}", 'SERVER')
+            
+            return self.send_data(client_id, {
+                "type": "save_game_settings_response",
+                "success": True,
+                "message": "游戏设置保存成功",
+                "settings": valid_settings
+            })
+        else:
+            return self.send_data(client_id, {
+                "type": "save_game_settings_response",
+                "success": False,
+                "message": "保存游戏设置失败"
+            })
+#==========================游戏设置处理==========================
+    
 
 
 #==========================玩家游玩时间处理==========================
@@ -6506,16 +6743,32 @@ class TCPGameServer(TCPServer):
 #==========================每日签到处理==========================
     #加载每日签到配置
     def _load_daily_check_in_config(self):
-        """加载每日签到配置"""
+        """加载每日签到配置 - 优先使用MongoDB，失败则回退到JSON文件"""
+        # 优先尝试从MongoDB获取配置
+        if hasattr(self, 'use_mongodb') and self.use_mongodb and self.mongo_api:
+            try:
+                config = self.mongo_api.get_daily_checkin_config()
+                if config:
+                    self.log('INFO', "从MongoDB成功加载每日签到配置", 'SERVER')
+                    return config
+                else:
+                    self.log('WARNING', "MongoDB中未找到每日签到配置，尝试使用JSON文件", 'SERVER')
+            except Exception as e:
+                self.log('ERROR', f"从MongoDB加载每日签到配置失败: {e}，回退到JSON文件", 'SERVER')
+        
+        # 回退到JSON文件
         try:
             config_path = os.path.join(self.config_dir, "daily_checkin_config.json")
             if os.path.exists(config_path):
                 with open(config_path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-        except:
-            pass
+                    config = json.load(f)
+                    self.log('INFO', "从JSON文件成功加载每日签到配置", 'SERVER')
+                    return config
+        except Exception as e:
+            self.log('ERROR', f"从JSON文件加载每日签到配置失败: {e}", 'SERVER')
         
         # 默认配置
+        self.log('WARNING', "使用默认每日签到配置", 'SERVER')
         return {
             "基础奖励": {
                 "金币": {"最小值": 200, "最大值": 500, "图标": "💰", "颜色": "#FFD700"},
@@ -6536,6 +6789,25 @@ class TCPGameServer(TCPServer):
                 "第30天": {"额外金币": 1500, "额外经验": 500, "描述": "满月连击奖励"}
             }
         }
+    
+    #更新每日签到配置到MongoDB
+    def _update_daily_checkin_config_to_mongodb(self, config_data):
+        """更新每日签到配置到MongoDB"""
+        if hasattr(self, 'use_mongodb') and self.use_mongodb and self.mongo_api:
+            try:
+                success = self.mongo_api.update_daily_checkin_config(config_data)
+                if success:
+                    self.log('INFO', "成功更新每日签到配置到MongoDB", 'SERVER')
+                    return True
+                else:
+                    self.log('ERROR', "更新每日签到配置到MongoDB失败", 'SERVER')
+                    return False
+            except Exception as e:
+                self.log('ERROR', f"更新每日签到配置到MongoDB异常: {e}", 'SERVER')
+                return False
+        else:
+            self.log('WARNING', "MongoDB未连接，无法更新配置", 'SERVER')
+            return False
     
     #处理每日签到请求
     def _handle_daily_check_in_request(self, client_id, message):
@@ -7126,16 +7398,32 @@ class TCPGameServer(TCPServer):
     
     #加载抽奖配置
     def _load_lucky_draw_config(self):
-        """加载抽奖配置"""
+        """加载抽奖配置（优先从MongoDB读取）"""
+        # 优先尝试从MongoDB读取
+        if self.use_mongodb and self.mongo_api:
+            try:
+                config = self.mongo_api.get_lucky_draw_config()
+                if config:
+                    self.log('INFO', "成功从MongoDB加载幸运抽奖配置", 'SERVER')
+                    return config
+                else:
+                    self.log('WARNING', "MongoDB中未找到幸运抽奖配置，尝试从JSON文件读取", 'SERVER')
+            except Exception as e:
+                self.log('ERROR', f"从MongoDB读取幸运抽奖配置失败: {e}，尝试从JSON文件读取", 'SERVER')
+        
+        # 回退到JSON文件
         try:
             config_path = os.path.join(self.config_dir, "lucky_draw_config.json")
             if os.path.exists(config_path):
                 with open(config_path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-        except:
-            pass
+                    config = json.load(f)
+                    self.log('INFO', "成功从JSON文件加载幸运抽奖配置", 'SERVER')
+                    return config
+        except Exception as e:
+            self.log('ERROR', f"从JSON文件读取幸运抽奖配置失败: {e}，使用默认配置", 'SERVER')
         
         # 默认配置
+        self.log('WARNING', "使用默认幸运抽奖配置", 'SERVER')
         return {
             "抽奖费用": {"单抽": 800, "五连抽": 3600, "十连抽": 6400},
             "概率配置": {
@@ -7151,16 +7439,31 @@ class TCPGameServer(TCPServer):
     #加载在线礼包配置
     def _load_online_gift_config(self):
         """加载在线礼包配置"""
+        # 优先从MongoDB读取配置
+        if hasattr(self, 'mongo_api') and self.mongo_api and self.mongo_api.is_connected():
+            try:
+                config = self.mongo_api.get_online_gift_config()
+                if config:
+                    self.log('INFO', '成功从MongoDB加载在线礼包配置', 'SERVER')
+                    return config
+                else:
+                    self.log('WARNING', '从MongoDB未找到在线礼包配置，尝试从JSON文件加载', 'SERVER')
+            except Exception as e:
+                self.log('ERROR', f'从MongoDB加载在线礼包配置失败: {str(e)}，尝试从JSON文件加载', 'SERVER')
+        
+        # 回退到JSON文件
         try:
             config_path = os.path.join(self.config_dir, "online_gift_config.json")
             if os.path.exists(config_path):
                 with open(config_path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
+                    config = json.load(f)
+                    self.log('INFO', '成功从JSON文件加载在线礼包配置', 'SERVER')
+                    return config
         except Exception as e:
-            self.log('ERROR', f"加载在线礼包配置失败: {str(e)}", 'SERVER')
-            pass
+            self.log('ERROR', f"从JSON文件加载在线礼包配置失败: {str(e)}", 'SERVER')
         
         # 默认配置
+        self.log('WARNING', '使用默认在线礼包配置', 'SERVER')
         return {
             "在线礼包配置": {
                 "1分钟": {"时长秒数": 60, "奖励": {"金币": 100, "经验": 50, "种子": [{"名称": "小麦", "数量": 5}]}},
@@ -7174,15 +7477,31 @@ class TCPGameServer(TCPServer):
     #加载新手礼包配置
     def _load_new_player_config(self):
         """加载新手礼包配置"""
+        # 优先从MongoDB读取配置
+        if hasattr(self, 'mongo_api') and self.mongo_api and self.mongo_api.is_connected():
+            try:
+                config = self.mongo_api.get_new_player_config()
+                if config:
+                    self.log('INFO', '成功从MongoDB加载新手大礼包配置', 'SERVER')
+                    return config
+                else:
+                    self.log('WARNING', '从MongoDB未找到新手大礼包配置，尝试从JSON文件加载', 'SERVER')
+            except Exception as e:
+                self.log('ERROR', f'从MongoDB加载新手大礼包配置失败: {str(e)}，尝试从JSON文件加载', 'SERVER')
+        
+        # 回退到JSON文件
         try:
             config_path = os.path.join(self.config_dir, "new_player_config.json")
             if os.path.exists(config_path):
                 with open(config_path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
+                    config = json.load(f)
+                    self.log('INFO', '成功从JSON文件加载新手大礼包配置', 'SERVER')
+                    return config
         except Exception as e:
-            self.log('ERROR', f"加载新手礼包配置失败: {str(e)}", 'SERVER')
+            self.log('ERROR', f"从JSON文件加载新手礼包配置失败: {str(e)}", 'SERVER')
         
         # 默认配置
+        self.log('WARNING', '使用默认新手大礼包配置', 'SERVER')
         return {
             "新手礼包配置": {
                 "奖励内容": {
@@ -8279,7 +8598,7 @@ class TCPGameServer(TCPServer):
         # 从智慧树消息库中随机获取一条消息
         random_message = self._get_random_wisdom_tree_message()
         if random_message:
-            wisdom_tree_config["智慧树显示的话"] = random_message
+            wisdom_tree_config["智慧树显示的话"] = random_message.get("content", "")
         
         # 保存数据
         self.save_player_data(username, player_data)
@@ -8347,7 +8666,7 @@ class TCPGameServer(TCPServer):
         random_message = self._get_random_wisdom_tree_message()
         
         if random_message:
-            wisdom_tree_config["智慧树显示的话"] = random_message
+            wisdom_tree_config["智慧树显示的话"] = random_message.get("content", "")
             
             # 保存数据
             self.save_player_data(username, player_data)
@@ -8505,6 +8824,22 @@ class TCPGameServer(TCPServer):
         import json
         import random
         
+        # 优先从MongoDB读取
+        if hasattr(self, 'mongo_api') and self.mongo_api and self.mongo_api.is_connected():
+            try:
+                wisdom_tree_data = self.mongo_api.get_wisdom_tree_config()
+                if wisdom_tree_data:
+                    messages = wisdom_tree_data.get("messages", [])
+                    if messages:
+                        selected_message = random.choice(messages)
+                        self.log('INFO', f"成功从MongoDB获取智慧树消息", 'SERVER')
+                        return selected_message
+                    else:
+                        return None
+            except Exception as e:
+                self.log('ERROR', f"从MongoDB读取智慧树消息失败: {e}", 'SERVER')
+        
+        # 回退到JSON文件
         wisdom_tree_data_path = os.path.join(os.path.dirname(__file__), "config", "wisdom_tree_data.json")
         
         try:
@@ -8514,12 +8849,13 @@ class TCPGameServer(TCPServer):
             messages = wisdom_tree_data.get("messages", [])
             if messages:
                 selected_message = random.choice(messages)
-                return selected_message.get("content", "")
+                self.log('INFO', f"成功从JSON文件获取智慧树消息", 'SERVER')
+                return selected_message
             else:
-                return ""
+                return None
         except Exception as e:
-            print(f"读取智慧树消息失败：{e}")
-            return ""
+            self.log('ERROR', f"从JSON文件读取智慧树消息失败: {e}", 'SERVER')
+            return None
     
     def _save_wisdom_tree_message(self, username, message_content):
         """保存智慧树消息到消息库"""
@@ -8528,6 +8864,46 @@ class TCPGameServer(TCPServer):
         import time
         import uuid
         
+        # 创建新消息
+        new_message = {
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+            "sender": username,
+            "content": message_content,
+            "id": str(uuid.uuid4())
+        }
+        
+        # 优先保存到MongoDB
+        if hasattr(self, 'mongo_api') and self.mongo_api and self.mongo_api.is_connected():
+            try:
+                # 获取现有数据
+                wisdom_tree_data = self.mongo_api.get_wisdom_tree_config()
+                if not wisdom_tree_data:
+                    wisdom_tree_data = {
+                        "messages": [],
+                        "total_messages": 0,
+                        "last_update": ""
+                    }
+                
+                # 添加新消息
+                wisdom_tree_data["messages"].append(new_message)
+                wisdom_tree_data["total_messages"] = len(wisdom_tree_data["messages"])
+                wisdom_tree_data["last_update"] = new_message["timestamp"]
+                
+                # 保持最多1000条消息
+                if len(wisdom_tree_data["messages"]) > 1000:
+                    wisdom_tree_data["messages"] = wisdom_tree_data["messages"][-1000:]
+                    wisdom_tree_data["total_messages"] = len(wisdom_tree_data["messages"])
+                
+                # 保存到MongoDB
+                if self.mongo_api.update_wisdom_tree_config(wisdom_tree_data):
+                    self.log('INFO', f"成功保存智慧树消息到MongoDB: {username}", 'SERVER')
+                    return True
+                else:
+                    self.log('ERROR', f"保存智慧树消息到MongoDB失败: {username}", 'SERVER')
+            except Exception as e:
+                self.log('ERROR', f"MongoDB保存智慧树消息异常: {e}", 'SERVER')
+        
+        # 回退到JSON文件
         wisdom_tree_data_path = os.path.join(os.path.dirname(__file__), "config", "wisdom_tree_data.json")
         
         try:
@@ -8541,14 +8917,6 @@ class TCPGameServer(TCPServer):
                     "total_messages": 0,
                     "last_update": ""
                 }
-            
-            # 创建新消息
-            new_message = {
-                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-                "sender": username,
-                "content": message_content,
-                "id": str(uuid.uuid4())
-            }
             
             # 添加到消息列表
             wisdom_tree_data["messages"].append(new_message)
@@ -8564,9 +8932,10 @@ class TCPGameServer(TCPServer):
             with open(wisdom_tree_data_path, 'w', encoding='utf-8') as f:
                 json.dump(wisdom_tree_data, f, ensure_ascii=False, indent=4)
             
+            self.log('INFO', f"成功保存智慧树消息到JSON文件: {username}", 'SERVER')
             return True
         except Exception as e:
-            print(f"保存智慧树消息失败：{e}")
+            self.log('ERROR', f"保存智慧树消息到JSON文件失败: {e}", 'SERVER')
             return False
     
     def check_wisdom_tree_health_decay(self):
@@ -9543,17 +9912,6 @@ if __name__ == "__main__":
         server_thread.start()
         
         print("✅ 服务器启动成功！")
-        print("📋 功能列表:")
-        print("   ├── 用户注册/登录系统")
-        print("   ├── 作物种植与收获")
-        print("   ├── 浇水与施肥系统")
-        print("   ├── 每日签到奖励")
-        print("   ├── 幸运抽奖系统")
-        print("   ├── 玩家互动功能")
-        print("   ├── 性能优化缓存")
-        print("   └── 控制台命令系统")
-        print("=" * 60)
-        print("🔥 服务器运行中...")
         
         # 启动控制台输入线程
         console_thread = threading.Thread(target=console_input_thread, args=(server,))
@@ -9584,4 +9942,4 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n❌ 服务器启动失败: {str(e)}")
         print("🔧 请检查配置并重试")
-        sys.exit(1) 
+        sys.exit(1)

@@ -2,7 +2,7 @@ extends Control
 #各种面板
 @onready var game_about_panel: Panel = $GameAboutPanel
 @onready var game_update_panel: Panel = $GameUpdatePanel
-@onready var game_setting_panel: Panel = $GameSettingPanel
+#@onready var game_setting_panel: Panel = $GameSettingPanel
 
 @onready var game_version_label: Label = $GUI/GameVersionLabel
 
@@ -23,7 +23,7 @@ func _on_start_game_button_pressed() -> void:
 
 #游戏设置
 func _on_game_setting_button_pressed() -> void:
-	game_setting_panel.show()
+	#game_setting_panel.show()
 	pass 
 
 #游戏更新

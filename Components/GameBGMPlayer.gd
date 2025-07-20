@@ -23,11 +23,20 @@ var music_files: Array[String] = []
 var current_index: int = 0
 var played_indices: Array[int] = []  # 随机模式已播放的索引
 
+# 音量控制相关
+var current_volume: float = 1.0  # 当前音量 (0.0-1.0)
+var is_muted: bool = false       # 是否静音
+var volume_before_mute: float = 1.0  # 静音前的音量
+
 func _ready():
 	# 创建音频播放器
 	audio_player = AudioStreamPlayer.new()
 	add_child(audio_player)
 	audio_player.finished.connect(_on_music_finished)
+	
+	# 从全局变量读取初始音量设置
+	current_volume = GlobalVariables.BackgroundMusicVolume
+	audio_player.volume_db = linear_to_db(current_volume)
 	
 	# 加载音乐文件
 	_load_music_files()
@@ -163,4 +172,71 @@ func add_music_file(file_path: String) -> bool:
 		return true
 	else:
 		print("音乐文件不存在: ", file_path)
-		return false 
+		return false
+
+# ============================= 音量控制功能 =====================================
+
+func set_volume(volume: float):
+	"""设置音量 (0.0-1.0)"""
+	current_volume = clamp(volume, 0.0, 1.0)
+	if not is_muted:
+		audio_player.volume_db = linear_to_db(current_volume)
+	print("背景音乐音量设置为: ", current_volume)
+
+func get_volume() -> float:
+	"""获取当前音量"""
+	return current_volume
+
+func set_mute(muted: bool):
+	"""设置静音状态"""
+	if muted and not is_muted:
+		# 静音
+		volume_before_mute = current_volume
+		audio_player.volume_db = -80.0  # 设置为最小音量
+		is_muted = true
+		print("背景音乐已静音")
+	elif not muted and is_muted:
+		# 取消静音
+		audio_player.volume_db = linear_to_db(current_volume)
+		is_muted = false
+		print("背景音乐取消静音")
+
+func toggle_mute():
+	"""切换静音状态"""
+	set_mute(not is_muted)
+
+func is_music_muted() -> bool:
+	"""获取静音状态"""
+	return is_muted
+
+func pause():
+	"""暂停音乐"""
+	if audio_player.playing:
+		audio_player.stream_paused = true
+		print("背景音乐已暂停")
+
+func resume():
+	"""恢复音乐"""
+	if audio_player.stream_paused:
+		audio_player.stream_paused = false
+		print("背景音乐已恢复")
+
+func stop():
+	"""停止音乐"""
+	if audio_player.playing:
+		audio_player.stop()
+		print("背景音乐已停止")
+
+func is_playing() -> bool:
+	"""检查是否正在播放"""
+	return audio_player.playing and not audio_player.stream_paused
+
+func get_current_position() -> float:
+	"""获取当前播放位置（秒）"""
+	return audio_player.get_playback_position()
+
+func get_current_length() -> float:
+	"""获取当前音乐总长度（秒）"""
+	if audio_player.stream:
+		return audio_player.stream.get_length()
+	return 0.0 

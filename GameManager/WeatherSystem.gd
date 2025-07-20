@@ -9,8 +9,16 @@ extends Node2D
 # 天气系统
 # 要显示哪种天气直接调用相应天气的show()然后一并隐藏其他天气hide()
 
+# 动态天气显示控制（可以覆盖全局设置）
+var weather_display_enabled: bool = true
+
 # 设置天气的统一方法
 func set_weather(weather_type: String):
+	# 检查全局设置和动态设置
+	if GlobalVariables.DisableWeatherDisplay or not weather_display_enabled:
+		hide_all_weather()
+		return
+
 	# 先隐藏所有天气效果
 	hide_all_weather()
 	
@@ -36,6 +44,19 @@ func set_weather(weather_type: String):
 				willow_leaf_rain.show()
 		_:
 			print("未知的天气类型: ", weather_type)
+
+# 动态设置天气显示状态
+func set_weather_display_enabled(enabled: bool):
+	"""动态设置天气显示是否启用"""
+	weather_display_enabled = enabled
+	if not enabled:
+		hide_all_weather()
+	print("天气显示已", "启用" if enabled else "禁用")
+
+# 获取当前天气显示状态
+func is_weather_display_enabled() -> bool:
+	"""获取当前天气显示状态"""
+	return weather_display_enabled and not GlobalVariables.DisableWeatherDisplay
 
 # 隐藏所有天气效果
 func hide_all_weather():
