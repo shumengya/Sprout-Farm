@@ -2300,112 +2300,11 @@ class TCPGameServer(TCPServer):
 
 
 
-
-#==========================购买道具处理==========================
-    #处理购买道具请求
-    def _handle_buy_item(self, client_id, message):
-        """处理购买道具请求"""
-        # 检查用户是否已登录
-        logged_in, response = self._check_user_logged_in(client_id, "购买道具", "buy_item")
-        if not logged_in:
-            return self.send_data(client_id, response)
-        
-        # 获取玩家数据
-        player_data, username, response = self._load_player_data_with_check(client_id, "buy_item")
-        if not player_data:
-            return self.send_data(client_id, response)
-        
-        item_name = message.get("item_name", "")
-        item_cost = message.get("item_cost", 0)
-        quantity = message.get("quantity", 1)  # 获取购买数量，默认为1
-        
-        # 确保购买数量为正整数
-        if not isinstance(quantity, int) or quantity <= 0:
-            quantity = 1
-        
-        # 加载道具配置
-        item_config = self._load_item_config()
-        if not item_config:
-            return self._send_action_error(client_id, "buy_item", "服务器无法加载道具数据")
-        
-        # 检查道具是否存在
-        if item_name not in item_config:
-            return self._send_action_error(client_id, "buy_item", "该道具不存在")
-        
-        # 验证价格是否正确
-        actual_cost = item_config[item_name].get("花费", 0)
-        if item_cost != actual_cost:
-            return self._send_action_error(client_id, "buy_item", f"道具价格验证失败，实际价格为{actual_cost}元")
-        
-        # 处理批量购买
-        return self._process_item_purchase(client_id, player_data, username, item_name, item_config[item_name], quantity)
-    
-    #处理道具购买逻辑
-    def _process_item_purchase(self, client_id, player_data, username, item_name, item_info, quantity=1):
-        """处理道具购买逻辑"""
-        unit_cost = item_info.get("花费", 0)
-        total_cost = unit_cost * quantity
-        
-        # 检查玩家金钱
-        if player_data["money"] < total_cost:
-            return self._send_action_error(client_id, "buy_item", f"金钱不足，无法购买此道具。需要{total_cost}元，当前只有{player_data['money']}元")
-        
-        # 扣除金钱
-        player_data["money"] -= total_cost
-        
-        # 将道具添加到道具背包
-        item_found = False
-        
-        # 确保道具背包存在
-        if "道具背包" not in player_data:
-            player_data["道具背包"] = []
-        
-        for item in player_data["道具背包"]:
-            if item.get("name") == item_name:
-                item["count"] += quantity
-                item_found = True
-                break
-        
-        if not item_found:
-            player_data["道具背包"].append({
-                "name": item_name,
-                "count": quantity
-            })
-        
-        # 保存玩家数据
-        self.save_player_data(username, player_data)
-        
-        self.log('INFO', f"玩家 {username} 购买了 {quantity} 个道具 {item_name}，花费 {total_cost} 元", 'SERVER')
-        
-        return self.send_data(client_id, {
-            "type": "action_response",
-            "action_type": "buy_item",
-            "success": True,
-            "message": f"成功购买 {quantity} 个 {item_name}",
-            "updated_data": {
-                "money": player_data["money"],
-                "道具背包": player_data["道具背包"]
-            }
-        })
-    
-    #加载道具配置数据
-    def _load_item_config(self):
-        """从item_config.json加载道具配置数据"""
-        try:
-            with open("config/item_config.json", 'r', encoding='utf-8') as file:
-                return json.load(file)
-        except Exception as e:
-            self.log('ERROR', f"无法加载道具数据: {str(e)}", 'SERVER')
-            return {}
-#==========================购买道具处理==========================
-
-
-
 #==========================购买宠物处理==========================
     #处理购买宠物请求
     def _handle_buy_pet(self, client_id, message):
         """处理购买宠物请求"""
-        # 检查用户是否已登录
+        # 检查用户登录状态
         logged_in, response = self._check_user_logged_in(client_id, "购买宠物", "buy_pet")
         if not logged_in:
             return self.send_data(client_id, response)
@@ -2415,35 +2314,46 @@ class TCPGameServer(TCPServer):
         if not player_data:
             return self.send_data(client_id, response)
         
+        # 获取请求参数
         pet_name = message.get("pet_name", "")
         pet_cost = message.get("pet_cost", 0)
         
+        # 验证宠物购买条件
+        validation_result = self._validate_pet_purchase(pet_name, pet_cost, player_data)
+        if not validation_result["success"]:
+            return self._send_action_error(client_id, "buy_pet", validation_result["message"])
+        
+        # 处理宠物购买
+        return self._process_pet_purchase(client_id, player_data, username, pet_name, validation_result["pet_info"])
+    
+    def _validate_pet_purchase(self, pet_name, pet_cost, player_data):
+        """验证宠物购买条件"""
         # 加载宠物配置
         pet_config = self._load_pet_config()
         if not pet_config:
-            return self._send_action_error(client_id, "buy_pet", "服务器无法加载宠物数据")
+            return {"success": False, "message": "服务器无法加载宠物数据"}
         
         # 检查宠物是否存在
         if pet_name not in pet_config:
-            return self._send_action_error(client_id, "buy_pet", "该宠物不存在")
+            return {"success": False, "message": "该宠物不存在"}
         
-        # 检查宠物是否可购买
         pet_info = pet_config[pet_name]
         purchase_info = pet_info.get("购买信息", {})
-        if not purchase_info.get("能否购买", False):
-            return self._send_action_error(client_id, "buy_pet", "该宠物不可购买")
         
-        # 验证价格是否正确
+        # 检查宠物是否可购买
+        if not purchase_info.get("能否购买", False):
+            return {"success": False, "message": "该宠物不可购买"}
+        
+        # 验证价格
         actual_cost = purchase_info.get("购买价格", 0)
         if pet_cost != actual_cost:
-            return self._send_action_error(client_id, "buy_pet", f"宠物价格验证失败，实际价格为{actual_cost}元")
+            return {"success": False, "message": f"宠物价格验证失败，实际价格为{actual_cost}元"}
         
         # 检查玩家是否已拥有该宠物
         if self._player_has_pet(player_data, pet_name):
-            return self._send_action_error(client_id, "buy_pet", f"你已经拥有 {pet_name} 了！")
+            return {"success": False, "message": f"你已经拥有 {pet_name} 了！"}
         
-        # 处理宠物购买
-        return self._process_pet_purchase(client_id, player_data, username, pet_name, pet_info)
+        return {"success": True, "pet_info": pet_info}
     
     #处理宠物购买逻辑
     def _process_pet_purchase(self, client_id, player_data, username, pet_name, pet_info):
@@ -2453,43 +2363,20 @@ class TCPGameServer(TCPServer):
         
         # 检查玩家金钱
         if player_data["money"] < pet_cost:
-            return self._send_action_error(client_id, "buy_pet", f"金钱不足，无法购买此宠物。需要{pet_cost}元，当前只有{player_data['money']}元")
+            return self._send_action_error(client_id, "buy_pet", 
+                f"金钱不足，无法购买此宠物。需要{pet_cost}元，当前只有{player_data['money']}元")
         
-        # 扣除金钱
+        # 扣除金钱并添加宠物
         player_data["money"] -= pet_cost
+        pet_instance = self._create_pet_instance(pet_info, username, pet_name)
         
-        # 确保宠物背包存在
+        # 确保宠物背包存在并添加宠物
         if "宠物背包" not in player_data:
             player_data["宠物背包"] = []
-        
-        # 创建宠物实例数据 - 复制宠物配置的完整JSON数据
-        import copy
-        pet_instance = copy.deepcopy(pet_info)
-        
-        # 为购买的宠物设置独特的ID和主人信息
-        import time
-        current_time = time.time()
-        unique_id = str(int(current_time * 1000))  # 使用时间戳作为唯一ID
-        
-        # 更新基本信息
-        if "基本信息" in pet_instance:
-            pet_instance["基本信息"]["宠物主人"] = username
-            pet_instance["基本信息"]["宠物ID"] = unique_id
-            pet_instance["基本信息"]["宠物名称"] = f"{username}的{pet_name}"
-            
-            # 设置宠物生日（详细时间）
-            import datetime
-            now = datetime.datetime.now()
-            birthday = f"{now.year}年{now.month}月{now.day}日{now.hour}时{now.minute}分{now.second}秒"
-            pet_instance["基本信息"]["生日"] = birthday
-            pet_instance["基本信息"]["年龄"] = 0  # 刚出生年龄为0
-        
-        # 将宠物添加到宠物背包
         player_data["宠物背包"].append(pet_instance)
         
-        # 保存玩家数据
+        # 保存数据并返回响应
         self.save_player_data(username, player_data)
-        
         self.log('INFO', f"玩家 {username} 购买了宠物 {pet_name}，花费 {pet_cost} 元", 'SERVER')
         
         return self.send_data(client_id, {
@@ -2502,6 +2389,31 @@ class TCPGameServer(TCPServer):
                 "宠物背包": player_data["宠物背包"]
             }
         })
+    
+    def _create_pet_instance(self, pet_info, username, pet_name):
+        """创建宠物实例"""
+        import copy
+        import time
+        import datetime
+        
+        # 复制宠物配置数据
+        pet_instance = copy.deepcopy(pet_info)
+        
+        # 生成唯一ID和设置基本信息
+        unique_id = str(int(time.time() * 1000))
+        now = datetime.datetime.now()
+        birthday = f"{now.year}年{now.month}月{now.day}日{now.hour}时{now.minute}分{now.second}秒"
+        
+        if "基本信息" in pet_instance:
+            pet_instance["基本信息"].update({
+                "宠物主人": username,
+                "宠物ID": unique_id,
+                "宠物名称": f"{username}的{pet_name}",
+                "生日": birthday,
+                "年龄": 0
+            })
+        
+        return pet_instance
     
     #检查玩家是否已拥有某种宠物
     def _player_has_pet(self, player_data, pet_name):
@@ -2516,12 +2428,28 @@ class TCPGameServer(TCPServer):
     
     #加载宠物配置数据
     def _load_pet_config(self):
-        """从pet_data.json加载宠物配置数据"""
+        """优先从MongoDB加载宠物配置数据，失败时回退到JSON文件"""
         try:
+            # 优先从MongoDB加载
+            if hasattr(self, 'mongo_api') and self.mongo_api:
+                config = self.mongo_api.get_pet_config()
+                if config:
+                    self.log('INFO', "成功从MongoDB加载宠物配置", 'SERVER')
+                    return config
+                else:
+                    self.log('WARNING', "MongoDB中未找到宠物配置，回退到JSON文件", 'SERVER')
+            
+            # 回退到JSON文件
             with open("config/pet_data.json", 'r', encoding='utf-8') as file:
-                return json.load(file)
+                config = json.load(file)
+                self.log('INFO', "从JSON文件加载宠物配置", 'SERVER')
+                return config
+                
+        except json.JSONDecodeError as e:
+            self.log('ERROR', f"宠物配置JSON解析错误: {str(e)}", 'SERVER')
+            return {}
         except Exception as e:
-            self.log('ERROR', f"无法加载宠物数据: {str(e)}", 'SERVER')
+            self.log('ERROR', f"加载宠物配置失败: {str(e)}", 'SERVER')
             return {}
     
     # 将巡逻宠物ID转换为完整宠物数据
@@ -3847,69 +3775,173 @@ class TCPGameServer(TCPServer):
 
 
 
+#==========================购买道具处理==========================
+    #处理购买道具请求
+    def _handle_buy_item(self, client_id, message):
+        """处理购买道具请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "购买道具", "buy_item")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "buy_item")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        # 解析请求参数
+        item_name = message.get("item_name", "")
+        item_cost = message.get("item_cost", 0)
+        quantity = max(1, int(message.get("quantity", 1)))  # 确保购买数量为正整数
+        
+        # 验证道具配置
+        item_config = self._load_item_config()
+        if not item_config:
+            return self._send_action_error(client_id, "buy_item", "服务器无法加载道具数据")
+        
+        if item_name not in item_config:
+            return self._send_action_error(client_id, "buy_item", "该道具不存在")
+        
+        # 验证价格
+        actual_cost = item_config[item_name].get("花费", 0)
+        if item_cost != actual_cost:
+            return self._send_action_error(client_id, "buy_item", f"道具价格验证失败，实际价格为{actual_cost}元")
+        
+        # 处理购买
+        return self._process_item_purchase(client_id, player_data, username, item_name, item_config[item_name], quantity)
+    
+    #处理道具购买逻辑
+    def _process_item_purchase(self, client_id, player_data, username, item_name, item_info, quantity=1):
+        """处理道具购买逻辑"""
+        unit_cost = item_info.get("花费", 0)
+        total_cost = unit_cost * quantity
+        
+        # 检查金钱是否足够
+        if player_data["money"] < total_cost:
+            return self._send_action_error(client_id, "buy_item", 
+                f"金钱不足，需要{total_cost}元，当前只有{player_data['money']}元")
+        
+        # 扣除金钱并添加道具
+        player_data["money"] -= total_cost
+        self._add_item_to_inventory(player_data, item_name, quantity)
+        
+        # 保存数据并记录日志
+        self.save_player_data(username, player_data)
+        self.log('INFO', f"玩家 {username} 购买了 {quantity} 个道具 {item_name}，花费 {total_cost} 元", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "buy_item",
+            "success": True,
+            "message": f"成功购买 {quantity} 个 {item_name}",
+            "updated_data": {
+                "money": player_data["money"],
+                "道具背包": player_data["道具背包"]
+            }
+        })
+    
+    def _add_item_to_inventory(self, player_data, item_name, quantity):
+        """将道具添加到玩家背包"""
+        if "道具背包" not in player_data:
+            player_data["道具背包"] = []
+        
+        # 查找是否已有该道具
+        for item in player_data["道具背包"]:
+            if item.get("name") == item_name:
+                item["count"] += quantity
+                return
+        
+        # 添加新道具
+        player_data["道具背包"].append({
+            "name": item_name,
+            "count": quantity
+        })
+    
+    #加载道具配置数据
+    def _load_item_config(self):
+        """优先从MongoDB加载道具配置数据，失败时回退到JSON文件"""
+        # 首先尝试从MongoDB加载
+        if self.mongo_api and self.mongo_api.is_connected():
+            try:
+                config = self.mongo_api.get_item_config()
+                if config:
+                    self.log('INFO', '成功从MongoDB加载道具配置', 'SERVER')
+                    return config
+                else:
+                    self.log('WARNING', 'MongoDB中未找到道具配置，回退到JSON文件', 'SERVER')
+            except Exception as e:
+                self.log('WARNING', f'从MongoDB加载道具配置失败: {e}，回退到JSON文件', 'SERVER')
+        
+        # 回退到JSON文件
+        try:
+            with open("config/item_config.json", 'r', encoding='utf-8') as file:
+                config = json.load(file)
+                self.log('INFO', '从JSON文件加载道具配置', 'SERVER')
+                return config
+        except json.JSONDecodeError as e:
+            self.log('ERROR', f'JSON文件格式错误: {e}', 'SERVER')
+            return {}
+        except Exception as e:
+            self.log('ERROR', f'无法加载道具数据: {e}', 'SERVER')
+            return {}
+#==========================购买道具处理==========================
+
+
 
 #==========================道具使用处理==========================
     def _handle_use_item(self, client_id, message):
         """处理使用道具请求"""
-        print(f"调试：服务器收到道具使用请求")
-        print(f"  - client_id: {client_id}")
-        print(f"  - message: {message}")
-        
         # 检查用户是否已登录
         logged_in, response = self._check_user_logged_in(client_id, "使用道具", "use_item")
         if not logged_in:
-            print(f"错误：用户未登录")
             return self.send_data(client_id, response)
         
         # 获取玩家数据
         player_data, username, response = self._load_player_data_with_check(client_id, "use_item")
         if not player_data:
-            print(f"错误：无法加载玩家数据")
             return self.send_data(client_id, response)
         
+        # 解析请求参数
         lot_index = message.get("lot_index", -1)
         item_name = message.get("item_name", "")
         use_type = message.get("use_type", "")
         target_username = message.get("target_username", "")
         
-        print(f"调试：解析参数")
-        print(f"  - username: {username}")
-        print(f"  - lot_index: {lot_index}")
-        print(f"  - item_name: {item_name}")
-        print(f"  - use_type: {use_type}")
-        print(f"  - target_username: {target_username}")
-        
         # 验证参数
-        if not item_name:
-            return self._send_action_error(client_id, "use_item", "道具名称不能为空")
-        
-        if not use_type:
-            return self._send_action_error(client_id, "use_item", "使用类型不能为空")
+        if not item_name or not use_type:
+            return self._send_action_error(client_id, "use_item", "道具名称和使用类型不能为空")
         
         # 检查玩家是否拥有该道具
         if not self._has_item_in_inventory(player_data, item_name):
             return self._send_action_error(client_id, "use_item", f"您没有 {item_name}")
         
-        # 确定操作目标
+        # 确定操作目标并处理
         if target_username and target_username != username:
             # 访问模式：对别人的作物使用道具
-            target_player_data = self.load_player_data(target_username)
-            if not target_player_data:
-                return self._send_action_error(client_id, "use_item", f"无法找到玩家 {target_username} 的数据")
-            
-            # 验证地块索引
-            if lot_index < 0 or lot_index >= len(target_player_data.get("farm_lots", [])):
-                return self._send_action_error(client_id, "use_item", "无效的地块索引")
-            
-            target_lot = target_player_data["farm_lots"][lot_index]
-            return self._process_item_use_visiting(client_id, player_data, username, target_player_data, target_username, target_lot, lot_index, item_name, use_type)
+            return self._handle_visiting_item_use(client_id, player_data, username, target_username, lot_index, item_name, use_type)
         else:
             # 正常模式：对自己的作物使用道具
-            if lot_index < 0 or lot_index >= len(player_data.get("farm_lots", [])):
-                return self._send_action_error(client_id, "use_item", "无效的地块索引")
-            
-            lot = player_data["farm_lots"][lot_index]
-            return self._process_item_use_normal(client_id, player_data, username, lot, lot_index, item_name, use_type)
+            return self._handle_normal_item_use(client_id, player_data, username, lot_index, item_name, use_type)
+    
+    def _handle_normal_item_use(self, client_id, player_data, username, lot_index, item_name, use_type):
+        """处理正常模式下的道具使用"""
+        if lot_index < 0 or lot_index >= len(player_data.get("farm_lots", [])):
+            return self._send_action_error(client_id, "use_item", "无效的地块索引")
+        
+        lot = player_data["farm_lots"][lot_index]
+        return self._process_item_use_normal(client_id, player_data, username, lot, lot_index, item_name, use_type)
+    
+    def _handle_visiting_item_use(self, client_id, player_data, username, target_username, lot_index, item_name, use_type):
+        """处理访问模式下的道具使用"""
+        target_player_data = self.load_player_data(target_username)
+        if not target_player_data:
+            return self._send_action_error(client_id, "use_item", f"无法找到玩家 {target_username} 的数据")
+        
+        if lot_index < 0 or lot_index >= len(target_player_data.get("farm_lots", [])):
+            return self._send_action_error(client_id, "use_item", "无效的地块索引")
+        
+        target_lot = target_player_data["farm_lots"][lot_index]
+        return self._process_item_use_visiting(client_id, player_data, username, target_player_data, target_username, target_lot, lot_index, item_name, use_type)
     
     def _has_item_in_inventory(self, player_data, item_name):
         """检查玩家是否拥有指定道具"""
@@ -4759,118 +4791,100 @@ class TCPGameServer(TCPServer):
 #==========================宠物使用道具处理==========================
     def _handle_use_pet_item(self, client_id, message):
         """处理宠物使用道具请求"""
-        # 检查用户是否已登录
+        # 检查用户登录状态
         logged_in, response = self._check_user_logged_in(client_id, "宠物使用道具", "use_pet_item")
         if not logged_in:
             return self.send_data(client_id, response)
         
-        # 获取请求参数
+        # 验证请求参数
         item_name = message.get("item_name", "")
         pet_id = message.get("pet_id", "")
-        
         if not item_name or not pet_id:
-            return self.send_data(client_id, {
-                "type": "use_pet_item_response",
-                "success": False,
-                "message": "缺少必要参数"
-            })
+            return self._send_pet_item_error(client_id, "缺少必要参数")
         
         # 获取玩家数据
         username = self.user_data[client_id]["username"]
         player_data = self.load_player_data(username)
-        
         if not player_data:
-            return self.send_data(client_id, {
-                "type": "use_pet_item_response",
-                "success": False,
-                "message": "玩家数据加载失败"
-            })
+            return self._send_pet_item_error(client_id, "玩家数据加载失败")
         
-        # 检查道具是否存在
+        # 验证道具和宠物
+        validation_result = self._validate_pet_item_use(player_data, item_name, pet_id)
+        if not validation_result["success"]:
+            return self._send_pet_item_error(client_id, validation_result["message"])
+        
+        # 处理道具使用
+        return self._execute_pet_item_use(client_id, player_data, username, 
+                                        validation_result["item_index"], 
+                                        validation_result["pet_index"], 
+                                        item_name, pet_id)
+    
+    def _validate_pet_item_use(self, player_data, item_name, pet_id):
+        """验证宠物道具使用条件"""
+        # 检查道具
         item_bag = player_data.get("道具背包", [])
-        item_found = False
         item_index = -1
-        
         for i, item in enumerate(item_bag):
-            if item.get("name") == item_name:
-                if item.get("count", 0) > 0:
-                    item_found = True
-                    item_index = i
-                    break
+            if item.get("name") == item_name and item.get("count", 0) > 0:
+                item_index = i
+                break
         
-        if not item_found:
-            return self.send_data(client_id, {
-                "type": "use_pet_item_response",
-                "success": False,
-                "message": f"道具 {item_name} 不足"
-            })
+        if item_index == -1:
+            return {"success": False, "message": f"道具 {item_name} 不足"}
         
-        # 检查宠物是否存在
+        # 检查宠物
         pet_bag = player_data.get("宠物背包", [])
-        pet_found = False
         pet_index = -1
-        
         for i, pet in enumerate(pet_bag):
             if pet.get("基本信息", {}).get("宠物ID") == pet_id:
-                pet_found = True
                 pet_index = i
                 break
         
-        if not pet_found:
-            return self.send_data(client_id, {
-                "type": "use_pet_item_response",
-                "success": False,
-                "message": "找不到指定的宠物"
-            })
+        if pet_index == -1:
+            return {"success": False, "message": "找不到指定的宠物"}
         
-        # 处理道具使用
+        return {"success": True, "item_index": item_index, "pet_index": pet_index}
+    
+    def _execute_pet_item_use(self, client_id, player_data, username, item_index, pet_index, item_name, pet_id):
+        """执行宠物道具使用"""
         try:
-            success, result_message, updated_pet = self._process_pet_item_use(
-                item_name, pet_bag[pet_index]
-            )
+            item_bag = player_data["道具背包"]
+            pet_bag = player_data["宠物背包"]
+            
+            # 处理道具效果
+            success, result_message, updated_pet = self._process_pet_item_use(item_name, pet_bag[pet_index])
             
             if success:
-                # 更新宠物数据
+                # 更新数据
                 pet_bag[pet_index] = updated_pet
-                
-                # 减少道具数量
                 item_bag[item_index]["count"] -= 1
                 if item_bag[item_index]["count"] <= 0:
                     item_bag.pop(item_index)
                 
-                # 保存玩家数据
+                # 保存并记录
                 self.save_player_data(username, player_data)
+                self.log('INFO', f"用户 {username} 对宠物 {pet_id} 使用道具 {item_name} 成功", 'PET_ITEM')
                 
-                # 发送成功响应
-                response = {
+                return self.send_data(client_id, {
                     "type": "use_pet_item_response",
                     "success": True,
                     "message": result_message,
-                    "updated_data": {
-                        "宠物背包": pet_bag,
-                        "道具背包": item_bag
-                    }
-                }
-                
-                self.log('INFO', f"用户 {username} 对宠物 {pet_id} 使用道具 {item_name} 成功", 'PET_ITEM')
-                
+                    "updated_data": {"宠物背包": pet_bag, "道具背包": item_bag}
+                })
             else:
-                # 发送失败响应
-                response = {
-                    "type": "use_pet_item_response",
-                    "success": False,
-                    "message": result_message
-                }
-            
-            return self.send_data(client_id, response)
-            
+                return self._send_pet_item_error(client_id, result_message)
+                
         except Exception as e:
             self.log('ERROR', f"宠物使用道具处理失败: {str(e)}", 'PET_ITEM')
-            return self.send_data(client_id, {
-                "type": "use_pet_item_response",
-                "success": False,
-                "message": "道具使用处理失败"
-            })
+            return self._send_pet_item_error(client_id, "道具使用处理失败")
+    
+    def _send_pet_item_error(self, client_id, message):
+        """发送宠物道具使用错误响应"""
+        return self.send_data(client_id, {
+            "type": "use_pet_item_response",
+            "success": False,
+            "message": message
+        })
     
     def _process_pet_item_use(self, item_name, pet_data):
         """处理具体的宠物道具使用逻辑"""
@@ -5069,7 +5083,6 @@ class TCPGameServer(TCPServer):
 
 
 
-
 #==========================道具配置数据处理==========================
     #处理客户端请求道具配置数据
     def _handle_item_config_request(self, client_id):
@@ -5090,7 +5103,6 @@ class TCPGameServer(TCPServer):
                 "message": "无法读取道具配置数据"
             })
 #==========================道具配置数据处理==========================
-
 
 
 
@@ -5464,10 +5476,24 @@ class TCPGameServer(TCPServer):
 
     def _load_stamina_config(self):
         """加载体力系统配置"""
+        # 优先从MongoDB加载配置
+        if self.use_mongodb and self.mongo_api and self.mongo_api.is_connected():
+            try:
+                config_data = self.mongo_api.get_stamina_config()
+                if config_data:
+                    self.log('INFO', '成功从MongoDB加载体力系统配置', 'SERVER')
+                    return config_data.get("体力系统配置", {})
+                else:
+                    self.log('WARNING', '从MongoDB获取体力系统配置失败，回退到JSON文件', 'SERVER')
+            except Exception as e:
+                self.log('ERROR', f'从MongoDB加载体力系统配置时发生错误: {e}，回退到JSON文件', 'SERVER')
+        
+        # 回退到JSON文件
         try:
             config_path = os.path.join(os.path.dirname(__file__), "config", "stamina_config.json")
             with open(config_path, 'r', encoding='utf-8') as file:
                 config_data = json.load(file)
+                self.log('INFO', '从JSON文件加载体力系统配置', 'SERVER')
                 return config_data.get("体力系统配置", {})
         except FileNotFoundError:
             self.log('WARNING', f"体力系统配置文件未找到，使用默认配置", 'SERVER')
@@ -5479,10 +5505,20 @@ class TCPGameServer(TCPServer):
             }
         except json.JSONDecodeError as e:
             self.log('ERROR', f"体力系统配置文件格式错误: {e}", 'SERVER')
-            return {}
+            return {
+                "最大体力值": 20,
+                "每小时恢复体力": 1,
+                "恢复间隔秒数": 3600,
+                "新玩家初始体力": 20
+            }
         except Exception as e:
             self.log('ERROR', f"加载体力系统配置时发生错误: {e}", 'SERVER')
-            return {}
+            return {
+                "最大体力值": 20,
+                "每小时恢复体力": 1,
+                "恢复间隔秒数": 3600,
+                "新玩家初始体力": 20
+            }
 
 #==========================点赞玩家处理==========================
 
@@ -8293,12 +8329,35 @@ class TCPGameServer(TCPServer):
     
     def _load_scare_crow_config(self):
         """加载稻草人配置"""
+        # 优先从MongoDB加载配置
+        try:
+            if hasattr(self, 'mongo_api') and self.mongo_api and self.mongo_api.is_connected():
+                config = self.mongo_api.get_scare_crow_config()
+                if config:
+                    self.log('INFO', "成功从MongoDB加载稻草人配置", 'SERVER')
+                    return config
+                else:
+                    self.log('WARNING', "MongoDB中未找到稻草人配置，回退到JSON文件", 'SERVER')
+        except Exception as e:
+            self.log('ERROR', f"从MongoDB加载稻草人配置失败: {str(e)}，回退到JSON文件", 'SERVER')
+        
+        # 回退到从JSON文件加载
         try:
             with open("config/scare_crow_config.json", 'r', encoding='utf-8') as file:
-                return json.load(file)
+                config = json.load(file)
+                self.log('INFO', "成功从JSON文件加载稻草人配置", 'SERVER')
+                return config
         except Exception as e:
             self.log('ERROR', f"无法加载稻草人配置: {str(e)}", 'SERVER')
-            return {}
+            # 返回默认配置
+            return {
+                "稻草人类型": {
+                    "稻草人1": {"图片": "res://assets/道具图片/稻草人1.webp", "价格": 1000},
+                    "稻草人2": {"图片": "res://assets/道具图片/稻草人2.webp", "价格": 1000},
+                    "稻草人3": {"图片": "res://assets/道具图片/稻草人3.webp", "价格": 1000}
+                },
+                "修改稻草人配置花费": 300
+            }
     
     def _send_buy_scare_crow_error(self, client_id, message):
         """发送购买稻草人错误响应"""
