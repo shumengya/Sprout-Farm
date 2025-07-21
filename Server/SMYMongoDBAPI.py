@@ -589,6 +589,75 @@ class SMYMongoDBAPI:
     #=====================在线礼包系统======================
 
 
+    #=====================作物数据系统======================
+    def get_crop_data_config(self) -> Optional[Dict[str, Any]]:
+        """
+        获取作物数据配置
+        
+        Returns:
+            Dict: 作物数据配置
+        """
+        try:
+            collection = self.get_collection("gameconfig")
+            
+            # 使用已知的文档ID查找
+            object_id = ObjectId("687cfb3d8e77ba00a7414bac")
+            result = collection.find_one({"_id": object_id})
+            
+            if result:
+                # 移除MongoDB的_id字段和updated_at字段
+                if "_id" in result:
+                    del result["_id"]
+                if "updated_at" in result:
+                    del result["updated_at"]
+                    
+                self.logger.info("成功获取作物数据配置")
+                return result
+            else:
+                self.logger.warning("未找到作物数据配置")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"获取作物数据配置失败: {e}")
+            return None
+    
+    def update_crop_data_config(self, config_data: Dict[str, Any]) -> bool:
+        """
+        更新作物数据配置
+        
+        Args:
+            config_data: 配置数据
+            
+        Returns:
+            bool: 是否成功
+        """
+        try:
+            collection = self.get_collection("gameconfig")
+            
+            # 使用已知的文档ID更新
+            object_id = ObjectId("687cfb3d8e77ba00a7414bac")
+            
+            # 添加更新时间
+            update_data = {
+                "updated_at": datetime.now(),
+                **config_data
+            }
+            
+            result = collection.replace_one({"_id": object_id}, update_data)
+            
+            if result.acknowledged and result.matched_count > 0:
+                self.logger.info("成功更新作物数据配置")
+                return True
+            else:
+                self.logger.error("更新作物数据配置失败")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"更新作物数据配置异常: {e}")
+            return False
+    #=====================作物数据系统======================
+
+
     #=====================道具配置系统======================
     def get_item_config(self) -> Optional[Dict[str, Any]]:
         """
