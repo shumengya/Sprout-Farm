@@ -110,16 +110,36 @@ func _on_forget_password_button_pressed():
 
 # 处理登录按钮点击
 func _on_login_button_pressed():
-	var user_name = username_input.text.strip_edges()
+	password_2.hide()
+	verification_code.hide()
+	player_name.hide()
+	farm_name.hide()
+	
+	
+	
+	var user_name = username_input.text.strip_edges()  # 修剪前后的空格
 	var user_password = password_input.text.strip_edges()
+	var farmname = farmname_input.text.strip_edges()
 	
-	# 验证输入
-	if not _validate_login_input(user_name, user_password, status_label):
+	if user_name == "" or user_password == "":
+		status_label.text = "用户名或密码不能为空！"
+		status_label.modulate = Color.RED
 		return
 	
-	# 检查网络连接
-	if not await _ensure_network_connection(status_label):
-		return
+	# 检查网络连接状态
+	if !tcp_network_manager_panel.client.is_client_connected():
+		status_label.text = "未连接到服务器，正在尝试连接..."
+		status_label.modulate = Color.YELLOW
+		# 尝试自动连接到服务器
+		tcp_network_manager_panel.connect_to_current_server()
+		await get_tree().create_timer(2.0).timeout
+		
+		# 再次检查连接状态
+		if !tcp_network_manager_panel.client.is_client_connected():
+			status_label.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label.modulate = Color.YELLOW
+			# 等待自动服务器切换完成
+			await get_tree().create_timer(3.0).timeout
 			
 	
 	# 禁用按钮，防止重复点击
@@ -149,13 +169,30 @@ func _on_login_button_pressed():
 func _on_send_button_pressed():
 	var user_name = register_username_input.text.strip_edges()
 	
-	# 验证输入
-	if not _validate_qq_input(user_name, status_label_2):
+	if user_name == "":
+		status_label_2.text = "请输入QQ号以接收验证码！"
+		status_label_2.modulate = Color.RED
+		return
+		
+	if !is_valid_qq_number(user_name):
+		status_label_2.text = "请输入正确的QQ号码（5-12位数字）！"
+		status_label_2.modulate = Color.RED
 		return
 	
-	# 检查网络连接
-	if not await _ensure_network_connection(status_label_2):
-		return
+	# 检查网络连接状态
+	if !tcp_network_manager_panel.client.is_client_connected():
+		status_label_2.text = "未连接到服务器，正在尝试连接..."
+		status_label_2.modulate = Color.YELLOW
+		# 尝试自动连接到服务器
+		tcp_network_manager_panel.connect_to_current_server()
+		await get_tree().create_timer(2.0).timeout
+		
+		# 再次检查连接状态
+		if !tcp_network_manager_panel.client.is_client_connected():
+			status_label_2.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label_2.modulate = Color.YELLOW
+			# 等待自动服务器切换完成
+			await get_tree().create_timer(3.0).timeout
 			
 	
 	# 禁用按钮，防止重复点击
@@ -186,18 +223,55 @@ func _on_send_button_pressed():
 func _on_register_button_2_pressed():
 	var user_name = register_username_input.text.strip_edges()
 	var user_password = password_input_1.text.strip_edges()
-	var password_confirm = password_input_2.text.strip_edges()
+	var user_password_2 = password_input_2.text.strip_edges()
+	var farmname = farmname_input.text.strip_edges()
 	var player_name = playername_input.text.strip_edges()
-	var farm_name = farmname_input.text.strip_edges()
 	var verification_code = verificationcode_input.text.strip_edges()
 	
-	# 验证输入
-	if not _validate_register_input(user_name, user_password, password_confirm, player_name, farm_name, verification_code, status_label_2):
+	# 检查密码格式（只允许数字和字母）
+	if not is_valid_password(user_password):
+		status_label_2.text = "密码只能包含数字和字母！"
+		status_label_2.modulate = Color.RED
 		return
 	
-	# 检查网络连接
-	if not await _ensure_network_connection(status_label_2):
+	if user_name == "" or user_password == "":
+		status_label_2.text = "用户名或密码不能为空！"
+		status_label_2.modulate = Color.RED
 		return
+	if farmname == "":
+		status_label_2.text = "农场名称不能为空！"
+		status_label_2.modulate = Color.RED
+		return 
+	if user_password != user_password_2:
+		status_label_2.text = "两次输入的密码不一致！"
+		status_label_2.modulate = Color.RED
+		return 
+		
+	if !is_valid_qq_number(user_name):
+		status_label_2.text = "请输入正确的QQ号码（5-12位数字）！"
+		status_label_2.modulate = Color.RED
+		return
+		
+	if verification_code == "":
+		status_label_2.text = "请输入验证码！"
+		status_label_2.modulate = Color.RED
+		return
+		
+			# 检查网络连接状态
+	if !tcp_network_manager_panel.client.is_client_connected():
+		status_label_2.text = "未连接到服务器，正在尝试连接..."
+		status_label_2.modulate = Color.YELLOW
+		# 尝试自动连接到服务器
+		tcp_network_manager_panel.connect_to_current_server()
+		await get_tree().create_timer(2.0).timeout
+		
+		# 再次检查连接状态
+		if !tcp_network_manager_panel.client.is_client_connected():
+			status_label_2.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label_2.modulate = Color.YELLOW
+			# 等待自动服务器切换完成
+			await get_tree().create_timer(3.0).timeout
+			
 	
 	# 禁用按钮，防止重复点击
 	register_button_2.disabled = true
@@ -205,8 +279,13 @@ func _on_register_button_2_pressed():
 	status_label_2.text = "正在注册，请稍候..."
 	status_label_2.modulate = Color.YELLOW
 	
-	# 发送注册请求
-	tcp_network_manager_panel.sendRegisterInfo(user_name, user_password, player_name, farm_name, verification_code)
+		# 发送注册请求
+	tcp_network_manager_panel.sendRegisterInfo(user_name, user_password, farmname, player_name, verification_code)
+
+	# 更新主游戏数据
+	main_game.user_name = user_name
+	main_game.user_password = user_password
+	# farmname 直接在注册成功后通过UI更新，这里不需要设置
 	
 	# 5秒后重新启用按钮（如果没有收到响应）
 	await get_tree().create_timer(5.0).timeout
@@ -219,13 +298,30 @@ func _on_register_button_2_pressed():
 func _on_forget_send_button_pressed():
 	var user_name = forget_username_input.text.strip_edges()
 	
-	# 验证输入
-	if not _validate_qq_input(user_name, status_label_3):
+	if user_name == "":
+		status_label_3.text = "请输入QQ号以接收验证码！"
+		status_label_3.modulate = Color.RED
+		return
+		
+	if !is_valid_qq_number(user_name):
+		status_label_3.text = "请输入正确的QQ号码（5-12位数字）！"
+		status_label_3.modulate = Color.RED
 		return
 	
-	# 检查网络连接
-	if not await _ensure_network_connection(status_label_3):
-		return
+	# 检查网络连接状态
+	if !tcp_network_manager_panel.client.is_client_connected():
+		status_label_3.text = "未连接到服务器，正在尝试连接..."
+		status_label_3.modulate = Color.YELLOW
+		# 尝试自动连接到服务器
+		tcp_network_manager_panel.connect_to_current_server()
+		await get_tree().create_timer(2.0).timeout
+		
+		# 再次检查连接状态
+		if !tcp_network_manager_panel.client.is_client_connected():
+			status_label_3.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label_3.modulate = Color.YELLOW
+			# 等待自动服务器切换完成
+			await get_tree().create_timer(3.0).timeout
 	
 	# 禁用按钮，防止重复点击
 	forget_send_button.disabled = true
@@ -257,13 +353,41 @@ func _on_forget_password_confirm_pressed():
 	var new_password = new_password_input.text.strip_edges()
 	var verification_code = forget_verificationcode_input.text.strip_edges()
 	
-	# 验证输入
-	if not _validate_forget_password_input(user_name, new_password, verification_code, status_label_3):
+	# 检查密码格式（只允许数字和字母）
+	if not is_valid_password(new_password):
+		status_label_3.text = "密码只能包含数字和字母！"
+		status_label_3.modulate = Color.RED
 		return
 	
-	# 检查网络连接
-	if not await _ensure_network_connection(status_label_3):
+	if user_name == "" or new_password == "":
+		status_label_3.text = "用户名或新密码不能为空！"
+		status_label_3.modulate = Color.RED
 		return
+		
+	if !is_valid_qq_number(user_name):
+		status_label_3.text = "请输入正确的QQ号码（5-12位数字）！"
+		status_label_3.modulate = Color.RED
+		return
+		
+	if verification_code == "":
+		status_label_3.text = "请输入验证码！"
+		status_label_3.modulate = Color.RED
+		return
+	
+	# 检查网络连接状态
+	if !tcp_network_manager_panel.client.is_client_connected():
+		status_label_3.text = "未连接到服务器，正在尝试连接..."
+		status_label_3.modulate = Color.YELLOW
+		# 尝试自动连接到服务器
+		tcp_network_manager_panel.connect_to_current_server()
+		await get_tree().create_timer(2.0).timeout
+		
+		# 再次检查连接状态
+		if !tcp_network_manager_panel.client.is_client_connected():
+			status_label_3.text = "连接服务器失败，正在尝试其他服务器..."
+			status_label_3.modulate = Color.YELLOW
+			# 等待自动服务器切换完成
+			await get_tree().create_timer(3.0).timeout
 	
 	# 禁用按钮，防止重复点击
 	forget_password_button.disabled = true
@@ -283,112 +407,291 @@ func _on_forget_password_confirm_pressed():
 
 # 处理验证码发送响应
 func _on_verification_code_response(success: bool, message: String):
-	_set_status(status_label, message, Color.GREEN if success else Color.RED)
-	if not success:
+	if success:
+		status_label.text = message
+		status_label.modulate = Color.GREEN
+	else:
+		status_label.text = message
+		status_label.modulate = Color.RED
 		send_button.disabled = false
 		send_button.text = "发送验证码"
 
 # 处理验证码验证响应
 func _on_verify_code_response(success: bool, message: String):
-	_set_status(status_label, message, Color.GREEN if success else Color.RED)
+	if success:
+		status_label.text = message
+		status_label.modulate = Color.GREEN
+	else:
+		status_label.text = message
+		status_label.modulate = Color.RED
 
-# 输入验证函数
+# 验证QQ号是否有效
 func is_valid_qq_number(qq_number: String) -> bool:
+	# QQ号的标准格式是5到12位的数字
 	var qq_regex = RegEx.new()
-	if qq_regex.compile(r"^\d{5,12}$") != OK:
+	var pattern = r"^\d{5,12}$"
+	
+	var error = qq_regex.compile(pattern)
+	if error != OK:
+		status_label.text = "QQ号验证失败部错误"
+		status_label.modulate = Color.RED
 		return false
+
 	return qq_regex.search(qq_number) != null
 
+# 添加密码验证函数
 func is_valid_password(password: String) -> bool:
-	return password.match(r"^[a-zA-Z0-9]+$") != null
+	# 使用正则表达式检查是否只包含数字和字母
+	var pattern = r"^[a-zA-Z0-9]+$"
+	return password.match(pattern) != null
 
 # 处理登录响应
 func _on_login_response_received(success: bool, message: String, user_data: Dictionary):
+	# 启用按钮
 	login_button.disabled = false
 	
 	if success:
-		_set_status(status_label, "登录成功！正在加载游戏...", Color.GREEN)
-		_handle_login_success(user_data)
+		status_label.text = "登录成功！正在加载游戏..."
+		status_label.modulate = Color.GREEN
+		
+		# 保存登录数据到主游戏
+		main_game.login_data = user_data.duplicate()
+		
+		# 保存剩余点赞次数
+		main_game.remaining_likes = user_data.get("今日剩余点赞次数", 10)
+		
+		# 更新主游戏数据
+		main_game.experience = user_data.get("experience", 0)
+		main_game.farm_lots = user_data.get("farm_lots", [])
+		main_game.level = user_data.get("level", 1)
+		main_game.money = user_data.get("money", 0)
+		main_game.stamina = user_data.get("体力值", 20)
+		main_game.show_farm_name.text = "农场名称："+user_data.get("farm_name", "")
+		main_game.show_player_name.text = "玩家昵称："+user_data.get("player_name", "")
+		farmname_input.text = user_data.get("farm_name", "")
+		
+		# 加载玩家背包数据
+		if user_data.has("player_bag"):
+			main_game.player_bag = user_data.get("player_bag", [])
+		else:
+			main_game.player_bag = []
+		
+		# 加载作物仓库数据
+		if user_data.has("作物仓库"):
+			main_game.crop_warehouse = user_data.get("作物仓库", [])
+		else:
+			main_game.crop_warehouse = []
+		
+		# 加载道具背包数据
+		if user_data.has("道具背包"):
+			main_game.item_bag = user_data.get("道具背包", [])
+		else:
+			main_game.item_bag = []
+		
+		# 加载宠物背包数据
+		if user_data.has("宠物背包"):
+			main_game.pet_bag = user_data.get("宠物背包", [])
+		else:
+			main_game.pet_bag = []
+		
+		# 加载巡逻宠物数据
+		if user_data.has("巡逻宠物"):
+			main_game.patrol_pets = user_data.get("巡逻宠物", [])
+		else:
+			main_game.patrol_pets = []
+		
+		main_game.start_game = true
+		self.hide()
+		
+		# 确保在更新数据后调用主游戏的 UI 更新函数
+		main_game._update_ui()
+		main_game._refresh_farm_lots()
+
+		player_bag_panel.update_player_bag_ui()
+		# 更新作物仓库和道具背包UI
+		crop_warehouse_panel.update_crop_warehouse_ui()
+		item_bag_panel.update_item_bag_ui()
+		# 更新宠物背包UI
+		if pet_bag_panel and pet_bag_panel.has_method("update_pet_bag_ui"):
+			pet_bag_panel.update_pet_bag_ui()
+		
+		# 初始化巡逻宠物
+		if main_game.has_method("init_patrol_pets"):
+			main_game.init_patrol_pets()
+		
+		# 调用主游戏的登录成功处理函数
+		main_game.handle_login_success(user_data)
+		
+		# 初始化游戏设置
+		if main_game.game_setting_panel and main_game.game_setting_panel.has_method("refresh_settings"):
+			main_game.game_setting_panel.refresh_settings()
 	else:
-		_set_status(status_label, "登录失败：" + message, Color.RED)
+		status_label.text = "登录失败：" + message
+		status_label.modulate = Color.RED
+		
+		# 如果登录失败且是密码错误，可以选择清除保存的信息
 		if "密码" in message or "password" in message.to_lower():
 			print("登录失败，可能是密码错误。如需清除保存的登录信息，请调用_clear_login_info()")
 
 # 处理注册响应
 func _on_register_response_received(success: bool, message: String):
+	# 启用按钮
 	register_button_2.disabled = false
 	
 	if success:
-		_set_status(status_label_2, "注册成功！请登录游戏", Color.GREEN)
-		_handle_register_success()
+		status_label_2.text = "注册成功！请登录游戏"
+		status_label_2.modulate = Color.GREEN
+		
+		# 注册成功后，如果启用了记住密码，保存登录信息
+		if remember_password:
+			var user_name = register_username_input.text.strip_edges()
+			var user_password = password_input_1.text.strip_edges()
+			_save_login_info(user_name, user_password)
+		
+		# 清除注册相关的输入框
+		password_input_2.text = ""
+		verificationcode_input.text = ""
+		
+		# 切换回登录面板
+		register_vbox.hide()
+		forget_password_vbox.hide()
+		login_v_box.show()
+		
+		# 如果记住密码，自动填充登录信息
+		if remember_password:
+			username_input.text = register_username_input.text
+			password_input.text = password_input_1.text
 	else:
-		_set_status(status_label_2, "注册失败：" + message, Color.RED)
+		status_label_2.text = "注册失败：" + message
+		status_label_2.modulate = Color.RED
 
 # 处理忘记密码响应
 func _on_forget_password_response_received(success: bool, message: String):
+	# 启用按钮
 	forget_password_button.disabled = false
 	
 	if success:
-		_set_status(status_label_3, "密码重置成功！请使用新密码登录", Color.GREEN)
-		_handle_forget_password_success()
-	else:
-		_set_status(status_label_3, "密码重置失败：" + message, Color.RED)
-
-# 登录信息文件操作
-func _save_login_info(user_name: String, password: String):
-	_write_login_file({"user_name": user_name, "password": password})
-	print("登录信息已保存" if user_name != "" else "登录信息已清除")
-
-func _load_login_info():
-	var login_data = _read_login_file()
-	if login_data:
-		var saved_username = login_data.get("user_name", "")
-		var saved_password = login_data.get("password", "")
+		status_label_3.text = "密码重置成功！请使用新密码登录"
+		status_label_3.modulate = Color.GREEN
 		
-		if saved_username != "" and saved_password != "":
-			username_input.text = saved_username
-			password_input.text = saved_password
-			_set_status(status_label, "已加载保存的登录信息", Color.CYAN)
-			print("登录信息已加载：用户名 =", saved_username)
-			return
+		# 保存新的登录信息
+		if remember_password:
+			var user_name = forget_username_input.text.strip_edges()
+			var new_password = new_password_input.text.strip_edges()
+			_save_login_info(user_name, new_password)
+		
+		# 清除输入框
+		forget_verificationcode_input.text = ""
+		
+		# 切换回登录面板并自动填充账号信息
+		forget_password_vbox.hide()
+		register_vbox.hide()
+		login_v_box.show()
+		
+		# 自动填充登录信息
+		username_input.text = forget_username_input.text
+		password_input.text = new_password_input.text
+		
+		status_label.text = "密码已重置，请登录"
+		status_label.modulate = Color.GREEN
+	else:
+		status_label_3.text = "密码重置失败：" + message
+		status_label_3.modulate = Color.RED
+
+# 保存登录信息到JSON文件
+func _save_login_info(user_name: String, password: String):
+	var login_data = {
+		"user_name": user_name,
+		"password": password
+	}
 	
-	_set_status(status_label, "欢迎使用萌芽农场", Color.WHITE)
-	print("没有有效的保存登录信息")
-
-func _clear_login_info():
-	_save_login_info("", "")
-
-func _write_login_file(data: Dictionary):
 	var file = FileAccess.open("user://login.json", FileAccess.WRITE)
 	if file:
-		file.store_string(JSON.stringify(data, "\t"))
+		var json_string = JSON.stringify(login_data, "\t")
+		file.store_string(json_string)
 		file.close()
+		print("登录信息已保存")
+	else:
+		print("无法保存登录信息")
 
-func _read_login_file() -> Dictionary:
+# 从JSON文件加载登录信息
+func _load_login_info():
 	var file = FileAccess.open("user://login.json", FileAccess.READ)
-	if not file:
-		_write_login_file({"user_name": "", "password": ""})
-		return {}
-	
-	var json_text = file.get_as_text()
-	file.close()
-	
-	var json = JSON.new()
-	if json.parse(json_text) == OK:
-		return json.get_data()
-	return {}
+	if file:
+		var json_text = file.get_as_text()
+		file.close()
+		
+		var json = JSON.new()
+		var parse_result = json.parse(json_text)
+		if parse_result == OK:
+			var login_data = json.get_data()
+			if login_data.has("user_name") and login_data.has("password"):
+				var saved_username = login_data.get("user_name", "")
+				var saved_password = login_data.get("password", "")
+				
+				if saved_username != "" and saved_password != "":
+					username_input.text = saved_username
+					password_input.text = saved_password
+					status_label.text = "已加载保存的登录信息"
+					status_label.modulate = Color.CYAN
+					print("登录信息已加载：用户名 =", saved_username)
+				else:
+					status_label.text = "欢迎使用萌芽农场"
+					status_label.modulate = Color.WHITE
+					print("没有有效的保存登录信息")
+			else:
+				print("登录信息格式错误")
+		else:
+			print("登录信息JSON解析错误：", json.get_error_message())
+	else:
+		# 创建默认的登录信息文件
+		_save_login_info("", "")
+		status_label.text = "欢迎使用萌芽农场"
+		status_label.modulate = Color.WHITE
+		print("没有找到保存的登录信息，已创建默认文件")
 
-# 记住密码和快捷登录功能
+# 清除保存的登录信息
+func _clear_login_info():
+	var file = FileAccess.open("user://login.json", FileAccess.WRITE)
+	if file:
+		var empty_data = {
+			"user_name": "",
+			"password": ""
+		}
+		var json_string = JSON.stringify(empty_data, "\t")
+		file.store_string(json_string)
+		file.close()
+		print("登录信息已清除")
+	else:
+		print("无法清除登录信息")
+
+# 切换记住密码选项
 func toggle_remember_password():
 	remember_password = !remember_password
 	print("记住密码选项：", "开启" if remember_password else "关闭")
+	
+	# 如果关闭了记住密码，清除已保存的信息
 	if not remember_password:
 		_clear_login_info()
 
+# 检查是否有保存的登录信息
 func has_saved_login_info() -> bool:
-	var login_data = _read_login_file()
-	return login_data.get("user_name", "") != "" and login_data.get("password", "") != ""
+	var file = FileAccess.open("user://login.json", FileAccess.READ)
+	if file:
+		var json_text = file.get_as_text()
+		file.close()
+		
+		var json = JSON.new()
+		var parse_result = json.parse(json_text)
+		if parse_result == OK:
+			var login_data = json.get_data()
+			var user_name = login_data.get("user_name", "")
+			var password = login_data.get("password", "")
+			return user_name != "" and password != ""
+	
+	return false
 
+# 快捷登录（使用保存的登录信息）
 func quick_login():
 	if has_saved_login_info():
 		var user_name = username_input.text.strip_edges()
@@ -398,171 +701,40 @@ func quick_login():
 			print("执行快捷登录...")
 			_on_login_button_pressed()
 		else:
-			_set_status(status_label, "保存的登录信息不完整", Color.ORANGE)
+			status_label.text = "保存的登录信息不完整"
+			status_label.modulate = Color.ORANGE
 	else:
-		_set_status(status_label, "没有保存的登录信息", Color.ORANGE)
+		status_label.text = "没有保存的登录信息"
+		status_label.modulate = Color.ORANGE
 
+# 获取保存的用户名（用于调试或显示）
 func get_saved_username() -> String:
-	return _read_login_file().get("user_name", "")
+	var file = FileAccess.open("user://login.json", FileAccess.READ)
+	if file:
+		var json_text = file.get_as_text()
+		file.close()
+		
+		var json = JSON.new()
+		var parse_result = json.parse(json_text)
+		if parse_result == OK:
+			var login_data = json.get_data()
+			return login_data.get("user_name", "")
+	
+	return ""
 
 # 显示版本信息
 func _display_version_info():
-	if status_label.text in ["欢迎使用萌芽农场", "连接状态"]:
-		_set_status(status_label, "萌芽农场 v" + main_game.client_version + " - 欢迎使用", Color.CYAN)
+	# 在状态标签中显示客户端版本信息
+	if status_label.text == "欢迎使用萌芽农场" or status_label.text == "连接状态":
+		status_label.text = "萌芽农场 v" + main_game.client_version + " - 欢迎使用"
+		status_label.modulate = Color.CYAN
 
-
-# 登录成功处理
-func _handle_login_success(user_data: Dictionary):
-	# 保存登录数据到主游戏
-	main_game.login_data = user_data.duplicate()
-	main_game.remaining_likes = user_data.get("今日剩余点赞次数", 10)
-	
-	# 更新主游戏数据
-	main_game.experience = user_data.get("experience", 0)
-	main_game.farm_lots = user_data.get("farm_lots", [])
-	main_game.level = user_data.get("level", 1)
-	main_game.money = user_data.get("money", 0)
-	main_game.stamina = user_data.get("体力值", 20)
-	main_game.show_farm_name.text = "农场名称：" + user_data.get("farm_name", "")
-	main_game.show_player_name.text = "玩家昵称：" + user_data.get("player_name", "")
-	farmname_input.text = user_data.get("farm_name", "")
-	
-	# 加载各种背包数据
-	main_game.player_bag = user_data.get("player_bag", [])
-	main_game.crop_warehouse = user_data.get("作物仓库", [])
-	main_game.item_bag = user_data.get("道具背包", [])
-	main_game.pet_bag = user_data.get("宠物背包", [])
-	main_game.patrol_pets = user_data.get("巡逻宠物", [])
-	
-	# 启动游戏并隐藏登录面板
-	main_game.start_game = true
-	self.hide()
-	
-	# 更新UI
-	main_game._update_ui()
-	main_game._refresh_farm_lots()
-	player_bag_panel.update_player_bag_ui()
-	crop_warehouse_panel.update_crop_warehouse_ui()
-	item_bag_panel.update_item_bag_ui()
-	
-	if pet_bag_panel and pet_bag_panel.has_method("update_pet_bag_ui"):
-		pet_bag_panel.update_pet_bag_ui()
-	if main_game.has_method("init_patrol_pets"):
-		main_game.init_patrol_pets()
-	
-	main_game.handle_login_success(user_data)
-	
-	if main_game.game_setting_panel and main_game.game_setting_panel.has_method("refresh_settings"):
-		main_game.game_setting_panel.refresh_settings()
-
-# 注册成功处理
-func _handle_register_success():
-	if remember_password:
-		var user_name = register_username_input.text.strip_edges()
-		var user_password = password_input_1.text.strip_edges()
-		_save_login_info(user_name, user_password)
-	
-	# 清除注册相关的输入框
-	password_input_2.text = ""
-	verificationcode_input.text = ""
-	
-	# 切换回登录面板
-	_switch_to_login_panel()
-	
-	# 如果记住密码，自动填充登录信息
-	if remember_password:
-		username_input.text = register_username_input.text
-		password_input.text = password_input_1.text
-
-# 忘记密码成功处理
-func _handle_forget_password_success():
-	if remember_password:
-		var user_name = forget_username_input.text.strip_edges()
-		var new_password = new_password_input.text.strip_edges()
-		_save_login_info(user_name, new_password)
-	
-	# 清除输入框
-	forget_verificationcode_input.text = ""
-	
-	# 切换回登录面板并自动填充账号信息
-	_switch_to_login_panel()
-	username_input.text = forget_username_input.text
-	password_input.text = new_password_input.text
-	_set_status(status_label, "密码已重置，请登录", Color.GREEN)
-
-# 切换到登录面板
-func _switch_to_login_panel():
-	register_vbox.hide()
-	forget_password_vbox.hide()
-	login_v_box.show()
-
-# 公共验证函数
-func _validate_login_input(user_name: String, password: String, label: Label) -> bool:
-	if user_name.is_empty() or password.is_empty():
-		_set_status(label, "用户名或密码不能为空！", Color.RED)
-		return false
-	return true
-
-func _validate_register_input(user_name: String, password: String, password_confirm: String, player_name: String, farm_name: String, verification_code: String, label: Label) -> bool:
-	if user_name.is_empty() or password.is_empty() or password_confirm.is_empty() or player_name.is_empty() or farm_name.is_empty():
-		_set_status(label, "所有字段都不能为空！", Color.RED)
-		return false
-	if password != password_confirm:
-		_set_status(label, "两次输入的密码不一致！", Color.RED)
-		return false
-	if not is_valid_qq_number(user_name):
-		_set_status(label, "请输入有效的QQ号（5-12位数字）！", Color.RED)
-		return false
-	if not is_valid_password(password):
-		_set_status(label, "密码只能包含数字和字母！", Color.RED)
-		return false
-	if verification_code.is_empty():
-		_set_status(label, "验证码不能为空！", Color.RED)
-		return false
-	return true
-
-func _validate_qq_input(user_name: String, label: Label) -> bool:
-	if user_name.is_empty():
-		_set_status(label, "请输入QQ号以接收验证码！", Color.RED)
-		return false
-	if not is_valid_qq_number(user_name):
-		_set_status(label, "请输入正确的QQ号码（5-12位数字）！", Color.RED)
-		return false
-	return true
-
-func _validate_forget_password_input(user_name: String, new_password: String, verification_code: String, label: Label) -> bool:
-	if user_name.is_empty() or new_password.is_empty():
-		_set_status(label, "用户名或新密码不能为空！", Color.RED)
-		return false
-	if not is_valid_qq_number(user_name):
-		_set_status(label, "请输入正确的QQ号码（5-12位数字）！", Color.RED)
-		return false
-	if not is_valid_password(new_password):
-		_set_status(label, "密码只能包含数字和字母！", Color.RED)
-		return false
-	if verification_code.is_empty():
-		_set_status(label, "请输入验证码！", Color.RED)
-		return false
-	return true
-
-# 公共网络连接检查函数
-func _ensure_network_connection(label: Label) -> bool:
-	if not tcp_network_manager_panel.client.is_client_connected():
-		_set_status(label, "未连接到服务器，正在尝试连接...", Color.YELLOW)
-		tcp_network_manager_panel.connect_to_current_server()
-		await get_tree().create_timer(2.0).timeout
-		
-		if not tcp_network_manager_panel.client.is_client_connected():
-			_set_status(label, "连接服务器失败，正在尝试其他服务器...", Color.YELLOW)
-			await get_tree().create_timer(3.0).timeout
-			return false
-	return true
-
-# 公共状态设置函数
-func _set_status(label: Label, text: String, color: Color):
-	label.text = text
-	label.modulate = color
 
 #面板显示与隐藏切换处理
 func _on_visibility_changed():
-	GlobalVariables.isZoomDisabled = visible
+	if visible:
+		GlobalVariables.isZoomDisabled = true
+		pass
+	else:
+		GlobalVariables.isZoomDisabled = false
+		pass
