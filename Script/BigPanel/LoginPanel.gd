@@ -420,7 +420,7 @@ func _handle_login_success(user_data: Dictionary):
 	# 更新主游戏数据
 	main_game.experience = user_data.get("经验值", 0)
 	main_game.farm_lots = user_data.get("农场土地", [])
-	main_game.level = user_data.get("level", 1)
+	main_game.level = user_data.get("等级", 1)
 	main_game.money = user_data.get("money", 0)
 	main_game.stamina = user_data.get("体力值", 20)
 	main_game.show_farm_name.text = "农场名称：" + user_data.get("农场名称", "")

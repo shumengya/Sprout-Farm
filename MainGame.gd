@@ -390,7 +390,7 @@ func _handle_visit_player_response(data):
 				"玩家账号": user_name,
 				"玩家昵称": show_player_name.text.replace("玩家昵称：", ""),
 				"农场名称": show_farm_name.text.replace("农场名称：", ""),
-				"level": level,
+				"等级": level,
 				"money": money,
 				"经验值": experience,
 				"stamina": stamina,
@@ -405,7 +405,7 @@ func _handle_visit_player_response(data):
 		# 更新显示数据
 		money = target_player_data.get("money", 0)
 		experience = target_player_data.get("经验值", 0)
-		level = target_player_data.get("level", 1)
+		level = target_player_data.get("等级", 1)
 		stamina = target_player_data.get("体力值", 20)
 		farm_lots = target_player_data.get("农场土地", [])
 		player_bag = target_player_data.get("种子仓库", [])
@@ -482,7 +482,7 @@ func _handle_return_my_farm_response(data):
 		# 恢复玩家数据
 		money = player_data.get("money", 500)
 		experience = player_data.get("经验值", 0)
-		level = player_data.get("level", 1)
+		level = player_data.get("等级", 1)
 		stamina = player_data.get("体力值", 20)
 		farm_lots = player_data.get("农场土地", [])
 		player_bag = player_data.get("种子仓库", [])
@@ -1803,7 +1803,7 @@ func _handle_daily_check_in_response(response: Dictionary) -> void:
 
 	money = updated_data["money"]
 	experience = updated_data["经验值"]
-	level = updated_data["level"]
+	level = updated_data["等级"]
 	player_bag = updated_data["种子仓库"]
 	
 	# 更新UI
@@ -1942,7 +1942,7 @@ func _handle_lucky_draw_response(response: Dictionary) -> void:
 	var updated_data = response.get("updated_data", {})
 	money = updated_data["money"]
 	experience = updated_data["经验值"]
-	level = updated_data["level"]
+	level = updated_data["等级"]
 	player_bag = updated_data["种子仓库"]
 	
 	# 更新UI
@@ -2162,7 +2162,7 @@ func _handle_new_player_gift_response(data):
 		# 更新玩家数据
 		money = updated_data.get("money", money)
 		experience = updated_data.get("经验值", experience)
-		level = updated_data.get("level", level)
+		level = updated_data.get("等级", level)
 		
 		# 安全更新背包数据
 		if updated_data.has("种子仓库"):
@@ -2424,7 +2424,7 @@ func _handle_claim_online_gift_response(data: Dictionary):
 		# 更新玩家数据
 		money = updated_data["money"]
 		experience = updated_data["经验值"]
-		level = updated_data["level"]
+		level = updated_data["等级"]
 		player_bag = updated_data["种子仓库"]
 		
 		# 更新UI
@@ -2452,7 +2452,7 @@ func _handle_account_setting_response(data: Dictionary):
 			
 			# 更新基本游戏状态显示
 			experience = account_info.get("经验值", 0)
-			level = account_info.get("level", 1)
+			level = account_info.get("等级", 1)
 			money = account_info.get("money", 0)
 			
 			# 同步更新login_data和data中的账户信息
@@ -2526,8 +2526,8 @@ func _handle_use_farm_item_response(data: Dictionary):
 		if updated_data.has("经验值"):
 			experience = updated_data["经验值"]
 		# 安全更新等级
-		if updated_data.has("level"):
-			level = updated_data["level"]
+		if updated_data.has("等级"):
+			level = updated_data["等级"]
 		# 安全更新道具背包数据
 		if updated_data.has("道具背包"):
 			item_bag = updated_data["道具背包"]

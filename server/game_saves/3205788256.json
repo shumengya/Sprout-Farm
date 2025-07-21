@@ -13,7 +13,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 17030,
+      "grow_time": 17700,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -35,7 +35,7 @@
     },
     {
       "crop_type": "杂交树1",
-      "grow_time": 17070,
+      "grow_time": 17740,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -46,7 +46,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 4040,
+      "grow_time": 4174,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -68,7 +68,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 12114,
+      "grow_time": 12516,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -101,7 +101,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2019,
+      "grow_time": 2086,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -178,7 +178,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2017,
+      "grow_time": 2084,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -189,7 +189,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2017,
+      "grow_time": 2084,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -200,7 +200,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2017,
+      "grow_time": 2084,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -277,7 +277,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2015,
+      "grow_time": 2082,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -321,7 +321,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2014,
+      "grow_time": 2081,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -555,26 +555,276 @@
     {
       "name": "小麦",
       "quality": "普通",
-      "count": 14
+      "count": 23
     },
     {
       "name": "胡萝卜",
       "quality": "普通",
-      "count": 3
+      "count": 7
     },
     {
       "name": "土豆",
       "quality": "普通",
+      "count": 10
+    },
+    {
+      "name": "鱼腥草",
+      "quality": "优良",
+      "count": 5
+    },
+    {
+      "name": "玉米",
+      "quality": "优良",
+      "count": 1
+    },
+    {
+      "name": "蓝莓",
+      "quality": "稀有",
+      "count": 1
+    },
+    {
+      "name": "大蒜",
+      "quality": "普通",
+      "count": 8
+    },
+    {
+      "name": "仙人掌",
+      "quality": "优良",
+      "count": 1
+    },
+    {
+      "name": "稻谷",
+      "quality": "普通",
       "count": 7
+    },
+    {
+      "name": "大豆",
+      "quality": "普通",
+      "count": 6
+    },
+    {
+      "name": "咖啡豆",
+      "quality": "稀有",
+      "count": 4
+    },
+    {
+      "name": "芒果",
+      "quality": "稀有",
+      "count": 2
+    },
+    {
+      "name": "荔枝",
+      "quality": "稀有",
+      "count": 9
+    },
+    {
+      "name": "椰子",
+      "quality": "优良",
+      "count": 8
+    },
+    {
+      "name": "菠萝",
+      "quality": "稀有",
+      "count": 1
+    },
+    {
+      "name": "苹果",
+      "quality": "优良",
+      "count": 4
+    },
+    {
+      "name": "藏羚羊草",
+      "quality": "史诗",
+      "count": 1
+    },
+    {
+      "name": "向日葵",
+      "quality": "稀有",
+      "count": 2
+    },
+    {
+      "name": "石榴",
+      "quality": "优良",
+      "count": 13
+    },
+    {
+      "name": "幸运草",
+      "quality": "传奇",
+      "count": 1
+    },
+    {
+      "name": "枇杷",
+      "quality": "优良",
+      "count": 1
+    },
+    {
+      "name": "藏红花",
+      "quality": "稀有",
+      "count": 1
+    },
+    {
+      "name": "橘子",
+      "quality": "优良",
+      "count": 3
+    },
+    {
+      "name": "百合花",
+      "quality": "史诗",
+      "count": 1
+    },
+    {
+      "name": "牵牛花",
+      "quality": "稀有",
+      "count": 3
+    },
+    {
+      "name": "茄子",
+      "quality": "普通",
+      "count": 3
+    },
+    {
+      "name": "草莓",
+      "quality": "稀有",
+      "count": 1
+    },
+    {
+      "name": "番茄",
+      "quality": "普通",
+      "count": 4
+    },
+    {
+      "name": "大白菜",
+      "quality": "普通",
+      "count": 3
+    },
+    {
+      "name": "杂草2",
+      "quality": "普通",
+      "count": 4
+    },
+    {
+      "name": "梨子",
+      "quality": "优良",
+      "count": 2
+    },
+    {
+      "name": "生菜",
+      "quality": "普通",
+      "count": 8
+    },
+    {
+      "name": "黄瓜",
+      "quality": "普通",
+      "count": 6
+    },
+    {
+      "name": "面包树",
+      "quality": "传奇",
+      "count": 1
+    },
+    {
+      "name": "哈密瓜",
+      "quality": "稀有",
+      "count": 3
+    },
+    {
+      "name": "野草1",
+      "quality": "普通",
+      "count": 6
+    },
+    {
+      "name": "豌豆",
+      "quality": "普通",
+      "count": 4
+    },
+    {
+      "name": "柿子",
+      "quality": "稀有",
+      "count": 5
+    },
+    {
+      "name": "葡萄",
+      "quality": "普通",
+      "count": 3
+    },
+    {
+      "name": "树莓",
+      "quality": "优良",
+      "count": 3
+    },
+    {
+      "name": "玫瑰花",
+      "quality": "稀有",
+      "count": 1
+    },
+    {
+      "name": "甜菜",
+      "quality": "稀有",
+      "count": 5
+    },
+    {
+      "name": "辣椒",
+      "quality": "普通",
+      "count": 7
+    },
+    {
+      "name": "山葵",
+      "quality": "稀有",
+      "count": 2
+    },
+    {
+      "name": "可可豆",
+      "quality": "稀有",
+      "count": 1
+    },
+    {
+      "name": "桃子",
+      "quality": "稀有",
+      "count": 3
+    },
+    {
+      "name": "甘蔗",
+      "quality": "稀有",
+      "count": 3
+    },
+    {
+      "name": "人参",
+      "quality": "史诗",
+      "count": 1
+    },
+    {
+      "name": "南瓜",
+      "quality": "普通",
+      "count": 2
+    },
+    {
+      "name": "葫芦",
+      "quality": "优良",
+      "count": 3
+    },
+    {
+      "name": "杂交树1",
+      "quality": "传奇",
+      "count": 1
+    },
+    {
+      "name": "杂草1",
+      "quality": "普通",
+      "count": 3
+    },
+    {
+      "name": "香蕉",
+      "quality": "优良",
+      "count": 3
     }
   ],
-  "经验值": 2384,
+  "经验值": 3553,
   "农场名称": "树萌芽の狗窝",
   "玩家昵称": "树萌芽",
-  "level": 64,
-  "money": 615197025903,
-  "最后登录时间": "2025年07月21日10时47分21秒",
-  "总游玩时间": "162时56分4秒",
+  "等级": 66,
+  "money": 615196901889,
+  "最后登录时间": "2025年07月21日10时51分16秒",
+  "总游玩时间": "162时56分42秒",
   "玩家账号": "3205788256",
   "玩家密码": "123456",
   "个人简介": "人生啊，就这样吧",

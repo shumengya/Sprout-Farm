@@ -274,7 +274,7 @@ func _on_data_received(data):
 			if success:
 				main_game.money = updated_data["money"]
 				main_game.experience = updated_data["经验值"]
-				main_game.level = updated_data["level"]
+				main_game.level = updated_data["等级"]
 				# 只有偷菜时才会返回体力值，正常收获不会返回
 				if updated_data.has("体力值"):
 					main_game.stamina = updated_data["体力值"]
@@ -357,7 +357,7 @@ func _on_data_received(data):
 				main_game.item_bag = updated_data["道具背包"]
 				main_game.farm_lots = updated_data["农场土地"]
 				main_game.experience = updated_data["经验值"]
-				main_game.level = updated_data["level"]
+				main_game.level = updated_data["等级"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
 				main_game.item_bag_panel.update_item_bag_ui()
@@ -370,7 +370,7 @@ func _on_data_received(data):
 			if success:
 				main_game.money = updated_data["money"]
 				main_game.experience = updated_data["经验值"]
-				main_game.level = updated_data["level"]
+				main_game.level = updated_data["等级"]
 				main_game.farm_lots = updated_data["农场土地"]
 				main_game.player_bag = updated_data["种子仓库"]
 				main_game._update_ui()
@@ -397,7 +397,7 @@ func _on_data_received(data):
 				main_game.money = updated_data["money"]
 				main_game.farm_lots = updated_data["农场土地"]
 				main_game.experience = updated_data["经验值"]
-				main_game.level = updated_data["level"]
+				main_game.level = updated_data["等级"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
 				Toast.show(message, Color.CYAN)
@@ -410,7 +410,7 @@ func _on_data_received(data):
 				main_game.money = updated_data["money"]
 				main_game.farm_lots = updated_data["农场土地"]
 				main_game.experience = updated_data["经验值"]
-				main_game.level = updated_data["level"]
+				main_game.level = updated_data["等级"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
 				Toast.show(message, Color.PURPLE)
@@ -446,7 +446,7 @@ func _on_data_received(data):
 				main_game.money = updated_data["money"]
 				main_game.crop_warehouse = updated_data["作物仓库"]
 				main_game.experience = updated_data.get("经验值", main_game.experience)
-				main_game.level = updated_data.get("level", main_game.level)
+				main_game.level = updated_data.get("等级", main_game.level)
 				main_game._update_ui()
 				main_game.crop_warehouse_panel.update_crop_warehouse_ui()
 				Toast.show(message, Color.GREEN)
@@ -850,7 +850,7 @@ func sendUpdatePlayTime():
 	return true
 
 #发送获取玩家排行榜请求
-func sendGetPlayerRankings(sort_by = "level", sort_order = "desc", filter_online = false, search_qq = ""):
+func sendGetPlayerRankings(sort_by = "等级", sort_order = "desc", filter_online = false, search_qq = ""):
 	if not client.is_client_connected():
 		return false
 		

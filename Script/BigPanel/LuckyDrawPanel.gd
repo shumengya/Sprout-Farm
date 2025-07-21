@@ -72,7 +72,7 @@ func _build_seed_rewards_from_crop_data(crop_data: Dictionary) -> void:
 			"icon": "🌱",
 			"color": rarity_color,
 			"rarity": quality,
-			"level": crop_info.get("等级", 1),
+			"等级": crop_info.get("等级", 1),
 			"cost": crop_info.get("花费", 50)
 		}
 
