@@ -273,7 +273,7 @@ func _on_data_received(data):
 		if action_type == "harvest_crop":
 			if success:
 				main_game.money = updated_data["money"]
-				main_game.experience = updated_data["experience"]
+				main_game.experience = updated_data["经验值"]
 				main_game.level = updated_data["level"]
 				# 只有偷菜时才会返回体力值，正常收获不会返回
 				if updated_data.has("体力值"):
@@ -356,7 +356,7 @@ func _on_data_received(data):
 			if success:
 				main_game.item_bag = updated_data["道具背包"]
 				main_game.farm_lots = updated_data["农场土地"]
-				main_game.experience = updated_data["experience"]
+				main_game.experience = updated_data["经验值"]
 				main_game.level = updated_data["level"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
@@ -369,7 +369,7 @@ func _on_data_received(data):
 		elif action_type == "dig_ground":
 			if success:
 				main_game.money = updated_data["money"]
-				main_game.experience = updated_data["experience"]
+				main_game.experience = updated_data["经验值"]
 				main_game.level = updated_data["level"]
 				main_game.farm_lots = updated_data["农场土地"]
 				main_game.player_bag = updated_data["种子仓库"]
@@ -396,7 +396,7 @@ func _on_data_received(data):
 			if success:
 				main_game.money = updated_data["money"]
 				main_game.farm_lots = updated_data["农场土地"]
-				main_game.experience = updated_data["experience"]
+				main_game.experience = updated_data["经验值"]
 				main_game.level = updated_data["level"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
@@ -409,7 +409,7 @@ func _on_data_received(data):
 			if success:
 				main_game.money = updated_data["money"]
 				main_game.farm_lots = updated_data["农场土地"]
-				main_game.experience = updated_data["experience"]
+				main_game.experience = updated_data["经验值"]
 				main_game.level = updated_data["level"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
@@ -445,7 +445,7 @@ func _on_data_received(data):
 			if success:
 				main_game.money = updated_data["money"]
 				main_game.crop_warehouse = updated_data["作物仓库"]
-				main_game.experience = updated_data.get("experience", main_game.experience)
+				main_game.experience = updated_data.get("经验值", main_game.experience)
 				main_game.level = updated_data.get("level", main_game.level)
 				main_game._update_ui()
 				main_game.crop_warehouse_panel.update_crop_warehouse_ui()

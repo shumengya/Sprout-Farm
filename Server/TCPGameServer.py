@@ -1109,7 +1109,7 @@ class TCPGameServer(TCPServer):
                 "农场名称": farm_name or "我的农场",
                 "玩家昵称": player_name or username,
                 "个人简介": "",  # 新增个人简介字段，默认为空
-                "experience": player_data.get("experience", 0),
+                "经验值": player_data.get("经验值", 0),
                 "level": player_data.get("level", 1),
                 "money": player_data.get("money", 1000)
             })
@@ -1435,7 +1435,7 @@ class TCPGameServer(TCPServer):
                     "message": f"已帮助 {target_username} 清理死亡的作物",
                     "updated_data": {
                         "money": current_player_data["money"],
-                        "experience": current_player_data["experience"],
+                        "经验值": current_player_data["经验值"],
                         "level": current_player_data["level"]
                     }
                 })
@@ -1473,7 +1473,7 @@ class TCPGameServer(TCPServer):
                     "message": "已铲除死亡的作物",
                     "updated_data": {
                         "money": current_player_data["money"],
-                        "experience": current_player_data["experience"],
+                        "经验值": current_player_data["经验值"],
                         "level": current_player_data["level"]
                     }
                 })
@@ -1517,7 +1517,7 @@ class TCPGameServer(TCPServer):
             }
         
         # 更新玩家经验
-        player_data["experience"] += crop_exp
+        player_data["经验值"] += crop_exp
         
         # 检查是否会获得成熟物
         mature_name = crop_info.get("成熟物名称")
@@ -1534,9 +1534,9 @@ class TCPGameServer(TCPServer):
         
         # 检查升级
         level_up_experience = 100 * player_data["level"]
-        if player_data["experience"] >= level_up_experience:
+        if player_data["经验值"] >= level_up_experience:
             player_data["level"] += 1
-            player_data["experience"] -= level_up_experience
+            player_data["经验值"] -= level_up_experience
             self.log('INFO', f"玩家 {username} 升级到 {player_data['level']} 级", 'SERVER')
         
         # 清理地块（批量更新）
@@ -1576,7 +1576,7 @@ class TCPGameServer(TCPServer):
             "message": message,
             "updated_data": {
                 "money": player_data["money"],
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "种子仓库": player_data.get("种子仓库", []),
                 "作物仓库": player_data.get("作物仓库", [])
@@ -1643,7 +1643,7 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "harvest_crop", stamina_message)
         
         # 更新当前玩家数据（获得经验）
-        current_player_data["experience"] += crop_exp
+        current_player_data["经验值"] += crop_exp
         
         # 检查是否会获得成熟物
         mature_name = crop_info.get("成熟物名称")
@@ -1660,9 +1660,9 @@ class TCPGameServer(TCPServer):
         
         # 检查当前玩家升级
         level_up_experience = 100 * current_player_data["level"]
-        if current_player_data["experience"] >= level_up_experience:
+        if current_player_data["经验值"] >= level_up_experience:
             current_player_data["level"] += 1
-            current_player_data["experience"] -= level_up_experience
+            current_player_data["经验值"] -= level_up_experience
             self.log('INFO', f"玩家 {current_username} 升级到 {current_player_data['level']} 级", 'SERVER')
         
         # 清理目标玩家的地块（批量更新）
@@ -1703,7 +1703,7 @@ class TCPGameServer(TCPServer):
             "message": message,
             "updated_data": {
                 "money": current_player_data["money"],
-                "experience": current_player_data["experience"],
+                "经验值": current_player_data["经验值"],
                 "level": current_player_data["level"],
                 "体力值": current_player_data["体力值"],
                 "种子仓库": current_player_data.get("种子仓库", []),
@@ -3210,7 +3210,7 @@ class TCPGameServer(TCPServer):
         
         # 应用奖励
         player_data["money"] += rewards["money"]
-        player_data["experience"] += rewards["experience"]
+        player_data["经验值"] += rewards["经验值"]
         
         # 添加种子到背包
         if "种子仓库" not in player_data:
@@ -3256,7 +3256,7 @@ class TCPGameServer(TCPServer):
             "message": f"成功开垦地块，花费 {dig_money} 金钱！{reward_message}",
             "updated_data": {
                 "money": player_data["money"],
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "农场土地": player_data["农场土地"],
                 "种子仓库": player_data["种子仓库"]
@@ -3269,7 +3269,7 @@ class TCPGameServer(TCPServer):
         
         rewards = {
             "money": 0,
-            "experience": 0,
+            "经验值": 0,
             "seeds": {}
         }
         
@@ -3277,7 +3277,7 @@ class TCPGameServer(TCPServer):
         rewards["money"] = random.randint(200, 500)
         
         # 随机经验：300-600经验
-        rewards["experience"] = random.randint(300, 600)
+        rewards["经验值"] = random.randint(300, 600)
         
         # 随机种子：0-3种种子
         seed_types_count = random.randint(0, 3)
@@ -3466,7 +3466,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励（100-300）
         experience_reward = random.randint(100, 300)
-        player_data["experience"] += experience_reward
+        player_data["经验值"] += experience_reward
         
         # 检查是否升级
         self._check_level_up(player_data)
@@ -3507,7 +3507,7 @@ class TCPGameServer(TCPServer):
             "message": message,
             "updated_data": {
                 "money": player_data["money"],
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "农场土地": player_data["农场土地"]
             }
@@ -3547,7 +3547,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励（100-300）给当前玩家
         experience_reward = random.randint(100, 300)
-        current_player_data["experience"] += experience_reward
+        current_player_data["经验值"] += experience_reward
         
         # 检查当前玩家是否升级
         self._check_level_up(current_player_data)
@@ -3589,7 +3589,7 @@ class TCPGameServer(TCPServer):
             "message": message,
             "updated_data": {
                 "money": current_player_data["money"],
-                "experience": current_player_data["experience"],
+                "经验值": current_player_data["经验值"],
                 "level": current_player_data["level"]
             }
         })
@@ -3676,7 +3676,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励（100-300）给当前玩家
         experience_reward = random.randint(100, 300)
-        current_player_data["experience"] += experience_reward
+        current_player_data["经验值"] += experience_reward
         
         # 检查当前玩家是否升级
         self._check_level_up(current_player_data)
@@ -3705,7 +3705,7 @@ class TCPGameServer(TCPServer):
             "message": f"帮助施肥成功！{target_username} 的 {crop_type} 将在10分钟内以双倍速度生长，获得 {experience_reward} 经验",
             "updated_data": {
                 "money": current_player_data["money"],
-                "experience": current_player_data["experience"],
+                "经验值": current_player_data["经验值"],
                 "level": current_player_data["level"]
             }
         })
@@ -3737,7 +3737,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励（100-300）
         experience_reward = random.randint(100, 300)
-        player_data["experience"] += experience_reward
+        player_data["经验值"] += experience_reward
         
         # 检查是否升级
         self._check_level_up(player_data)
@@ -3765,7 +3765,7 @@ class TCPGameServer(TCPServer):
             "message": f"施肥成功！{crop_type} 将在10分钟内以双倍速度生长，获得 {experience_reward} 经验",
             "updated_data": {
                 "money": player_data["money"],
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "农场土地": player_data["农场土地"]
             }
@@ -4044,7 +4044,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励
         experience_reward = random.randint(50, 150)
-        player_data["experience"] += experience_reward
+        player_data["经验值"] += experience_reward
         
         # 检查是否升级
         self._check_level_up(player_data)
@@ -4094,7 +4094,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"{message}，获得 {experience_reward} 经验",
             "updated_data": {
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "农场土地": player_data["农场土地"],
                 "道具背包": player_data["道具背包"]
@@ -4109,7 +4109,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励
         experience_reward = random.randint(30, 100)
-        player_data["experience"] += experience_reward
+        player_data["经验值"] += experience_reward
         
         # 检查是否升级
         self._check_level_up(player_data)
@@ -4159,7 +4159,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": final_message,
             "updated_data": {
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "农场土地": player_data["农场土地"],
                 "道具背包": player_data["道具背包"]
@@ -4178,7 +4178,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励给当前玩家
         experience_reward = random.randint(50, 150)
-        current_player_data["experience"] += experience_reward
+        current_player_data["经验值"] += experience_reward
         
         # 检查当前玩家是否升级
         self._check_level_up(current_player_data)
@@ -4229,7 +4229,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"{message}，获得 {experience_reward} 经验",
             "updated_data": {
-                "experience": current_player_data["experience"],
+                "经验值": current_player_data["经验值"],
                 "level": current_player_data["level"],
                 "道具背包": current_player_data["道具背包"]
             }
@@ -4243,7 +4243,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励给当前玩家
         experience_reward = random.randint(30, 100)
-        current_player_data["experience"] += experience_reward
+        current_player_data["经验值"] += experience_reward
         
         # 检查当前玩家是否升级
         self._check_level_up(current_player_data)
@@ -4294,7 +4294,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": final_message,
             "updated_data": {
-                "experience": current_player_data["experience"],
+                "经验值": current_player_data["经验值"],
                 "level": current_player_data["level"],
                 "道具背包": current_player_data["道具背包"]
             }
@@ -4312,7 +4312,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励
         experience_reward = random.randint(20, 60)
-        player_data["experience"] += experience_reward
+        player_data["经验值"] += experience_reward
         
         # 检查是否升级
         self._check_level_up(player_data)
@@ -4342,7 +4342,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"使用 {item_name} 成功铲除作物 {crop_type}，获得 {experience_reward} 经验",
             "updated_data": {
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "农场土地": player_data["农场土地"],
                 "道具背包": player_data["道具背包"]
@@ -4372,7 +4372,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励
         experience_reward = random.randint(15, 50)
-        player_data["experience"] += experience_reward
+        player_data["经验值"] += experience_reward
         
         # 检查是否升级
         self._check_level_up(player_data)
@@ -4399,7 +4399,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"使用 {item_name} 成功清除杂草 {crop_type}，获得 {experience_reward} 经验",
             "updated_data": {
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "农场土地": player_data["农场土地"],
                 "道具背包": player_data["道具背包"]
@@ -4418,7 +4418,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励给当前玩家
         experience_reward = random.randint(20, 60)
-        current_player_data["experience"] += experience_reward
+        current_player_data["经验值"] += experience_reward
         
         # 检查当前玩家是否升级
         self._check_level_up(current_player_data)
@@ -4449,7 +4449,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"帮助 {target_username} 铲除作物 {crop_type} 成功，获得 {experience_reward} 经验",
             "updated_data": {
-                "experience": current_player_data["experience"],
+                "经验值": current_player_data["经验值"],
                 "level": current_player_data["level"],
                 "道具背包": current_player_data["道具背包"]
             }
@@ -4478,7 +4478,7 @@ class TCPGameServer(TCPServer):
         
         # 生成随机经验奖励给当前玩家
         experience_reward = random.randint(15, 50)
-        current_player_data["experience"] += experience_reward
+        current_player_data["经验值"] += experience_reward
         
         # 检查当前玩家是否升级
         self._check_level_up(current_player_data)
@@ -4506,7 +4506,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"帮助 {target_username} 清除杂草 {crop_type} 成功，获得 {experience_reward} 经验",
             "updated_data": {
-                "experience": current_player_data["experience"],
+                "经验值": current_player_data["经验值"],
                 "level": current_player_data["level"],
                 "道具背包": current_player_data["道具背包"]
             }
@@ -4581,7 +4581,7 @@ class TCPGameServer(TCPServer):
         }
         
         # 更新玩家经验
-        player_data["experience"] += crop_exp
+        player_data["经验值"] += crop_exp
         
         # 检查是否升级
         self._check_level_up(player_data)
@@ -4640,7 +4640,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": message,
             "updated_data": {
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "种子仓库": player_data.get("种子仓库", []),
                 "作物仓库": player_data.get("作物仓库", []),
@@ -4717,7 +4717,7 @@ class TCPGameServer(TCPServer):
         }
         
         # 更新当前玩家经验
-        current_player_data["experience"] += crop_exp
+        current_player_data["经验值"] += crop_exp
         
         # 检查当前玩家是否升级
         self._check_level_up(current_player_data)
@@ -4777,7 +4777,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": message,
             "updated_data": {
-                "experience": current_player_data["experience"],
+                "经验值": current_player_data["经验值"],
                 "level": current_player_data["level"],
                 "种子仓库": current_player_data.get("种子仓库", []),
                 "作物仓库": current_player_data.get("作物仓库", []),
@@ -5015,8 +5015,8 @@ class TCPGameServer(TCPServer):
                 # 应用奖励
                 if "money" in rewards:
                     player_data["money"] += rewards["money"]
-                if "experience" in rewards:
-                    player_data["experience"] += rewards["experience"]
+                if "经验值" in rewards:
+                    player_data["经验值"] += rewards["经验值"]
                 
                 # 检查是否升级
                 self._check_level_up(player_data)
@@ -5031,7 +5031,7 @@ class TCPGameServer(TCPServer):
                     "message": result_message,
                     "updated_data": {
                         "money": player_data["money"],
-                        "experience": player_data["experience"],
+                        "经验值": player_data["经验值"],
                         "level": player_data["level"],
                         "道具背包": item_bag
                     }
@@ -5064,7 +5064,7 @@ class TCPGameServer(TCPServer):
             
             if item_name == "小额经验卡":
                 # 给玩家增加500经验
-                rewards["experience"] = 500
+                rewards["经验值"] = 500
                 return True, f"使用 {item_name} 成功！获得了500经验值", rewards
                 
             elif item_name == "小额金币卡":
@@ -5954,7 +5954,7 @@ class TCPGameServer(TCPServer):
                         "农场名称": player_data.get("农场名称", ""),
                         "level": player_data.get("level", 1),
                         "money": player_data.get("money", 0),
-                        "experience": player_data.get("experience", 0),
+                        "经验值": player_data.get("经验值", 0),
                         "体力值": current_stamina,
                         "seed_count": seed_count,
                         "最后登录时间": last_login_str,
@@ -6112,7 +6112,7 @@ class TCPGameServer(TCPServer):
             "农场名称": target_player_data.get("农场名称", ""),
             "level": target_player_data.get("level", 1),
             "money": target_player_data.get("money", 0),
-            "experience": target_player_data.get("experience", 0),
+            "经验值": target_player_data.get("经验值", 0),
             "体力值": target_current_stamina,
             "农场土地": target_player_data.get("农场土地", []),
             "种子仓库": target_player_data.get("种子仓库", []),
@@ -6184,7 +6184,7 @@ class TCPGameServer(TCPServer):
                 "农场名称": player_data.get("农场名称", ""),
                 "level": player_data.get("level", 1),
                 "money": player_data.get("money", 0),
-                "experience": player_data.get("experience", 0),
+                "经验值": player_data.get("经验值", 0),
                 "体力值": my_current_stamina,
                 "农场土地": player_data.get("农场土地", []),
                 "种子仓库": player_data.get("种子仓库", []),
@@ -6325,7 +6325,7 @@ class TCPGameServer(TCPServer):
             "rewards": rewards,
             "updated_data": {
                 "money": player_data["money"],
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "种子仓库": player_data.get("种子仓库", [])
             }
@@ -6340,8 +6340,8 @@ class TCPGameServer(TCPServer):
         
         # 发放经验
         if "经验" in rewards:
-            old_experience = player_data.get("experience", 0)
-            player_data["experience"] = old_experience + rewards["经验"]
+            old_experience = player_data.get("经验值", 0)
+            player_data["经验值"] = old_experience + rewards["经验"]
             
             # 检查是否升级
             self._check_level_up(player_data)
@@ -6386,9 +6386,9 @@ class TCPGameServer(TCPServer):
             player_data["money"] = player_data.get("money", 0) + rewards["money"]
         
         # 发放经验
-        if "experience" in rewards:
-            old_experience = player_data.get("experience", 0)
-            player_data["experience"] = old_experience + rewards["experience"]
+        if "经验值" in rewards:
+            old_experience = player_data.get("经验值", 0)
+            player_data["经验值"] = old_experience + rewards["经验值"]
             
             # 检查是否升级
             self._check_level_up(player_data)
@@ -6430,7 +6430,7 @@ class TCPGameServer(TCPServer):
     def _check_level_up(self, player_data):
         """检查玩家是否升级"""
         current_level = player_data.get("level", 1)
-        current_experience = player_data.get("experience", 0)
+        current_experience = player_data.get("经验值", 0)
         
         # 计算升级所需经验 (每级需要的经验递增)
         experience_needed = current_level * 100
@@ -6442,7 +6442,7 @@ class TCPGameServer(TCPServer):
             experience_needed = current_level * 100
         
         player_data["level"] = current_level
-        player_data["experience"] = current_experience
+        player_data["经验值"] = current_experience
     
     #更新玩家今日在线时间
     def _update_daily_online_time(self, client_id, player_data):
@@ -6907,7 +6907,7 @@ class TCPGameServer(TCPServer):
             "consecutive_days": consecutive_days,
             "updated_data": {
                 "money": player_data["money"],
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "种子仓库": player_data.get("种子仓库", [])
             }
@@ -7133,16 +7133,16 @@ class TCPGameServer(TCPServer):
         
         # 应用经验奖励
         if "exp" in rewards:
-            player_data["experience"] = player_data.get("experience", 0) + rewards["exp"]
+            player_data["经验值"] = player_data.get("经验值", 0) + rewards["exp"]
         
         if "bonus_exp" in rewards:
-            player_data["experience"] = player_data.get("experience", 0) + rewards["bonus_exp"]
+            player_data["经验值"] = player_data.get("经验值", 0) + rewards["bonus_exp"]
         
         # 检查升级
         level_up_experience = 100 * player_data.get("level", 1)
-        while player_data.get("experience", 0) >= level_up_experience:
+        while player_data.get("经验值", 0) >= level_up_experience:
             player_data["level"] = player_data.get("level", 1) + 1
-            player_data["experience"] -= level_up_experience
+            player_data["经验值"] -= level_up_experience
             level_up_experience = 100 * player_data["level"]
         
         # 应用种子奖励
@@ -7229,7 +7229,7 @@ class TCPGameServer(TCPServer):
                 "gift_contents": reward_content,
                 "updated_data": {
                     "money": player_data["money"],
-                    "experience": player_data["experience"],
+                    "经验值": player_data["经验值"],
                     "level": player_data["level"],
                     "种子仓库": player_data.get("种子仓库", []),
                     "宠物背包": player_data.get("宠物背包", []),
@@ -7256,14 +7256,14 @@ class TCPGameServer(TCPServer):
             player_data["money"] = player_data.get("money", 0) + gift_contents["coins"]
         
         # 应用经验奖励
-        if "experience" in gift_contents:
-            player_data["experience"] = player_data.get("experience", 0) + gift_contents["experience"]
+        if "经验值" in gift_contents:
+            player_data["经验值"] = player_data.get("经验值", 0) + gift_contents["经验值"]
             
             # 检查升级
             level_up_experience = 100 * player_data.get("level", 1)
-            while player_data.get("experience", 0) >= level_up_experience:
+            while player_data.get("经验值", 0) >= level_up_experience:
                 player_data["level"] = player_data.get("level", 1) + 1
-                player_data["experience"] -= level_up_experience
+                player_data["经验值"] -= level_up_experience
                 level_up_experience = 100 * player_data["level"]
         
         # 应用种子奖励
@@ -7301,14 +7301,14 @@ class TCPGameServer(TCPServer):
         
         # 应用经验奖励
         if "经验" in reward_content:
-            player_data["experience"] = player_data.get("experience", 0) + reward_content["经验"]
+            player_data["经验值"] = player_data.get("经验值", 0) + reward_content["经验"]
             
             # 检查升级
             while True:
                 level_up_experience = 100 * player_data.get("level", 1)
-                if player_data.get("experience", 0) >= level_up_experience:
+                if player_data.get("经验值", 0) >= level_up_experience:
                     player_data["level"] = player_data.get("level", 1) + 1
-                    player_data["experience"] -= level_up_experience
+                    player_data["经验值"] -= level_up_experience
                 else:
                     break
         
@@ -7417,7 +7417,7 @@ class TCPGameServer(TCPServer):
                 "rewards": rewards,
                 "updated_data": {
                     "money": player_data["money"],
-                    "experience": player_data["experience"],
+                    "经验值": player_data["经验值"],
                     "level": player_data["level"],
                     "种子仓库": player_data.get("种子仓库", [])
                 }
@@ -7770,13 +7770,13 @@ class TCPGameServer(TCPServer):
                 player_data["money"] = player_data.get("money", 0) + reward.get("amount", 0)
             
             elif reward_type == "exp":
-                player_data["experience"] = player_data.get("experience", 0) + reward.get("amount", 0)
+                player_data["经验值"] = player_data.get("经验值", 0) + reward.get("amount", 0)
                 
                 # 检查升级
                 level_up_experience = 100 * player_data.get("level", 1)
-                while player_data.get("experience", 0) >= level_up_experience:
+                while player_data.get("经验值", 0) >= level_up_experience:
                     player_data["level"] = player_data.get("level", 1) + 1
-                    player_data["experience"] -= level_up_experience
+                    player_data["经验值"] -= level_up_experience
                     level_up_experience = 100 * player_data["level"]
             
             elif reward_type == "seed":
@@ -8082,7 +8082,7 @@ class TCPGameServer(TCPServer):
                 "农场名称": player_data.get("农场名称", ""),
                 "个人简介": player_data.get("个人简介", ""),
                 "level": player_data.get("level", 1),
-                "experience": player_data.get("experience", 0),
+                "经验值": player_data.get("经验值", 0),
                 "money": player_data.get("money", 0)
             }
             
@@ -9160,7 +9160,7 @@ class TCPGameServer(TCPServer):
         
         # 给予少量出售经验
         sell_experience = max(1, sell_count // 5)  # 每5个作物给1点经验
-        player_data["experience"] += sell_experience
+        player_data["经验值"] += sell_experience
         
         # 检查是否升级
         self._check_level_up(player_data)
@@ -9186,7 +9186,7 @@ class TCPGameServer(TCPServer):
             "message": f"成功出售 {sell_count} 个 {display_name}，获得 {total_income} 金币和 {sell_experience} 经验",
             "updated_data": {
                 "money": player_data["money"],
-                "experience": player_data["experience"],
+                "经验值": player_data["经验值"],
                 "level": player_data["level"],
                 "作物仓库": player_data["作物仓库"]
             }
@@ -9631,8 +9631,8 @@ class ConsoleCommands:
             return
             
         # 修改经验
-        old_exp = player_data.get("experience", 0)
-        player_data["experience"] = old_exp + amount
+        old_exp = player_data.get("经验值", 0)
+        player_data["经验值"] = old_exp + amount
         
         # 检查是否升级
         old_level = player_data.get("level", 1)

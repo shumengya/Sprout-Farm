@@ -1,11 +1,11 @@
 {
   "农场土地": [
     {
-      "crop_type": "小麦",
-      "grow_time": 300,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
@@ -13,7 +13,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 16020,
+      "grow_time": 17030,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -23,11 +23,11 @@
       "土地等级": 4
     },
     {
-      "crop_type": "龙果",
-      "grow_time": 14450,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 14400,
       "已浇水": false,
       "已施肥": false,
@@ -35,7 +35,7 @@
     },
     {
       "crop_type": "杂交树1",
-      "grow_time": 16060,
+      "grow_time": 17070,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -46,7 +46,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 3838,
+      "grow_time": 4040,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -56,11 +56,11 @@
       "土地等级": 1
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 300,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
@@ -68,7 +68,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 11508,
+      "grow_time": 12114,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -78,22 +78,22 @@
       "土地等级": 3
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 304,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 304,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
@@ -101,7 +101,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 1918,
+      "grow_time": 2019,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -111,66 +111,66 @@
       "土地等级": 0
     },
     {
-      "crop_type": "土豆",
-      "grow_time": 480,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 480,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 4
     },
     {
-      "crop_type": "土豆",
-      "grow_time": 480,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 480,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 4
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 300,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 4
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 300,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 4
     },
     {
-      "crop_type": "土豆",
-      "grow_time": 489,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 480,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 303,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
@@ -178,7 +178,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 1916,
+      "grow_time": 2017,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -189,7 +189,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 1916,
+      "grow_time": 2017,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -200,7 +200,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 1916,
+      "grow_time": 2017,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -210,66 +210,66 @@
       "土地等级": 0
     },
     {
-      "crop_type": "土豆",
-      "grow_time": 487,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 480,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
     },
     {
-      "crop_type": "土豆",
-      "grow_time": 487,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 480,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 303,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 303,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 303,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
     },
     {
-      "crop_type": "土豆",
-      "grow_time": 486,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 480,
       "已浇水": false,
       "已施肥": false,
@@ -277,7 +277,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 1914,
+      "grow_time": 2015,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -287,33 +287,33 @@
       "土地等级": 0
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 302,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 302,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 0
     },
     {
-      "crop_type": "小麦",
-      "grow_time": 302,
+      "crop_type": "",
+      "grow_time": 0,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": true,
+      "is_planted": false,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
@@ -321,7 +321,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 1913,
+      "grow_time": 2014,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -555,21 +555,26 @@
     {
       "name": "小麦",
       "quality": "普通",
-      "count": 5
+      "count": 14
     },
     {
       "name": "胡萝卜",
       "quality": "普通",
       "count": 3
+    },
+    {
+      "name": "土豆",
+      "quality": "普通",
+      "count": 7
     }
   ],
-  "experience": 1963,
+  "经验值": 2384,
   "农场名称": "树萌芽の狗窝",
   "玩家昵称": "树萌芽",
   "level": 64,
-  "money": 615197025464,
-  "最后登录时间": "2025年07月21日10时37分11秒",
-  "总游玩时间": "162时54分56秒",
+  "money": 615197025903,
+  "最后登录时间": "2025年07月21日10时47分21秒",
+  "总游玩时间": "162时56分4秒",
   "玩家账号": "3205788256",
   "玩家密码": "123456",
   "个人简介": "人生啊，就这样吧",
@@ -623,7 +628,7 @@
     {
       "name": "小麦",
       "quality": "普通",
-      "count": 37
+      "count": 77
     },
     {
       "name": "山葵",
@@ -683,12 +688,12 @@
     {
       "name": "马铃薯",
       "quality": "普通",
-      "count": 16
+      "count": 29
     },
     {
       "name": "火龙果",
       "quality": "稀有",
-      "count": 3
+      "count": 5
     }
   ],
   "道具背包": [
@@ -1100,7 +1105,7 @@
   },
   "在线礼包": {
     "当前日期": "2025-07-21",
-    "今日在线时长": 71.67846703529358,
+    "今日在线时长": 94.40529680252075,
     "已领取礼包": [
       "1分钟"
     ],
@@ -1134,5 +1139,8 @@
   "新手礼包": {
     "已领取": true,
     "领取时间": "2025-07-21 09:30:48"
+  },
+  "签到历史": {
+    "2025年07月21日10时47分55秒": "金币439 经验57 小麦x5 土豆x3"
   }
 }

@@ -172,8 +172,8 @@ func handle_claim_online_gift_response(data: Dictionary):
 		# 兼容老格式
 		if rewards.has("money"):
 			reward_text += "金币+" + str(rewards["money"]) + " "
-		if rewards.has("experience"):
-			reward_text += "经验+" + str(rewards["experience"]) + " "
+		if rewards.has("经验值"):
+			reward_text += "经验+" + str(rewards["经验值"]) + " "
 		if rewards.has("seeds"):
 			for seed in rewards["seeds"]:
 				reward_text += seed["name"] + "x" + str(seed["count"]) + " "
