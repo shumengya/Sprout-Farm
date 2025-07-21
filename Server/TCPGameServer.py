@@ -470,12 +470,12 @@ class TCPGameServer(TCPServer):
             # 注意：在线礼包时间累计现在由新系统管理，此处不再需要更新旧格式
             
             self.save_player_data(username, player_data)
-            self.log('INFO', f"用户 {username} 本次游玩时间: {play_time_seconds} 秒，总游玩时间: {player_data['total_login_time']}", 'SERVER')
+            self.log('INFO', f"用户 {username} 本次游玩时间: {play_time_seconds} 秒，总游玩时间: {player_data['总游玩时间']}", 'SERVER')
     
     #更新总游玩时间
     def _update_total_play_time(self, player_data, play_time_seconds):
         """更新总游玩时间"""
-        total_time_str = player_data.get("total_login_time", "0时0分0秒")
+        total_time_str = player_data.get("总游玩时间", "0时0分0秒")
         time_parts = re.match(r"(?:(\d+)时)?(?:(\d+)分)?(?:(\d+)秒)?", total_time_str)
         
         if time_parts:
@@ -490,7 +490,7 @@ class TCPGameServer(TCPServer):
             new_seconds = total_seconds % 60
             
             # 更新总游玩时间
-            player_data["total_login_time"] = f"{new_hours}时{new_minutes}分{new_seconds}秒"
+            player_data["总游玩时间"] = f"{new_hours}时{new_minutes}分{new_seconds}秒"
     
     # 检查玩家是否享受新玩家注册奖励
     def _is_new_player_bonus_active(self, player_data):
@@ -1138,8 +1138,8 @@ class TCPGameServer(TCPServer):
             # 设置新玩家的注册时间（不同于模板中的默认时间）
             player_data["注册时间"] = time_str
             
-            if "total_login_time" not in player_data:
-                player_data["total_login_time"] = "0时0分0秒"
+            if "总游玩时间" not in player_data:
+                player_data["总游玩时间"] = "0时0分0秒"
             
             # 保存新用户数据
             file_path = os.path.join("game_saves", f"{username}.json")
@@ -5815,7 +5815,7 @@ class TCPGameServer(TCPServer):
         
         # 获取最后登录时间和总游玩时间
         last_login_time = player_data.get("最后登录时间", "未知")
-        total_login_time = player_data.get("total_login_time", "0时0分0秒")
+        total_login_time = player_data.get("总游玩时间", "0时0分0秒")
         
         self.log('INFO', f"玩家 {username} 请求游玩时间统计", 'SERVER')
         
@@ -5823,7 +5823,7 @@ class TCPGameServer(TCPServer):
             "type": "play_time_response",
             "success": True,
             "最后登录时间": last_login_time,
-            "total_login_time": total_login_time,
+            "总游玩时间": total_login_time,
             "current_session_time": current_session_time
         })
     
@@ -5845,7 +5845,7 @@ class TCPGameServer(TCPServer):
         play_time_seconds = int(time.time() - login_timestamp)
         
         # 解析现有的总游玩时间
-        total_time_str = player_data.get("total_login_time", "0时0分0秒")
+        total_time_str = player_data.get("总游玩时间", "0时0分0秒")
         time_parts = re.match(r"(?:(\d+)时)?(?:(\d+)分)?(?:(\d+)秒)?", total_time_str)
         
         if time_parts:
@@ -5860,7 +5860,7 @@ class TCPGameServer(TCPServer):
             new_seconds = total_seconds % 60
             
             # 更新总游玩时间
-            player_data["total_login_time"] = f"{new_hours}时{new_minutes}分{new_seconds}秒"
+            player_data["总游玩时间"] = f"{new_hours}时{new_minutes}分{new_seconds}秒"
             
             # 保存玩家数据
             self.save_player_data(username, player_data)
@@ -5868,13 +5868,13 @@ class TCPGameServer(TCPServer):
             # 重置登录时间戳，以便下次计算
             self.user_data[client_id]["login_timestamp"] = time.time()
             
-            self.log('INFO', f"已更新玩家 {username} 的游玩时间，当前游玩时间: {play_time_seconds} 秒，总游玩时间: {player_data['total_login_time']}", 'SERVER')
+            self.log('INFO', f"已更新玩家 {username} 的游玩时间，当前游玩时间: {play_time_seconds} 秒，总游玩时间: {player_data['总游玩时间']}", 'SERVER')
             
             return self.send_data(client_id, {
                 "type": "update_time_response",
                 "success": True,
                 "message": "游玩时间已更新",
-                "total_login_time": player_data["total_login_time"]
+                "总游玩时间": player_data["总游玩时间"]
             })
         else:
             self.log('ERROR', f"解析玩家 {username} 的游玩时间失败", 'SERVER')
@@ -5937,7 +5937,7 @@ class TCPGameServer(TCPServer):
                         continue
                     
                     # 解析总游玩时间为秒数（用于排序）
-                    total_time_str = player_data.get("total_login_time", "0时0分0秒")
+                    total_time_str = player_data.get("总游玩时间", "0时0分0秒")
                     total_time_seconds = self._parse_time_to_seconds(total_time_str)
                     
                     # 解析最后登录时间为时间戳（用于排序）
@@ -5959,7 +5959,7 @@ class TCPGameServer(TCPServer):
                         "seed_count": seed_count,
                         "最后登录时间": last_login_str,
                         "last_login_timestamp": last_login_timestamp,
-                        "total_login_time": total_time_str,
+                        "总游玩时间": total_time_str,
                         "total_time_seconds": total_time_seconds,
                         "like_num": player_data.get("点赞数", 0),
                         "is_online": is_online
@@ -6127,7 +6127,7 @@ class TCPGameServer(TCPServer):
             "小卖部格子数": target_player_data.get("小卖部格子数", 10),  # 添加小卖部格子数
             "点赞数": target_player_data.get("点赞数", 0),  # 添加点赞数
             "最后登录时间": target_player_data.get("最后登录时间", "未知"),
-            "total_login_time": target_player_data.get("total_login_time", "0时0分0秒"),
+            "总游玩时间": target_player_data.get("总游玩时间", "0时0分0秒"),
             "total_likes": target_player_data.get("total_likes", 0)
         }
         
@@ -9774,7 +9774,7 @@ class ConsoleCommands:
         print(f"体力: {player_data.get('体力值', 20)}")
         print(f"注册时间: {player_data.get('注册时间', '未知')}")
         print(f"最后登录: {player_data.get('最后登录时间', '从未登录')}")
-        print(f"总在线时长: {player_data.get('total_login_time', '0时0分0秒')}")
+        print(f"总在线时长: {player_data.get('总游玩时间', '0时0分0秒')}")
         
         # 显示土地信息
         farm_lots = player_data.get("farm_lots", [])

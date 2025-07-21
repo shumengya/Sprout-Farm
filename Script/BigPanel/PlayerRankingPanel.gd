@@ -217,7 +217,7 @@ func add_player_entry(player_data):
 	player_level.text = "等级: " + str(int(player_data.get("level", 0)))
 	player_money.text = "金币: " + str(int(player_data.get("money", 0)))
 	player_seed_num.text = "种子: " + str(int(player_data.get("seed_count", 0)))
-	player_online_time.text = "游玩时间: " + player_data.get("total_login_time", "0时0分0秒")
+	player_online_time.text = "游玩时间: " + player_data.get("总游玩时间", "0时0分0秒")
 	player_last_login_time.text = "最后登录: " + player_data.get("最后登录时间", "未知")
 	
 	# 设置在线状态显示

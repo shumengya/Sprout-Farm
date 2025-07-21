@@ -7,7 +7,7 @@
   "user_name": "2143323382",
   "user_password": "tyh@19900420",
   "最后登录时间": "2025年07月20日22时15分13秒",
-  "total_login_time": "6时47分9秒",
+  "总游玩时间": "6时47分9秒",
   "farm_lots": [
     {
       "crop_type": "",
@@ -144,7 +144,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 22356,
+      "grow_time": 23736,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
