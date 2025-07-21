@@ -423,9 +423,9 @@ func _handle_login_success(user_data: Dictionary):
 	main_game.level = user_data.get("level", 1)
 	main_game.money = user_data.get("money", 0)
 	main_game.stamina = user_data.get("体力值", 20)
-	main_game.show_farm_name.text = "农场名称：" + user_data.get("farm_name", "")
+	main_game.show_farm_name.text = "农场名称：" + user_data.get("农场名称", "")
 	main_game.show_player_name.text = "玩家昵称：" + user_data.get("玩家昵称", "")
-	farmname_input.text = user_data.get("farm_name", "")
+	farmname_input.text = user_data.get("农场名称", "")
 	
 	# 加载各种背包数据
 	main_game.player_bag = user_data.get("种子仓库", [])

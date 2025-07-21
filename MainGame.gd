@@ -389,7 +389,7 @@ func _handle_visit_player_response(data):
 			original_player_data = {
 				"玩家账号": user_name,
 				"玩家昵称": show_player_name.text.replace("玩家昵称：", ""),
-				"farm_name": show_farm_name.text.replace("农场名称：", ""),
+				"农场名称": show_farm_name.text.replace("农场名称：", ""),
 				"level": level,
 				"money": money,
 				"experience": experience,
@@ -416,7 +416,7 @@ func _handle_visit_player_response(data):
 		
 		# 更新UI显示
 		show_player_name.text = "玩家昵称：" + target_player_data.get("玩家昵称", "未知")
-		show_farm_name.text = "农场名称：" + target_player_data.get("farm_name", "未知农场")
+		show_farm_name.text = "农场名称：" + target_player_data.get("农场名称", "未知农场")
 		
 		# 显示被访问玩家的点赞数
 		var target_likes = target_player_data.get("点赞数", 0)
@@ -493,7 +493,7 @@ func _handle_return_my_farm_response(data):
 		
 		# 恢复UI显示
 		show_player_name.text = "玩家昵称：" + player_data.get("玩家昵称", "未知")
-		show_farm_name.text = "农场名称：" + player_data.get("farm_name", "我的农场")
+		show_farm_name.text = "农场名称：" + player_data.get("农场名称", "我的农场")
 		
 		# 显示自己的点赞数
 		var my_likes = player_data.get("点赞数", 0)
@@ -2447,7 +2447,7 @@ func _handle_account_setting_response(data: Dictionary):
 			
 			# 只更新账户相关信息，不影响农场和背包数据
 			user_password = account_info["玩家密码"]
-			show_farm_name.text = "农场名称：" + account_info.get("farm_name", "")
+			show_farm_name.text = "农场名称：" + account_info.get("农场名称", "")
 			show_player_name.text = "玩家昵称：" + account_info.get("玩家昵称", "")
 			
 			# 更新基本游戏状态显示
@@ -2459,13 +2459,13 @@ func _handle_account_setting_response(data: Dictionary):
 			if login_data.size() > 0:
 				login_data["玩家密码"] = account_info.get("玩家密码", "")
 				login_data["玩家昵称"] = account_info.get("玩家昵称", "")
-				login_data["farm_name"] = account_info.get("farm_name", "")
+				login_data["农场名称"] = account_info.get("农场名称", "")
 				login_data["个人简介"] = account_info.get("个人简介", "")
 			
 			if data.size() > 0:
 				data["玩家密码"] = account_info.get("玩家密码", "")
 				data["玩家昵称"] = account_info.get("玩家昵称", "")
-				data["farm_name"] = account_info.get("farm_name", "")
+				data["农场名称"] = account_info.get("农场名称", "")
 				data["个人简介"] = account_info.get("个人简介", "")
 			
 			# 更新UI显示

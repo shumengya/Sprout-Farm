@@ -191,7 +191,7 @@ func _refresh_player_info():
 	var player_data = main_game.login_data #if main_game.login_data.size() > 0 else main_game.data
 	
 	player_name_input.text = player_data.get("玩家昵称", "")
-	farm_name_input.text = player_data.get("farm_name", "")
+	farm_name_input.text = player_data.get("农场名称", "")
 	personal_profile_input.text = player_data.get("个人简介", "")
 	
 
@@ -218,8 +218,8 @@ func handle_account_response(response_data: Dictionary):
 					if main_game:
 						if updated_data.has("玩家昵称"):
 							main_game.login_data["玩家昵称"] = updated_data["玩家昵称"]
-						if updated_data.has("farm_name"):
-							main_game.login_data["farm_name"] = updated_data["farm_name"]
+						if updated_data.has("农场名称"):
+							main_game.login_data["农场名称"] = updated_data["农场名称"]
 						if updated_data.has("个人简介"):
 							main_game.login_data["个人简介"] = updated_data["个人简介"]
 						if updated_data.has("玩家密码"):

@@ -1037,7 +1037,7 @@ class TCPGameServer(TCPServer):
         """处理注册消息"""
         username = message.get("username", "")
         password = message.get("password", "")
-        farm_name = message.get("farm_name", "")
+        farm_name = message.get("农场名称", "")
         player_name = message.get("玩家昵称", "")
         verification_code = message.get("verification_code", "")
         client_version = message.get("client_version", "")
@@ -1106,7 +1106,7 @@ class TCPGameServer(TCPServer):
             player_data.update({
                 "玩家账号": username,
                 "玩家密码": password,
-                "farm_name": farm_name or "我的农场",
+                "农场名称": farm_name or "我的农场",
                 "玩家昵称": player_name or username,
                 "个人简介": "",  # 新增个人简介字段，默认为空
                 "experience": player_data.get("experience", 0),
@@ -5951,7 +5951,7 @@ class TCPGameServer(TCPServer):
                     player_info = {
                         "玩家账号": player_data.get("玩家账号", account_id),
                         "玩家昵称": player_data.get("玩家昵称", player_data.get("玩家账号", account_id)),
-                        "farm_name": player_data.get("farm_name", ""),
+                        "农场名称": player_data.get("农场名称", ""),
                         "level": player_data.get("level", 1),
                         "money": player_data.get("money", 0),
                         "experience": player_data.get("experience", 0),
@@ -6109,7 +6109,7 @@ class TCPGameServer(TCPServer):
             "玩家账号": target_player_data.get("玩家账号", target_username),
             "username": target_username,  # 添加username字段，用于购买商品时标识卖家
             "玩家昵称": target_player_data.get("玩家昵称", target_username),
-            "farm_name": target_player_data.get("farm_name", ""),
+            "农场名称": target_player_data.get("农场名称", ""),
             "level": target_player_data.get("level", 1),
             "money": target_player_data.get("money", 0),
             "experience": target_player_data.get("experience", 0),
@@ -6181,7 +6181,7 @@ class TCPGameServer(TCPServer):
             "player_data": {
                 "玩家账号": player_data.get("玩家账号", username),
                 "玩家昵称": player_data.get("玩家昵称", username),
-                "farm_name": player_data.get("farm_name", ""),
+                "农场名称": player_data.get("农场名称", ""),
                 "level": player_data.get("level", 1),
                 "money": player_data.get("money", 0),
                 "experience": player_data.get("experience", 0),
@@ -7974,7 +7974,7 @@ class TCPGameServer(TCPServer):
             # 更新玩家数据
             player_data[""] = new_password
             player_data["玩家昵称"] = new_player_name
-            player_data["farm_name"] = new_farm_name
+            player_data["农场名称"] = new_farm_name
             player_data["个人简介"] = new_personal_profile
             
             # 保存到缓存和文件
@@ -7992,7 +7992,7 @@ class TCPGameServer(TCPServer):
                 "updated_data": {
                     "玩家密码": new_password,
                     "玩家昵称": new_player_name,
-                    "farm_name": new_farm_name,
+                    "农场名称": new_farm_name,
                     "个人简介": new_personal_profile
                 }
             })
@@ -8079,7 +8079,7 @@ class TCPGameServer(TCPServer):
                 "玩家账号": player_data.get("玩家账号", ""),
                 "玩家密码": player_data.get("玩家密码", ""),
                 "玩家昵称": player_data.get("玩家昵称", ""),
-                "farm_name": player_data.get("farm_name", ""),
+                "农场名称": player_data.get("农场名称", ""),
                 "个人简介": player_data.get("个人简介", ""),
                 "level": player_data.get("level", 1),
                 "experience": player_data.get("experience", 0),
@@ -9767,7 +9767,7 @@ class ConsoleCommands:
         print(f"👤 玩家信息: {qq_number}")
         print("=" * 50)
         print(f"昵称: {player_data.get('玩家昵称', '未设置')}")
-        print(f"农场名: {player_data.get('farm_name', '未设置')}")
+        print(f"农场名: {player_data.get('农场名称', '未设置')}")
         print(f"等级: {player_data.get('level', 1)}")
         print(f"经验: {player_data.get('experience', 0)}")
         print(f"金币: {player_data.get('money', 0)}")

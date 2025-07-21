@@ -677,7 +677,7 @@ func sendRegisterInfo(username, password, farmname, player_name="", verification
 		"type": "register",
 		"username": username,
 		"password": password,
-		"farm_name": farmname,
+		"农场名称": farmname,
 		"玩家昵称": player_name,
 		"verification_code": verification_code,
 		"client_version": main_game.client_version
