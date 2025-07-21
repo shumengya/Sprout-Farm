@@ -415,7 +415,7 @@ func _display_version_info():
 func _handle_login_success(user_data: Dictionary):
 	# 保存登录数据到主游戏
 	main_game.login_data = user_data.duplicate()
-	main_game.remaining_likes = user_data.get("今日剩余点赞次数", 10)
+	main_game.remaining_likes = user_data.get("点赞系统", {}).get("今日剩余点赞次数", 10)
 	
 	# 更新主游戏数据
 	main_game.experience = user_data.get("经验值", 0)

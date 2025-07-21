@@ -195,7 +195,7 @@ class EmailVerification:
     @staticmethod
     def save_verification_code(qq_number, verification_code, expiry_time=300, code_type="register"):
         """
-        保存验证码到缓存文件
+        保存验证码到MongoDB（优先）或缓存文件（备用）
         
         参数:
             qq_number (str): QQ号
@@ -208,6 +208,21 @@ class EmailVerification:
         """
         import time
         
+        # 优先尝试使用MongoDB
+        try:
+            from SMYMongoDBAPI import SMYMongoDBAPI
+            mongo_api = SMYMongoDBAPI("test")
+            if mongo_api.is_connected():
+                success = mongo_api.save_verification_code(qq_number, verification_code, expiry_time, code_type)
+                if success:
+                    print(f"[验证码系统-MongoDB] 为QQ {qq_number} 保存{code_type}验证码: {verification_code}")
+                    return True
+                else:
+                    print(f"[验证码系统-MongoDB] 保存失败，尝试使用JSON文件")
+        except Exception as e:
+            print(f"[验证码系统-MongoDB] MongoDB保存失败: {str(e)}，尝试使用JSON文件")
+        
+        # MongoDB失败，使用JSON文件备用
         # 创建目录（如果不存在）
         os.makedirs(os.path.dirname(VERIFICATION_CACHE_FILE), exist_ok=True)
         
@@ -239,7 +254,7 @@ class EmailVerification:
             with open(VERIFICATION_CACHE_FILE, 'w', encoding='utf-8') as file:
                 json.dump(verification_data, file, indent=2, ensure_ascii=False)
             
-            print(f"[验证码系统] 为QQ {qq_number} 保存{code_type}验证码: {verification_code}, 过期时间: {expire_at}")
+            print(f"[验证码系统-JSON] 为QQ {qq_number} 保存{code_type}验证码: {verification_code}, 过期时间: {expire_at}")
             return True
         except Exception as e:
             print(f"保存验证码失败: {str(e)}")
@@ -248,7 +263,7 @@ class EmailVerification:
     @staticmethod
     def verify_code(qq_number, input_code, code_type="register"):
         """
-        验证用户输入的验证码
+        验证用户输入的验证码（优先使用MongoDB）
         
         参数:
             qq_number (str): QQ号
@@ -261,9 +276,21 @@ class EmailVerification:
         """
         import time
         
+        # 优先尝试使用MongoDB
+        try:
+            from SMYMongoDBAPI import SMYMongoDBAPI
+            mongo_api = SMYMongoDBAPI("test")
+            if mongo_api.is_connected():
+                success, message = mongo_api.verify_verification_code(qq_number, input_code, code_type)
+                print(f"[验证码系统-MongoDB] QQ {qq_number} 验证结果: {success}, 消息: {message}")
+                return success, message
+        except Exception as e:
+            print(f"[验证码系统-MongoDB] MongoDB验证失败: {str(e)}，尝试使用JSON文件")
+        
+        # MongoDB失败，使用JSON文件备用
         # 检查缓存文件是否存在
         if not os.path.exists(VERIFICATION_CACHE_FILE):
-            print(f"[验证码系统] QQ {qq_number} 验证失败: 缓存文件不存在")
+            print(f"[验证码系统-JSON] QQ {qq_number} 验证失败: 缓存文件不存在")
             return False, "验证码不存在或已过期"
         
         # 读取验证码数据
@@ -271,12 +298,12 @@ class EmailVerification:
             with open(VERIFICATION_CACHE_FILE, 'r', encoding='utf-8') as file:
                 verification_data = json.load(file)
         except Exception as e:
-            print(f"[验证码系统] 读取验证码文件失败: {str(e)}")
+            print(f"[验证码系统-JSON] 读取验证码文件失败: {str(e)}")
             return False, "验证码数据损坏"
         
         # 检查该QQ号是否有验证码
         if qq_number not in verification_data:
-            print(f"[验证码系统] QQ {qq_number} 验证失败: 没有找到验证码记录")
+            print(f"[验证码系统-JSON] QQ {qq_number} 验证失败: 没有找到验证码记录")
             return False, "验证码不存在，请重新获取"
         
         # 获取存储的验证码信息
@@ -287,16 +314,16 @@ class EmailVerification:
         is_used = code_info.get("used", False)
         created_at = code_info.get("created_at", 0)
         
-        print(f"[验证码系统] QQ {qq_number} 验证码详情: 存储码={stored_code}, 输入码={input_code}, 类型={stored_code_type}, 已使用={is_used}, 创建时间={created_at}")
+        print(f"[验证码系统-JSON] QQ {qq_number} 验证码详情: 存储码={stored_code}, 输入码={input_code}, 类型={stored_code_type}, 已使用={is_used}, 创建时间={created_at}")
         
         # 检查验证码类型是否匹配
         if stored_code_type != code_type:
-            print(f"[验证码系统] QQ {qq_number} 验证失败: 验证码类型不匹配，存储类型={stored_code_type}, 请求类型={code_type}")
+            print(f"[验证码系统-JSON] QQ {qq_number} 验证失败: 验证码类型不匹配，存储类型={stored_code_type}, 请求类型={code_type}")
             return False, f"验证码类型不匹配，请重新获取{code_type}验证码"
         
         # 检查验证码是否已被使用
         if is_used:
-            print(f"[验证码系统] QQ {qq_number} 验证失败: 验证码已被使用")
+            print(f"[验证码系统-JSON] QQ {qq_number} 验证失败: 验证码已被使用")
             return False, "验证码已被使用，请重新获取"
         
         # 检查验证码是否过期
@@ -306,7 +333,7 @@ class EmailVerification:
             del verification_data[qq_number]
             with open(VERIFICATION_CACHE_FILE, 'w', encoding='utf-8') as file:
                 json.dump(verification_data, file, indent=2, ensure_ascii=False)
-            print(f"[验证码系统] QQ {qq_number} 验证失败: 验证码已过期")
+            print(f"[验证码系统-JSON] QQ {qq_number} 验证失败: 验证码已过期")
             return False, "验证码已过期，请重新获取"
         
         # 验证码比较（不区分大小写）
@@ -318,22 +345,34 @@ class EmailVerification:
             try:
                 with open(VERIFICATION_CACHE_FILE, 'w', encoding='utf-8') as file:
                     json.dump(verification_data, file, indent=2, ensure_ascii=False)
-                print(f"[验证码系统] QQ {qq_number} 验证成功: 验证码已标记为已使用")
+                print(f"[验证码系统-JSON] QQ {qq_number} 验证成功: 验证码已标记为已使用")
                 return True, "验证码正确"
             except Exception as e:
-                print(f"[验证码系统] 标记验证码已使用时失败: {str(e)}")
+                print(f"[验证码系统-JSON] 标记验证码已使用时失败: {str(e)}")
                 return True, "验证码正确"  # 即使标记失败，验证还是成功的
         else:
-            print(f"[验证码系统] QQ {qq_number} 验证失败: 验证码不匹配")
+            print(f"[验证码系统-JSON] QQ {qq_number} 验证失败: 验证码不匹配")
             return False, "验证码错误"
     
     @staticmethod
     def clean_expired_codes():
         """
-        清理过期的验证码和已使用的验证码
+        清理过期的验证码和已使用的验证码（优先使用MongoDB）
         """
         import time
         
+        # 优先尝试使用MongoDB
+        try:
+            from SMYMongoDBAPI import SMYMongoDBAPI
+            mongo_api = SMYMongoDBAPI("test")
+            if mongo_api.is_connected():
+                expired_count = mongo_api.clean_expired_verification_codes()
+                print(f"[验证码系统-MongoDB] 清理完成，删除了 {expired_count} 个过期验证码")
+                return expired_count
+        except Exception as e:
+            print(f"[验证码系统-MongoDB] MongoDB清理失败: {str(e)}，尝试使用JSON文件")
+        
+        # MongoDB失败，使用JSON文件备用
         if not os.path.exists(VERIFICATION_CACHE_FILE):
             return
         
@@ -355,12 +394,12 @@ class EmailVerification:
                 # 过期的验证码
                 if current_time > expire_at:
                     should_remove = True
-                    print(f"[验证码清理] 移除过期验证码: QQ {qq_number}")
+                    print(f"[验证码清理-JSON] 移除过期验证码: QQ {qq_number}")
                 
                 # 已使用超过1小时的验证码
                 elif is_used and used_at > 0 and (current_time - used_at) > 3600:
                     should_remove = True
-                    print(f"[验证码清理] 移除已使用的验证码: QQ {qq_number}")
+                    print(f"[验证码清理-JSON] 移除已使用的验证码: QQ {qq_number}")
                 
                 if should_remove:
                     removed_keys.append(qq_number)
@@ -373,7 +412,7 @@ class EmailVerification:
             if removed_keys:
                 with open(VERIFICATION_CACHE_FILE, 'w', encoding='utf-8') as file:
                     json.dump(verification_data, file, indent=2, ensure_ascii=False)
-                print(f"[验证码清理] 共清理了 {len(removed_keys)} 个验证码")
+                print(f"[验证码清理-JSON] 共清理了 {len(removed_keys)} 个验证码")
                 
         except Exception as e:
             print(f"清理验证码失败: {str(e)}")
@@ -381,7 +420,7 @@ class EmailVerification:
     @staticmethod
     def get_verification_status(qq_number):
         """
-        获取验证码状态（用于调试）
+        获取验证码状态（优先使用MongoDB）
         
         参数:
             qq_number (str): QQ号
@@ -391,6 +430,33 @@ class EmailVerification:
         """
         import time
         
+        # 优先尝试使用MongoDB
+        try:
+            from SMYMongoDBAPI import SMYMongoDBAPI
+            mongo_api = SMYMongoDBAPI("test")
+            if mongo_api.is_connected():
+                verification_codes = mongo_api.get_verification_codes()
+                if verification_codes and qq_number in verification_codes:
+                    code_info = verification_codes[qq_number]
+                    current_time = time.time()
+                    
+                    return {
+                        "status": "found",
+                        "code": code_info.get("code", ""),
+                        "code_type": code_info.get("code_type", "unknown"),
+                        "used": code_info.get("used", False),
+                        "expired": current_time > code_info.get("expire_at", 0),
+                        "created_at": code_info.get("created_at", 0),
+                        "expire_at": code_info.get("expire_at", 0),
+                        "used_at": code_info.get("used_at", 0),
+                        "source": "mongodb"
+                    }
+                else:
+                    return {"status": "no_code", "source": "mongodb"}
+        except Exception as e:
+            print(f"[验证码系统-MongoDB] MongoDB状态查询失败: {str(e)}，尝试使用JSON文件")
+        
+        # MongoDB失败，使用JSON文件备用
         if not os.path.exists(VERIFICATION_CACHE_FILE):
             return {"status": "no_cache_file"}
         
@@ -412,7 +478,8 @@ class EmailVerification:
                 "expired": current_time > code_info.get("expire_at", 0),
                 "created_at": code_info.get("created_at", 0),
                 "expire_at": code_info.get("expire_at", 0),
-                "used_at": code_info.get("used_at", 0)
+                "used_at": code_info.get("used_at", 0),
+                "source": "json"
             }
             
         except Exception as e:
@@ -440,4 +507,4 @@ if __name__ == "__main__":
         # 测试验证
         test_input = input("请输入收到的验证码: ")
         verify_success, verify_message = EmailVerification.verify_code(test_qq, test_input)
-        print(f"验证结果: {verify_success}, 消息: {verify_message}")    
+        print(f"验证结果: {verify_success}, 消息: {verify_message}")

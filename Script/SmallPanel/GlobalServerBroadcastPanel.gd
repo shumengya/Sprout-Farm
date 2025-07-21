@@ -85,8 +85,8 @@ func send_broadcast_message():
 	else:
 		Toast.show("消息发送失败", Color.RED, 2.0, 1.0)
 
-# 接收全服大喇叭消息
-func receive_broadcast_message(data: Dictionary):
+# 统一的消息处理函数
+func _add_message_to_history(data: Dictionary):
 	var username = data.get("username", "匿名")
 	var player_name = data.get("玩家昵称", "")
 	var content = data.get("content", "")
@@ -109,17 +109,12 @@ func receive_broadcast_message(data: Dictionary):
 		"display_name": display_name
 	}
 	
-	# 按时间戳插入到正确位置（保持时间顺序）
-	var inserted = false
-	for i in range(message_history.size()):
-		if message_history[i].get("timestamp", 0) > timestamp:
-			message_history.insert(i, message_record)
-			inserted = true
-			break
-	
-	# 如果没有找到插入位置，说明是最新消息，添加到末尾
-	if not inserted:
-		message_history.append(message_record)
+	message_history.append(message_record)
+
+# 接收全服大喇叭消息
+func receive_broadcast_message(data: Dictionary):
+	# 使用统一的处理函数
+	_add_message_to_history(data)
 	
 	# 保持消息历史记录在限制范围内
 	if message_history.size() > max_message_history:
@@ -128,10 +123,6 @@ func receive_broadcast_message(data: Dictionary):
 	# 如果面板当前可见，立即更新显示
 	if visible:
 		update_message_display()
-	
-	# 更新主界面的大喇叭显示
-	if main_game and main_game.has_method("update_broadcast_display"):
-		main_game.update_broadcast_display(display_name + ": " + content)
 	
 	# 保存到本地
 	save_chat_history()
@@ -229,25 +220,19 @@ func receive_history_messages(data: Dictionary):
 	print("大喇叭面板收到历史消息: ", messages.size(), " 条")
 	
 	if messages.size() > 0:
-		# 清空当前消息历史
+		# 清空当前历史记录，重新加载
 		message_history.clear()
 		
-		# 添加服务器返回的历史消息
+		# 处理每条消息
 		for msg in messages:
-			var message_record = {
-				"username": msg.get("username", "匿名"),
-				"玩家昵称": msg.get("玩家昵称", ""),
-				"content": msg.get("content", ""),
-				"timestamp": msg.get("timestamp", 0),
-				"time_str": msg.get("time_str", ""),
-				"display_name": msg.get("display_name", msg.get("username", "匿名"))
-			}
-			message_history.append(message_record)
-			print("添加消息: ", message_record.display_name, ": ", message_record.content)
+			_add_message_to_history(msg)
 		
-		# 按时间戳排序消息历史（从旧到新）
+		# 按时间戳排序
 		message_history.sort_custom(func(a, b): return a.get("timestamp", 0) < b.get("timestamp", 0))
-		print("排序后消息历史大小: ", message_history.size())
+		
+		# 保持消息历史记录在限制范围内
+		if message_history.size() > max_message_history:
+			message_history = message_history.slice(-max_message_history)
 		
 		# 更新显示
 		update_message_display()

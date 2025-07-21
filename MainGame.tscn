@@ -270,7 +270,9 @@ glow_intensity = 1.0
 glow_strength = 0.75
 glow_bloom = 1.0
 glow_blend_mode = 1
-fog_enabled = true
+fog_mode = 1
+fog_sun_scatter = 1.0
+fog_density = 1.0
 
 [node name="main" type="Node"]
 script = ExtResource("1_v3yaj")
@@ -877,7 +879,7 @@ theme_override_constants/shadow_offset_y = 4
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 50
-text = "宠物背包2"
+text = "宠物背包"
 horizontal_alignment = 1
 
 [node name="QuitButton" type="Button" parent="UI/BigPanel/PetBagPanel"]

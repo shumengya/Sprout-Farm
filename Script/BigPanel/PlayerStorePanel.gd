@@ -50,13 +50,15 @@ func update_player_store_ui():
 	# 获取小卖部数据
 	if main_game.is_visiting_mode:
 		# 访问模式：显示被访问玩家的小卖部
-		player_store_data = main_game.visited_player_data.get("玩家小卖部", [])
-		max_store_slots = main_game.visited_player_data.get("小卖部格子数", 10)
+		var store_config = main_game.visited_player_data.get("小卖部配置", {"商品列表": [], "格子数": 10})
+		player_store_data = store_config.get("商品列表", [])
+		max_store_slots = store_config.get("格子数", 10)
 		buy_product_booth_button.hide()  # 访问模式下隐藏购买格子按钮
 	else:
 		# 正常模式：显示自己的小卖部
-		player_store_data = main_game.login_data.get("玩家小卖部", [])
-		max_store_slots = main_game.login_data.get("小卖部格子数", 10)
+		var store_config = main_game.login_data.get("小卖部配置", {"商品列表": [], "格子数": 10})
+		player_store_data = store_config.get("商品列表", [])
+		max_store_slots = store_config.get("格子数", 10)
 		buy_product_booth_button.show()  # 正常模式下显示购买格子按钮
 	
 	# 创建商品按钮
@@ -187,7 +189,7 @@ func _on_product_buy_selected(product_data: Dictionary, slot_index: int):
 		batch_buy_popup.show_buy_popup(
 			product_name,
 			product_price,
-			"玩家小卖部商品",
+			"小卖部商品",
 			"store_product",  # 特殊类型标识
 			_on_confirm_buy_store_product,
 			_on_cancel_buy_store_product

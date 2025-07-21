@@ -13,7 +13,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 19020,
+      "grow_time": 25230,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -35,7 +35,7 @@
     },
     {
       "crop_type": "杂交树1",
-      "grow_time": 19060,
+      "grow_time": 21670,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -46,7 +46,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 4438,
+      "grow_time": 25200,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -68,7 +68,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 13308,
+      "grow_time": 25254,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -101,7 +101,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2218,
+      "grow_time": 12749,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -178,7 +178,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2216,
+      "grow_time": 12747,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -189,7 +189,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2216,
+      "grow_time": 12747,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -200,7 +200,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2216,
+      "grow_time": 12747,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -277,7 +277,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2214,
+      "grow_time": 12745,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -321,7 +321,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2213,
+      "grow_time": 12744,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -822,9 +822,9 @@
   "农场名称": "树萌芽の狗窝",
   "玩家昵称": "树萌芽",
   "等级": 66,
-  "钱币": 615196901889,
-  "最后登录时间": "2025年07月21日10时54分03秒",
-  "总游玩时间": "162时57分23秒",
+  "钱币": 615196902055,
+  "最后登录时间": "2025年07月21日13时20分46秒",
+  "总游玩时间": "162时58分35秒",
   "玩家账号": "3205788256",
   "玩家密码": "123456",
   "个人简介": "人生啊，就这样吧",
@@ -923,7 +923,7 @@
     {
       "name": "仙人掌",
       "quality": "优良",
-      "count": 3
+      "count": 2
     },
     {
       "name": "胡萝卜",
@@ -933,7 +933,7 @@
     {
       "name": "土豆",
       "quality": "普通",
-      "count": 3
+      "count": 2
     },
     {
       "name": "马铃薯",
@@ -1361,27 +1361,10 @@
     ],
     "登录时间": 1753061433.2417476
   },
-  "玩家小卖部": [
-    {
-      "商品类型": "作物",
-      "商品名称": "番茄",
-      "商品价格": 999,
-      "商品数量": 1
-    },
-    {
-      "商品类型": "作物",
-      "商品名称": "番茄",
-      "商品价格": 888,
-      "商品数量": 81
-    },
-    {
-      "商品类型": "作物",
-      "商品名称": "荔枝",
-      "商品价格": 99999999999999999,
-      "商品数量": 1
-    }
-  ],
-  "小卖部格子数": 10,
+  "小卖部配置": {
+    "商品列表": [],
+    "格子数": 11
+  },
   "游戏设置": {
     "背景音乐音量": 0.0,
     "天气显示": true

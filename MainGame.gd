@@ -2205,6 +2205,9 @@ func _handle_new_player_gift_response(data):
 func _handle_global_broadcast_message(data: Dictionary):
 	# 将消息传递给大喇叭面板处理
 	global_server_broadcast_panel.receive_broadcast_message(data)
+	
+	# 立即更新主界面大喇叭显示
+	update_broadcast_display_from_message(data)
 
 # 处理全服大喇叭发送响应
 func _handle_global_broadcast_response(data: Dictionary):
@@ -2224,25 +2227,39 @@ func _handle_broadcast_history_response(data: Dictionary):
 		global_server_broadcast_panel.receive_history_messages(data)
 		
 		# 更新主界面大喇叭显示为最新消息
-		if global_server_broadcast:
-			var latest_message = global_server_broadcast_panel.get_latest_message()
-			if latest_message != "全服大喇叭":
-				global_server_broadcast.text = latest_message
-				print("主界面大喇叭已更新为: ", latest_message)
-			else:
-				global_server_broadcast.text = "全服大喇叭"
+		update_broadcast_display_from_panel()
+
+# 从消息数据直接更新大喇叭显示
+func update_broadcast_display_from_message(data: Dictionary):
+	if global_server_broadcast:
+		var username = data.get("username", "匿名")
+		var player_name = data.get("玩家昵称", "")
+		var content = data.get("content", "")
+		
+		# 优先显示玩家昵称
+		var display_name = player_name if player_name != "" else username
+		global_server_broadcast.text = display_name + ": " + content
+		print("主界面大喇叭已更新为: ", global_server_broadcast.text)
+
+# 从面板获取最新消息更新大喇叭显示
+func update_broadcast_display_from_panel():
+	if global_server_broadcast and global_server_broadcast_panel:
+		var latest_message = global_server_broadcast_panel.get_latest_message()
+		if latest_message != "暂无消息" and latest_message != "全服大喇叭":
+			global_server_broadcast.text = latest_message
+			print("主界面大喇叭已更新为: ", latest_message)
+		else:
+			global_server_broadcast.text = "全服大喇叭"
 
 
 # 初始化大喇叭显示
 func _init_broadcast_display():
 	if global_server_broadcast and global_server_broadcast_panel:
-		# 先设置为空
-		global_server_broadcast.text = ""
+		# 设置默认文本
+		global_server_broadcast.text = "全服大喇叭"
 		
-		# 直接从本地文件加载历史消息
+		# 先从本地加载，然后请求服务器最新消息
 		_load_broadcast_from_local()
-		
-		# 无论是否有本地消息，都请求服务器获取最新消息
 		_request_latest_broadcast_message()
 
 # 从本地文件加载大喇叭消息
@@ -2269,20 +2286,21 @@ func _load_broadcast_from_local():
 					var content = latest.get("content", "")
 					global_server_broadcast.text = display_name + ": " + content
 
-
-
 # 请求服务器获取最新的一条大喇叭消息
 func _request_latest_broadcast_message():
-		# 请求最近1天的消息，只获取最新的一条
+	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
+		# 请求最近1天的消息
 		var success = tcp_network_manager_panel.send_message({
 			"type": "request_broadcast_history",
 			"days": 1,
-			"limit": 1,  # 只要最新的一条
+			"limit": 10,  # 获取最近10条，客户端取最新的
 			"timestamp": Time.get_unix_time_from_system()
 		})
 		
 		if not success:
 			print("请求最新大喇叭消息失败")
+	else:
+		print("未连接到服务器，无法请求最新大喇叭消息")
 
 # 请求服务器历史消息用于刷新显示
 func _request_server_history_for_refresh():
@@ -3361,4 +3379,4 @@ func _on_item_store_pressed() -> void:
 
 func _on_pet_store_pressed() -> void:
 	pet_store_panel.show()
-	pass 
+	pass

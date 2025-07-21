@@ -456,7 +456,7 @@ func _on_data_received(data):
 		# 添加商品到小卖部响应
 		elif action_type == "add_product_to_store":
 			if success:
-				main_game.login_data["玩家小卖部"] = updated_data["玩家小卖部"]
+				main_game.login_data["小卖部配置"] = updated_data["小卖部配置"]
 				main_game.crop_warehouse = updated_data["作物仓库"]
 				
 				# 更新UI
@@ -472,7 +472,7 @@ func _on_data_received(data):
 		# 下架小卖部商品响应
 		elif action_type == "remove_store_product":
 			if success:
-				main_game.login_data["玩家小卖部"] = updated_data["玩家小卖部"]
+				main_game.login_data["小卖部配置"] = updated_data["小卖部配置"]
 				main_game.crop_warehouse = updated_data["作物仓库"]
 				
 				# 更新UI
@@ -510,7 +510,7 @@ func _on_data_received(data):
 		elif action_type == "buy_store_booth":
 			if success:
 				main_game.money = updated_data["钱币"]
-				main_game.login_data["小卖部格子数"] = updated_data["小卖部格子数"]
+				main_game.login_data["小卖部配置"] = updated_data["小卖部配置"]
 				
 				# 更新UI
 				main_game._update_ui()

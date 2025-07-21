@@ -1,5 +1,5 @@
 from TCPServer import TCPServer
-from SMYMongoDBAPI import SMYMongoDBAPI
+
 import time
 import json
 import os
@@ -8,6 +8,9 @@ import threading
 import datetime
 import re
 import random
+#导入服务器外置插件模块
+from SMYMongoDBAPI import SMYMongoDBAPI #导入MongoDB数据库模块
+from QQEmailSendAPI import EmailVerification#导入QQ邮箱发送模块
 
 """
 萌芽农场TCP游戏服务器 - 代码结构说明
@@ -29,14 +32,6 @@ import random
 - 分层更新策略：在线玩家快速更新，离线玩家慢速更新
 - 批量数据保存：定时批量写入，提升性能
 - 智能缓存管理：LRU策略，自动清理过期数据
-
-🎮 游戏功能模块：
-- 用户系统：注册、登录、邮箱验证
-- 农场系统：种植、收获、浇水、施肥
-- 升级系统：经验获取、等级提升
-- 社交系统：访问农场、点赞互动
-- 奖励系统：每日签到、幸运抽奖
-- 排行系统：玩家排行榜展示
 
 📊 数据存储：
 - 玩家数据：JSON格式存储在game_saves目录
@@ -205,7 +200,7 @@ class TCPGameServer(TCPServer):
     def start_verification_code_cleanup_timer(self):
         """启动验证码清理定时器"""
         try:
-            from QQEmailSend import EmailVerification
+
             EmailVerification.clean_expired_codes()
             self.log('INFO', "验证码清理完成", 'SERVER')
         except Exception as e:
@@ -433,7 +428,7 @@ class TCPGameServer(TCPServer):
     
     #加载作物配置数据（优化版本）
     def _load_crop_data(self):
-        """加载作物配置数据（带缓存优化）"""
+        """加载作物配置数据（优先MongoDB，带缓存优化）"""
         current_time = time.time()
         
         # 检查缓存是否有效
@@ -442,10 +437,26 @@ class TCPGameServer(TCPServer):
             return self.crop_data_cache
         
         # 缓存过期或不存在，重新加载
+        # 优先尝试从MongoDB加载
+        if self.use_mongodb and self.mongo_api:
+            try:
+                crop_data = self.mongo_api.get_crop_data_config()
+                if crop_data:
+                    self.crop_data_cache = crop_data
+                    self.crop_data_cache_time = current_time
+                    self.log('INFO', "成功从MongoDB加载作物数据配置", 'SERVER')
+                    return self.crop_data_cache
+                else:
+                    self.log('WARNING', "MongoDB中未找到作物数据配置，尝试JSON文件", 'SERVER')
+            except Exception as e:
+                self.log('ERROR', f"从MongoDB加载作物数据失败: {str(e)}，尝试JSON文件", 'SERVER')
+        
+        # MongoDB失败或不可用，尝试从JSON文件加载
         try:
             with open("config/crop_data.json", 'r', encoding='utf-8') as file:
                 self.crop_data_cache = json.load(file)
                 self.crop_data_cache_time = current_time
+                self.log('INFO', "成功从JSON文件加载作物数据配置", 'SERVER')
                 return self.crop_data_cache
         except Exception as e:
             self.log('ERROR', f"无法加载作物数据: {str(e)}", 'SERVER')
@@ -1059,7 +1070,7 @@ class TCPGameServer(TCPServer):
         
         # 验证验证码
         if verification_code:
-            from QQEmailSend import EmailVerification
+
             success, verify_message = EmailVerification.verify_code(username, verification_code, "register")
             if not success:
                 self.log('WARNING', f"QQ号 {username} 注册验证码验证失败: {verify_message}", 'SERVER')
@@ -1092,54 +1103,47 @@ class TCPGameServer(TCPServer):
 
     #辅助函数-创建新用户
     def _create_new_user(self, client_id, username, password, farm_name, player_name):
-        """创建新用户"""
+        """创建新用户（优先从MongoDB加载模板）"""
         try:
-            # 从模板加载初始玩家数据
-            template_path = os.path.join("config", "initial_player_data_template.json")
-            if not os.path.exists(template_path):
-                return self._send_register_error(client_id, "服务器配置错误，无法注册新用户")
-                
-            with open(template_path, 'r', encoding='utf-8') as file:
-                player_data = json.load(file)
-                
-            # 更新玩家数据
+            # 优先从MongoDB加载初始玩家数据模板
+            player_data = None
+            if self.use_mongodb and self.mongo_api:
+                try:
+                    player_data = self.mongo_api.get_initial_player_data_template()
+                    if player_data:
+                        self.log('INFO', "成功从MongoDB加载初始玩家数据模板", 'SERVER')
+                    else:
+                        self.log('WARNING', "MongoDB中未找到初始玩家数据模板，尝试从JSON文件加载", 'SERVER')
+                except Exception as e:
+                    self.log('ERROR', f"从MongoDB加载初始玩家数据模板失败: {str(e)}，尝试从JSON文件加载", 'SERVER')
+            
+            # MongoDB加载失败或不可用，从JSON文件加载
+            if not player_data:
+                template_path = os.path.join("config", "initial_player_data_template.json")
+                if not os.path.exists(template_path):
+                    return self._send_register_error(client_id, "服务器配置错误，无法注册新用户")
+                    
+                with open(template_path, 'r', encoding='utf-8') as file:
+                    player_data = json.load(file)
+                self.log('INFO', "成功从JSON文件加载初始玩家数据模板", 'SERVER')
+            
+            # 更新玩家基本信息
+            current_time = datetime.datetime.now()
+            time_str = current_time.strftime("%Y年%m月%d日%H时%M分%S秒")
+            
             player_data.update({
                 "玩家账号": username,
                 "玩家密码": password,
                 "农场名称": farm_name or "我的农场",
                 "玩家昵称": player_name or username,
-                "个人简介": "",  # 新增个人简介字段，默认为空
-                "经验值": player_data.get("经验值", 0),
-                "等级": player_data.get("等级", 1),
-                "钱币": player_data.get("钱币", 1000)
+                "个人简介": "",
+                "最后登录时间": time_str,
+                "注册时间": time_str,
+                "总游玩时间": player_data.get("总游玩时间", "0时0分0秒")
             })
             
-            # 确保农场地块存在
-            if "农场土地" not in player_data:
-                player_data["农场土地"] = []
-                for i in range(40):
-                    player_data["农场土地"].append({
-                        "crop_type": "",
-                        "grow_time": 0,
-                        "is_dead": False,
-                        "is_diged": i < 5,  # 默认开垦前5块地
-                        "is_planted": False,
-                        "max_grow_time": 5 if i >= 5 else 3
-                    })
-            
-            if "种子仓库" not in player_data:
-                player_data["种子仓库"] = []
-            
-            # 更新注册时间和登录时间
-            current_time = datetime.datetime.now()
-            time_str = current_time.strftime("%Y年%m月%d日%H时%M分%S秒")
-            player_data["最后登录时间"] = time_str
-            
-            # 设置新玩家的注册时间（不同于模板中的默认时间）
-            player_data["注册时间"] = time_str
-            
-            if "总游玩时间" not in player_data:
-                player_data["总游玩时间"] = "0时0分0秒"
+            # 确保必要字段存在
+            self._ensure_player_data_fields(player_data)
             
             # 保存新用户数据
             file_path = os.path.join("game_saves", f"{username}.json")
@@ -1148,7 +1152,6 @@ class TCPGameServer(TCPServer):
                 
             self.log('INFO', f"用户 {username} 注册成功，注册时间: {time_str}，享受3天新玩家10倍生长速度奖励", 'SERVER')
             
-            # 返回成功响应
             return self.send_data(client_id, {
                 "type": "register_response",
                 "status": "success",
@@ -1158,6 +1161,29 @@ class TCPGameServer(TCPServer):
         except Exception as e:
             self.log('ERROR', f"注册用户 {username} 时出错: {str(e)}", 'SERVER')
             return self._send_register_error(client_id, f"注册过程中出现错误: {str(e)}")
+    
+    def _ensure_player_data_fields(self, player_data):
+        """确保玩家数据包含所有必要字段"""
+        # 确保农场地块存在
+        if "农场土地" not in player_data:
+            player_data["农场土地"] = []
+            for i in range(40):
+                player_data["农场土地"].append({
+                    "crop_type": "",
+                    "grow_time": 0,
+                    "is_dead": False,
+                    "is_diged": i < 20,  # 默认开垦前20块地
+                    "is_planted": False,
+                    "max_grow_time": 5 if i >= 20 else 3,
+                    "已浇水": False,
+                    "已施肥": False,
+                    "土地等级": 0
+                })
+        
+        # 确保基本仓库存在
+        for field in ["种子仓库", "作物仓库", "道具背包", "宠物背包", "巡逻宠物", "出战宠物"]:
+            if field not in player_data:
+                player_data[field] = []
     
     #辅助函数-客户端版本检查
     def _check_client_version(self, client_version, action_name="操作"):
@@ -1176,7 +1202,6 @@ class TCPGameServer(TCPServer):
     #处理验证码请求
     def _handle_verification_code_request(self, client_id, message):
         """处理验证码请求"""
-        from QQEmailSend import EmailVerification
         
         qq_number = message.get("qq_number", "")
         
@@ -1215,7 +1240,6 @@ class TCPGameServer(TCPServer):
     #处理验证码验证
     def _handle_verify_code(self, client_id, message):
         """处理验证码验证"""
-        from QQEmailSend import EmailVerification
         
         qq_number = message.get("qq_number", "")
         input_code = message.get("code", "")
@@ -1250,7 +1274,6 @@ class TCPGameServer(TCPServer):
     #处理忘记密码验证码请求
     def _handle_forget_password_verification_code_request(self, client_id, message):
         """处理忘记密码验证码请求"""
-        from QQEmailSend import EmailVerification
         
         qq_number = message.get("qq_number", "")
         
@@ -1298,7 +1321,6 @@ class TCPGameServer(TCPServer):
     #处理重置密码请求
     def _handle_reset_password_request(self, client_id, message):
         """处理重置密码请求"""
-        from QQEmailSend import EmailVerification
         
         username = message.get("username", "")
         new_password = message.get("new_password", "")
@@ -5329,20 +5351,28 @@ class TCPGameServer(TCPServer):
         # 扣除点赞次数
         player_data["点赞系统"]["今日剩余点赞次数"] = remaining_likes - 1
         
+        # 初始化目标玩家的点赞系统（如果不存在）
+        if "点赞系统" not in target_player_data:
+            target_player_data["点赞系统"] = {
+                "今日剩余点赞次数": 10,
+                "点赞上次刷新时间": datetime.datetime.now().strftime("%Y-%m-%d"),
+                "总点赞数": 0
+            }
+        
         # 更新目标玩家的点赞数量
-        target_player_data["点赞数"] = target_player_data.get("点赞数", 0) + 1
+        target_player_data["点赞系统"]["总点赞数"] = target_player_data["点赞系统"].get("总点赞数", 0) + 1
         
         # 保存两个玩家的数据
         self.save_player_data(username, player_data)
         self.save_player_data(target_username, target_player_data)
         
-        self.log('INFO', f"玩家 {username} 点赞了玩家 {target_username}，目标玩家点赞数：{target_player_data['点赞数']}，剩余点赞次数：{player_data['点赞系统']['今日剩余点赞次数']}", 'SERVER')
+        self.log('INFO', f"玩家 {username} 点赞了玩家 {target_username}，目标玩家点赞数：{target_player_data['点赞系统']['总点赞数']}，剩余点赞次数：{player_data['点赞系统']['今日剩余点赞次数']}", 'SERVER')
         
         return self.send_data(client_id, {
             "type": "like_player_response",
             "success": True,
             "message": f"成功点赞玩家 {target_username}！剩余点赞次数：{player_data['点赞系统']['今日剩余点赞次数']}",
-            "target_likes": target_player_data["点赞数"],
+            "target_likes": target_player_data["点赞系统"]["总点赞数"],
             "remaining_likes": player_data["点赞系统"]["今日剩余点赞次数"]
         })
     #检查并更新每日点赞次数
@@ -5356,7 +5386,8 @@ class TCPGameServer(TCPServer):
         if "点赞系统" not in player_data:
             player_data["点赞系统"] = {
                 "今日剩余点赞次数": 10,
-                "点赞上次刷新时间": current_date
+                "点赞上次刷新时间": current_date,
+                "总点赞数": 0
             }
             return True  # 发生了初始化
         
@@ -5367,6 +5398,8 @@ class TCPGameServer(TCPServer):
             like_system["今日剩余点赞次数"] = 10
         if "点赞上次刷新时间" not in like_system:
             like_system["点赞上次刷新时间"] = current_date
+        if "总点赞数" not in like_system:
+            like_system["总点赞数"] = 0
         
         # 检查是否需要每日重置
         last_refresh_date = like_system.get("点赞上次刷新时间", "")
@@ -5961,7 +5994,7 @@ class TCPGameServer(TCPServer):
                         "last_login_timestamp": last_login_timestamp,
                         "总游玩时间": total_time_str,
                         "total_time_seconds": total_time_seconds,
-                        "like_num": player_data.get("点赞数", 0),
+                        "like_num": player_data.get("点赞系统", {}).get("总点赞数", 0),
                         "is_online": is_online
                     }
                     
@@ -6123,9 +6156,8 @@ class TCPGameServer(TCPServer):
             "出战宠物": self._convert_battle_pets_to_full_data(target_player_data),
             "稻草人配置": target_player_data.get("稻草人配置", {}),
             "智慧树配置": target_player_data.get("智慧树配置", {}),
-            "玩家小卖部": target_player_data.get("玩家小卖部", []),  # 添加小卖部数据
-            "小卖部格子数": target_player_data.get("小卖部格子数", 10),  # 添加小卖部格子数
-            "点赞数": target_player_data.get("点赞数", 0),  # 添加点赞数
+            "小卖部配置": target_player_data.get("小卖部配置", {"商品列表": [], "格子数": 10}),  # 添加小卖部配置
+            "点赞数": target_player_data.get("点赞系统", {}).get("总点赞数", 0),  # 添加点赞数
             "最后登录时间": target_player_data.get("最后登录时间", "未知"),
             "总游玩时间": target_player_data.get("总游玩时间", "0时0分0秒"),
             "total_likes": target_player_data.get("total_likes", 0)
@@ -6540,20 +6572,31 @@ class TCPGameServer(TCPServer):
         if player_data:
             player_name = player_data.get("玩家昵称", "")
         
+        # 获取当前时间戳
+        current_timestamp = time.time()
+        
         # 创建广播消息
         broadcast_message = {
             "type": "global_broadcast_message",
             "username": username,
             "玩家昵称": player_name,
             "content": content,
-            "timestamp": time.time()
+            "timestamp": current_timestamp
         }
         
         # 广播给所有在线用户
         self.broadcast(broadcast_message)
         
-        # 保存消息到日志文件
-        self._save_broadcast_message_to_log(username, player_name, content)
+        # 保存消息到MongoDB
+        if self.mongo_api and self.mongo_api.is_connected():
+            success = self.mongo_api.save_chat_message(username, player_name, content, current_timestamp)
+            if not success:
+                self.log('WARNING', f"保存聊天消息到MongoDB失败，尝试保存到本地文件", 'BROADCAST')
+                self._save_broadcast_message_to_log(username, player_name, content)
+        else:
+            # 如果MongoDB不可用，保存到本地文件作为备份
+            self.log('WARNING', f"MongoDB不可用，保存聊天消息到本地文件", 'BROADCAST')
+            self._save_broadcast_message_to_log(username, player_name, content)
         
         # 发送成功响应给发送者
         self.send_data(client_id, {
@@ -6603,10 +6646,28 @@ class TCPGameServer(TCPServer):
         
         try:
             days = message.get("days", 3)  # 默认加载3天
+            limit = message.get("limit", 500)  # 默认限制500条
             if days > 30:  # 限制最多30天
                 days = 30
             
-            messages = self._load_broadcast_history(days)
+            # 优先从MongoDB获取历史消息
+            messages = []
+            if self.mongo_api and self.mongo_api.is_connected():
+                try:
+                    messages = self.mongo_api.get_chat_history(days, limit)
+                    # 转换数据格式以兼容客户端
+                    for msg in messages:
+                        msg["玩家昵称"] = msg.get("player_name", "")
+                        msg["display_name"] = msg.get("player_name", "") if msg.get("player_name") else msg.get("username", "匿名")
+                    self.log('INFO', f"从MongoDB获取了 {len(messages)} 条历史消息", 'SERVER')
+                except Exception as e:
+                    self.log('ERROR', f"从MongoDB获取历史消息失败: {str(e)}", 'SERVER')
+                    messages = []
+            
+            # 如果MongoDB获取失败或没有数据，尝试从本地文件获取
+            if not messages:
+                self.log('INFO', f"尝试从本地文件获取历史消息", 'SERVER')
+                messages = self._load_broadcast_history(days)
             
             # 发送历史消息响应
             response = {
@@ -6733,7 +6794,7 @@ class TCPGameServer(TCPServer):
             self.log('ERROR', f"解析日志消息失败: {line}, 错误: {str(e)}", 'SERVER')
             return None
 
- #==========================全服大喇叭消息处理==========================
+#==========================全服大喇叭消息处理==========================
  
  
 
@@ -9223,13 +9284,15 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "add_product_to_store", "商品价格必须大于0")
         
         # 初始化小卖部数据
-        if "玩家小卖部" not in player_data:
-            player_data["玩家小卖部"] = []
-        if "小卖部格子数" not in player_data:
-            player_data["小卖部格子数"] = 10
+        if "小卖部配置" not in player_data:
+            player_data["小卖部配置"] = {
+                "商品列表": [],
+                "格子数": 10
+            }
         
-        player_store = player_data["玩家小卖部"]
-        max_slots = player_data["小卖部格子数"]
+        store_config = player_data["小卖部配置"]
+        player_store = store_config["商品列表"]
+        max_slots = store_config["格子数"]
         
         # 检查小卖部格子是否已满
         if len(player_store) >= max_slots:
@@ -9280,7 +9343,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功添加 {product_count} 个 {product_name} 到小卖部",
             "updated_data": {
-                "玩家小卖部": player_data["玩家小卖部"],
+                "小卖部配置": player_data["小卖部配置"],
                 "作物仓库": player_data.get("作物仓库", [])
             }
         })
@@ -9304,7 +9367,8 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "remove_store_product", "无效的商品槽位")
         
         # 检查小卖部数据
-        player_store = player_data.get("玩家小卖部", [])
+        store_config = player_data.get("小卖部配置", {"商品列表": [], "格子数": 10})
+        player_store = store_config.get("商品列表", [])
         if slot_index >= len(player_store):
             return self._send_action_error(client_id, "remove_store_product", "商品槽位不存在")
         
@@ -9356,7 +9420,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功下架 {product_count} 个 {product_name}，已返回仓库",
             "updated_data": {
-                "玩家小卖部": player_data["玩家小卖部"],
+                "小卖部配置": player_data["小卖部配置"],
                 "作物仓库": player_data.get("作物仓库", [])
             }
         })
@@ -9399,7 +9463,8 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "buy_store_product", f"卖家 {seller_username} 不存在")
         
         # 检查卖家小卖部
-        seller_store = seller_data.get("玩家小卖部", [])
+        seller_store_config = seller_data.get("小卖部配置", {"商品列表": [], "格子数": 10})
+        seller_store = seller_store_config.get("商品列表", [])
         if slot_index >= len(seller_store):
             return self._send_action_error(client_id, "buy_store_product", "商品不存在")
         
@@ -9498,10 +9563,14 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "buy_store_booth", "无效的购买费用")
         
         # 初始化小卖部数据
-        if "小卖部格子数" not in player_data:
-            player_data["小卖部格子数"] = 10
+        if "小卖部配置" not in player_data:
+            player_data["小卖部配置"] = {
+                "商品列表": [],
+                "格子数": 10
+            }
         
-        current_slots = player_data["小卖部格子数"]
+        store_config = player_data["小卖部配置"]
+        current_slots = store_config["格子数"]
         
         # 检查是否已达上限
         if current_slots >= 40:
@@ -9518,21 +9587,21 @@ class TCPGameServer(TCPServer):
         
         # 执行购买
         player_data["钱币"] -= cost
-        player_data["小卖部格子数"] += 1
+        store_config["格子数"] += 1
         
         # 保存玩家数据
         self.save_player_data(username, player_data)
         
-        self.log('INFO', f"玩家 {username} 购买小卖部格子，花费 {cost} 元，格子数：{current_slots} -> {player_data['小卖部格子数']}", 'SERVER')
+        self.log('INFO', f"玩家 {username} 购买小卖部格子，花费 {cost} 元，格子数：{current_slots} -> {store_config['格子数']}", 'SERVER')
         
         return self.send_data(client_id, {
             "type": "action_response",
             "action_type": "buy_store_booth",
             "success": True,
-            "message": f"成功购买格子，花费 {cost} 元，当前格子数：{player_data['小卖部格子数']}",
+            "message": f"成功购买格子，花费 {cost} 元，当前格子数：{store_config['格子数']}",
             "updated_data": {
                 "钱币": player_data["钱币"],
-                "小卖部格子数": player_data["小卖部格子数"]
+                "小卖部配置": player_data["小卖部配置"]
             }
         })
 #==========================小卖部管理处理==========================
@@ -9803,13 +9872,27 @@ class ConsoleCommands:
             print(f"❌ 玩家 {qq_number} 不存在")
             return
             
-        # 加载初始化模板
-        try:
-            with open("config/initial_player_data_template.json", 'r', encoding='utf-8') as f:
-                template_data = json.load(f)
-        except Exception as e:
-            print(f"❌ 无法加载初始化模板: {str(e)}")
-            return
+        # 加载初始化模板（优先从MongoDB）
+        template_data = None
+        if self.server.use_mongodb and self.server.mongo_api:
+            try:
+                template_data = self.server.mongo_api.get_initial_player_data_template()
+                if template_data:
+                    print("✅ 成功从MongoDB加载初始玩家数据模板")
+                else:
+                    print("⚠️ MongoDB中未找到初始玩家数据模板，尝试从JSON文件加载")
+            except Exception as e:
+                print(f"⚠️ 从MongoDB加载初始玩家数据模板失败: {str(e)}，尝试从JSON文件加载")
+        
+        # MongoDB加载失败或不可用，从JSON文件加载
+        if not template_data:
+            try:
+                with open("config/initial_player_data_template.json", 'r', encoding='utf-8') as f:
+                    template_data = json.load(f)
+                print("✅ 成功从JSON文件加载初始玩家数据模板")
+            except Exception as e:
+                print(f"❌ 无法加载初始化模板: {str(e)}")
+                return
             
         # 重置土地状态
         if "农场土地" in template_data:
