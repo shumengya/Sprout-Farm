@@ -613,7 +613,7 @@ class TCPGameServer(TCPServer):
         """通用的作物更新逻辑"""
         growth_updated = False
         
-        for farm_lot in player_data.get("farm_lots", []):
+        for farm_lot in player_data.get("农场土地", []):
             if (farm_lot.get("crop_type") and farm_lot.get("is_planted") and 
                 not farm_lot.get("is_dead") and farm_lot["grow_time"] < farm_lot["max_grow_time"]):
                 
@@ -701,7 +701,7 @@ class TCPGameServer(TCPServer):
             
             update_message = {
                 "type": "crop_update",
-                "farm_lots": target_player_data.get("farm_lots", []),
+                "农场土地": target_player_data.get("农场土地", []),
                 "timestamp": time.time(),
                 "is_visiting": True,
                 "visited_player": visiting_target,
@@ -714,7 +714,7 @@ class TCPGameServer(TCPServer):
         """发送正常模式的更新"""
         update_message = {
             "type": "crop_update",
-            "farm_lots": player_data.get("farm_lots", []),
+            "农场土地": player_data.get("农场土地", []),
             "timestamp": time.time(),
             "is_visiting": False
         }
@@ -1001,10 +1001,10 @@ class TCPGameServer(TCPServer):
     def _send_initial_login_data(self, client_id, player_data):
         """发送登录后的初始数据"""
         # 立即向客户端发送一次作物状态
-        farm_lots = player_data.get("farm_lots", [])
+        farm_lots = player_data.get("农场土地", [])
         initial_crop_update = {
             "type": "crop_update",
-            "farm_lots": farm_lots,
+            "农场土地": farm_lots,
             "timestamp": time.time()
         }
         self.send_data(client_id, initial_crop_update)
@@ -1115,10 +1115,10 @@ class TCPGameServer(TCPServer):
             })
             
             # 确保农场地块存在
-            if "farm_lots" not in player_data:
-                player_data["farm_lots"] = []
+            if "农场土地" not in player_data:
+                player_data["农场土地"] = []
                 for i in range(40):
-                    player_data["farm_lots"].append({
+                    player_data["农场土地"].append({
                         "crop_type": "",
                         "grow_time": 0,
                         "is_dead": False,
@@ -1410,10 +1410,10 @@ class TCPGameServer(TCPServer):
                 return self._send_action_error(client_id, "harvest_crop", f"无法找到玩家 {target_username} 的数据")
             
             # 验证地块索引
-            if lot_index < 0 or lot_index >= len(target_player_data.get("farm_lots", [])):
+            if lot_index < 0 or lot_index >= len(target_player_data.get("农场土地", [])):
                 return self._send_action_error(client_id, "harvest_crop", "无效的地块索引")
             
-            target_lot = target_player_data["farm_lots"][lot_index]
+            target_lot = target_player_data["农场土地"][lot_index]
             
             # 检查地块状态
             if not target_lot.get("is_planted", False) or not target_lot.get("crop_type", ""):
@@ -1448,10 +1448,10 @@ class TCPGameServer(TCPServer):
         else:
             # 正常模式：收获自己的作物
             # 验证地块索引
-            if lot_index < 0 or lot_index >= len(current_player_data.get("farm_lots", [])):
+            if lot_index < 0 or lot_index >= len(current_player_data.get("农场土地", [])):
                 return self._send_action_error(client_id, "harvest_crop", "无效的地块索引")
             
-            lot = current_player_data["farm_lots"][lot_index]
+            lot = current_player_data["农场土地"][lot_index]
             
             # 检查地块状态
             if not lot.get("is_planted", False) or not lot.get("crop_type", ""):
@@ -2056,7 +2056,7 @@ class TCPGameServer(TCPServer):
         """为指定玩家的空地生长杂草"""
         import random
         
-        farm_lots = player_data.get("farm_lots", [])
+        farm_lots = player_data.get("农场土地", [])
         if not farm_lots:
             return 0
         
@@ -2126,10 +2126,10 @@ class TCPGameServer(TCPServer):
         crop_name = message.get("crop_name", "")
         
         # 验证参数
-        if lot_index < 0 or lot_index >= len(player_data.get("farm_lots", [])):
+        if lot_index < 0 or lot_index >= len(player_data.get("农场土地", [])):
             return self._send_action_error(client_id, "plant_crop", "无效的地块索引")
         
-        lot = player_data["farm_lots"][lot_index]
+        lot = player_data["农场土地"][lot_index]
         
         # 检查地块状态
         if not lot.get("is_diged", False):
@@ -3177,10 +3177,10 @@ class TCPGameServer(TCPServer):
         lot_index = message.get("lot_index", -1)
         
         # 验证地块索引
-        if lot_index < 0 or lot_index >= len(player_data.get("farm_lots", [])):
+        if lot_index < 0 or lot_index >= len(player_data.get("农场土地", [])):
             return self._send_action_error(client_id, "dig_ground", "无效的地块索引")
         
-        lot = player_data["farm_lots"][lot_index]
+        lot = player_data["农场土地"][lot_index]
         
         # 检查地块是否已开垦
         if lot.get("is_diged", False):
@@ -3194,7 +3194,7 @@ class TCPGameServer(TCPServer):
         """处理土地开垦逻辑"""
         
         # 计算开垦费用 - 基于已开垦地块数量
-        digged_count = sum(1 for l in player_data.get("farm_lots", []) if l.get("is_diged", False))
+        digged_count = sum(1 for l in player_data.get("农场土地", []) if l.get("is_diged", False))
         dig_money = digged_count * 1000
         
         # 检查玩家金钱是否足够
@@ -3258,7 +3258,7 @@ class TCPGameServer(TCPServer):
                 "money": player_data["money"],
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "farm_lots": player_data["farm_lots"],
+                "农场土地": player_data["农场土地"],
                 "种子仓库": player_data["种子仓库"]
             }
         })
@@ -3325,10 +3325,10 @@ class TCPGameServer(TCPServer):
         lot_index = message.get("lot_index", -1)
         
         # 验证地块索引
-        if lot_index < 0 or lot_index >= len(player_data.get("farm_lots", [])):
+        if lot_index < 0 or lot_index >= len(player_data.get("农场土地", [])):
             return self._send_action_error(client_id, "remove_crop", "无效的地块索引")
         
-        lot = player_data["farm_lots"][lot_index]
+        lot = player_data["农场土地"][lot_index]
         
         # 检查地块状态
         if not lot.get("is_planted", False) or not lot.get("crop_type", ""):
@@ -3372,7 +3372,7 @@ class TCPGameServer(TCPServer):
             "message": f"成功铲除作物 {crop_type}，花费 {removal_cost} 金钱",
             "updated_data": {
                 "money": player_data["money"],
-                "farm_lots": player_data["farm_lots"]
+                "农场土地": player_data["农场土地"]
             }
         })
     
@@ -3406,10 +3406,10 @@ class TCPGameServer(TCPServer):
                 return self._send_action_error(client_id, "water_crop", f"无法找到玩家 {target_username} 的数据")
             
             # 验证地块索引
-            if lot_index < 0 or lot_index >= len(target_player_data.get("farm_lots", [])):
+            if lot_index < 0 or lot_index >= len(target_player_data.get("农场土地", [])):
                 return self._send_action_error(client_id, "water_crop", "无效的地块索引")
             
-            target_lot = target_player_data["farm_lots"][lot_index]
+            target_lot = target_player_data["农场土地"][lot_index]
             
             # 检查地块状态
             if not target_lot.get("is_planted", False) or not target_lot.get("crop_type", ""):
@@ -3420,10 +3420,10 @@ class TCPGameServer(TCPServer):
         else:
             # 正常模式：浇水自己的作物
             # 验证地块索引
-            if lot_index < 0 or lot_index >= len(current_player_data.get("farm_lots", [])):
+            if lot_index < 0 or lot_index >= len(current_player_data.get("农场土地", [])):
                 return self._send_action_error(client_id, "water_crop", "无效的地块索引")
             
-            lot = current_player_data["farm_lots"][lot_index]
+            lot = current_player_data["农场土地"][lot_index]
             
             # 检查地块状态
             if not lot.get("is_planted", False) or not lot.get("crop_type", ""):
@@ -3509,7 +3509,7 @@ class TCPGameServer(TCPServer):
                 "money": player_data["money"],
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "farm_lots": player_data["farm_lots"]
+                "农场土地": player_data["农场土地"]
             }
         })
     
@@ -3623,10 +3623,10 @@ class TCPGameServer(TCPServer):
                 return self._send_action_error(client_id, "fertilize_crop", f"无法找到玩家 {target_username} 的数据")
             
             # 验证地块索引
-            if lot_index < 0 or lot_index >= len(target_player_data.get("farm_lots", [])):
+            if lot_index < 0 or lot_index >= len(target_player_data.get("农场土地", [])):
                 return self._send_action_error(client_id, "fertilize_crop", "无效的地块索引")
             
-            target_lot = target_player_data["farm_lots"][lot_index]
+            target_lot = target_player_data["农场土地"][lot_index]
             
             # 检查地块状态
             if not target_lot.get("is_planted", False) or not target_lot.get("crop_type", ""):
@@ -3637,10 +3637,10 @@ class TCPGameServer(TCPServer):
         else:
             # 正常模式：施肥自己的作物
             # 验证地块索引
-            if lot_index < 0 or lot_index >= len(current_player_data.get("farm_lots", [])):
+            if lot_index < 0 or lot_index >= len(current_player_data.get("农场土地", [])):
                 return self._send_action_error(client_id, "fertilize_crop", "无效的地块索引")
             
-            lot = current_player_data["farm_lots"][lot_index]
+            lot = current_player_data["农场土地"][lot_index]
             
             # 检查地块状态
             if not lot.get("is_planted", False) or not lot.get("crop_type", ""):
@@ -3767,7 +3767,7 @@ class TCPGameServer(TCPServer):
                 "money": player_data["money"],
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "farm_lots": player_data["farm_lots"]
+                "农场土地": player_data["农场土地"]
             }
         })
     
@@ -3925,10 +3925,10 @@ class TCPGameServer(TCPServer):
     
     def _handle_normal_item_use(self, client_id, player_data, username, lot_index, item_name, use_type):
         """处理正常模式下的道具使用"""
-        if lot_index < 0 or lot_index >= len(player_data.get("farm_lots", [])):
+        if lot_index < 0 or lot_index >= len(player_data.get("农场土地", [])):
             return self._send_action_error(client_id, "use_item", "无效的地块索引")
         
-        lot = player_data["farm_lots"][lot_index]
+        lot = player_data["农场土地"][lot_index]
         return self._process_item_use_normal(client_id, player_data, username, lot, lot_index, item_name, use_type)
     
     def _handle_visiting_item_use(self, client_id, player_data, username, target_username, lot_index, item_name, use_type):
@@ -3937,10 +3937,10 @@ class TCPGameServer(TCPServer):
         if not target_player_data:
             return self._send_action_error(client_id, "use_item", f"无法找到玩家 {target_username} 的数据")
         
-        if lot_index < 0 or lot_index >= len(target_player_data.get("farm_lots", [])):
+        if lot_index < 0 or lot_index >= len(target_player_data.get("农场土地", [])):
             return self._send_action_error(client_id, "use_item", "无效的地块索引")
         
-        target_lot = target_player_data["farm_lots"][lot_index]
+        target_lot = target_player_data["农场土地"][lot_index]
         return self._process_item_use_visiting(client_id, player_data, username, target_player_data, target_username, target_lot, lot_index, item_name, use_type)
     
     def _has_item_in_inventory(self, player_data, item_name):
@@ -4096,7 +4096,7 @@ class TCPGameServer(TCPServer):
             "updated_data": {
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "farm_lots": player_data["farm_lots"],
+                "农场土地": player_data["农场土地"],
                 "道具背包": player_data["道具背包"]
             }
         })
@@ -4161,7 +4161,7 @@ class TCPGameServer(TCPServer):
             "updated_data": {
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "farm_lots": player_data["farm_lots"],
+                "农场土地": player_data["农场土地"],
                 "道具背包": player_data["道具背包"]
             }
         })
@@ -4344,7 +4344,7 @@ class TCPGameServer(TCPServer):
             "updated_data": {
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "farm_lots": player_data["farm_lots"],
+                "农场土地": player_data["农场土地"],
                 "道具背包": player_data["道具背包"]
             }
         })
@@ -4401,7 +4401,7 @@ class TCPGameServer(TCPServer):
             "updated_data": {
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "farm_lots": player_data["farm_lots"],
+                "农场土地": player_data["农场土地"],
                 "道具背包": player_data["道具背包"]
             }
         })
@@ -5123,10 +5123,10 @@ class TCPGameServer(TCPServer):
         lot_index = message.get("lot_index", -1)
         
         # 验证地块索引
-        if lot_index < 0 or lot_index >= len(player_data.get("farm_lots", [])):
+        if lot_index < 0 or lot_index >= len(player_data.get("农场土地", [])):
             return self._send_action_error(client_id, "upgrade_land", "无效的地块索引")
         
-        lot = player_data["farm_lots"][lot_index]
+        lot = player_data["农场土地"][lot_index]
         
         # 检查地块是否已开垦
         if not lot.get("is_diged", False):
@@ -5187,7 +5187,7 @@ class TCPGameServer(TCPServer):
             "message": f"土地升级成功！升级到{next_level}级{next_name}，作物将以{speed_multiplier}倍速度生长",
             "updated_data": {
                 "money": player_data["money"],
-                "farm_lots": player_data["farm_lots"]
+                "农场土地": player_data["农场土地"]
             }
         })
 #==========================升级土地处理==========================
@@ -5223,7 +5223,7 @@ class TCPGameServer(TCPServer):
         
         # 检查地块数量限制
         max_lots = 1000  # 最大地块数量限制
-        current_lots = len(player_data.get("farm_lots", []))
+        current_lots = len(player_data.get("农场土地", []))
         if current_lots >= max_lots:
             return self._send_action_error(client_id, "buy_new_ground", f"已达到最大地块数量限制（{max_lots}个）")
         
@@ -5244,9 +5244,9 @@ class TCPGameServer(TCPServer):
         }
         
         # 添加到农场地块数组
-        if "farm_lots" not in player_data:
-            player_data["farm_lots"] = []
-        player_data["farm_lots"].append(new_lot)
+        if "农场土地" not in player_data:
+            player_data["农场土地"] = []
+        player_data["农场土地"].append(new_lot)
         
         # 保存玩家数据
         self.save_player_data(username, player_data)
@@ -5254,7 +5254,7 @@ class TCPGameServer(TCPServer):
         # 发送作物更新
         self._push_crop_update_to_player(username, player_data)
         
-        new_lot_index = len(player_data["farm_lots"])
+        new_lot_index = len(player_data["农场土地"])
         self.log('INFO', f"玩家 {username} 成功购买新地块，花费 {new_ground_cost} 金钱，新地块位置：{new_lot_index}", 'SERVER')
         
         return self.send_data(client_id, {
@@ -5264,7 +5264,7 @@ class TCPGameServer(TCPServer):
             "message": f"购买新地块成功！花费 {new_ground_cost} 元，新地块位置：{new_lot_index}",
             "updated_data": {
                 "money": player_data["money"],
-                "farm_lots": player_data["farm_lots"]
+                "农场土地": player_data["农场土地"]
             }
         })
     
@@ -6114,7 +6114,7 @@ class TCPGameServer(TCPServer):
             "money": target_player_data.get("money", 0),
             "experience": target_player_data.get("experience", 0),
             "体力值": target_current_stamina,
-            "farm_lots": target_player_data.get("farm_lots", []),
+            "农场土地": target_player_data.get("农场土地", []),
             "种子仓库": target_player_data.get("种子仓库", []),
             "作物仓库": target_player_data.get("作物仓库", []),
             "道具背包": target_player_data.get("道具背包", []),
@@ -6186,7 +6186,7 @@ class TCPGameServer(TCPServer):
                 "money": player_data.get("money", 0),
                 "experience": player_data.get("experience", 0),
                 "体力值": my_current_stamina,
-                "farm_lots": player_data.get("farm_lots", []),
+                "农场土地": player_data.get("农场土地", []),
                 "种子仓库": player_data.get("种子仓库", []),
                 "宠物背包": player_data.get("宠物背包", []),
                 "巡逻宠物": self._convert_patrol_pets_to_full_data(player_data),
@@ -9777,7 +9777,7 @@ class ConsoleCommands:
         print(f"总在线时长: {player_data.get('总游玩时间', '0时0分0秒')}")
         
         # 显示土地信息
-        farm_lots = player_data.get("farm_lots", [])
+        farm_lots = player_data.get("农场土地", [])
         planted_count = sum(1 for lot in farm_lots if lot.get("is_planted", False))
         digged_count = sum(1 for lot in farm_lots if lot.get("is_diged", False))
         print(f"土地状态: 总共{len(farm_lots)}块，已开垦{digged_count}块，已种植{planted_count}块")
@@ -9812,10 +9812,10 @@ class ConsoleCommands:
             return
             
         # 重置土地状态
-        if "farm_lots" in template_data:
-            old_lots_count = len(player_data.get("farm_lots", []))
-            player_data["farm_lots"] = template_data["farm_lots"]
-            new_lots_count = len(player_data["farm_lots"])
+        if "农场土地" in template_data:
+            old_lots_count = len(player_data.get("农场土地", []))
+            player_data["农场土地"] = template_data["农场土地"]
+            new_lots_count = len(player_data["农场土地"])
             
             # 保存数据
             self.server.save_player_data(qq_number, player_data)

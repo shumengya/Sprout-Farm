@@ -355,7 +355,7 @@ func _on_data_received(data):
 		elif action_type == "use_item":
 			if success:
 				main_game.item_bag = updated_data["道具背包"]
-				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.farm_lots = updated_data["农场土地"]
 				main_game.experience = updated_data["experience"]
 				main_game.level = updated_data["level"]
 				main_game._update_ui()
@@ -371,7 +371,7 @@ func _on_data_received(data):
 				main_game.money = updated_data["money"]
 				main_game.experience = updated_data["experience"]
 				main_game.level = updated_data["level"]
-				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.farm_lots = updated_data["农场土地"]
 				main_game.player_bag = updated_data["种子仓库"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
@@ -384,7 +384,7 @@ func _on_data_received(data):
 		elif action_type == "remove_crop":
 			if success:
 				main_game.money = updated_data["money"]
-				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.farm_lots = updated_data["农场土地"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
 				Toast.show(message, Color.GREEN)
@@ -395,7 +395,7 @@ func _on_data_received(data):
 		elif action_type == "water_crop":
 			if success:
 				main_game.money = updated_data["money"]
-				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.farm_lots = updated_data["农场土地"]
 				main_game.experience = updated_data["experience"]
 				main_game.level = updated_data["level"]
 				main_game._update_ui()
@@ -408,7 +408,7 @@ func _on_data_received(data):
 		elif action_type == "fertilize_crop":
 			if success:
 				main_game.money = updated_data["money"]
-				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.farm_lots = updated_data["农场土地"]
 				main_game.experience = updated_data["experience"]
 				main_game.level = updated_data["level"]
 				main_game._update_ui()
@@ -421,7 +421,7 @@ func _on_data_received(data):
 		elif action_type == "upgrade_land":
 			if success:
 				main_game.money = updated_data["money"]
-				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.farm_lots = updated_data["农场土地"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
 				Toast.show(message, Color.GOLD)
@@ -432,7 +432,7 @@ func _on_data_received(data):
 		elif action_type == "buy_new_ground":
 			if success:
 				main_game.money = updated_data["money"]
-				main_game.farm_lots = updated_data["farm_lots"]
+				main_game.farm_lots = updated_data["农场土地"]
 				main_game._create_farm_buttons()
 				main_game._update_farm_lots_state()
 				main_game._update_ui()

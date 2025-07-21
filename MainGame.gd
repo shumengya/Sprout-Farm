@@ -394,7 +394,7 @@ func _handle_visit_player_response(data):
 				"money": money,
 				"experience": experience,
 				"stamina": stamina,
-				"farm_lots": farm_lots.duplicate(true),
+				"农场土地": farm_lots.duplicate(true),
 				"种子仓库": player_bag.duplicate(true)
 			}
 		
@@ -407,7 +407,7 @@ func _handle_visit_player_response(data):
 		experience = target_player_data.get("experience", 0)
 		level = target_player_data.get("level", 1)
 		stamina = target_player_data.get("体力值", 20)
-		farm_lots = target_player_data.get("farm_lots", [])
+		farm_lots = target_player_data.get("农场土地", [])
 		player_bag = target_player_data.get("种子仓库", [])
 		crop_warehouse = target_player_data.get("作物仓库", [])
 		item_bag = target_player_data.get("道具背包", [])
@@ -484,7 +484,7 @@ func _handle_return_my_farm_response(data):
 		experience = player_data.get("experience", 0)
 		level = player_data.get("level", 1)
 		stamina = player_data.get("体力值", 20)
-		farm_lots = player_data.get("farm_lots", [])
+		farm_lots = player_data.get("农场土地", [])
 		player_bag = player_data.get("种子仓库", [])
 		crop_warehouse = player_data.get("作物仓库", [])
 		item_bag = player_data.get("道具背包", [])
@@ -631,10 +631,10 @@ func _handle_crop_update(update_data):
 	
 	if is_visiting_update and is_visiting_mode:
 		# 访问模式下的更新，更新被访问玩家的农场数据
-		farm_lots = update_data["farm_lots"]
+		farm_lots = update_data["农场土地"]
 	elif not is_visiting_update and not is_visiting_mode:
 		# 正常模式下的更新，更新自己的农场数据
-		farm_lots = update_data["farm_lots"]
+		farm_lots = update_data["农场土地"]
 	else:
 		# 状态不匹配，忽略更新
 		print("忽略不匹配的作物更新，当前访问模式：", is_visiting_mode, "，更新类型：", is_visiting_update)

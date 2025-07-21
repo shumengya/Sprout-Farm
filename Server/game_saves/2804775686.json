@@ -10,7 +10,7 @@
   "总游玩时间": "0时8分51秒",
   "注册时间": "2025年07月20日23时08分10秒",
   "个人简介": "啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊",
-  "farm_lots": [
+  "农场土地": [
     {
       "crop_type": "树莓",
       "grow_time": 2770,
@@ -35,7 +35,7 @@
     },
     {
       "crop_type": "龙果",
-      "grow_time": 4440,
+      "grow_time": 5840,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -57,7 +57,7 @@
     },
     {
       "crop_type": "苹果",
-      "grow_time": 4310,
+      "grow_time": 5710,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
