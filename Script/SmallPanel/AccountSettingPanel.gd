@@ -27,6 +27,7 @@ func _ready() -> void:
 	refresh_button.pressed.connect(_on_refresh_button_pressed)
 	confirm_btn.pressed.connect(_on_confirm_btn_pressed)
 	remove_account_btn.pressed.connect(_on_remove_account_btn_pressed)
+	visibility_changed.connect(_on_visibility_changed)
 	
 	# 初始显示界面数据
 	_refresh_player_info()
@@ -36,7 +37,7 @@ func _ready() -> void:
 		await get_tree().create_timer(1.0).timeout
 		_request_player_info_from_server()
 
-
+#面板切换显示时
 func _on_visibility_changed():
 	if visible:
 		GlobalVariables.isZoomDisabled = true
@@ -216,11 +217,11 @@ func handle_account_response(response_data: Dictionary):
 					var updated_data = response_data["updated_data"]
 					if main_game:
 						if updated_data.has("player_name"):
-							main_game.data["player_name"] = updated_data["player_name"]
+							main_game.login_data["player_name"] = updated_data["player_name"]
 						if updated_data.has("farm_name"):
-							main_game.data["farm_name"] = updated_data["farm_name"]
+							main_game.login_data["farm_name"] = updated_data["farm_name"]
 						if updated_data.has("个人简介"):
-							main_game.data["个人简介"] = updated_data["个人简介"]
+							main_game.login_data["个人简介"] = updated_data["个人简介"]
 						if updated_data.has("user_password"):
 							main_game.user_password = updated_data["user_password"]
 				
