@@ -7960,10 +7960,7 @@ class TCPGameServer(TCPServer):
         
         if not new_farm_name:
             return self._send_modify_account_error(client_id, "农场名称不能为空")
-        
-        if len(new_password) < 6:
-            return self._send_modify_account_error(client_id, "密码长度至少6个字符")
-        
+
         if len(new_player_name) > 20:
             return self._send_modify_account_error(client_id, "玩家昵称不能超过20个字符")
         
