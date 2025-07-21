@@ -272,7 +272,7 @@ func _on_data_received(data):
 		# 收获作物响应
 		if action_type == "harvest_crop":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.experience = updated_data["经验值"]
 				main_game.level = updated_data["等级"]
 				# 只有偷菜时才会返回体力值，正常收获不会返回
@@ -297,7 +297,7 @@ func _on_data_received(data):
 		# 购买种子响应
 		elif action_type == "buy_seed":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.player_bag = updated_data["种子仓库"]
 				main_game._update_ui()
 				main_game.player_bag_panel.update_player_bag_ui()
@@ -308,7 +308,7 @@ func _on_data_received(data):
 		# 购买道具响应
 		elif action_type == "buy_item":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.item_bag = updated_data["道具背包"]
 				main_game._update_ui()
 				main_game.item_bag_panel.update_item_bag_ui()
@@ -319,7 +319,7 @@ func _on_data_received(data):
 		# 购买宠物响应
 		elif action_type == "buy_pet":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.pet_bag = updated_data["宠物背包"]
 				main_game._update_ui()
 				main_game.pet_bag_panel.update_pet_bag_ui()
@@ -368,7 +368,7 @@ func _on_data_received(data):
 		# 开垦土地响应
 		elif action_type == "dig_ground":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.experience = updated_data["经验值"]
 				main_game.level = updated_data["等级"]
 				main_game.farm_lots = updated_data["农场土地"]
@@ -383,7 +383,7 @@ func _on_data_received(data):
 		# 铲除作物响应
 		elif action_type == "remove_crop":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.farm_lots = updated_data["农场土地"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
@@ -394,7 +394,7 @@ func _on_data_received(data):
 		# 浇水响应
 		elif action_type == "water_crop":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.farm_lots = updated_data["农场土地"]
 				main_game.experience = updated_data["经验值"]
 				main_game.level = updated_data["等级"]
@@ -407,7 +407,7 @@ func _on_data_received(data):
 		# 施肥响应
 		elif action_type == "fertilize_crop":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.farm_lots = updated_data["农场土地"]
 				main_game.experience = updated_data["经验值"]
 				main_game.level = updated_data["等级"]
@@ -420,7 +420,7 @@ func _on_data_received(data):
 		# 升级土地响应
 		elif action_type == "upgrade_land":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.farm_lots = updated_data["农场土地"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
@@ -431,7 +431,7 @@ func _on_data_received(data):
 		# 添加新土地响应
 		elif action_type == "buy_new_ground":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.farm_lots = updated_data["农场土地"]
 				main_game._create_farm_buttons()
 				main_game._update_farm_lots_state()
@@ -443,7 +443,7 @@ func _on_data_received(data):
 		# 出售作物响应
 		elif action_type == "sell_crop":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.crop_warehouse = updated_data["作物仓库"]
 				main_game.experience = updated_data.get("经验值", main_game.experience)
 				main_game.level = updated_data.get("等级", main_game.level)
@@ -488,7 +488,7 @@ func _on_data_received(data):
 		# 购买小卖部商品响应
 		elif action_type == "buy_store_product":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.crop_warehouse = updated_data["作物仓库"]
 				
 				# 更新UI
@@ -509,7 +509,7 @@ func _on_data_received(data):
 		# 购买小卖部格子响应
 		elif action_type == "buy_store_booth":
 			if success:
-				main_game.money = updated_data["money"]
+				main_game.money = updated_data["钱币"]
 				main_game.login_data["小卖部格子数"] = updated_data["小卖部格子数"]
 				
 				# 更新UI

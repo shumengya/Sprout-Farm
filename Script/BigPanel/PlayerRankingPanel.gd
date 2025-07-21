@@ -60,7 +60,7 @@ func _ready() -> void:
 	online_time_sort_btn.pressed.connect(func(): _on_sort_button_pressed("online_time"))
 	login_time_sort_btn.pressed.connect(func(): _on_sort_button_pressed("login_time"))
 	like_num_sort_btn.pressed.connect(func(): _on_sort_button_pressed("like_num"))
-	money_sort_btn.pressed.connect(func(): _on_sort_button_pressed("money"))
+	money_sort_btn.pressed.connect(func(): _on_sort_button_pressed("钱币"))
 	is_online_sort_btn.pressed.connect(_on_online_filter_pressed)
 	
 	# 初始化按钮状态
@@ -92,7 +92,7 @@ func _on_online_filter_pressed():
 func _update_button_states():
 	# 重置所有排序按钮
 	var sort_buttons = [seed_sort_btn, level_sort_btn, online_time_sort_btn, login_time_sort_btn, like_num_sort_btn, money_sort_btn]
-	var sort_fields = ["seed_count", "等级", "online_time", "login_time", "like_num", "money"]
+	var sort_fields = ["seed_count", "等级", "online_time", "login_time", "like_num", "钱币"]
 	var sort_names = ["种子数", "等级", "游玩时间", "登录时间", "点赞数", "金币数"]
 	
 	for i in range(sort_buttons.size()):
@@ -215,7 +215,7 @@ func add_player_entry(player_data):
 	player_name.text = display_name
 	#都是整数，不要乱用浮点数
 	player_level.text = "等级: " + str(int(player_data.get("等级", 0)))
-	player_money.text = "金币: " + str(int(player_data.get("money", 0)))
+	player_money.text = "金币: " + str(int(player_data.get("钱币", 0)))
 	player_seed_num.text = "种子: " + str(int(player_data.get("seed_count", 0)))
 	player_online_time.text = "游玩时间: " + player_data.get("总游玩时间", "0时0分0秒")
 	player_last_login_time.text = "最后登录: " + player_data.get("最后登录时间", "未知")

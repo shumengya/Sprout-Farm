@@ -391,7 +391,7 @@ func _handle_visit_player_response(data):
 				"玩家昵称": show_player_name.text.replace("玩家昵称：", ""),
 				"农场名称": show_farm_name.text.replace("农场名称：", ""),
 				"等级": level,
-				"money": money,
+				"钱币": money,
 				"经验值": experience,
 				"stamina": stamina,
 				"农场土地": farm_lots.duplicate(true),
@@ -403,7 +403,7 @@ func _handle_visit_player_response(data):
 		visited_player_data = target_player_data
 		
 		# 更新显示数据
-		money = target_player_data.get("money", 0)
+		money = target_player_data.get("钱币", 0)
 		experience = target_player_data.get("经验值", 0)
 		level = target_player_data.get("等级", 1)
 		stamina = target_player_data.get("体力值", 20)
@@ -480,7 +480,7 @@ func _handle_return_my_farm_response(data):
 		var player_data = data.get("player_data", {})
 		
 		# 恢复玩家数据
-		money = player_data.get("money", 500)
+		money = player_data.get("钱币", 500)
 		experience = player_data.get("经验值", 0)
 		level = player_data.get("等级", 1)
 		stamina = player_data.get("体力值", 20)
@@ -1801,7 +1801,7 @@ func _handle_daily_check_in_response(response: Dictionary) -> void:
 	# 更新玩家数据
 	var updated_data = response.get("updated_data", {})
 
-	money = updated_data["money"]
+	money = updated_data["钱币"]
 	experience = updated_data["经验值"]
 	level = updated_data["等级"]
 	player_bag = updated_data["种子仓库"]
@@ -1940,7 +1940,7 @@ func _on_lucky_draw_button_pressed() -> void:
 func _handle_lucky_draw_response(response: Dictionary) -> void:
 	# 更新玩家数据
 	var updated_data = response.get("updated_data", {})
-	money = updated_data["money"]
+	money = updated_data["钱币"]
 	experience = updated_data["经验值"]
 	level = updated_data["等级"]
 	player_bag = updated_data["种子仓库"]
@@ -2160,7 +2160,7 @@ func _handle_new_player_gift_response(data):
 	
 	if success:
 		# 更新玩家数据
-		money = updated_data.get("money", money)
+		money = updated_data.get("钱币", money)
 		experience = updated_data.get("经验值", experience)
 		level = updated_data.get("等级", level)
 		
@@ -2422,7 +2422,7 @@ func _handle_claim_online_gift_response(data: Dictionary):
 	
 	if success:
 		# 更新玩家数据
-		money = updated_data["money"]
+		money = updated_data["钱币"]
 		experience = updated_data["经验值"]
 		level = updated_data["等级"]
 		player_bag = updated_data["种子仓库"]
@@ -2453,7 +2453,7 @@ func _handle_account_setting_response(data: Dictionary):
 			# 更新基本游戏状态显示
 			experience = account_info.get("经验值", 0)
 			level = account_info.get("等级", 1)
-			money = account_info.get("money", 0)
+			money = account_info.get("钱币", 0)
 			
 			# 同步更新login_data和data中的账户信息
 			if login_data.size() > 0:
@@ -2520,8 +2520,8 @@ func _handle_use_farm_item_response(data: Dictionary):
 	
 	if success:
 		# 安全更新金币
-		if updated_data.has("money"):
-			money = updated_data["money"]
+		if updated_data.has("钱币"):
+			money = updated_data["钱币"]
 		# 安全更新经验
 		if updated_data.has("经验值"):
 			experience = updated_data["经验值"]
@@ -2560,7 +2560,7 @@ func _handle_buy_scare_crow_response(data: Dictionary):
 	
 	if success:
 		# 更新玩家数据
-		money = updated_data["money"]
+		money = updated_data["钱币"]
 		login_data["稻草人配置"] = updated_data["稻草人配置"]
 			
 		# 将稻草人配置传递给稻草人面板
@@ -2582,7 +2582,7 @@ func _handle_modify_scare_crow_config_response(data: Dictionary):
 	
 	if success:
 		# 更新玩家数据
-		money = updated_data["money"]
+		money = updated_data["钱币"]
 		login_data["稻草人配置"] = updated_data["稻草人配置"]
 			
 		# 将稻草人配置传递给稻草人面板
@@ -3105,8 +3105,8 @@ func _handle_steal_caught_response(data: Dictionary):
 		else:
 			# 没有出战宠物，直接显示逃跑结果
 			var updated_data = data.get("updated_data", {})
-			if updated_data.has("money"):
-				money = updated_data["money"]
+			if updated_data.has("钱币"):
+				money = updated_data["钱币"]
 				_update_ui()
 			Toast.show(message, Color.RED, 3.0)
 	else:

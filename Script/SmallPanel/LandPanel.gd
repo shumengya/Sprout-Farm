@@ -163,7 +163,7 @@ func _on_water_button_pressed():
 	
 	# 如果是访问模式，需要检查自己的原始金钱数据
 	if main_game.is_visiting_mode:
-		my_money = main_game.original_player_data.get("money", 0)
+		my_money = main_game.original_player_data.get("钱币", 0)
 	
 	if my_money < water_cost:
 		var action_text = "帮助浇水" if main_game.is_visiting_mode else "浇水"
@@ -227,7 +227,7 @@ func _on_fertilize_button_pressed():
 	
 	# 如果是访问模式，需要检查自己的原始金钱数据
 	if main_game.is_visiting_mode:
-		my_money = main_game.original_player_data.get("money", 0)
+		my_money = main_game.original_player_data.get("钱币", 0)
 	
 	if my_money < fertilize_cost:
 		var action_text = "帮助施肥" if main_game.is_visiting_mode else "施肥"

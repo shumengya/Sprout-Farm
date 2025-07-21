@@ -233,8 +233,8 @@ func handle_wisdom_tree_operation_response(success: bool, message: String, opera
 				main_game.login_data["智慧树配置"] = wisdom_tree_config
 		
 		# 更新玩家数据
-		if updated_data.has("money"):
-			main_game.money = updated_data["money"]
+		if updated_data.has("钱币"):
+			main_game.money = updated_data["钱币"]
 			main_game._update_ui()
 		
 		# 更新智慧树设置面板UI
@@ -289,8 +289,8 @@ func handle_wisdom_tree_operation_response(success: bool, message: String, opera
 func handle_wisdom_tree_message_response(success: bool, message: String, updated_data: Dictionary = {}):
 	if success:
 		# 更新玩家金钱
-		if updated_data.has("money"):
-			main_game.money = updated_data["money"]
+		if updated_data.has("钱币"):
+			main_game.money = updated_data["钱币"]
 			main_game._update_ui()
 		
 		Toast.show("消息发送成功！", Color.GREEN)

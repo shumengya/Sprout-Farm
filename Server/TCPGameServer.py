@@ -1111,7 +1111,7 @@ class TCPGameServer(TCPServer):
                 "个人简介": "",  # 新增个人简介字段，默认为空
                 "经验值": player_data.get("经验值", 0),
                 "等级": player_data.get("等级", 1),
-                "money": player_data.get("money", 1000)
+                "钱币": player_data.get("钱币", 1000)
             })
             
             # 确保农场地块存在
@@ -1434,7 +1434,7 @@ class TCPGameServer(TCPServer):
                     "success": True,
                     "message": f"已帮助 {target_username} 清理死亡的作物",
                     "updated_data": {
-                        "money": current_player_data["money"],
+                        "钱币": current_player_data["钱币"],
                         "经验值": current_player_data["经验值"],
                         "等级": current_player_data["等级"]
                     }
@@ -1472,7 +1472,7 @@ class TCPGameServer(TCPServer):
                     "success": True,
                     "message": "已铲除死亡的作物",
                     "updated_data": {
-                        "money": current_player_data["money"],
+                        "钱币": current_player_data["钱币"],
                         "经验值": current_player_data["经验值"],
                         "等级": current_player_data["等级"]
                     }
@@ -1575,7 +1575,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": message,
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "经验值": player_data["经验值"],
                 "等级": player_data["等级"],
                 "种子仓库": player_data.get("种子仓库", []),
@@ -1702,7 +1702,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": message,
             "updated_data": {
-                "money": current_player_data["money"],
+                "钱币": current_player_data["钱币"],
                 "经验值": current_player_data["经验值"],
                 "等级": current_player_data["等级"],
                 "体力值": current_player_data["体力值"],
@@ -1720,7 +1720,7 @@ class TCPGameServer(TCPServer):
         if len(battle_pets) == 0:
             # 没有出战宠物，只能逃跑，支付1000金币
             escape_cost = 1000
-            if current_player_data.get("money", 0) < escape_cost:
+            if current_player_data.get("钱币", 0) < escape_cost:
                 # 金币不足，偷菜失败
                 self.log('INFO', f"玩家 {current_username} 偷菜被发现，金币不足逃跑，偷菜失败", 'SERVER')
                 return self.send_data(client_id, {
@@ -1730,12 +1730,12 @@ class TCPGameServer(TCPServer):
                     "patrol_pet_data": self._get_patrol_pet_data(target_player_data, patrol_pet_id),
                     "has_battle_pet": False,
                     "escape_cost": escape_cost,
-                    "current_money": current_player_data.get("money", 0)
+                    "current_money": current_player_data.get("钱币", 0)
                 })
             else:
                 # 自动逃跑，扣除金币
-                current_player_data["money"] -= escape_cost
-                target_player_data["money"] += escape_cost
+                current_player_data["钱币"] -= escape_cost
+                target_player_data["钱币"] += escape_cost
                 
                 # 保存数据
                 self.save_player_data(current_username, current_player_data)
@@ -1750,7 +1750,7 @@ class TCPGameServer(TCPServer):
                     "has_battle_pet": False,
                     "escape_cost": escape_cost,
                     "updated_data": {
-                        "money": current_player_data["money"]
+                        "钱币": current_player_data["钱币"]
                     }
                 })
         else:
@@ -2255,11 +2255,11 @@ class TCPGameServer(TCPServer):
         total_cost = unit_cost * quantity
         
         # 检查玩家金钱
-        if player_data["money"] < total_cost:
+        if player_data["钱币"] < total_cost:
             return self._send_action_error(client_id, "buy_seed", f"金钱不足，无法购买此种子。需要{total_cost}元，当前只有{player_data['money']}元")
         
         # 扣除金钱
-        player_data["money"] -= total_cost
+        player_data["钱币"] -= total_cost
         
         # 将种子添加到背包
         seed_found = False
@@ -2291,7 +2291,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功购买 {quantity} 个 {crop_name} 种子",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "种子仓库": player_data["种子仓库"]
             }
         })
@@ -2362,12 +2362,12 @@ class TCPGameServer(TCPServer):
         pet_cost = purchase_info.get("购买价格", 0)
         
         # 检查玩家金钱
-        if player_data["money"] < pet_cost:
+        if player_data["钱币"] < pet_cost:
             return self._send_action_error(client_id, "buy_pet", 
                 f"金钱不足，无法购买此宠物。需要{pet_cost}元，当前只有{player_data['money']}元")
         
         # 扣除金钱并添加宠物
-        player_data["money"] -= pet_cost
+        player_data["钱币"] -= pet_cost
         pet_instance = self._create_pet_instance(pet_info, username, pet_name)
         
         # 确保宠物背包存在并添加宠物
@@ -2385,7 +2385,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功购买宠物 {pet_name}！",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "宠物背包": player_data["宠物背包"]
             }
         })
@@ -3198,18 +3198,18 @@ class TCPGameServer(TCPServer):
         dig_money = digged_count * 1000
         
         # 检查玩家金钱是否足够
-        if player_data["money"] < dig_money:
+        if player_data["钱币"] < dig_money:
             return self._send_action_error(client_id, "dig_ground", f"金钱不足，开垦此地块需要 {dig_money} 金钱")
         
         # 执行开垦操作
-        player_data["money"] -= dig_money
+        player_data["钱币"] -= dig_money
         lot["is_diged"] = True
         
         # 生成开垦随机奖励
         rewards = self._generate_dig_rewards()
         
         # 应用奖励
-        player_data["money"] += rewards["money"]
+        player_data["钱币"] += rewards["钱币"]
         player_data["经验值"] += rewards["经验值"]
         
         # 添加种子到背包
@@ -3255,7 +3255,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功开垦地块，花费 {dig_money} 金钱！{reward_message}",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "经验值": player_data["经验值"],
                 "等级": player_data["等级"],
                 "农场土地": player_data["农场土地"],
@@ -3268,13 +3268,13 @@ class TCPGameServer(TCPServer):
         """生成开垦土地的随机奖励"""
         
         rewards = {
-            "money": 0,
+            "钱币": 0,
             "经验值": 0,
             "seeds": {}
         }
         
         # 随机金钱：200-500元
-        rewards["money"] = random.randint(200, 500)
+        rewards["钱币"] = random.randint(200, 500)
         
         # 随机经验：300-600经验
         rewards["经验值"] = random.randint(300, 600)
@@ -3344,14 +3344,14 @@ class TCPGameServer(TCPServer):
         removal_cost = 500
         
         # 检查玩家金钱是否足够
-        if player_data["money"] < removal_cost:
+        if player_data["钱币"] < removal_cost:
             return self._send_action_error(client_id, "remove_crop", f"金钱不足，铲除作物需要 {removal_cost} 金钱")
         
         # 获取作物名称用于日志
         crop_type = lot.get("crop_type", "未知作物")
         
         # 执行铲除操作
-        player_data["money"] -= removal_cost
+        player_data["钱币"] -= removal_cost
         lot["is_planted"] = False
         lot["crop_type"] = ""
         lot["grow_time"] = 0
@@ -3371,7 +3371,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功铲除作物 {crop_type}，花费 {removal_cost} 金钱",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "农场土地": player_data["农场土地"]
             }
         })
@@ -3439,7 +3439,7 @@ class TCPGameServer(TCPServer):
         water_cost = 50
         
         # 检查玩家金钱是否足够
-        if player_data["money"] < water_cost:
+        if player_data["钱币"] < water_cost:
             return self._send_action_error(client_id, "water_crop", f"金钱不足，浇水需要 {water_cost} 金钱")
         
         # 检查作物是否已死亡
@@ -3462,7 +3462,7 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "water_crop", f"浇水冷却中，还需等待 {remaining_minutes} 分钟 {remaining_seconds} 秒")
         
         # 执行浇水操作
-        player_data["money"] -= water_cost
+        player_data["钱币"] -= water_cost
         
         # 生成随机经验奖励（100-300）
         experience_reward = random.randint(100, 300)
@@ -3506,7 +3506,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": message,
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "经验值": player_data["经验值"],
                 "等级": player_data["等级"],
                 "农场土地": player_data["农场土地"]
@@ -3520,7 +3520,7 @@ class TCPGameServer(TCPServer):
         water_cost = 50
         
         # 检查当前玩家金钱是否足够
-        if current_player_data["money"] < water_cost:
+        if current_player_data["钱币"] < water_cost:
             return self._send_action_error(client_id, "water_crop", f"金钱不足，帮助浇水需要 {water_cost} 金钱")
         
         # 检查目标作物是否已死亡
@@ -3543,7 +3543,7 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "water_crop", f"浇水冷却中，还需等待 {remaining_minutes} 分钟 {remaining_seconds} 秒")
         
         # 执行浇水操作：扣除当前玩家的钱
-        current_player_data["money"] -= water_cost
+        current_player_data["钱币"] -= water_cost
         
         # 生成随机经验奖励（100-300）给当前玩家
         experience_reward = random.randint(100, 300)
@@ -3588,7 +3588,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": message,
             "updated_data": {
-                "money": current_player_data["money"],
+                "钱币": current_player_data["钱币"],
                 "经验值": current_player_data["经验值"],
                 "等级": current_player_data["等级"]
             }
@@ -3656,7 +3656,7 @@ class TCPGameServer(TCPServer):
         fertilize_cost = 150
         
         # 检查当前玩家金钱是否足够
-        if current_player_data["money"] < fertilize_cost:
+        if current_player_data["钱币"] < fertilize_cost:
             return self._send_action_error(client_id, "fertilize_crop", f"金钱不足，帮助施肥需要 {fertilize_cost} 金钱")
         
         # 检查目标作物是否已死亡
@@ -3672,7 +3672,7 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "fertilize_crop", "此作物已经施过肥了")
         
         # 执行施肥操作：扣除当前玩家的钱
-        current_player_data["money"] -= fertilize_cost
+        current_player_data["钱币"] -= fertilize_cost
         
         # 生成随机经验奖励（100-300）给当前玩家
         experience_reward = random.randint(100, 300)
@@ -3704,7 +3704,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"帮助施肥成功！{target_username} 的 {crop_type} 将在10分钟内以双倍速度生长，获得 {experience_reward} 经验",
             "updated_data": {
-                "money": current_player_data["money"],
+                "钱币": current_player_data["钱币"],
                 "经验值": current_player_data["经验值"],
                 "等级": current_player_data["等级"]
             }
@@ -3717,7 +3717,7 @@ class TCPGameServer(TCPServer):
         fertilize_cost = 150
         
         # 检查玩家金钱是否足够
-        if player_data["money"] < fertilize_cost:
+        if player_data["钱币"] < fertilize_cost:
             return self._send_action_error(client_id, "fertilize_crop", f"金钱不足，施肥需要 {fertilize_cost} 金钱")
         
         # 检查作物是否已死亡
@@ -3733,7 +3733,7 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "fertilize_crop", "此作物已经施过肥了")
         
         # 执行施肥操作
-        player_data["money"] -= fertilize_cost
+        player_data["钱币"] -= fertilize_cost
         
         # 生成随机经验奖励（100-300）
         experience_reward = random.randint(100, 300)
@@ -3764,7 +3764,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"施肥成功！{crop_type} 将在10分钟内以双倍速度生长，获得 {experience_reward} 经验",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "经验值": player_data["经验值"],
                 "等级": player_data["等级"],
                 "农场土地": player_data["农场土地"]
@@ -3817,12 +3817,12 @@ class TCPGameServer(TCPServer):
         total_cost = unit_cost * quantity
         
         # 检查金钱是否足够
-        if player_data["money"] < total_cost:
+        if player_data["钱币"] < total_cost:
             return self._send_action_error(client_id, "buy_item", 
                 f"金钱不足，需要{total_cost}元，当前只有{player_data['money']}元")
         
         # 扣除金钱并添加道具
-        player_data["money"] -= total_cost
+        player_data["钱币"] -= total_cost
         self._add_item_to_inventory(player_data, item_name, quantity)
         
         # 保存数据并记录日志
@@ -3835,7 +3835,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功购买 {quantity} 个 {item_name}",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "道具背包": player_data["道具背包"]
             }
         })
@@ -5013,8 +5013,8 @@ class TCPGameServer(TCPServer):
                     item_bag.pop(item_index)
                 
                 # 应用奖励
-                if "money" in rewards:
-                    player_data["money"] += rewards["money"]
+                if "钱币" in rewards:
+                    player_data["钱币"] += rewards["钱币"]
                 if "经验值" in rewards:
                     player_data["经验值"] += rewards["经验值"]
                 
@@ -5030,7 +5030,7 @@ class TCPGameServer(TCPServer):
                     "success": True,
                     "message": result_message,
                     "updated_data": {
-                        "money": player_data["money"],
+                        "钱币": player_data["钱币"],
                         "经验值": player_data["经验值"],
                         "等级": player_data["等级"],
                         "道具背包": item_bag
@@ -5069,7 +5069,7 @@ class TCPGameServer(TCPServer):
                 
             elif item_name == "小额金币卡":
                 # 给玩家增加500金币
-                rewards["money"] = 500
+                rewards["钱币"] = 500
                 return True, f"使用 {item_name} 成功！获得了500金币", rewards
             
             else:
@@ -5165,11 +5165,11 @@ class TCPGameServer(TCPServer):
         speed_multiplier = config["speed"]
         
         # 检查玩家金钱是否足够
-        if player_data["money"] < upgrade_cost:
+        if player_data["钱币"] < upgrade_cost:
             return self._send_action_error(client_id, "upgrade_land", f"金钱不足，升级到{next_name}需要 {upgrade_cost} 金钱")
         
         # 执行升级操作
-        player_data["money"] -= upgrade_cost
+        player_data["钱币"] -= upgrade_cost
         lot["土地等级"] = next_level
         
         # 保存玩家数据
@@ -5186,7 +5186,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"土地升级成功！升级到{next_level}级{next_name}，作物将以{speed_multiplier}倍速度生长",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "农场土地": player_data["农场土地"]
             }
         })
@@ -5218,7 +5218,7 @@ class TCPGameServer(TCPServer):
         new_ground_cost = 2000
         
         # 检查玩家金钱是否足够
-        if player_data["money"] < new_ground_cost:
+        if player_data["钱币"] < new_ground_cost:
             return self._send_action_error(client_id, "buy_new_ground", f"金钱不足，购买新地块需要 {new_ground_cost} 金钱")
         
         # 检查地块数量限制
@@ -5228,7 +5228,7 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "buy_new_ground", f"已达到最大地块数量限制（{max_lots}个）")
         
         # 执行购买操作
-        player_data["money"] -= new_ground_cost
+        player_data["钱币"] -= new_ground_cost
         
         # 创建新的未开垦地块
         new_lot = {
@@ -5263,7 +5263,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"购买新地块成功！花费 {new_ground_cost} 元，新地块位置：{new_lot_index}",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "农场土地": player_data["农场土地"]
             }
         })
@@ -5953,7 +5953,7 @@ class TCPGameServer(TCPServer):
                         "玩家昵称": player_data.get("玩家昵称", player_data.get("玩家账号", account_id)),
                         "农场名称": player_data.get("农场名称", ""),
                         "等级": player_data.get("等级", 1),
-                        "money": player_data.get("money", 0),
+                        "钱币": player_data.get("钱币", 0),
                         "经验值": player_data.get("经验值", 0),
                         "体力值": current_stamina,
                         "seed_count": seed_count,
@@ -5982,8 +5982,8 @@ class TCPGameServer(TCPServer):
             players_data.sort(key=lambda x: x["last_login_timestamp"], reverse=reverse_order)
         elif sort_by == "like_num":
             players_data.sort(key=lambda x: x["like_num"], reverse=reverse_order)
-        elif sort_by == "money":
-            players_data.sort(key=lambda x: x["money"], reverse=reverse_order)
+        elif sort_by == "钱币":
+            players_data.sort(key=lambda x: x["钱币"], reverse=reverse_order)
         else:
             # 默认按等级排序
             players_data.sort(key=lambda x: x["等级"], reverse=True)
@@ -6111,7 +6111,7 @@ class TCPGameServer(TCPServer):
             "玩家昵称": target_player_data.get("玩家昵称", target_username),
             "农场名称": target_player_data.get("农场名称", ""),
             "等级": target_player_data.get("等级", 1),
-            "money": target_player_data.get("money", 0),
+            "钱币": target_player_data.get("钱币", 0),
             "经验值": target_player_data.get("经验值", 0),
             "体力值": target_current_stamina,
             "农场土地": target_player_data.get("农场土地", []),
@@ -6183,7 +6183,7 @@ class TCPGameServer(TCPServer):
                 "玩家昵称": player_data.get("玩家昵称", username),
                 "农场名称": player_data.get("农场名称", ""),
                 "等级": player_data.get("等级", 1),
-                "money": player_data.get("money", 0),
+                "钱币": player_data.get("钱币", 0),
                 "经验值": player_data.get("经验值", 0),
                 "体力值": my_current_stamina,
                 "农场土地": player_data.get("农场土地", []),
@@ -6324,7 +6324,7 @@ class TCPGameServer(TCPServer):
             "gift_name": gift_name,
             "rewards": rewards,
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "经验值": player_data["经验值"],
                 "等级": player_data["等级"],
                 "种子仓库": player_data.get("种子仓库", [])
@@ -6336,7 +6336,7 @@ class TCPGameServer(TCPServer):
         """发放在线礼包奖励（中文配置格式）"""
         # 发放金币
         if "金币" in rewards:
-            player_data["money"] = player_data.get("money", 0) + rewards["金币"]
+            player_data["钱币"] = player_data.get("钱币", 0) + rewards["金币"]
         
         # 发放经验
         if "经验" in rewards:
@@ -6382,8 +6382,8 @@ class TCPGameServer(TCPServer):
     def _apply_online_gift_rewards(self, player_data, rewards):
         """发放在线礼包奖励"""
         # 发放金币
-        if "money" in rewards:
-            player_data["money"] = player_data.get("money", 0) + rewards["money"]
+        if "钱币" in rewards:
+            player_data["钱币"] = player_data.get("钱币", 0) + rewards["钱币"]
         
         # 发放经验
         if "经验值" in rewards:
@@ -6906,7 +6906,7 @@ class TCPGameServer(TCPServer):
             "rewards": rewards,
             "consecutive_days": consecutive_days,
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "经验值": player_data["经验值"],
                 "等级": player_data["等级"],
                 "种子仓库": player_data.get("种子仓库", [])
@@ -7126,10 +7126,10 @@ class TCPGameServer(TCPServer):
         """应用签到奖励到玩家数据"""
         # 应用钱币奖励
         if "coins" in rewards:
-            player_data["money"] = player_data.get("money", 0) + rewards["coins"]
+            player_data["钱币"] = player_data.get("钱币", 0) + rewards["coins"]
         
         if "bonus_coins" in rewards:
-            player_data["money"] = player_data.get("money", 0) + rewards["bonus_coins"]
+            player_data["钱币"] = player_data.get("钱币", 0) + rewards["bonus_coins"]
         
         # 应用经验奖励
         if "exp" in rewards:
@@ -7228,7 +7228,7 @@ class TCPGameServer(TCPServer):
                 "message": gift_config.get("提示消息", {}).get("成功", "新手大礼包领取成功！"),
                 "gift_contents": reward_content,
                 "updated_data": {
-                    "money": player_data["money"],
+                    "钱币": player_data["钱币"],
                     "经验值": player_data["经验值"],
                     "等级": player_data["等级"],
                     "种子仓库": player_data.get("种子仓库", []),
@@ -7253,7 +7253,7 @@ class TCPGameServer(TCPServer):
         """应用新手大礼包奖励到玩家数据（旧格式，保留兼容性）"""
         # 应用金币奖励
         if "coins" in gift_contents:
-            player_data["money"] = player_data.get("money", 0) + gift_contents["coins"]
+            player_data["钱币"] = player_data.get("钱币", 0) + gift_contents["coins"]
         
         # 应用经验奖励
         if "经验值" in gift_contents:
@@ -7297,7 +7297,7 @@ class TCPGameServer(TCPServer):
         """应用新手大礼包奖励到玩家数据（新中文格式）"""
         # 应用金币奖励
         if "金币" in reward_content:
-            player_data["money"] = player_data.get("money", 0) + reward_content["金币"]
+            player_data["钱币"] = player_data.get("钱币", 0) + reward_content["金币"]
         
         # 应用经验奖励
         if "经验" in reward_content:
@@ -7387,7 +7387,7 @@ class TCPGameServer(TCPServer):
                 })
             
             # 检查玩家金钱是否足够
-            if player_data.get("money", 0) < total_cost:
+            if player_data.get("钱币", 0) < total_cost:
                 return self.send_data(client_id, {
                     "type": "lucky_draw_response",
                     "success": False,
@@ -7395,7 +7395,7 @@ class TCPGameServer(TCPServer):
                 })
             
             # 扣除金钱
-            player_data["money"] -= total_cost
+            player_data["钱币"] -= total_cost
             
             # 生成奖励
             rewards = self._generate_lucky_draw_rewards(draw_count, draw_type, config)
@@ -7416,7 +7416,7 @@ class TCPGameServer(TCPServer):
                 "cost": total_cost,
                 "rewards": rewards,
                 "updated_data": {
-                    "money": player_data["money"],
+                    "钱币": player_data["钱币"],
                     "经验值": player_data["经验值"],
                     "等级": player_data["等级"],
                     "种子仓库": player_data.get("种子仓库", [])
@@ -7767,7 +7767,7 @@ class TCPGameServer(TCPServer):
                 continue  # 空奖励不处理
             
             elif reward_type == "coins":
-                player_data["money"] = player_data.get("money", 0) + reward.get("amount", 0)
+                player_data["钱币"] = player_data.get("钱币", 0) + reward.get("amount", 0)
             
             elif reward_type == "exp":
                 player_data["经验值"] = player_data.get("经验值", 0) + reward.get("amount", 0)
@@ -8083,7 +8083,7 @@ class TCPGameServer(TCPServer):
                 "个人简介": player_data.get("个人简介", ""),
                 "等级": player_data.get("等级", 1),
                 "经验值": player_data.get("经验值", 0),
-                "money": player_data.get("money", 0)
+                "钱币": player_data.get("钱币", 0)
             }
             
             # 发送刷新后的账户信息
@@ -8158,7 +8158,7 @@ class TCPGameServer(TCPServer):
             return self._send_buy_scare_crow_error(client_id, f"稻草人价格验证失败，实际价格为{actual_price}金币")
         
         # 检查玩家金钱
-        if player_data["money"] < price:
+        if player_data["钱币"] < price:
             return self._send_buy_scare_crow_error(client_id, f"金币不足，需要{price}金币，当前只有{player_data['money']}金币")
         
         # 确保稻草人配置存在
@@ -8181,7 +8181,7 @@ class TCPGameServer(TCPServer):
             return self._send_buy_scare_crow_error(client_id, f"你已经拥有{scare_crow_type}了")
         
         # 扣除金钱
-        player_data["money"] -= price
+        player_data["钱币"] -= price
         
         # 添加稻草人到已拥有列表
         player_data["稻草人配置"]["已拥有稻草人类型"].append(scare_crow_type)
@@ -8200,7 +8200,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功购买{scare_crow_type}！",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "稻草人配置": player_data["稻草人配置"]
             }
         })
@@ -8239,7 +8239,7 @@ class TCPGameServer(TCPServer):
                 return self._send_modify_scare_crow_config_error(client_id, f"修改费用验证失败，实际费用为{actual_cost}金币")
             
             # 检查玩家金钱
-            if player_data["money"] < modify_cost:
+            if player_data["钱币"] < modify_cost:
                 return self._send_modify_scare_crow_config_error(client_id, f"金币不足，需要{modify_cost}金币，当前只有{player_data['money']}金币")
         
         # 确保稻草人配置存在
@@ -8248,7 +8248,7 @@ class TCPGameServer(TCPServer):
         
         # 只在非切换展示类型时扣除金钱
         if not is_only_changing_display:
-            player_data["money"] -= modify_cost
+            player_data["钱币"] -= modify_cost
         
         # 更新稻草人配置
         if "稻草人展示类型" in config_data:
@@ -8283,7 +8283,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": message,
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "稻草人配置": player_data["稻草人配置"]
             }
         })
@@ -8435,7 +8435,7 @@ class TCPGameServer(TCPServer):
         water_cost = 100
         
         # 检查金钱是否足够
-        if player_data["money"] < water_cost:
+        if player_data["钱币"] < water_cost:
             return self.send_data(client_id, {
                 "type": "wisdom_tree_operation_response",
                 "success": False,
@@ -8444,7 +8444,7 @@ class TCPGameServer(TCPServer):
             })
         
         # 执行浇水
-        player_data["money"] -= water_cost
+        player_data["钱币"] -= water_cost
         
         # 浇水经验：50-150随机
         import random
@@ -8472,7 +8472,7 @@ class TCPGameServer(TCPServer):
             "message": f"浇水成功！经验+{exp_gained}{height_msg}",
             "operation_type": "water",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "智慧树配置": wisdom_tree_config
             }
         })
@@ -8492,7 +8492,7 @@ class TCPGameServer(TCPServer):
         fertilize_cost = 200
         
         # 检查金钱是否足够
-        if player_data["money"] < fertilize_cost:
+        if player_data["钱币"] < fertilize_cost:
             return self.send_data(client_id, {
                 "type": "wisdom_tree_operation_response",
                 "success": False,
@@ -8501,7 +8501,7 @@ class TCPGameServer(TCPServer):
             })
         
         # 执行施肥
-        player_data["money"] -= fertilize_cost
+        player_data["钱币"] -= fertilize_cost
         
         # 施肥经验：10-40随机
         import random
@@ -8529,7 +8529,7 @@ class TCPGameServer(TCPServer):
             "message": f"施肥成功！经验+{exp_gained}{height_msg}",
             "operation_type": "fertilize",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "智慧树配置": wisdom_tree_config
             }
         })
@@ -8549,7 +8549,7 @@ class TCPGameServer(TCPServer):
         kill_grass_cost = 150
         
         # 检查金钱是否足够
-        if player_data["money"] < kill_grass_cost:
+        if player_data["钱币"] < kill_grass_cost:
             return self.send_data(client_id, {
                 "type": "wisdom_tree_operation_response",
                 "success": False,
@@ -8559,7 +8559,7 @@ class TCPGameServer(TCPServer):
         
         # 执行除草
         import time
-        player_data["money"] -= kill_grass_cost
+        player_data["钱币"] -= kill_grass_cost
         max_health = wisdom_tree_config["最大生命值"]
         wisdom_tree_config["当前生命值"] = min(max_health, wisdom_tree_config["当前生命值"] + 10)
         wisdom_tree_config["距离上一次除草时间"] = int(time.time())
@@ -8575,7 +8575,7 @@ class TCPGameServer(TCPServer):
             "message": "除草成功！生命值+10",
             "operation_type": "kill_grass",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "智慧树配置": wisdom_tree_config
             }
         })
@@ -8595,7 +8595,7 @@ class TCPGameServer(TCPServer):
         kill_bug_cost = 150
         
         # 检查金钱是否足够
-        if player_data["money"] < kill_bug_cost:
+        if player_data["钱币"] < kill_bug_cost:
             return self.send_data(client_id, {
                 "type": "wisdom_tree_operation_response",
                 "success": False,
@@ -8604,7 +8604,7 @@ class TCPGameServer(TCPServer):
             })
         
                 # 执行杀虫
-        player_data["money"] -= kill_bug_cost
+        player_data["钱币"] -= kill_bug_cost
         max_health = wisdom_tree_config["最大生命值"]
         wisdom_tree_config["当前生命值"] = min(max_health, wisdom_tree_config["当前生命值"] + 15)
         wisdom_tree_config["距离上一次杀虫时间"] = int(time.time())
@@ -8620,7 +8620,7 @@ class TCPGameServer(TCPServer):
             "message": "杀虫成功！生命值+15",
             "operation_type": "kill_bug",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "智慧树配置": wisdom_tree_config
             }
         })
@@ -8640,7 +8640,7 @@ class TCPGameServer(TCPServer):
         play_music_cost = 100
         
         # 检查金钱是否足够
-        if player_data["money"] < play_music_cost:
+        if player_data["钱币"] < play_music_cost:
             return self.send_data(client_id, {
                 "type": "wisdom_tree_operation_response",
                 "success": False,
@@ -8649,7 +8649,7 @@ class TCPGameServer(TCPServer):
             })
         
         # 执行放音乐
-        player_data["money"] -= play_music_cost
+        player_data["钱币"] -= play_music_cost
         
         # 从智慧树消息库中随机获取一条消息
         random_message = self._get_random_wisdom_tree_message()
@@ -8668,7 +8668,7 @@ class TCPGameServer(TCPServer):
             "operation_type": "play_music",
             "random_message": random_message,
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "智慧树配置": wisdom_tree_config
             }
         })
@@ -8688,7 +8688,7 @@ class TCPGameServer(TCPServer):
         revive_cost = 1000
         
         # 检查金钱是否足够
-        if player_data["money"] < revive_cost:
+        if player_data["钱币"] < revive_cost:
             return self.send_data(client_id, {
                 "type": "wisdom_tree_operation_response",
                 "success": False,
@@ -8697,7 +8697,7 @@ class TCPGameServer(TCPServer):
             })
         
         # 执行复活
-        player_data["money"] -= revive_cost
+        player_data["钱币"] -= revive_cost
         wisdom_tree_config["当前生命值"] = wisdom_tree_config["最大生命值"]
         
         # 保存数据
@@ -8711,7 +8711,7 @@ class TCPGameServer(TCPServer):
             "message": "智慧树复活成功！",
             "operation_type": "revive",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "智慧树配置": wisdom_tree_config
             }
         })
@@ -8778,7 +8778,7 @@ class TCPGameServer(TCPServer):
         send_cost = 50
         
         # 检查金钱是否足够
-        if player_data["money"] < send_cost:
+        if player_data["钱币"] < send_cost:
             return self.send_data(client_id, {
                 "type": "wisdom_tree_message_response",
                 "success": False,
@@ -8786,7 +8786,7 @@ class TCPGameServer(TCPServer):
             })
         
         # 扣除费用
-        player_data["money"] -= send_cost
+        player_data["钱币"] -= send_cost
         
         # 保存消息到智慧树消息库
         success = self._save_wisdom_tree_message(username, message_content)
@@ -8802,7 +8802,7 @@ class TCPGameServer(TCPServer):
                 "success": True,
                 "message": "消息发送成功！",
                 "updated_data": {
-                    "money": player_data["money"]
+                    "钱币": player_data["钱币"]
                 }
             })
         else:
@@ -9149,7 +9149,7 @@ class TCPGameServer(TCPServer):
         total_income = sell_count * unit_price
         
         # 执行出售操作
-        player_data["money"] += total_income
+        player_data["钱币"] += total_income
         
         # 从作物仓库中减少数量
         crop_warehouse[crop_index]["count"] -= sell_count
@@ -9185,7 +9185,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功出售 {sell_count} 个 {display_name}，获得 {total_income} 金币和 {sell_experience} 经验",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "经验值": player_data["经验值"],
                 "等级": player_data["等级"],
                 "作物仓库": player_data["作物仓库"]
@@ -9423,12 +9423,12 @@ class TCPGameServer(TCPServer):
         total_cost = quantity * unit_price
         
         # 检查买家金钱是否足够
-        if buyer_data["money"] < total_cost:
+        if buyer_data["钱币"] < total_cost:
             return self._send_action_error(client_id, "buy_store_product", f"金钱不足，需要 {total_cost} 元")
         
         # 执行交易
-        buyer_data["money"] -= total_cost
-        seller_data["money"] += total_cost
+        buyer_data["钱币"] -= total_cost
+        seller_data["钱币"] += total_cost
         
         # 扣除卖家商品
         seller_store[slot_index]["商品数量"] -= quantity
@@ -9474,7 +9474,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功购买 {quantity} 个 {product_name}，花费 {total_cost} 元",
             "updated_data": {
-                "money": buyer_data["money"],
+                "钱币": buyer_data["钱币"],
                 "作物仓库": buyer_data.get("作物仓库", [])
             }
         })
@@ -9513,11 +9513,11 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "buy_store_booth", f"费用不正确，应为 {expected_cost} 元")
         
         # 检查玩家金钱是否足够
-        if player_data["money"] < cost:
+        if player_data["钱币"] < cost:
             return self._send_action_error(client_id, "buy_store_booth", f"金钱不足，需要 {cost} 元")
         
         # 执行购买
-        player_data["money"] -= cost
+        player_data["钱币"] -= cost
         player_data["小卖部格子数"] += 1
         
         # 保存玩家数据
@@ -9531,7 +9531,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功购买格子，花费 {cost} 元，当前格子数：{player_data['小卖部格子数']}",
             "updated_data": {
-                "money": player_data["money"],
+                "钱币": player_data["钱币"],
                 "小卖部格子数": player_data["小卖部格子数"]
             }
         })
@@ -9601,8 +9601,8 @@ class ConsoleCommands:
             return
             
         # 修改金币
-        old_money = player_data.get("money", 0)
-        player_data["money"] = old_money + amount
+        old_money = player_data.get("钱币", 0)
+        player_data["钱币"] = old_money + amount
         
         # 保存数据
         self.server.save_player_data(qq_number, player_data)
@@ -9743,7 +9743,7 @@ class ConsoleCommands:
                 if player_data:
                     nickname = player_data.get("玩家昵称", "未设置")
                     level = player_data.get("等级", 1)
-                    money = player_data.get("money", 0)
+                    money = player_data.get("钱币", 0)
                     last_login = player_data.get("最后登录时间", "从未登录")
                     
                     print(f"{qq_number:<12} {nickname:<15} {level:<6} {money:<10} {last_login:<20}")

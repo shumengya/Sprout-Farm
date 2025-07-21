@@ -209,8 +209,8 @@ func handle_buy_scare_crow_response(success: bool, message: String, updated_data
 		Toast.show(message, Color.GREEN)
 		
 		# 更新玩家数据
-		if updated_data.has("money"):
-			main_game.money = updated_data["money"]
+		if updated_data.has("钱币"):
+			main_game.money = updated_data["钱币"]
 		if updated_data.has("稻草人配置"):
 			player_scare_crow_config = updated_data["稻草人配置"]
 		
@@ -230,8 +230,8 @@ func handle_modify_scare_crow_config_response(success: bool, message: String, up
 		Toast.show(message, Color.GREEN)
 		
 		# 更新玩家数据
-		if updated_data.has("money"):
-			main_game.money = updated_data["money"]
+		if updated_data.has("钱币"):
+			main_game.money = updated_data["钱币"]
 		if updated_data.has("稻草人配置"):
 			player_scare_crow_config = updated_data["稻草人配置"]
 		

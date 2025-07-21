@@ -13,7 +13,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 17700,
+      "grow_time": 19020,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -35,7 +35,7 @@
     },
     {
       "crop_type": "杂交树1",
-      "grow_time": 17740,
+      "grow_time": 19060,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -46,7 +46,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 4174,
+      "grow_time": 4438,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -68,7 +68,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 12516,
+      "grow_time": 13308,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -101,7 +101,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2086,
+      "grow_time": 2218,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -178,7 +178,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2084,
+      "grow_time": 2216,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -189,7 +189,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2084,
+      "grow_time": 2216,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -200,7 +200,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2084,
+      "grow_time": 2216,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -277,7 +277,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2082,
+      "grow_time": 2214,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -321,7 +321,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2081,
+      "grow_time": 2213,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -822,9 +822,9 @@
   "农场名称": "树萌芽の狗窝",
   "玩家昵称": "树萌芽",
   "等级": 66,
-  "money": 615196901889,
-  "最后登录时间": "2025年07月21日10时51分16秒",
-  "总游玩时间": "162时56分42秒",
+  "钱币": 615196901889,
+  "最后登录时间": "2025年07月21日10时54分03秒",
+  "总游玩时间": "162时57分23秒",
   "玩家账号": "3205788256",
   "玩家密码": "123456",
   "个人简介": "人生啊，就这样吧",
