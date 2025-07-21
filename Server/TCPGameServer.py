@@ -1038,7 +1038,7 @@ class TCPGameServer(TCPServer):
         username = message.get("username", "")
         password = message.get("password", "")
         farm_name = message.get("farm_name", "")
-        player_name = message.get("player_name", "")
+        player_name = message.get("玩家昵称", "")
         verification_code = message.get("verification_code", "")
         client_version = message.get("client_version", "")
         
@@ -1107,7 +1107,7 @@ class TCPGameServer(TCPServer):
                 "玩家账号": username,
                 "玩家密码": password,
                 "farm_name": farm_name or "我的农场",
-                "player_name": player_name or username,
+                "玩家昵称": player_name or username,
                 "个人简介": "",  # 新增个人简介字段，默认为空
                 "experience": player_data.get("experience", 0),
                 "level": player_data.get("level", 1),
@@ -5950,7 +5950,7 @@ class TCPGameServer(TCPServer):
                     
                     player_info = {
                         "玩家账号": player_data.get("玩家账号", account_id),
-                        "player_name": player_data.get("player_name", player_data.get("玩家账号", account_id)),
+                        "玩家昵称": player_data.get("玩家昵称", player_data.get("玩家账号", account_id)),
                         "farm_name": player_data.get("farm_name", ""),
                         "level": player_data.get("level", 1),
                         "money": player_data.get("money", 0),
@@ -6108,7 +6108,7 @@ class TCPGameServer(TCPServer):
         safe_player_data = {
             "玩家账号": target_player_data.get("玩家账号", target_username),
             "username": target_username,  # 添加username字段，用于购买商品时标识卖家
-            "player_name": target_player_data.get("player_name", target_username),
+            "玩家昵称": target_player_data.get("玩家昵称", target_username),
             "farm_name": target_player_data.get("farm_name", ""),
             "level": target_player_data.get("level", 1),
             "money": target_player_data.get("money", 0),
@@ -6180,7 +6180,7 @@ class TCPGameServer(TCPServer):
             "message": "已返回自己的农场",
             "player_data": {
                 "玩家账号": player_data.get("玩家账号", username),
-                "player_name": player_data.get("player_name", username),
+                "玩家昵称": player_data.get("玩家昵称", username),
                 "farm_name": player_data.get("farm_name", ""),
                 "level": player_data.get("level", 1),
                 "money": player_data.get("money", 0),
@@ -6538,13 +6538,13 @@ class TCPGameServer(TCPServer):
         player_data = self.load_player_data(username)
         player_name = ""
         if player_data:
-            player_name = player_data.get("player_name", "")
+            player_name = player_data.get("玩家昵称", "")
         
         # 创建广播消息
         broadcast_message = {
             "type": "global_broadcast_message",
             "username": username,
-            "player_name": player_name,
+            "玩家昵称": player_name,
             "content": content,
             "timestamp": time.time()
         }
@@ -6722,7 +6722,7 @@ class TCPGameServer(TCPServer):
             
             return {
                 "username": username,
-                "player_name": player_name,
+                "玩家昵称": player_name,
                 "display_name": player_name if player_name else username,
                 "content": content,
                 "timestamp": timestamp,
@@ -7973,7 +7973,7 @@ class TCPGameServer(TCPServer):
         try:
             # 更新玩家数据
             player_data[""] = new_password
-            player_data["player_name"] = new_player_name
+            player_data["玩家昵称"] = new_player_name
             player_data["farm_name"] = new_farm_name
             player_data["个人简介"] = new_personal_profile
             
@@ -7991,7 +7991,7 @@ class TCPGameServer(TCPServer):
                 "message": "账号信息修改成功",
                 "updated_data": {
                     "玩家密码": new_password,
-                    "player_name": new_player_name,
+                    "玩家昵称": new_player_name,
                     "farm_name": new_farm_name,
                     "个人简介": new_personal_profile
                 }
@@ -8078,7 +8078,7 @@ class TCPGameServer(TCPServer):
             account_info = {
                 "玩家账号": player_data.get("玩家账号", ""),
                 "玩家密码": player_data.get("玩家密码", ""),
-                "player_name": player_data.get("player_name", ""),
+                "玩家昵称": player_data.get("玩家昵称", ""),
                 "farm_name": player_data.get("farm_name", ""),
                 "个人简介": player_data.get("个人简介", ""),
                 "level": player_data.get("level", 1),
@@ -9741,7 +9741,7 @@ class ConsoleCommands:
             try:
                 player_data = self.server._load_player_data_from_file(qq_number)
                 if player_data:
-                    nickname = player_data.get("player_name", "未设置")
+                    nickname = player_data.get("玩家昵称", "未设置")
                     level = player_data.get("level", 1)
                     money = player_data.get("money", 0)
                     last_login = player_data.get("最后登录时间", "从未登录")
@@ -9766,7 +9766,7 @@ class ConsoleCommands:
             
         print(f"👤 玩家信息: {qq_number}")
         print("=" * 50)
-        print(f"昵称: {player_data.get('player_name', '未设置')}")
+        print(f"昵称: {player_data.get('玩家昵称', '未设置')}")
         print(f"农场名: {player_data.get('farm_name', '未设置')}")
         print(f"等级: {player_data.get('level', 1)}")
         print(f"经验: {player_data.get('experience', 0)}")

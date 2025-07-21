@@ -88,7 +88,7 @@ func send_broadcast_message():
 # 接收全服大喇叭消息
 func receive_broadcast_message(data: Dictionary):
 	var username = data.get("username", "匿名")
-	var player_name = data.get("player_name", "")
+	var player_name = data.get("玩家昵称", "")
 	var content = data.get("content", "")
 	var timestamp = data.get("timestamp", Time.get_unix_time_from_system())
 	
@@ -102,7 +102,7 @@ func receive_broadcast_message(data: Dictionary):
 	# 创建消息记录
 	var message_record = {
 		"username": username,
-		"player_name": player_name,
+		"玩家昵称": player_name,
 		"content": content,
 		"timestamp": timestamp,
 		"time_str": time_str,
@@ -236,7 +236,7 @@ func receive_history_messages(data: Dictionary):
 		for msg in messages:
 			var message_record = {
 				"username": msg.get("username", "匿名"),
-				"player_name": msg.get("player_name", ""),
+				"玩家昵称": msg.get("玩家昵称", ""),
 				"content": msg.get("content", ""),
 				"timestamp": msg.get("timestamp", 0),
 				"time_str": msg.get("time_str", ""),

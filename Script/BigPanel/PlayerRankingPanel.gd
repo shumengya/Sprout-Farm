@@ -211,7 +211,7 @@ func add_player_entry(player_data):
 	
 	# 填充数据
 	var username = player_data.get("玩家账号", "未知")
-	var display_name = player_data.get("player_name", username)
+	var display_name = player_data.get("玩家昵称", username)
 	player_name.text = display_name
 	#都是整数，不要乱用浮点数
 	player_level.text = "等级: " + str(int(player_data.get("level", 0)))

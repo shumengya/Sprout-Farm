@@ -388,7 +388,7 @@ func _handle_visit_player_response(data):
 		if not is_visiting_mode:
 			original_player_data = {
 				"玩家账号": user_name,
-				"player_name": show_player_name.text.replace("玩家昵称：", ""),
+				"玩家昵称": show_player_name.text.replace("玩家昵称：", ""),
 				"farm_name": show_farm_name.text.replace("农场名称：", ""),
 				"level": level,
 				"money": money,
@@ -415,7 +415,7 @@ func _handle_visit_player_response(data):
 		patrol_pets = target_player_data.get("巡逻宠物", [])
 		
 		# 更新UI显示
-		show_player_name.text = "玩家昵称：" + target_player_data.get("player_name", "未知")
+		show_player_name.text = "玩家昵称：" + target_player_data.get("玩家昵称", "未知")
 		show_farm_name.text = "农场名称：" + target_player_data.get("farm_name", "未知农场")
 		
 		# 显示被访问玩家的点赞数
@@ -466,7 +466,7 @@ func _handle_visit_player_response(data):
 		if player_ranking_panel:
 			player_ranking_panel.hide()
 		
-		Toast.show("正在访问 " + target_player_data.get("player_name", "未知") + " 的农场", Color.CYAN)
+		Toast.show("正在访问 " + target_player_data.get("玩家昵称", "未知") + " 的农场", Color.CYAN)
 	else:
 		Toast.show("访问失败：" + message, Color.RED)
 		print("访问玩家失败：", message)
@@ -492,7 +492,7 @@ func _handle_return_my_farm_response(data):
 		patrol_pets = player_data.get("巡逻宠物", [])
 		
 		# 恢复UI显示
-		show_player_name.text = "玩家昵称：" + player_data.get("player_name", "未知")
+		show_player_name.text = "玩家昵称：" + player_data.get("玩家昵称", "未知")
 		show_farm_name.text = "农场名称：" + player_data.get("farm_name", "我的农场")
 		
 		# 显示自己的点赞数
@@ -2448,7 +2448,7 @@ func _handle_account_setting_response(data: Dictionary):
 			# 只更新账户相关信息，不影响农场和背包数据
 			user_password = account_info["玩家密码"]
 			show_farm_name.text = "农场名称：" + account_info.get("farm_name", "")
-			show_player_name.text = "玩家昵称：" + account_info.get("player_name", "")
+			show_player_name.text = "玩家昵称：" + account_info.get("玩家昵称", "")
 			
 			# 更新基本游戏状态显示
 			experience = account_info.get("experience", 0)
@@ -2458,13 +2458,13 @@ func _handle_account_setting_response(data: Dictionary):
 			# 同步更新login_data和data中的账户信息
 			if login_data.size() > 0:
 				login_data["玩家密码"] = account_info.get("玩家密码", "")
-				login_data["player_name"] = account_info.get("player_name", "")
+				login_data["玩家昵称"] = account_info.get("玩家昵称", "")
 				login_data["farm_name"] = account_info.get("farm_name", "")
 				login_data["个人简介"] = account_info.get("个人简介", "")
 			
 			if data.size() > 0:
 				data["玩家密码"] = account_info.get("玩家密码", "")
-				data["player_name"] = account_info.get("player_name", "")
+				data["玩家昵称"] = account_info.get("玩家昵称", "")
 				data["farm_name"] = account_info.get("farm_name", "")
 				data["个人简介"] = account_info.get("个人简介", "")
 			

@@ -211,7 +211,7 @@ func _on_confirm_buy_store_product(product_name: String, unit_price: int, quanti
 	# 发送购买请求到服务器
 	var tcp_network_manager = get_node_or_null("/root/main/UI/BigPanel/TCPNetworkManagerPanel")
 	if tcp_network_manager and tcp_network_manager.has_method("send_message"):
-		var visited_player_name = main_game.visited_player_data.get("player_name", "")
+		var visited_player_name = main_game.visited_player_data.get("玩家昵称", "")
 		var message = {
 			"type": "buy_store_product",
 			"seller_username": main_game.visited_player_data.get("username", ""),

@@ -190,7 +190,7 @@ func _refresh_player_info():
 	# 优先从 login_data 获取数据，如果没有则从 data 获取
 	var player_data = main_game.login_data #if main_game.login_data.size() > 0 else main_game.data
 	
-	player_name_input.text = player_data.get("player_name", "")
+	player_name_input.text = player_data.get("玩家昵称", "")
 	farm_name_input.text = player_data.get("farm_name", "")
 	personal_profile_input.text = player_data.get("个人简介", "")
 	
@@ -216,8 +216,8 @@ func handle_account_response(response_data: Dictionary):
 				if response_data.has("updated_data"):
 					var updated_data = response_data["updated_data"]
 					if main_game:
-						if updated_data.has("player_name"):
-							main_game.login_data["player_name"] = updated_data["player_name"]
+						if updated_data.has("玩家昵称"):
+							main_game.login_data["玩家昵称"] = updated_data["玩家昵称"]
 						if updated_data.has("farm_name"):
 							main_game.login_data["farm_name"] = updated_data["farm_name"]
 						if updated_data.has("个人简介"):

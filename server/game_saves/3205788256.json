@@ -13,7 +13,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 4130,
+      "grow_time": 15120,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -24,7 +24,7 @@
     },
     {
       "crop_type": "龙果",
-      "grow_time": 4150,
+      "grow_time": 14400,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -35,7 +35,7 @@
     },
     {
       "crop_type": "杂交树1",
-      "grow_time": 4170,
+      "grow_time": 15160,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -46,7 +46,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 1460,
+      "grow_time": 3658,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -68,7 +68,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 4374,
+      "grow_time": 10968,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -101,7 +101,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 729,
+      "grow_time": 1828,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -178,7 +178,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 727,
+      "grow_time": 1826,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -189,7 +189,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 727,
+      "grow_time": 1826,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -200,7 +200,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 727,
+      "grow_time": 1826,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -277,7 +277,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 725,
+      "grow_time": 1824,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -321,7 +321,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 724,
+      "grow_time": 1823,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -568,7 +568,7 @@
   "player_name": "树萌芽",
   "level": 64,
   "money": 615197025464,
-  "最后登录时间": "2025年07月21日10时06分48秒",
+  "最后登录时间": "2025年07月21日10时20分08秒",
   "总游玩时间": "162时54分14秒",
   "玩家账号": "3205788256",
   "玩家密码": "123456",

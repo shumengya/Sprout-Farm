@@ -35,7 +35,7 @@
     },
     {
       "crop_type": "龙果",
-      "grow_time": 8740,
+      "grow_time": 14440,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -57,7 +57,7 @@
     },
     {
       "crop_type": "苹果",
-      "grow_time": 8610,
+      "grow_time": 9610,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
