@@ -336,13 +336,13 @@ func _on_forget_password_response_received(success: bool, message: String):
 
 # 登录信息文件操作
 func _save_login_info(user_name: String, password: String):
-	_write_login_file({"user_name": user_name, "password": password})
+	_write_login_file({"玩家账号": user_name, "password": password})
 	print("登录信息已保存" if user_name != "" else "登录信息已清除")
 
 func _load_login_info():
 	var login_data = _read_login_file()
 	if login_data:
-		var saved_username = login_data.get("user_name", "")
+		var saved_username = login_data.get("玩家账号", "")
 		var saved_password = login_data.get("password", "")
 		
 		if saved_username != "" and saved_password != "":
@@ -367,7 +367,7 @@ func _write_login_file(data: Dictionary):
 func _read_login_file() -> Dictionary:
 	var file = FileAccess.open("user://login.json", FileAccess.READ)
 	if not file:
-		_write_login_file({"user_name": "", "password": ""})
+		_write_login_file({"玩家账号": "", "password": ""})
 		return {}
 	
 	var json_text = file.get_as_text()
@@ -387,7 +387,7 @@ func toggle_remember_password():
 
 func has_saved_login_info() -> bool:
 	var login_data = _read_login_file()
-	return login_data.get("user_name", "") != "" and login_data.get("password", "") != ""
+	return login_data.get("玩家账号", "") != "" and login_data.get("password", "") != ""
 
 func quick_login():
 	if has_saved_login_info():
@@ -403,7 +403,7 @@ func quick_login():
 		_set_status(status_label, "没有保存的登录信息", Color.ORANGE)
 
 func get_saved_username() -> String:
-	return _read_login_file().get("user_name", "")
+	return _read_login_file().get("玩家账号", "")
 
 # 显示版本信息
 func _display_version_info():

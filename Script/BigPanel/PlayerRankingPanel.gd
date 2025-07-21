@@ -210,7 +210,7 @@ func add_player_entry(player_data):
 	var player_like_num = player_entry.get_node("HBox2/LikeNum")
 	
 	# 填充数据
-	var username = player_data.get("user_name", "未知")
+	var username = player_data.get("玩家账号", "未知")
 	var display_name = player_data.get("player_name", username)
 	player_name.text = display_name
 	#都是整数，不要乱用浮点数

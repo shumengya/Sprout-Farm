@@ -387,7 +387,7 @@ func _handle_visit_player_response(data):
 		# 保存当前玩家数据
 		if not is_visiting_mode:
 			original_player_data = {
-				"user_name": user_name,
+				"玩家账号": user_name,
 				"player_name": show_player_name.text.replace("玩家昵称：", ""),
 				"farm_name": show_farm_name.text.replace("农场名称：", ""),
 				"level": level,
@@ -2016,7 +2016,7 @@ func _on_like_button_pressed() -> void:
 		return
 	
 	# 获取被访问玩家的用户名
-	var target_username = visited_player_data.get("user_name", "")
+	var target_username = visited_player_data.get("玩家账号", "")
 	if target_username == "":
 		Toast.show("无法获取目标玩家信息", Color.RED)
 		return
@@ -2873,7 +2873,7 @@ func _has_item_in_bag(item_name: String) -> bool:
 
 # 发送使用道具请求
 func _send_use_item_request(lot_index: int, item_name: String, action_type: String, action_name: String):
-	var target_username = visited_player_data.get("user_name", "") if is_visiting_mode else ""
+	var target_username = visited_player_data.get("玩家账号", "") if is_visiting_mode else ""
 	
 	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendUseItem"):
 		if tcp_network_manager_panel.sendUseItem(lot_index, item_name, action_type, target_username):

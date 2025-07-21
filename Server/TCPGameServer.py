@@ -1104,7 +1104,7 @@ class TCPGameServer(TCPServer):
                 
             # 更新玩家数据
             player_data.update({
-                "user_name": username,
+                "玩家账号": username,
                 "玩家密码": password,
                 "farm_name": farm_name or "我的农场",
                 "player_name": player_name or username,
@@ -5949,8 +5949,8 @@ class TCPGameServer(TCPServer):
                     current_stamina = stamina_system.get("当前体力值", 20)
                     
                     player_info = {
-                        "user_name": player_data.get("user_name", account_id),
-                        "player_name": player_data.get("player_name", player_data.get("user_name", account_id)),
+                        "玩家账号": player_data.get("玩家账号", account_id),
+                        "player_name": player_data.get("player_name", player_data.get("玩家账号", account_id)),
                         "farm_name": player_data.get("farm_name", ""),
                         "level": player_data.get("level", 1),
                         "money": player_data.get("money", 0),
@@ -6106,7 +6106,7 @@ class TCPGameServer(TCPServer):
         target_current_stamina = target_stamina_system.get("当前体力值", 20)
         
         safe_player_data = {
-            "user_name": target_player_data.get("user_name", target_username),
+            "玩家账号": target_player_data.get("玩家账号", target_username),
             "username": target_username,  # 添加username字段，用于购买商品时标识卖家
             "player_name": target_player_data.get("player_name", target_username),
             "farm_name": target_player_data.get("farm_name", ""),
@@ -6179,7 +6179,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": "已返回自己的农场",
             "player_data": {
-                "user_name": player_data.get("user_name", username),
+                "玩家账号": player_data.get("玩家账号", username),
                 "player_name": player_data.get("player_name", username),
                 "farm_name": player_data.get("farm_name", ""),
                 "level": player_data.get("level", 1),
@@ -8076,7 +8076,7 @@ class TCPGameServer(TCPServer):
             
             # 只发送账户相关信息，不发送农场数据等
             account_info = {
-                "user_name": player_data.get("user_name", ""),
+                "玩家账号": player_data.get("玩家账号", ""),
                 "玩家密码": player_data.get("玩家密码", ""),
                 "player_name": player_data.get("player_name", ""),
                 "farm_name": player_data.get("farm_name", ""),

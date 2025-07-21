@@ -13,7 +13,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2730,
+      "grow_time": 4130,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -24,7 +24,7 @@
     },
     {
       "crop_type": "龙果",
-      "grow_time": 2750,
+      "grow_time": 4150,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -35,7 +35,7 @@
     },
     {
       "crop_type": "杂交树1",
-      "grow_time": 2770,
+      "grow_time": 4170,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -46,7 +46,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 1180,
+      "grow_time": 1460,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -68,7 +68,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 3534,
+      "grow_time": 4374,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -79,7 +79,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 244,
+      "grow_time": 304,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -90,7 +90,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 244,
+      "grow_time": 304,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -101,7 +101,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 589,
+      "grow_time": 729,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -167,7 +167,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 243,
+      "grow_time": 303,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -178,7 +178,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 587,
+      "grow_time": 727,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -189,7 +189,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 587,
+      "grow_time": 727,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -200,7 +200,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 587,
+      "grow_time": 727,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -233,7 +233,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 243,
+      "grow_time": 303,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -244,7 +244,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 243,
+      "grow_time": 303,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -255,7 +255,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 243,
+      "grow_time": 303,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -277,7 +277,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 585,
+      "grow_time": 725,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -288,7 +288,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 242,
+      "grow_time": 302,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -299,7 +299,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 242,
+      "grow_time": 302,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -310,7 +310,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 242,
+      "grow_time": 302,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -321,7 +321,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 584,
+      "grow_time": 724,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -568,9 +568,9 @@
   "player_name": "树萌芽",
   "level": 64,
   "money": 615197025464,
-  "最后登录时间": "2025年07月21日10时00分08秒",
-  "总游玩时间": "162时54分5秒",
-  "user_name": "3205788256",
+  "最后登录时间": "2025年07月21日10时06分48秒",
+  "总游玩时间": "162时54分14秒",
+  "玩家账号": "3205788256",
   "玩家密码": "123456",
   "个人简介": "人生啊，就这样吧",
   "注册时间": "2025年05月21日15时00分00秒",

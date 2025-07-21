@@ -206,7 +206,7 @@ func _on_water_button_pressed():
 	# 发送浇水请求到服务器
 	var target_username = ""
 	if main_game.is_visiting_mode:
-		target_username = main_game.visited_player_data.get("user_name", "")
+		target_username = main_game.visited_player_data.get("玩家账号", "")
 	
 	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
 		if tcp_network_manager_panel.sendWaterCrop(selected_lot_index, target_username):
@@ -263,7 +263,7 @@ func _on_fertilize_button_pressed():
 	# 发送施肥请求到服务器
 	var target_username = ""
 	if main_game.is_visiting_mode:
-		target_username = main_game.visited_player_data.get("user_name", "")
+		target_username = main_game.visited_player_data.get("玩家账号", "")
 	
 	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
 		if tcp_network_manager_panel.sendFertilizeCrop(selected_lot_index, target_username):
@@ -411,7 +411,7 @@ func _on_harvest_button_pressed():
 	# 发送收获请求到服务器
 	var target_username = ""
 	if main_game.is_visiting_mode:
-		target_username = main_game.visited_player_data.get("user_name", "")
+		target_username = main_game.visited_player_data.get("玩家账号", "")
 	
 	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
 		if tcp_network_manager_panel.sendHarvestCrop(selected_lot_index, target_username):
