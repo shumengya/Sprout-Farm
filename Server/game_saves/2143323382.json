@@ -6,7 +6,7 @@
   "player_name": "柚大青",
   "user_name": "2143323382",
   "user_password": "tyh@19900420",
-  "last_login_time": "2025年07月20日22时15分13秒",
+  "最后登录时间": "2025年07月20日22时15分13秒",
   "total_login_time": "6时47分9秒",
   "farm_lots": [
     {
@@ -132,35 +132,27 @@
     },
     {
       "crop_type": "杂交树1",
-      "grow_time": 21042,
+      "grow_time": 21642,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
       "max_grow_time": 21600,
       "已浇水": false,
-      "已施肥": true,
+      "已施肥": false,
       "土地等级": 3,
-      "施肥时间": 1753019866.8176558,
-      "施肥类型": "农家肥",
-      "施肥倍数": 2.0,
-      "施肥持续时间": 1800,
       "浇水时间": 1753019871.817958
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 21636,
+      "grow_time": 22356,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
       "max_grow_time": 25200,
       "已浇水": false,
-      "已施肥": true,
+      "已施肥": false,
       "土地等级": 3,
-      "浇水时间": 1753019874.5774846,
-      "施肥时间": 1753019862.2419734,
-      "施肥类型": "农家肥",
-      "施肥倍数": 2.0,
-      "施肥持续时间": 1800
+      "浇水时间": 1753019874.5774846
     },
     {
       "crop_type": "",

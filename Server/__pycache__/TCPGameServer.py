@@ -437,7 +437,7 @@ class TCPGameServer(TCPServer):
             # 更新最后登录时间
             import datetime
             current_time = datetime.datetime.now()
-            player_data["last_login_time"] = current_time.strftime("%Y年%m月%d日%H时%M分%S秒")
+            player_data["最后登录时间"] = current_time.strftime("%Y年%m月%d日%H时%M分%S秒")
             
             # 保存用户会话信息
             self.user_data[client_id] = {
@@ -606,7 +606,7 @@ class TCPGameServer(TCPServer):
             import datetime
             current_time = datetime.datetime.now()
             time_str = current_time.strftime("%Y年%m月%d日%H时%M分%S秒")
-            player_data["last_login_time"] = time_str
+            player_data["最后登录时间"] = time_str
             
             if "total_login_time" not in player_data:
                 player_data["total_login_time"] = "0时0分0秒"
@@ -1157,7 +1157,7 @@ class TCPGameServer(TCPServer):
         current_session_time = f"{current_hours}时{current_minutes}分{current_seconds}秒"
         
         # 获取最后登录时间和总游玩时间
-        last_login_time = player_data.get("last_login_time", "未知")
+        last_login_time = player_data.get("最后登录时间", "未知")
         total_login_time = player_data.get("total_login_time", "0时0分0秒")
         
         self.log('INFO', f"玩家 {username} 请求游玩时间统计", 'SERVER')
@@ -1165,7 +1165,7 @@ class TCPGameServer(TCPServer):
         return self.send_data(client_id, {
             "type": "play_time_response",
             "success": True,
-            "last_login_time": last_login_time,
+            "最后登录时间": last_login_time,
             "total_login_time": total_login_time,
             "current_session_time": current_session_time
         })
@@ -1282,7 +1282,7 @@ class TCPGameServer(TCPServer):
                         "money": player_data.get("money", 0),
                         "experience": player_data.get("experience", 0),
                         "seed_count": seed_count,
-                        "last_login_time": player_data.get("last_login_time", "未知"),
+                        "最后登录时间": player_data.get("最后登录时间", "未知"),
                         "total_login_time": player_data.get("total_login_time", "0时0分0秒")
                     }
                     
@@ -1471,7 +1471,7 @@ class TCPGameServer(TCPServer):
             "experience": target_player_data.get("experience", 0),
             "farm_lots": target_player_data.get("farm_lots", []),
             "player_bag": target_player_data.get("player_bag", []),
-            "last_login_time": target_player_data.get("last_login_time", "未知"),
+            "最后登录时间": target_player_data.get("最后登录时间", "未知"),
             "total_login_time": target_player_data.get("total_login_time", "0时0分0秒")
         }
         

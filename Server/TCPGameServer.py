@@ -922,7 +922,7 @@ class TCPGameServer(TCPServer):
             
             # 更新最后登录时间
             current_time = datetime.datetime.now()
-            player_data["last_login_time"] = current_time.strftime("%Y年%m月%d日%H时%M分%S秒")
+            player_data["最后登录时间"] = current_time.strftime("%Y年%m月%d日%H时%M分%S秒")
             
             # 检查并更新体力值
             stamina_updated = self._check_and_update_stamina(player_data)
@@ -1133,7 +1133,7 @@ class TCPGameServer(TCPServer):
             # 更新注册时间和登录时间
             current_time = datetime.datetime.now()
             time_str = current_time.strftime("%Y年%m月%d日%H时%M分%S秒")
-            player_data["last_login_time"] = time_str
+            player_data["最后登录时间"] = time_str
             
             # 设置新玩家的注册时间（不同于模板中的默认时间）
             player_data["注册时间"] = time_str
@@ -2032,7 +2032,7 @@ class TCPGameServer(TCPServer):
     def _is_player_long_offline(self, player_data, current_time):
         """检查玩家是否长时间离线"""
         # 获取玩家最后登录时间
-        last_login_time_str = player_data.get("last_login_time", "")
+        last_login_time_str = player_data.get("最后登录时间", "")
         if not last_login_time_str:
             return False
         
@@ -5814,7 +5814,7 @@ class TCPGameServer(TCPServer):
         current_session_time = f"{current_hours}时{current_minutes}分{current_seconds}秒"
         
         # 获取最后登录时间和总游玩时间
-        last_login_time = player_data.get("last_login_time", "未知")
+        last_login_time = player_data.get("最后登录时间", "未知")
         total_login_time = player_data.get("total_login_time", "0时0分0秒")
         
         self.log('INFO', f"玩家 {username} 请求游玩时间统计", 'SERVER')
@@ -5822,7 +5822,7 @@ class TCPGameServer(TCPServer):
         return self.send_data(client_id, {
             "type": "play_time_response",
             "success": True,
-            "last_login_time": last_login_time,
+            "最后登录时间": last_login_time,
             "total_login_time": total_login_time,
             "current_session_time": current_session_time
         })
@@ -5941,7 +5941,7 @@ class TCPGameServer(TCPServer):
                     total_time_seconds = self._parse_time_to_seconds(total_time_str)
                     
                     # 解析最后登录时间为时间戳（用于排序）
-                    last_login_str = player_data.get("last_login_time", "未知")
+                    last_login_str = player_data.get("最后登录时间", "未知")
                     last_login_timestamp = self._parse_login_time_to_timestamp(last_login_str)
                     
                     # 获取所需的玩家信息
@@ -5957,7 +5957,7 @@ class TCPGameServer(TCPServer):
                         "experience": player_data.get("experience", 0),
                         "体力值": current_stamina,
                         "seed_count": seed_count,
-                        "last_login_time": last_login_str,
+                        "最后登录时间": last_login_str,
                         "last_login_timestamp": last_login_timestamp,
                         "total_login_time": total_time_str,
                         "total_time_seconds": total_time_seconds,
@@ -6126,7 +6126,7 @@ class TCPGameServer(TCPServer):
             "玩家小卖部": target_player_data.get("玩家小卖部", []),  # 添加小卖部数据
             "小卖部格子数": target_player_data.get("小卖部格子数", 10),  # 添加小卖部格子数
             "点赞数": target_player_data.get("点赞数", 0),  # 添加点赞数
-            "last_login_time": target_player_data.get("last_login_time", "未知"),
+            "最后登录时间": target_player_data.get("最后登录时间", "未知"),
             "total_login_time": target_player_data.get("total_login_time", "0时0分0秒"),
             "total_likes": target_player_data.get("total_likes", 0)
         }
@@ -9744,7 +9744,7 @@ class ConsoleCommands:
                     nickname = player_data.get("player_name", "未设置")
                     level = player_data.get("level", 1)
                     money = player_data.get("money", 0)
-                    last_login = player_data.get("last_login_time", "从未登录")
+                    last_login = player_data.get("最后登录时间", "从未登录")
                     
                     print(f"{qq_number:<12} {nickname:<15} {level:<6} {money:<10} {last_login:<20}")
             except Exception as e:
@@ -9773,7 +9773,7 @@ class ConsoleCommands:
         print(f"金币: {player_data.get('money', 0)}")
         print(f"体力: {player_data.get('体力值', 20)}")
         print(f"注册时间: {player_data.get('注册时间', '未知')}")
-        print(f"最后登录: {player_data.get('last_login_time', '从未登录')}")
+        print(f"最后登录: {player_data.get('最后登录时间', '从未登录')}")
         print(f"总在线时长: {player_data.get('total_login_time', '0时0分0秒')}")
         
         # 显示土地信息
