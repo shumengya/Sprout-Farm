@@ -433,7 +433,7 @@ class TCPGameServer(TCPServer):
     
     #加载作物配置数据（优化版本）
     def _load_crop_data(self):
-        """加载作物配置数据（带缓存优化，优先从MongoDB加载）"""
+        """加载作物配置数据（带缓存优化）"""
         current_time = time.time()
         
         # 检查缓存是否有效
@@ -442,26 +442,10 @@ class TCPGameServer(TCPServer):
             return self.crop_data_cache
         
         # 缓存过期或不存在，重新加载
-        # 优先尝试从MongoDB加载
-        if self.use_mongodb and self.mongo_api:
-            try:
-                crop_data = self.mongo_api.get_crop_data_config()
-                if crop_data:
-                    self.crop_data_cache = crop_data
-                    self.crop_data_cache_time = current_time
-                    self.log('INFO', "成功从MongoDB加载作物数据", 'SERVER')
-                    return self.crop_data_cache
-                else:
-                    self.log('WARNING', "MongoDB中未找到作物数据，尝试从JSON文件加载", 'SERVER')
-            except Exception as e:
-                self.log('ERROR', f"从MongoDB加载作物数据失败: {str(e)}，尝试从JSON文件加载", 'SERVER')
-        
-        # MongoDB加载失败或不可用，从JSON文件加载
         try:
             with open("config/crop_data.json", 'r', encoding='utf-8') as file:
                 self.crop_data_cache = json.load(file)
                 self.crop_data_cache_time = current_time
-                self.log('INFO', "成功从JSON文件加载作物数据", 'SERVER')
                 return self.crop_data_cache
         except Exception as e:
             self.log('ERROR', f"无法加载作物数据: {str(e)}", 'SERVER')
@@ -7949,7 +7933,6 @@ class TCPGameServer(TCPServer):
 
 
 # ================================账户设置处理方法================================
-    #处理修改账号信息请求
     def _handle_modify_account_info_request(self, client_id, message):
         """处理修改账号信息请求"""
         # 检查用户是否已登录
@@ -7977,6 +7960,9 @@ class TCPGameServer(TCPServer):
         
         if not new_farm_name:
             return self._send_modify_account_error(client_id, "农场名称不能为空")
+        
+        if len(new_password) < 6:
+            return self._send_modify_account_error(client_id, "密码长度至少6个字符")
         
         if len(new_player_name) > 20:
             return self._send_modify_account_error(client_id, "玩家昵称不能超过20个字符")
@@ -8020,7 +8006,6 @@ class TCPGameServer(TCPServer):
             self.log('ERROR', f"修改账号信息时出错: {str(e)}", 'ACCOUNT')
             return self._send_modify_account_error(client_id, "修改账号信息失败，请稍后重试")
 
-    #处理删除账号请求
     def _handle_delete_account_request(self, client_id, message):
         """处理删除账号请求"""
         # 检查用户是否已登录

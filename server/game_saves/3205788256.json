@@ -1,44 +1,44 @@
 {
   "farm_lots": [
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "小麦",
+      "grow_time": 300,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 4
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "小麦",
+      "grow_time": 300,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 4
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "小麦",
+      "grow_time": 300,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
       "土地等级": 4
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "小麦",
+      "grow_time": 300,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
       "max_grow_time": 300,
       "已浇水": false,
       "已施肥": false,
@@ -78,11 +78,11 @@
       "土地等级": 3
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "龙果",
+      "grow_time": 14405,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
       "max_grow_time": 14400,
       "已浇水": false,
       "已施肥": false,
@@ -397,11 +397,11 @@
       "土地等级": 0
     },
     {
-      "crop_type": "",
-      "grow_time": 0,
+      "crop_type": "野草2",
+      "grow_time": 5,
       "is_dead": false,
       "is_diged": true,
-      "is_planted": false,
+      "is_planted": true,
       "max_grow_time": 5,
       "已浇水": false,
       "已施肥": false,
@@ -573,15 +573,17 @@
       "count": 8
     }
   ],
-  "experience": 852,
+  "experience": 573,
   "farm_name": "树萌芽の狗窝",
-  "player_name": "树萌芽2",
+  "player_name": "树萌芽",
   "level": 64,
-  "money": 615197019764,
-  "last_login_time": "2025年07月21日07时37分38秒",
-  "total_login_time": "162时52分10秒",
+  "money": 615197019864,
+  "last_login_time": "2025年07月19日21时52分29秒",
+  "total_login_time": "162时47分40秒",
   "user_name": "3205788256",
   "user_password": "tyh@19900420",
+  "last_water_reset_date": "2025-06-06",
+  "last_check_in_date": "2025-06-01",
   "session_start_time": 1749878790.288913,
   "个人简介": "人生啊，就这样吧",
   "注册时间": "2025年05月21日15时00分00秒",
@@ -634,7 +636,7 @@
     {
       "name": "小麦",
       "quality": "普通",
-      "count": 34
+      "count": 16
     },
     {
       "name": "山葵",
@@ -695,11 +697,6 @@
       "name": "马铃薯",
       "quality": "普通",
       "count": 7
-    },
-    {
-      "name": "火龙果",
-      "quality": "稀有",
-      "count": 1
     }
   ],
   "道具背包": [
@@ -1100,20 +1097,20 @@
     "上次护理时间": 1752051799
   },
   "体力系统": {
-    "当前体力值": 25,
-    "最大体力值": 25,
-    "上次刷新时间": "2025-07-21",
-    "上次恢复时间": 1753054658.7901437
+    "当前体力值": 20,
+    "最大体力值": 20,
+    "上次刷新时间": "2025-07-19",
+    "上次恢复时间": 1752904756.8787217
   },
   "点赞系统": {
     "今日剩余点赞次数": 10,
-    "点赞上次刷新时间": "2025-07-21"
+    "点赞上次刷新时间": "2025-07-19"
   },
   "在线礼包": {
-    "当前日期": "2025-07-21",
+    "当前日期": "2025-07-19",
     "今日在线时长": 0.0,
     "已领取礼包": [],
-    "登录时间": 1753054658.793094
+    "登录时间": 1752904756.8793516
   },
   "玩家小卖部": [
     {
