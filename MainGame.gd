@@ -395,7 +395,7 @@ func _handle_visit_player_response(data):
 				"experience": experience,
 				"stamina": stamina,
 				"farm_lots": farm_lots.duplicate(true),
-				"player_bag": player_bag.duplicate(true)
+				"种子仓库": player_bag.duplicate(true)
 			}
 		
 		# 切换到访问模式
@@ -408,7 +408,7 @@ func _handle_visit_player_response(data):
 		level = target_player_data.get("level", 1)
 		stamina = target_player_data.get("体力值", 20)
 		farm_lots = target_player_data.get("farm_lots", [])
-		player_bag = target_player_data.get("player_bag", [])
+		player_bag = target_player_data.get("种子仓库", [])
 		crop_warehouse = target_player_data.get("作物仓库", [])
 		item_bag = target_player_data.get("道具背包", [])
 		pet_bag = target_player_data.get("宠物背包", [])
@@ -485,7 +485,7 @@ func _handle_return_my_farm_response(data):
 		level = player_data.get("level", 1)
 		stamina = player_data.get("体力值", 20)
 		farm_lots = player_data.get("farm_lots", [])
-		player_bag = player_data.get("player_bag", [])
+		player_bag = player_data.get("种子仓库", [])
 		crop_warehouse = player_data.get("作物仓库", [])
 		item_bag = player_data.get("道具背包", [])
 		pet_bag = player_data.get("宠物背包", [])
@@ -1804,7 +1804,7 @@ func _handle_daily_check_in_response(response: Dictionary) -> void:
 	money = updated_data["money"]
 	experience = updated_data["experience"]
 	level = updated_data["level"]
-	player_bag = updated_data["player_bag"]
+	player_bag = updated_data["种子仓库"]
 	
 	# 更新UI
 	_update_ui()
@@ -1943,7 +1943,7 @@ func _handle_lucky_draw_response(response: Dictionary) -> void:
 	money = updated_data["money"]
 	experience = updated_data["experience"]
 	level = updated_data["level"]
-	player_bag = updated_data["player_bag"]
+	player_bag = updated_data["种子仓库"]
 	
 	# 更新UI
 	_update_ui()
@@ -2165,8 +2165,8 @@ func _handle_new_player_gift_response(data):
 		level = updated_data.get("level", level)
 		
 		# 安全更新背包数据
-		if updated_data.has("player_bag"):
-			player_bag = updated_data["player_bag"]
+		if updated_data.has("种子仓库"):
+			player_bag = updated_data["种子仓库"]
 		if updated_data.has("宠物背包"):
 			pet_bag = updated_data["宠物背包"]
 		
@@ -2425,7 +2425,7 @@ func _handle_claim_online_gift_response(data: Dictionary):
 		money = updated_data["money"]
 		experience = updated_data["experience"]
 		level = updated_data["level"]
-		player_bag = updated_data["player_bag"]
+		player_bag = updated_data["种子仓库"]
 		
 		# 更新UI
 		_update_ui()

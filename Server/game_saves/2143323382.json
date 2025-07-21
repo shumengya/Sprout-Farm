@@ -144,7 +144,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 23736,
+      "grow_time": 25236,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -562,7 +562,7 @@
       "土地等级": 0
     }
   ],
-  "player_bag": [
+  "种子仓库": [
     {
       "name": "土豆",
       "quality": "普通",
@@ -1092,5 +1092,6 @@
       }
     },
     "稻草人昵称颜色": "b38282ff"
-  }
+  },
+  "点赞数": 10
 }

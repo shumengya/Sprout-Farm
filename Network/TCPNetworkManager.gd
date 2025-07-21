@@ -288,7 +288,7 @@ func _on_data_received(data):
 		# 种植作物响应
 		elif action_type == "plant_crop":
 			if success:
-				main_game.player_bag = updated_data["player_bag"]
+				main_game.player_bag = updated_data["种子仓库"]
 				main_game.player_bag_panel.update_player_bag_ui()
 				Toast.show(message, Color.GREEN)
 			else:
@@ -298,7 +298,7 @@ func _on_data_received(data):
 		elif action_type == "buy_seed":
 			if success:
 				main_game.money = updated_data["money"]
-				main_game.player_bag = updated_data["player_bag"]
+				main_game.player_bag = updated_data["种子仓库"]
 				main_game._update_ui()
 				main_game.player_bag_panel.update_player_bag_ui()
 				Toast.show(message, Color.GREEN)
@@ -372,7 +372,7 @@ func _on_data_received(data):
 				main_game.experience = updated_data["experience"]
 				main_game.level = updated_data["level"]
 				main_game.farm_lots = updated_data["farm_lots"]
-				main_game.player_bag = updated_data["player_bag"]
+				main_game.player_bag = updated_data["种子仓库"]
 				main_game._update_ui()
 				main_game._update_farm_lots_state()
 				main_game.player_bag_panel.update_player_bag_ui()

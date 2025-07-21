@@ -428,7 +428,7 @@ func _handle_login_success(user_data: Dictionary):
 	farmname_input.text = user_data.get("farm_name", "")
 	
 	# 加载各种背包数据
-	main_game.player_bag = user_data.get("player_bag", [])
+	main_game.player_bag = user_data.get("种子仓库", [])
 	main_game.crop_warehouse = user_data.get("作物仓库", [])
 	main_game.item_bag = user_data.get("道具背包", [])
 	main_game.pet_bag = user_data.get("宠物背包", [])

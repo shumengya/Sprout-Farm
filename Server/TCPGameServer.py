@@ -1127,8 +1127,8 @@ class TCPGameServer(TCPServer):
                         "max_grow_time": 5 if i >= 5 else 3
                     })
             
-            if "player_bag" not in player_data:
-                player_data["player_bag"] = []
+            if "种子仓库" not in player_data:
+                player_data["种子仓库"] = []
             
             # 更新注册时间和登录时间
             current_time = datetime.datetime.now()
@@ -1578,7 +1578,7 @@ class TCPGameServer(TCPServer):
                 "money": player_data["money"],
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "player_bag": player_data.get("player_bag", []),
+                "种子仓库": player_data.get("种子仓库", []),
                 "作物仓库": player_data.get("作物仓库", [])
             }
         })
@@ -1706,7 +1706,7 @@ class TCPGameServer(TCPServer):
                 "experience": current_player_data["experience"],
                 "level": current_player_data["level"],
                 "体力值": current_player_data["体力值"],
-                "player_bag": current_player_data.get("player_bag", []),
+                "种子仓库": current_player_data.get("种子仓库", []),
                 "作物仓库": current_player_data.get("作物仓库", [])
             }
         })
@@ -1837,12 +1837,12 @@ class TCPGameServer(TCPServer):
         seed_count = seed_reward["count"]
         
         # 确保背包存在
-        if "player_bag" not in player_data:
-            player_data["player_bag"] = []
+        if "种子仓库" not in player_data:
+            player_data["种子仓库"] = []
         
         # 查找背包中是否已有该种子
         seed_found = False
-        for item in player_data["player_bag"]:
+        for item in player_data["种子仓库"]:
             if item.get("name") == seed_name:
                 item["count"] += seed_count
                 seed_found = True
@@ -1856,7 +1856,7 @@ class TCPGameServer(TCPServer):
             if crop_data and seed_name in crop_data:
                 quality = crop_data[seed_name].get("品质", "普通")
             
-            player_data["player_bag"].append({
+            player_data["种子仓库"].append({
                 "name": seed_name,
                 "quality": quality,
                 "count": seed_count
@@ -1923,17 +1923,17 @@ class TCPGameServer(TCPServer):
         seed_count = seed_reward["count"]
         
         # 确保背包存在
-        if "player_bag" not in player_data:
-            player_data["player_bag"] = []
+        if "种子仓库" not in player_data:
+            player_data["种子仓库"] = []
         
         # 查找背包中是否已有该种子
-        for item in player_data["player_bag"]:
+        for item in player_data["种子仓库"]:
             if item.get("name") == seed_name:
                 item["count"] += seed_count
                 return
         
         # 如果背包中没有该种子，添加新条目
-        player_data["player_bag"].append({
+        player_data["种子仓库"].append({
             "name": seed_name,
             "quality": quality,
             "count": seed_count
@@ -2151,7 +2151,7 @@ class TCPGameServer(TCPServer):
         seed_found = False
         seed_index = -1
         
-        for i, item in enumerate(player_data.get("player_bag", [])):
+        for i, item in enumerate(player_data.get("种子仓库", [])):
             if item.get("name") == crop_name:
                 seed_found = True
                 seed_index = i
@@ -2167,11 +2167,11 @@ class TCPGameServer(TCPServer):
             grow_time = 600
         
         # 从背包中减少种子数量
-        player_data["player_bag"][seed_index]["count"] -= 1
+        player_data["种子仓库"][seed_index]["count"] -= 1
         
         # 如果种子用完，从背包中移除
-        if player_data["player_bag"][seed_index]["count"] <= 0:
-            player_data["player_bag"].pop(seed_index)
+        if player_data["种子仓库"][seed_index]["count"] <= 0:
+            player_data["种子仓库"].pop(seed_index)
         
         # 更新地块数据
         lot.update({
@@ -2202,7 +2202,7 @@ class TCPGameServer(TCPServer):
             "success": True,
             "message": f"成功种植 {crop_name}",
             "updated_data": {
-                "player_bag": player_data["player_bag"]
+                "种子仓库": player_data["种子仓库"]
             }
         })
 #==========================种植作物处理==========================
@@ -2264,17 +2264,17 @@ class TCPGameServer(TCPServer):
         # 将种子添加到背包
         seed_found = False
         
-        for item in player_data.get("player_bag", []):
+        for item in player_data.get("种子仓库", []):
             if item.get("name") == crop_name:
                 item["count"] += quantity
                 seed_found = True
                 break
         
         if not seed_found:
-            if "player_bag" not in player_data:
-                player_data["player_bag"] = []
+            if "种子仓库" not in player_data:
+                player_data["种子仓库"] = []
                 
-            player_data["player_bag"].append({
+            player_data["种子仓库"].append({
                 "name": crop_name,
                 "quality": crop.get("品质", "普通"),
                 "count": quantity
@@ -2292,7 +2292,7 @@ class TCPGameServer(TCPServer):
             "message": f"成功购买 {quantity} 个 {crop_name} 种子",
             "updated_data": {
                 "money": player_data["money"],
-                "player_bag": player_data["player_bag"]
+                "种子仓库": player_data["种子仓库"]
             }
         })
     
@@ -3213,13 +3213,13 @@ class TCPGameServer(TCPServer):
         player_data["experience"] += rewards["experience"]
         
         # 添加种子到背包
-        if "player_bag" not in player_data:
-            player_data["player_bag"] = []
+        if "种子仓库" not in player_data:
+            player_data["种子仓库"] = []
         
         for seed_name, quantity in rewards["seeds"].items():
             # 查找是否已有该种子
             found = False
-            for item in player_data["player_bag"]:
+            for item in player_data["种子仓库"]:
                 if item.get("name") == seed_name:
                     item["count"] += quantity
                     found = True
@@ -3227,7 +3227,7 @@ class TCPGameServer(TCPServer):
             
             # 如果没有找到，添加新种子
             if not found:
-                player_data["player_bag"].append({
+                player_data["种子仓库"].append({
                     "name": seed_name,
                     "count": quantity
                 })
@@ -3259,7 +3259,7 @@ class TCPGameServer(TCPServer):
                 "experience": player_data["experience"],
                 "level": player_data["level"],
                 "farm_lots": player_data["farm_lots"],
-                "player_bag": player_data["player_bag"]
+                "种子仓库": player_data["种子仓库"]
             }
         })
     
@@ -4642,7 +4642,7 @@ class TCPGameServer(TCPServer):
             "updated_data": {
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "player_bag": player_data.get("player_bag", []),
+                "种子仓库": player_data.get("种子仓库", []),
                 "作物仓库": player_data.get("作物仓库", []),
                 "道具背包": player_data.get("道具背包", [])
             }
@@ -4779,7 +4779,7 @@ class TCPGameServer(TCPServer):
             "updated_data": {
                 "experience": current_player_data["experience"],
                 "level": current_player_data["level"],
-                "player_bag": current_player_data.get("player_bag", []),
+                "种子仓库": current_player_data.get("种子仓库", []),
                 "作物仓库": current_player_data.get("作物仓库", []),
                 "道具背包": current_player_data.get("道具背包", [])
             }
@@ -5924,7 +5924,7 @@ class TCPGameServer(TCPServer):
                 
                 if player_data:
                     # 统计背包中的种子数量
-                    seed_count = sum(item.get("count", 0) for item in player_data.get("player_bag", []))
+                    seed_count = sum(item.get("count", 0) for item in player_data.get("种子仓库", []))
                     
                     # 检查玩家是否在线
                     is_online = any(
@@ -6115,7 +6115,7 @@ class TCPGameServer(TCPServer):
             "experience": target_player_data.get("experience", 0),
             "体力值": target_current_stamina,
             "farm_lots": target_player_data.get("farm_lots", []),
-            "player_bag": target_player_data.get("player_bag", []),
+            "种子仓库": target_player_data.get("种子仓库", []),
             "作物仓库": target_player_data.get("作物仓库", []),
             "道具背包": target_player_data.get("道具背包", []),
             "宠物背包": target_player_data.get("宠物背包", []),
@@ -6187,7 +6187,7 @@ class TCPGameServer(TCPServer):
                 "experience": player_data.get("experience", 0),
                 "体力值": my_current_stamina,
                 "farm_lots": player_data.get("farm_lots", []),
-                "player_bag": player_data.get("player_bag", []),
+                "种子仓库": player_data.get("种子仓库", []),
                 "宠物背包": player_data.get("宠物背包", []),
                 "巡逻宠物": self._convert_patrol_pets_to_full_data(player_data),
                 "出战宠物": self._convert_battle_pets_to_full_data(player_data),
@@ -6327,7 +6327,7 @@ class TCPGameServer(TCPServer):
                 "money": player_data["money"],
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "player_bag": player_data.get("player_bag", [])
+                "种子仓库": player_data.get("种子仓库", [])
             }
         })
     
@@ -6348,7 +6348,7 @@ class TCPGameServer(TCPServer):
         
         # 发放种子
         if "种子" in rewards:
-            player_bag = player_data.get("player_bag", [])
+            player_bag = player_data.get("种子仓库", [])
             crop_data = self._load_crop_data()
             
             for seed_info in rewards["种子"]:
@@ -6376,7 +6376,7 @@ class TCPGameServer(TCPServer):
                         "count": seed_count
                     })
             
-            player_data["player_bag"] = player_bag
+            player_data["种子仓库"] = player_bag
 
     #发放在线礼包奖励（旧版本）
     def _apply_online_gift_rewards(self, player_data, rewards):
@@ -6395,7 +6395,7 @@ class TCPGameServer(TCPServer):
         
         # 发放种子
         if "seeds" in rewards:
-            player_bag = player_data.get("player_bag", [])
+            player_bag = player_data.get("种子仓库", [])
             crop_data = self._load_crop_data()
             
             for seed_info in rewards["seeds"]:
@@ -6424,7 +6424,7 @@ class TCPGameServer(TCPServer):
                         "quality": quality
                     })
             
-            player_data["player_bag"] = player_bag
+            player_data["种子仓库"] = player_bag
     
     #检查玩家是否升级
     def _check_level_up(self, player_data):
@@ -6909,7 +6909,7 @@ class TCPGameServer(TCPServer):
                 "money": player_data["money"],
                 "experience": player_data["experience"],
                 "level": player_data["level"],
-                "player_bag": player_data.get("player_bag", [])
+                "种子仓库": player_data.get("种子仓库", [])
             }
         })
     
@@ -7147,8 +7147,8 @@ class TCPGameServer(TCPServer):
         
         # 应用种子奖励
         if "seeds" in rewards:
-            if "player_bag" not in player_data:
-                player_data["player_bag"] = []
+            if "种子仓库" not in player_data:
+                player_data["种子仓库"] = []
             
             for seed_reward in rewards["seeds"]:
                 seed_name = seed_reward["name"]
@@ -7157,7 +7157,7 @@ class TCPGameServer(TCPServer):
                 
                 # 查找背包中是否已有该种子
                 found = False
-                for item in player_data["player_bag"]:
+                for item in player_data["种子仓库"]:
                     if item.get("name") == seed_name:
                         item["count"] += quantity
                         found = True
@@ -7165,7 +7165,7 @@ class TCPGameServer(TCPServer):
                 
                 # 如果背包中没有，添加新条目
                 if not found:
-                    player_data["player_bag"].append({
+                    player_data["种子仓库"].append({
                         "name": seed_name,
                         "quality": quality,
                         "count": quantity
@@ -7231,7 +7231,7 @@ class TCPGameServer(TCPServer):
                     "money": player_data["money"],
                     "experience": player_data["experience"],
                     "level": player_data["level"],
-                    "player_bag": player_data.get("player_bag", []),
+                    "种子仓库": player_data.get("种子仓库", []),
                     "宠物背包": player_data.get("宠物背包", []),
                     "新手礼包": player_data["新手礼包"]
                 }
@@ -7268,8 +7268,8 @@ class TCPGameServer(TCPServer):
         
         # 应用种子奖励
         if "seeds" in gift_contents:
-            if "player_bag" not in player_data:
-                player_data["player_bag"] = []
+            if "种子仓库" not in player_data:
+                player_data["种子仓库"] = []
             
             for seed_reward in gift_contents["seeds"]:
                 seed_name = seed_reward["name"]
@@ -7278,7 +7278,7 @@ class TCPGameServer(TCPServer):
                 
                 # 查找背包中是否已有该种子
                 found = False
-                for item in player_data["player_bag"]:
+                for item in player_data["种子仓库"]:
                     if item.get("name") == seed_name:
                         item["count"] += quantity
                         found = True
@@ -7286,7 +7286,7 @@ class TCPGameServer(TCPServer):
                 
                 # 如果背包中没有，添加新条目
                 if not found:
-                    player_data["player_bag"].append({
+                    player_data["种子仓库"].append({
                         "name": seed_name,
                         "quality": quality,
                         "count": quantity
@@ -7314,8 +7314,8 @@ class TCPGameServer(TCPServer):
         
         # 应用种子奖励
         if "种子" in reward_content:
-            if "player_bag" not in player_data:
-                player_data["player_bag"] = []
+            if "种子仓库" not in player_data:
+                player_data["种子仓库"] = []
             
             for seed_reward in reward_content["种子"]:
                 seed_name = seed_reward["名称"]
@@ -7324,7 +7324,7 @@ class TCPGameServer(TCPServer):
                 
                 # 查找背包中是否已有该种子
                 found = False
-                for item in player_data["player_bag"]:
+                for item in player_data["种子仓库"]:
                     if item.get("name") == seed_name:
                         item["count"] += quantity
                         found = True
@@ -7332,7 +7332,7 @@ class TCPGameServer(TCPServer):
                 
                 # 如果背包中没有，添加新条目
                 if not found:
-                    player_data["player_bag"].append({
+                    player_data["种子仓库"].append({
                         "name": seed_name,
                         "quality": quality,
                         "count": quantity
@@ -7419,7 +7419,7 @@ class TCPGameServer(TCPServer):
                     "money": player_data["money"],
                     "experience": player_data["experience"],
                     "level": player_data["level"],
-                    "player_bag": player_data.get("player_bag", [])
+                    "种子仓库": player_data.get("种子仓库", [])
                 }
             })
             
@@ -7780,12 +7780,12 @@ class TCPGameServer(TCPServer):
                     level_up_experience = 100 * player_data["level"]
             
             elif reward_type == "seed":
-                if "player_bag" not in player_data:
-                    player_data["player_bag"] = []
+                if "种子仓库" not in player_data:
+                    player_data["种子仓库"] = []
                 
                 # 查找背包中是否已有该种子
                 found = False
-                for item in player_data["player_bag"]:
+                for item in player_data["种子仓库"]:
                     if item.get("name") == reward.get("name", ""):
                         item["count"] += reward.get("amount", 0)
                         found = True
@@ -7793,7 +7793,7 @@ class TCPGameServer(TCPServer):
                 
                 # 如果背包中没有，添加新条目
                 if not found:
-                    player_data["player_bag"].append({
+                    player_data["种子仓库"].append({
                         "name": reward.get("name", "未知种子"),
                         "quality": reward.get("rarity", "普通"),
                         "count": reward.get("amount", 0)
