@@ -2446,7 +2446,7 @@ func _handle_account_setting_response(data: Dictionary):
 			var account_info = data["account_info"]
 			
 			# 只更新账户相关信息，不影响农场和背包数据
-			user_password = account_info["user_password"]
+			user_password = account_info["玩家密码"]
 			show_farm_name.text = "农场名称：" + account_info.get("farm_name", "")
 			show_player_name.text = "玩家昵称：" + account_info.get("player_name", "")
 			
@@ -2457,13 +2457,13 @@ func _handle_account_setting_response(data: Dictionary):
 			
 			# 同步更新login_data和data中的账户信息
 			if login_data.size() > 0:
-				login_data["user_password"] = account_info.get("user_password", "")
+				login_data["玩家密码"] = account_info.get("玩家密码", "")
 				login_data["player_name"] = account_info.get("player_name", "")
 				login_data["farm_name"] = account_info.get("farm_name", "")
 				login_data["个人简介"] = account_info.get("个人简介", "")
 			
 			if data.size() > 0:
-				data["user_password"] = account_info.get("user_password", "")
+				data["玩家密码"] = account_info.get("玩家密码", "")
 				data["player_name"] = account_info.get("player_name", "")
 				data["farm_name"] = account_info.get("farm_name", "")
 				data["个人简介"] = account_info.get("个人简介", "")

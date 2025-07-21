@@ -13,7 +13,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 1300,
+      "grow_time": 2730,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -24,7 +24,7 @@
     },
     {
       "crop_type": "龙果",
-      "grow_time": 1320,
+      "grow_time": 2750,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -35,7 +35,7 @@
     },
     {
       "crop_type": "杂交树1",
-      "grow_time": 1340,
+      "grow_time": 2770,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -46,7 +46,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 894,
+      "grow_time": 1180,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -68,7 +68,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 2676,
+      "grow_time": 3534,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -79,7 +79,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 101,
+      "grow_time": 244,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -90,7 +90,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 101,
+      "grow_time": 244,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -101,7 +101,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 446,
+      "grow_time": 589,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -156,7 +156,7 @@
     },
     {
       "crop_type": "土豆",
-      "grow_time": 445,
+      "grow_time": 489,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -167,7 +167,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 100,
+      "grow_time": 243,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -178,7 +178,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 444,
+      "grow_time": 587,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -189,7 +189,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 444,
+      "grow_time": 587,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -200,7 +200,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 444,
+      "grow_time": 587,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -211,7 +211,7 @@
     },
     {
       "crop_type": "土豆",
-      "grow_time": 443,
+      "grow_time": 487,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -222,7 +222,7 @@
     },
     {
       "crop_type": "土豆",
-      "grow_time": 443,
+      "grow_time": 487,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -233,7 +233,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 100,
+      "grow_time": 243,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -244,7 +244,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 100,
+      "grow_time": 243,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -255,7 +255,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 100,
+      "grow_time": 243,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -266,7 +266,7 @@
     },
     {
       "crop_type": "土豆",
-      "grow_time": 442,
+      "grow_time": 486,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -277,7 +277,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 442,
+      "grow_time": 585,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -288,7 +288,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 99,
+      "grow_time": 242,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -299,7 +299,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 99,
+      "grow_time": 242,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -310,7 +310,7 @@
     },
     {
       "crop_type": "小麦",
-      "grow_time": 99,
+      "grow_time": 242,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -321,7 +321,7 @@
     },
     {
       "crop_type": "杂交树2",
-      "grow_time": 441,
+      "grow_time": 584,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -568,10 +568,10 @@
   "player_name": "树萌芽",
   "level": 64,
   "money": 615197025464,
-  "最后登录时间": "2025年07月21日09时48分48秒",
-  "总游玩时间": "162时53分53秒",
+  "最后登录时间": "2025年07月21日10时00分08秒",
+  "总游玩时间": "162时54分5秒",
   "user_name": "3205788256",
-  "user_password": "tyh@19900420",
+  "玩家密码": "123456",
   "个人简介": "人生啊，就这样吧",
   "注册时间": "2025年05月21日15时00分00秒",
   "作物仓库": [

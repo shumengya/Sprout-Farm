@@ -222,8 +222,8 @@ func handle_account_response(response_data: Dictionary):
 							main_game.login_data["farm_name"] = updated_data["farm_name"]
 						if updated_data.has("个人简介"):
 							main_game.login_data["个人简介"] = updated_data["个人简介"]
-						if updated_data.has("user_password"):
-							main_game.user_password = updated_data["user_password"]
+						if updated_data.has("玩家密码"):
+							main_game.user_password = updated_data["玩家密码"]
 				
 				# 刷新显示
 				_refresh_player_info()

@@ -5,7 +5,7 @@
   "farm_name": "123",
   "player_name": "123",
   "user_name": "2804775686",
-  "user_password": "123",
+  "玩家密码": "123",
   "最后登录时间": "2025年07月21日09时27分44秒",
   "总游玩时间": "0时8分51秒",
   "注册时间": "2025年07月20日23时08分10秒",
@@ -35,7 +35,7 @@
     },
     {
       "crop_type": "龙果",
-      "grow_time": 5840,
+      "grow_time": 7240,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,
@@ -57,7 +57,7 @@
     },
     {
       "crop_type": "苹果",
-      "grow_time": 5710,
+      "grow_time": 7110,
       "is_dead": false,
       "is_diged": true,
       "is_planted": true,

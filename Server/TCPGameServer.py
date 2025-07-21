@@ -916,7 +916,7 @@ class TCPGameServer(TCPServer):
         # 读取玩家数据
         player_data = self.load_player_data(username)
         
-        if player_data and player_data.get("user_password") == password:
+        if player_data and player_data.get("玩家密码") == password:
             # 登录成功
             self.log('INFO', f"用户 {username} 登录成功", 'SERVER')
             
@@ -1105,7 +1105,7 @@ class TCPGameServer(TCPServer):
             # 更新玩家数据
             player_data.update({
                 "user_name": username,
-                "user_password": password,
+                "玩家密码": password,
                 "farm_name": farm_name or "我的农场",
                 "player_name": player_name or username,
                 "个人简介": "",  # 新增个人简介字段，默认为空
@@ -1343,7 +1343,7 @@ class TCPGameServer(TCPServer):
         
         # 更新密码
         try:
-            player_data["user_password"] = new_password
+            player_data["玩家密码"] = new_password
             
             # 保存到缓存和文件
             self.player_cache[username] = player_data
@@ -7972,7 +7972,7 @@ class TCPGameServer(TCPServer):
         
         try:
             # 更新玩家数据
-            player_data["user_password"] = new_password
+            player_data[""] = new_password
             player_data["player_name"] = new_player_name
             player_data["farm_name"] = new_farm_name
             player_data["个人简介"] = new_personal_profile
@@ -7990,7 +7990,7 @@ class TCPGameServer(TCPServer):
                 "success": True,
                 "message": "账号信息修改成功",
                 "updated_data": {
-                    "user_password": new_password,
+                    "玩家密码": new_password,
                     "player_name": new_player_name,
                     "farm_name": new_farm_name,
                     "个人简介": new_personal_profile
@@ -8077,7 +8077,7 @@ class TCPGameServer(TCPServer):
             # 只发送账户相关信息，不发送农场数据等
             account_info = {
                 "user_name": player_data.get("user_name", ""),
-                "user_password": player_data.get("user_password", ""),
+                "玩家密码": player_data.get("玩家密码", ""),
                 "player_name": player_data.get("player_name", ""),
                 "farm_name": player_data.get("farm_name", ""),
                 "个人简介": player_data.get("个人简介", ""),
