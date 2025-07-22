@@ -11,39 +11,14 @@ import random
 #导入服务器外置插件模块
 from SMYMongoDBAPI import SMYMongoDBAPI #导入MongoDB数据库模块
 from QQEmailSendAPI import EmailVerification#导入QQ邮箱发送模块
+from ConsoleCommandsAPI import ConsoleCommandsAPI #导入控制台命令API模块
 
 """
-萌芽农场TCP游戏服务器 - 代码结构说明
+萌芽农场TCP游戏服务器
 ====================================================================
-
-📁 代码组织结构：
-├── 1. 初始化和生命周期管理    - 服务器启动、停止、客户端管理
-├── 2. 验证和检查方法         - 版本检查、登录状态验证
-├── 3. 数据管理方法          - 玩家数据读写、缓存管理
-├── 4. 作物系统管理          - 作物生长、更新推送
-├── 5. 消息处理路由          - 客户端消息分发处理
-├── 6. 用户认证处理          - 登录、注册、验证码
-├── 7. 游戏操作处理          - 种植、收获、浇水等
-├── 8. 系统功能处理          - 签到、抽奖、排行榜
-└── 9. 性能优化功能          - 缓存优化、批量保存
-
-🔧 性能优化特性：
-- 内存缓存系统：减少磁盘I/O操作
-- 分层更新策略：在线玩家快速更新，离线玩家慢速更新
-- 批量数据保存：定时批量写入，提升性能
-- 智能缓存管理：LRU策略，自动清理过期数据
-
-📊 数据存储：
-- 玩家数据：JSON格式存储在game_saves目录
-- 配置文件：作物数据、初始模板等
-- 缓存策略：内存缓存 + 定时持久化
-
-🌐 网络通信：
 - 协议：TCP长连接
 - 数据格式：JSON消息
 - 消息类型：请求/响应模式
-
-
 ====================================================================
 """
 
@@ -83,8 +58,11 @@ class TCPGameServer(TCPServer):
         # 初始化MongoDB API（优先使用MongoDB，失败则使用JSON文件）
         self._init_mongodb_api()
         
-        # 性能优化相关配置
-        self._init_performance_settings()
+        # 初始化杂草系统配置
+        self._init_weed_settings()
+        
+        # 禁用父类的日志输出，避免重复
+        self._setup_game_server_logging()
         
         # 数据缓存
         self.crop_data_cache = None
@@ -95,7 +73,6 @@ class TCPGameServer(TCPServer):
         
         # 启动定时器
         self.start_crop_growth_timer()
-        self.start_batch_save_timer()
         self.start_weed_growth_timer()
         self.start_wisdom_tree_health_decay_timer()
         self.start_verification_code_cleanup_timer()
@@ -122,18 +99,9 @@ class TCPGameServer(TCPServer):
             self.mongo_api = None
             self.log('ERROR', f"MongoDB API初始化异常: {e}，将使用JSON配置文件", 'SERVER')
     
-    #初始化性能操作
-    def _init_performance_settings(self):
-        """初始化性能优化配置"""
-        self.player_cache = {}  # 玩家数据内存缓存
-        self.dirty_players = set()  # 需要保存到磁盘的玩家列表
-        self.last_save_time = time.time()  # 上次批量保存时间
-        self.save_interval = 30  # 批量保存间隔（秒）
-        self.update_counter = 0  # 更新计数器
-        self.slow_update_interval = 10  # 慢速更新间隔（每10秒进行一次完整更新）
-        self.active_players_cache = {}  # 活跃玩家缓存
-        self.cache_expire_time = 300  # 缓存过期时间（5分钟）
-        
+    #初始化杂草系统配置
+    def _init_weed_settings(self):
+        """初始化杂草生长配置"""
         # 杂草生长相关配置
         self.weed_check_interval = 86400  # 杂草检查间隔（24小时）
         self.offline_threshold_days = 3  # 离线多少天后开始长杂草
@@ -141,11 +109,18 @@ class TCPGameServer(TCPServer):
         self.weed_growth_probability = 0.3  # 每个空地长杂草的概率（30%）
         self.last_weed_check_time = time.time()  # 上次检查杂草的时间
     
+    #设置游戏服务器日志配置
+    def _setup_game_server_logging(self):
+        """设置游戏服务器日志配置，禁用父类重复输出"""
+        # 禁用父类logger的传播，避免重复输出
+        if hasattr(self, 'logger') and self.logger:
+            self.logger.propagate = False
+    
     #启动作物生长计时器
     def start_crop_growth_timer(self):
         """启动作物生长计时器，每秒更新一次"""
         try:
-            self.update_crops_growth_optimized()
+            self.update_crops_growth()
         except Exception as e:
             self.log('ERROR', f"作物生长更新时出错: {str(e)}", 'SERVER')
         
@@ -154,19 +129,7 @@ class TCPGameServer(TCPServer):
         self.crop_timer.daemon = True
         self.crop_timer.start()
     
-    #启动批量报错计时器
-    def start_batch_save_timer(self):
-        """启动批量保存计时器"""
-        try:
-            self.batch_save_dirty_players()
-            self.cleanup_expired_cache()
-        except Exception as e:
-            self.log('ERROR', f"批量保存时出错: {str(e)}", 'SERVER')
-        
-        # 创建下一个批量保存计时器
-        batch_timer = threading.Timer(self.save_interval, self.start_batch_save_timer)
-        batch_timer.daemon = True
-        batch_timer.start()
+
     
     #启动杂草生长计时器
     def start_weed_growth_timer(self):
@@ -216,7 +179,6 @@ class TCPGameServer(TCPServer):
         """获取服务器统计信息"""
         online_players = len([cid for cid in self.user_data if self.user_data[cid].get("logged_in", False)])
         return {
-            "cached_players": len(self.player_cache),
             "online_players": online_players,
             "total_connections": len(self.clients)
         }
@@ -250,14 +212,9 @@ class TCPGameServer(TCPServer):
             self.verification_cleanup_timer = None
             self.log('INFO', "验证码清理定时器已停止", 'SERVER')
         
-        # 强制保存所有缓存数据
-        self.log('INFO', "正在保存所有玩家数据...", 'SERVER')
-        saved_count = self.force_save_all_data()
-        self.log('INFO', f"已保存 {saved_count} 个玩家的数据", 'SERVER')
-        
         # 显示服务器统计信息
         stats = self.get_server_stats()
-        self.log('INFO', f"服务器统计 - 缓存玩家: {stats['cached_players']}, 在线玩家: {stats['online_players']}, 总连接: {stats['total_connections']}", 'SERVER')
+        self.log('INFO', f"服务器统计 - 在线玩家: {stats['online_players']}, 总连接: {stats['total_connections']}", 'SERVER')
         
         # 调用父类方法完成实际停止
         super().stop()
@@ -275,13 +232,6 @@ class TCPGameServer(TCPServer):
             # 处理已登录用户的离开
             if client_id in self.user_data and self.user_data[client_id].get("logged_in", False):
                 self._update_player_logout_time(client_id, username)
-                
-                # 立即保存离线玩家的数据
-                if username and username in self.player_cache:
-                    self.save_player_data_immediate(username)
-                    self.dirty_players.discard(username)
-                    self.log('INFO', f"已立即保存离线玩家 {username} 的数据", 'SERVER')
-                
                 self.log('INFO', f"用户 {username} 登出", 'SERVER')
             
             # 广播用户离开消息
@@ -333,24 +283,6 @@ class TCPGameServer(TCPServer):
 #=================================数据管理方法====================================
     #加载玩家数据
     def load_player_data(self, account_id):
-        """从缓存或文件加载玩家数据（优化版本）"""
-        # 先检查内存缓存
-        if account_id in self.player_cache:
-            self._update_cache_access_time(account_id)
-            return self.player_cache[account_id]
-        
-        # 缓存未命中，从文件读取
-        return self._load_player_data_from_file(account_id)
-    
-    #更新缓存访问时间
-    def _update_cache_access_time(self, account_id):
-        """更新缓存访问时间"""
-        if account_id not in self.active_players_cache:
-            self.active_players_cache[account_id] = {}
-        self.active_players_cache[account_id]["last_access"] = time.time()
-    
-    #从文件里加载玩家数据
-    def _load_player_data_from_file(self, account_id):
         """从文件加载玩家数据"""
         file_path = os.path.join("game_saves", f"{account_id}.json")
         
@@ -358,45 +290,20 @@ class TCPGameServer(TCPServer):
             if os.path.exists(file_path):
                 with open(file_path, 'r', encoding='utf-8') as file:
                     player_data = json.load(file)
-                
-                # 存入缓存
-                self.player_cache[account_id] = player_data
-                self.active_players_cache[account_id] = {
-                    "last_access": time.time(),
-                    "is_online": account_id in self.user_data and self.user_data[account_id].get("logged_in", False)
-                }
-                
                 return player_data
             return None
         except Exception as e:
             self.log('ERROR', f"读取玩家 {account_id} 的数据时出错: {str(e)}", 'SERVER')
             return None
     
-    #保存玩家数据到缓存
+    #保存玩家数据
     def save_player_data(self, account_id, player_data):
-        """保存玩家数据到缓存"""
-        # 更新内存缓存
-        self.player_cache[account_id] = player_data
-        
-        # 标记为脏数据，等待批量保存
-        self.dirty_players.add(account_id)
-        
-        # 更新活跃缓存
-        self._update_cache_access_time(account_id)
-        
-        return True
-    
-    #保存玩家数据到磁盘
-    def save_player_data_immediate(self, account_id):
-        """立即保存玩家数据到磁盘"""
-        if account_id not in self.player_cache:
-            return False
-            
+        """保存玩家数据到文件"""
         file_path = os.path.join("game_saves", f"{account_id}.json")
         
         try:
             with open(file_path, 'w', encoding='utf-8') as file:
-                json.dump(self.player_cache[account_id], file, indent=2, ensure_ascii=False)
+                json.dump(player_data, file, indent=2, ensure_ascii=False)
             return True
         except Exception as e:
             self.log('ERROR', f"保存玩家 {account_id} 的数据时出错: {str(e)}", 'SERVER')
@@ -536,21 +443,10 @@ class TCPGameServer(TCPServer):
 
 
 #================================作物系统管理=========================================
-    #优化的作物生长更新系统
-    def update_crops_growth_optimized(self):
-        """优化的作物生长更新系统"""
-        self.update_counter += 1
-        
-        # 每秒快速更新在线玩家
-        self.update_online_players_crops()
-        
-        # 每10秒进行一次慢速更新（离线玩家和深度检查）
-        if self.update_counter % self.slow_update_interval == 0:
-            self.update_offline_players_crops()
-    
-    #快速更新在线玩家的作物
-    def update_online_players_crops(self):
-        """快速更新在线玩家的作物"""
+    #作物生长更新系统
+    def update_crops_growth(self):
+        """更新所有玩家的作物生长"""
+        # 更新在线玩家的作物
         for client_id, user_info in self.user_data.items():
             if not user_info.get("logged_in", False):
                 continue
@@ -564,64 +460,16 @@ class TCPGameServer(TCPServer):
                 if not player_data:
                     continue
                 
-                if self.update_player_crops_fast(player_data, username):
+                if self.update_player_crops(player_data, username):
                     self.save_player_data(username, player_data)
                     self._push_crop_update_to_player(username, player_data)
                     
             except Exception as e:
-                self.log('ERROR', f"快速更新在线玩家 {username} 作物时出错: {str(e)}", 'SERVER')
+                self.log('ERROR', f"更新在线玩家 {username} 作物时出错: {str(e)}", 'SERVER')
     
-    #慢速更新离线玩家的作物
-    def update_offline_players_crops(self):
-        """慢速更新离线玩家的作物（每10秒一次）"""
-        import glob
-        
-        try:
-            save_files = glob.glob(os.path.join("game_saves", "*.json"))
-            offline_count = 0
-            updated_count = 0
-            
-            for save_file in save_files:
-                account_id = os.path.basename(save_file).split('.')[0]
-                
-                # 跳过在线玩家
-                is_online = any(
-                    user_info.get("username") == account_id and user_info.get("logged_in", False) 
-                    for user_info in self.user_data.values()
-                )
-                
-                if is_online:
-                    continue
-                
-                offline_count += 1
-                
-                player_data = self.load_player_data(account_id)
-                if not player_data:
-                    continue
-                
-                if self.update_player_crops_slow(player_data, account_id):
-                    self.save_player_data(account_id, player_data)
-                    updated_count += 1
-            
-            if updated_count > 0:
-                self.log('INFO', f"慢速更新：检查了 {offline_count} 个离线玩家，更新了 {updated_count} 个", 'SERVER')
-                
-        except Exception as e:
-            self.log('ERROR', f"慢速更新离线玩家作物时出错: {str(e)}", 'SERVER')
-    
-    #快速更新单个玩家的作物
-    def update_player_crops_fast(self, player_data, account_id):
-        """快速更新单个玩家的作物（在线玩家用）"""
-        return self.update_player_crops_common(player_data, account_id, 1)
-    
-    #慢速更新单个玩家的作物
-    def update_player_crops_slow(self, player_data, account_id):
-        """慢速更新单个玩家的作物（离线玩家用，补偿倍数）"""
-        return self.update_player_crops_common(player_data, account_id, self.slow_update_interval)
-    
-    #通用的作物更新逻辑
-    def update_player_crops_common(self, player_data, account_id, time_multiplier):
-        """通用的作物更新逻辑"""
+    #更新单个玩家的作物
+    def update_player_crops(self, player_data, account_id):
+        """更新单个玩家的作物"""
         growth_updated = False
         
         for farm_lot in player_data.get("农场土地", []):
@@ -671,8 +519,8 @@ class TCPGameServer(TCPServer):
                         if "施肥持续时间" in farm_lot:
                             del farm_lot["施肥持续时间"]
                 
-                # 应用生长速度倍数和时间补偿
-                growth_increase = int(growth_multiplier * time_multiplier)
+                # 应用生长速度倍数
+                growth_increase = int(growth_multiplier)
                 if growth_increase < 1:
                     growth_increase = 1
                 
@@ -1367,12 +1215,8 @@ class TCPGameServer(TCPServer):
         try:
             player_data["玩家密码"] = new_password
             
-            # 保存到缓存和文件
-            self.player_cache[username] = player_data
-            self.dirty_players.add(username)
-            
-            # 立即保存重要的账户信息
-            self.save_player_data_immediate(username)
+            # 保存到文件
+            self.save_player_data(username, player_data)
             
             self.log('INFO', f"用户 {username} 密码重置成功", 'ACCOUNT')
             
@@ -6098,11 +5942,6 @@ class TCPGameServer(TCPServer):
 #==========================作物数据处理==========================
 
 
-
-
-
-
-
 #==========================访问其他玩家农场处理==========================
     #处理访问其他玩家农场的请求
     def _handle_visit_player_request(self, client_id, message):
@@ -7403,7 +7242,6 @@ class TCPGameServer(TCPServer):
 
 
 
-
 #==========================幸运抽奖处理==========================
 
     #处理幸运抽奖请求
@@ -7892,105 +7730,7 @@ class TCPGameServer(TCPServer):
 
 
 
-#==========================缓存数据处理==========================
-    #清理过期的缓存数据
-    def cleanup_expired_cache(self):
-        """清理过期的缓存数据"""
-        current_time = time.time()
-        expired_players = []
-        
-        for account_id, cache_data in self.active_players_cache.items():
-            if current_time - cache_data.get("last_access", 0) > self.cache_expire_time:
-                expired_players.append(account_id)
-        
-        for account_id in expired_players:
-            # 如果是脏数据，先保存
-            if account_id in self.dirty_players:
-                self.save_player_data_immediate(account_id)
-                self.dirty_players.discard(account_id)
-            
-            # 移除过期缓存
-            self.player_cache.pop(account_id, None)
-            self.active_players_cache.pop(account_id, None)
-        
-        if expired_players:
-            self.log('INFO', f"清理了 {len(expired_players)} 个过期缓存", 'SERVER')
-    
-    #批量保存脏数据到磁盘
-    def batch_save_dirty_players(self):
-        """批量保存脏数据到磁盘"""
-        if not self.dirty_players:
-            return
-        
-        saved_count = 0
-        for account_id in list(self.dirty_players):
-            try:
-                if self.save_player_data_immediate(account_id):
-                    saved_count += 1
-            except Exception as e:
-                self.log('ERROR', f"保存玩家 {account_id} 数据时出错: {str(e)}", 'SERVER')
-        
-        self.dirty_players.clear()
-        self.last_save_time = time.time()
-        
-        if saved_count > 0:
-            self.log('INFO', f"批量保存了 {saved_count} 个玩家的数据", 'SERVER')
-    
-    #强制保存所有缓存数据
-    def force_save_all_data(self):
-        """强制保存所有缓存数据（用于服务器关闭时）"""
-        saved_count = 0
-        for account_id in list(self.player_cache.keys()):
-            try:
-                if self.save_player_data_immediate(account_id):
-                    saved_count += 1
-            except Exception as e:
-                self.log('ERROR', f"强制保存玩家 {account_id} 数据时出错: {str(e)}", 'SERVER')
-        
-        self.dirty_players.clear()
-        self.log('INFO', f"强制保存完成，保存了 {saved_count} 个玩家的数据", 'SERVER')
-        return saved_count
-    
-    #优化缓存大小，移除不活跃的数据
-    def optimize_cache_size(self):
-        """优化缓存大小，移除不活跃的数据"""
-        current_time = time.time()
-        removed_count = 0
-        
-        # 如果缓存过大，移除最不活跃的数据
-        if len(self.player_cache) > 1000:  # 缓存超过1000个玩家时进行清理
-            sorted_players = sorted(
-                self.active_players_cache.items(),
-                key=lambda x: x[1].get("last_access", 0)
-            )
-            
-            # 移除最不活跃的50%
-            remove_count = len(sorted_players) // 2
-            for account_id, _ in sorted_players[:remove_count]:
-                if account_id in self.dirty_players:
-                    self.save_player_data_immediate(account_id)
-                    self.dirty_players.discard(account_id)
-                
-                self.player_cache.pop(account_id, None)
-                self.active_players_cache.pop(account_id, None)
-                removed_count += 1
-        
-        if removed_count > 0:
-            self.log('INFO', f"缓存优化：移除了 {removed_count} 个不活跃的缓存数据", 'SERVER')
-        
-        return removed_count
 
-    #获取缓存命中信息（用于调试）
-    def get_cache_hit_info(self, account_id):
-        """获取缓存命中信息（用于调试）"""
-        return {
-            "in_memory_cache": account_id in self.player_cache,
-            "in_active_cache": account_id in self.active_players_cache,
-            "is_dirty": account_id in self.dirty_players,
-            "last_access": self.active_players_cache.get(account_id, {}).get("last_access", 0)
-        }
-
-#==========================缓存数据处理==========================
 
 
 # ================================账户设置处理方法================================
@@ -8033,17 +7773,13 @@ class TCPGameServer(TCPServer):
         
         try:
             # 更新玩家数据
-            player_data[""] = new_password
+            player_data["玩家密码"] = new_password
             player_data["玩家昵称"] = new_player_name
             player_data["农场名称"] = new_farm_name
             player_data["个人简介"] = new_personal_profile
             
-            # 保存到缓存和文件
-            self.player_cache[username] = player_data
-            self.dirty_players.add(username)
-            
-            # 立即保存重要的账户信息
-            self.save_player_data_immediate(username)
+            # 保存到文件
+            self.save_player_data(username, player_data)
             
             # 发送成功响应
             self.send_data(client_id, {
@@ -8080,16 +7816,6 @@ class TCPGameServer(TCPServer):
             if os.path.exists(file_path):
                 os.remove(file_path)
                 self.log('INFO', f"已删除玩家文件: {file_path}", 'ACCOUNT')
-            
-            # 从缓存中删除
-            if username in self.player_cache:
-                del self.player_cache[username]
-            
-            if username in self.dirty_players:
-                self.dirty_players.discard(username)
-            
-            if username in self.active_players_cache:
-                del self.active_players_cache[username]
             
             # 清理用户数据
             if client_id in self.user_data:
@@ -9073,14 +8799,7 @@ class TCPGameServer(TCPServer):
                     self.save_player_data(username, player_data)
                     processed_count += 1
         
-        # 检查缓存中的离线玩家
-        for username in list(self.player_cache.keys()):
-            if username not in [self.user_data[cid].get("username") for cid in self.user_data if self.user_data[cid].get("logged_in", False)]:
-                player_data = self.player_cache[username]
-                if "智慧树配置" in player_data:
-                    self._process_wisdom_tree_decay(player_data["智慧树配置"], username)
-                    self.save_player_data(username, player_data)
-                    processed_count += 1
+        # 注释：缓存机制已移除，只处理在线玩家的智慧树衰减
         
         if processed_count > 0:
             self.log('INFO', f"已处理 {processed_count} 个玩家的智慧树生命值衰减", 'SERVER')
@@ -9607,427 +9326,47 @@ class TCPGameServer(TCPServer):
 #==========================小卖部管理处理==========================
 
 
-# 控制台命令系统
-class ConsoleCommands:
-    """控制台命令处理类"""
-    
-    def __init__(self, server):
-        self.server = server
-        self.commands = {
-            "addmoney": self.cmd_add_money,
-            "addxp": self.cmd_add_experience,
-            "addlevel": self.cmd_add_level,
-            "addseed": self.cmd_add_seed,
-            "lsplayer": self.cmd_list_players,
-            "playerinfo": self.cmd_player_info,
-            "resetland": self.cmd_reset_land,
-            "weather": self.cmd_weather,
-            "help": self.cmd_help,
-            "stop": self.cmd_stop,
-            "save": self.cmd_save_all,
-            "reload": self.cmd_reload_config
-        }
-    
-    def process_command(self, command_line):
-        """处理控制台命令"""
-        if not command_line.strip():
-            return
-            
-        parts = command_line.strip().split()
-        if not parts:
-            return
-            
-        # 移除命令前的斜杠（如果有）
-        command = parts[0].lstrip('/')
-        args = parts[1:] if len(parts) > 1 else []
-        
-        if command in self.commands:
-            try:
-                self.commands[command](args)
-            except Exception as e:
-                print(f"❌ 执行命令 '{command}' 时出错: {str(e)}")
-        else:
-            print(f"❌ 未知命令: {command}")
-            print("💡 输入 'help' 查看可用命令")
-    
-    def cmd_add_money(self, args):
-        """添加金币命令: /addmoney QQ号 数量"""
-        if len(args) != 2:
-            print("❌ 用法: /addmoney <QQ号> <数量>")
-            return
-            
-        qq_number, amount_str = args
-        try:
-            amount = int(amount_str)
-        except ValueError:
-            print("❌ 金币数量必须是整数")
-            return
-            
-        # 加载玩家数据
-        player_data = self.server.load_player_data(qq_number)
-        if not player_data:
-            print(f"❌ 玩家 {qq_number} 不存在")
-            return
-            
-        # 修改金币
-        old_money = player_data.get("钱币", 0)
-        player_data["钱币"] = old_money + amount
-        
-        # 保存数据
-        self.server.save_player_data(qq_number, player_data)
-        self.server.save_player_data_immediate(qq_number)
-        
-        print(f"✅ 已为玩家 {qq_number} 添加 {amount} 金币")
-        print(f"   原金币: {old_money} → 新金币: {player_data['money']}")
-    
-    def cmd_add_experience(self, args):
-        """添加经验命令: /addxp QQ号 数量"""
-        if len(args) != 2:
-            print("❌ 用法: /addxp <QQ号> <数量>")
-            return
-            
-        qq_number, amount_str = args
-        try:
-            amount = int(amount_str)
-        except ValueError:
-            print("❌ 经验数量必须是整数")
-            return
-            
-        # 加载玩家数据
-        player_data = self.server.load_player_data(qq_number)
-        if not player_data:
-            print(f"❌ 玩家 {qq_number} 不存在")
-            return
-            
-        # 修改经验
-        old_exp = player_data.get("经验值", 0)
-        player_data["经验值"] = old_exp + amount
-        
-        # 检查是否升级
-        old_level = player_data.get("等级", 1)
-        self.server._check_level_up(player_data)
-        new_level = player_data.get("等级", 1)
-        
-        # 保存数据
-        self.server.save_player_data(qq_number, player_data)
-        self.server.save_player_data_immediate(qq_number)
-        
-        print(f"✅ 已为玩家 {qq_number} 添加 {amount} 经验")
-        print(f"   原经验: {old_exp} → 新经验: {player_data['experience']}")
-        if new_level > old_level:
-            print(f"🎉 玩家升级了! {old_level} → {new_level}")
-    
-    def cmd_add_level(self, args):
-        """添加等级命令: /addlevel QQ号 数量"""
-        if len(args) != 2:
-            print("❌ 用法: /addlevel <QQ号> <数量>")
-            return
-            
-        qq_number, amount_str = args
-        try:
-            amount = int(amount_str)
-        except ValueError:
-            print("❌ 等级数量必须是整数")
-            return
-            
-        # 加载玩家数据
-        player_data = self.server.load_player_data(qq_number)
-        if not player_data:
-            print(f"❌ 玩家 {qq_number} 不存在")
-            return
-            
-        # 修改等级
-        old_level = player_data.get("等级", 1)
-        new_level = max(1, old_level + amount)  # 确保等级不小于1
-        player_data["等级"] = new_level
-        
-        # 保存数据
-        self.server.save_player_data(qq_number, player_data)
-        self.server.save_player_data_immediate(qq_number)
-        
-        print(f"✅ 已为玩家 {qq_number} 添加 {amount} 等级")
-        print(f"   原等级: {old_level} → 新等级: {new_level}")
-    
-    def cmd_add_seed(self, args):
-        """添加种子命令: /addseed QQ号 作物名称 数量"""
-        if len(args) != 3:
-            print("❌ 用法: /addseed <QQ号> <作物名称> <数量>")
-            return
-            
-        qq_number, crop_name, amount_str = args
-        try:
-            amount = int(amount_str)
-        except ValueError:
-            print("❌ 种子数量必须是整数")
-            return
-            
-        # 加载玩家数据
-        player_data = self.server.load_player_data(qq_number)
-        if not player_data:
-            print(f"❌ 玩家 {qq_number} 不存在")
-            return
-            
-        # 检查作物是否存在
-        crop_data = self.server._load_crop_data()
-        if crop_name not in crop_data:
-            print(f"❌ 作物 '{crop_name}' 不存在")
-            print(f"💡 可用作物: {', '.join(list(crop_data.keys())[:10])}...")
-            return
-            
-        # 添加种子到背包
-        if "seeds" not in player_data:
-            player_data["seeds"] = {}
-            
-        old_count = player_data["seeds"].get(crop_name, 0)
-        player_data["seeds"][crop_name] = old_count + amount
-        
-        # 保存数据
-        self.server.save_player_data(qq_number, player_data)
-        self.server.save_player_data_immediate(qq_number)
-        
-        print(f"✅ 已为玩家 {qq_number} 添加 {amount} 个 {crop_name} 种子")
-        print(f"   原数量: {old_count} → 新数量: {player_data['seeds'][crop_name]}")
-    
-    def cmd_list_players(self, args):
-        """列出所有玩家命令: /lsplayer"""
-        saves_dir = "game_saves"
-        if not os.path.exists(saves_dir):
-            print("❌ 游戏存档目录不存在")
-            return
-            
-        player_files = [f for f in os.listdir(saves_dir) if f.endswith('.json')]
-        if not player_files:
-            print("📭 暂无已注册玩家")
-            return
-            
-        print(f"📋 已注册玩家列表 (共 {len(player_files)} 人):")
-        print("-" * 80)
-        print(f"{'QQ号':<12} {'昵称':<15} {'等级':<6} {'金币':<10} {'最后登录':<20}")
-        print("-" * 80)
-        
-        for i, filename in enumerate(sorted(player_files), 1):
-            qq_number = filename.replace('.json', '')
-            try:
-                player_data = self.server._load_player_data_from_file(qq_number)
-                if player_data:
-                    nickname = player_data.get("玩家昵称", "未设置")
-                    level = player_data.get("等级", 1)
-                    money = player_data.get("钱币", 0)
-                    last_login = player_data.get("最后登录时间", "从未登录")
-                    
-                    print(f"{qq_number:<12} {nickname:<15} {level:<6} {money:<10} {last_login:<20}")
-            except Exception as e:
-                print(f"{qq_number:<12} {'数据错误':<15} {'--':<6} {'--':<10} {'无法读取':<20}")
-        
-        print("-" * 80)
-    
-    def cmd_player_info(self, args):
-        """查看玩家信息命令: /playerinfo QQ号"""
-        if len(args) != 1:
-            print("❌ 用法: /playerinfo <QQ号>")
-            return
-            
-        qq_number = args[0]
-        player_data = self.server.load_player_data(qq_number)
-        if not player_data:
-            print(f"❌ 玩家 {qq_number} 不存在")
-            return
-            
-        print(f"👤 玩家信息: {qq_number}")
-        print("=" * 50)
-        print(f"昵称: {player_data.get('玩家昵称', '未设置')}")
-        print(f"农场名: {player_data.get('农场名称', '未设置')}")
-        print(f"等级: {player_data.get('level', 1)}")
-        print(f"经验: {player_data.get('experience', 0)}")
-        print(f"金币: {player_data.get('money', 0)}")
-        print(f"体力: {player_data.get('体力值', 20)}")
-        print(f"注册时间: {player_data.get('注册时间', '未知')}")
-        print(f"最后登录: {player_data.get('最后登录时间', '从未登录')}")
-        print(f"总在线时长: {player_data.get('总游玩时间', '0时0分0秒')}")
-        
-        # 显示土地信息
-        farm_lots = player_data.get("农场土地", [])
-        planted_count = sum(1 for lot in farm_lots if lot.get("is_planted", False))
-        digged_count = sum(1 for lot in farm_lots if lot.get("is_diged", False))
-        print(f"土地状态: 总共{len(farm_lots)}块，已开垦{digged_count}块，已种植{planted_count}块")
-        
-        # 显示种子信息
-        seeds = player_data.get("seeds", {})
-        if seeds:
-            print(f"种子背包: {len(seeds)}种作物，总计{sum(seeds.values())}个种子")
-        else:
-            print("种子背包: 空")
-            
-        print("=" * 50)
-    
-    def cmd_reset_land(self, args):
-        """重置玩家土地命令: /resetland QQ号"""
-        if len(args) != 1:
-            print("❌ 用法: /resetland <QQ号>")
-            return
-            
-        qq_number = args[0]
-        player_data = self.server.load_player_data(qq_number)
-        if not player_data:
-            print(f"❌ 玩家 {qq_number} 不存在")
-            return
-            
-        # 加载初始化模板（优先从MongoDB）
-        template_data = None
-        if self.server.use_mongodb and self.server.mongo_api:
-            try:
-                template_data = self.server.mongo_api.get_initial_player_data_template()
-                if template_data:
-                    print("✅ 成功从MongoDB加载初始玩家数据模板")
-                else:
-                    print("⚠️ MongoDB中未找到初始玩家数据模板，尝试从JSON文件加载")
-            except Exception as e:
-                print(f"⚠️ 从MongoDB加载初始玩家数据模板失败: {str(e)}，尝试从JSON文件加载")
-        
-        # MongoDB加载失败或不可用，从JSON文件加载
-        if not template_data:
-            try:
-                with open("config/initial_player_data_template.json", 'r', encoding='utf-8') as f:
-                    template_data = json.load(f)
-                print("✅ 成功从JSON文件加载初始玩家数据模板")
-            except Exception as e:
-                print(f"❌ 无法加载初始化模板: {str(e)}")
-                return
-            
-        # 重置土地状态
-        if "农场土地" in template_data:
-            old_lots_count = len(player_data.get("农场土地", []))
-            player_data["农场土地"] = template_data["农场土地"]
-            new_lots_count = len(player_data["农场土地"])
-            
-            # 保存数据
-            self.server.save_player_data(qq_number, player_data)
-            self.server.save_player_data_immediate(qq_number)
-            
-            print(f"✅ 已重置玩家 {qq_number} 的土地状态")
-            print(f"   土地数量: {old_lots_count} → {new_lots_count}")
-            print(f"   所有作物和状态已清除，恢复为初始状态")
-        else:
-            print("❌ 初始化模板中没有找到土地数据")
-    
-    def cmd_weather(self, args):
-        """天气控制命令: /weather <天气类型>"""
-        if len(args) != 1:
-            print("❌ 用法: /weather <天气类型>")
-            print("   可用天气: clear, rain, snow, cherry, gardenia, willow")
-            return
-            
-        weather_type = args[0].lower()
-        
-        # 定义可用的天气类型映射
-        weather_map = {
-            "clear": "晴天",
-            "rain": "下雨", 
-            "snow": "下雪",
-            "cherry": "樱花雨",
-            "gardenia": "栀子花雨", 
-            "willow": "柳叶雨",
-            "stop": "停止天气"
-        }
-        
-        if weather_type not in weather_map:
-            print("❌ 无效的天气类型")
-            print("   可用天气: clear, rain, snow, cherry, gardenia, willow, stop")
-            return
-            
-        # 广播天气变更消息给所有在线客户端
-        weather_message = {
-            "type": "weather_change",
-            "weather_type": weather_type,
-            "weather_name": weather_map[weather_type]
-        }
-        
-        # 发送给所有连接的客户端
-        for client_id in list(self.server.clients.keys()):
-            try:
-                self.server.send_data(client_id, weather_message)
-            except Exception as e:
-                print(f"⚠️  向客户端 {client_id} 发送天气消息失败: {str(e)}")
-        
-        print(f"🌤️  已将天气切换为: {weather_map[weather_type]}")
-        if len(self.server.clients) > 0:
-            print(f"   已通知 {len(self.server.clients)} 个在线客户端")
-        else:
-            print("   当前无在线客户端")
-    
-    def cmd_help(self, args):
-        """显示帮助信息"""
-        print("🌱 萌芽农场服务器控制台命令帮助")
-        print("=" * 60)
-        print("玩家管理命令:")
-        print("  /addmoney <QQ号> <数量>     - 为玩家添加金币")
-        print("  /addxp <QQ号> <数量>        - 为玩家添加经验")
-        print("  /addlevel <QQ号> <数量>     - 为玩家添加等级")
-        print("  /addseed <QQ号> <作物> <数量> - 为玩家添加种子")
-        print("  /lsplayer                   - 列出所有已注册玩家")
-        print("  /playerinfo <QQ号>          - 查看玩家详细信息")
-        print("  /resetland <QQ号>           - 重置玩家土地状态")
-        print("")
-        print("游戏控制命令:")
-        print("  /weather <类型>             - 控制全服天气")
-        print("     可用类型: clear, rain, snow, cherry, gardenia, willow, stop")
-        print("")
-        print("服务器管理命令:")
-        print("  /save                       - 立即保存所有玩家数据")
-        print("  /reload                     - 重新加载配置文件")
-        print("  /stop                       - 停止服务器")
-        print("  /help                       - 显示此帮助信息")
-        print("=" * 60)
-        print("💡 提示: 命令前的斜杠(/)是可选的")
-    
-    def cmd_save_all(self, args):
-        """保存所有数据命令"""
-        try:
-            self.server.force_save_all_data()
-            print("✅ 已强制保存所有玩家数据")
-        except Exception as e:
-            print(f"❌ 保存数据时出错: {str(e)}")
-    
-    def cmd_reload_config(self, args):
-        """重新加载配置命令"""
-        try:
-            # 重新加载作物数据
-            self.server._load_crop_data()
-            print("✅ 已重新加载配置文件")
-        except Exception as e:
-            print(f"❌ 重新加载配置时出错: {str(e)}")
-    
-    def cmd_stop(self, args):
-        """停止服务器命令"""
-        print("⚠️  正在停止服务器...")
-        try:
-            self.server.force_save_all_data()
-            print("💾 数据保存完成")
-        except:
-            pass
-        self.server.stop()
-        print("✅ 服务器已停止")
-        import sys
-        sys.exit(0)
-
-
 def console_input_thread(server):
     """控制台输入处理线程"""
-    console = ConsoleCommands(server)
+    import threading
+    import sys
     
-    print("💬 控制台已就绪，输入 'help' 查看可用命令")
+    # 等待服务器完全启动
+    time.sleep(0.5)
+    
+    console = ConsoleCommandsAPI(server)
+    
+    # 创建输入锁，防止日志输出打乱命令输入
+    input_lock = threading.Lock()
+    server._console_input_lock = input_lock
+    
+    # 获取服务器IP地址
+    server_ip = getattr(server, 'host', 'localhost')
+    if server_ip == '0.0.0.0':
+        server_ip = 'localhost'
+    
+    # 使用锁保护初始化消息输出
+    with input_lock:
+        print("💬 控制台已就绪，输入 'help' 查看可用命令")
     
     while True:
         try:
-            command = input("> ").strip()
+            # 使用自定义提示符格式，不使用锁避免阻塞
+            prompt = f"mengyafarm#{server_ip}> "
+            command = input(prompt).strip()
+                
             if command:
-                console.process_command(command)
+                # 只在处理命令时使用锁，避免输出被打乱
+                with input_lock:
+                    console.process_command(command)
         except EOFError:
             break
         except KeyboardInterrupt:
             break
         except Exception as e:
-            print(f"❌ 处理命令时出错: {str(e)}")
+            # 使用锁保护错误输出
+            with input_lock:
+                print(f"❌ 处理命令时出错: {str(e)}")
 
 # 主程序启动入口
 if __name__ == "__main__":
@@ -10068,7 +9407,14 @@ if __name__ == "__main__":
         
         if 'server' in locals():
             try:
-                server.force_save_all_data()
+                # 保存所有在线玩家数据
+                for client_id, user_info in server.user_data.items():
+                    if user_info.get("logged_in", False):
+                        username = user_info.get("username")
+                        if username:
+                            player_data = server.load_player_data(username)
+                            if player_data:
+                                server.save_player_data(username, player_data)
                 print("💾 数据保存完成")
             except:
                 pass

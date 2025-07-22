@@ -41,9 +41,6 @@ check_docker() {
 start_server() {
     echo "🚀 启动萌芽农场服务器..."
     
-    # 创建必要的目录
-    mkdir -p game_saves config chat
-    
     # 检查配置文件是否存在
     if [ ! -f "config/crop_data.json" ]; then
         echo "⚠️  警告: 配置文件不存在，请确保 config 目录包含必要的配置文件"

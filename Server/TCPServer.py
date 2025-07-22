@@ -116,7 +116,13 @@ class TCPServer:
             exc_info=None
         )
         record.category = category
-        self.logger.handle(record)
+        
+        # 检查是否存在控制台输入锁，如果存在则使用锁来避免打乱命令输入
+        if hasattr(self, '_console_input_lock'):
+            with self._console_input_lock:
+                self.logger.handle(record)
+        else:
+            self.logger.handle(record)
         
     def start(self):
         """启动服务器"""
@@ -352,4 +358,4 @@ if __name__ == "__main__":
         print("\n程序被用户中断")
         if 'server' in locals():
             server.stop()
-        sys.exit(0)    
+        sys.exit(0)
