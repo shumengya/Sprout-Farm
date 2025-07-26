@@ -433,6 +433,7 @@ func _handle_login_success(user_data: Dictionary):
 	main_game.item_bag = user_data.get("道具背包", [])
 	main_game.pet_bag = user_data.get("宠物背包", [])
 	main_game.patrol_pets = user_data.get("巡逻宠物", [])
+	main_game.battle_pets = user_data.get("出战宠物", [])
 	
 	# 启动游戏并隐藏登录面板
 	main_game.start_game = true

@@ -211,7 +211,13 @@ class EmailVerification:
         # 优先尝试使用MongoDB
         try:
             from SMYMongoDBAPI import SMYMongoDBAPI
-            mongo_api = SMYMongoDBAPI("test")
+            import os
+            # 根据环境动态选择MongoDB配置
+            if os.path.exists('/.dockerenv') or os.environ.get('PRODUCTION', '').lower() == 'true':
+                environment = "production"
+            else:
+                environment = "test"
+            mongo_api = SMYMongoDBAPI(environment)
             if mongo_api.is_connected():
                 success = mongo_api.save_verification_code(qq_number, verification_code, expiry_time, code_type)
                 if success:
@@ -279,7 +285,13 @@ class EmailVerification:
         # 优先尝试使用MongoDB
         try:
             from SMYMongoDBAPI import SMYMongoDBAPI
-            mongo_api = SMYMongoDBAPI("test")
+            import os
+            # 根据环境动态选择MongoDB配置
+            if os.path.exists('/.dockerenv') or os.environ.get('PRODUCTION', '').lower() == 'true':
+                environment = "production"
+            else:
+                environment = "test"
+            mongo_api = SMYMongoDBAPI(environment)
             if mongo_api.is_connected():
                 success, message = mongo_api.verify_verification_code(qq_number, input_code, code_type)
                 print(f"[验证码系统-MongoDB] QQ {qq_number} 验证结果: {success}, 消息: {message}")
@@ -364,7 +376,13 @@ class EmailVerification:
         # 优先尝试使用MongoDB
         try:
             from SMYMongoDBAPI import SMYMongoDBAPI
-            mongo_api = SMYMongoDBAPI("test")
+            import os
+            # 根据环境动态选择MongoDB配置
+            if os.path.exists('/.dockerenv') or os.environ.get('PRODUCTION', '').lower() == 'true':
+                environment = "production"
+            else:
+                environment = "test"
+            mongo_api = SMYMongoDBAPI(environment)
             if mongo_api.is_connected():
                 expired_count = mongo_api.clean_expired_verification_codes()
                 print(f"[验证码系统-MongoDB] 清理完成，删除了 {expired_count} 个过期验证码")
@@ -433,7 +451,13 @@ class EmailVerification:
         # 优先尝试使用MongoDB
         try:
             from SMYMongoDBAPI import SMYMongoDBAPI
-            mongo_api = SMYMongoDBAPI("test")
+            import os
+            # 根据环境动态选择MongoDB配置
+            if os.path.exists('/.dockerenv') or os.environ.get('PRODUCTION', '').lower() == 'true':
+                environment = "production"
+            else:
+                environment = "test"
+            mongo_api = SMYMongoDBAPI(environment)
             if mongo_api.is_connected():
                 verification_codes = mongo_api.get_verification_codes()
                 if verification_codes and qq_number in verification_codes:

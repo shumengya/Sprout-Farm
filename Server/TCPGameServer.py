@@ -21,20 +21,11 @@ from ConsoleCommandsAPI import ConsoleCommandsAPI #导入控制台命令API模�
 - 消息类型：请求/响应模式
 ====================================================================
 """
-
-# ============================================================================
-# 服务器配置参数
-# ============================================================================
 server_host: str = "0.0.0.0"
 server_port: int = 6060
 buffer_size: int = 4096
 server_version: str = "2.0.1"
 
-
-
-# ============================================================================
-# TCP游戏服务器类
-# ============================================================================
 class TCPGameServer(TCPServer):
 
     """
@@ -69,6 +60,9 @@ class TCPGameServer(TCPServer):
         self.crop_data_cache_time = 0
         self.cache_expire_duration = 300  # 缓存过期时间5分钟
         
+        # 偷菜免被发现临时计数器 {玩家名: {目标玩家名: 剩余免被发现次数}}
+        self.steal_immunity_counters = {}
+        
         self.log('INFO', f"萌芽农场TCP游戏服务器初始化完成 - 版本: {server_version}", 'SERVER')
         
         # 启动定时器
@@ -82,8 +76,15 @@ class TCPGameServer(TCPServer):
         """初始化MongoDB API连接"""
         try:
             # 根据配置决定使用测试环境还是生产环境
-            # 这里默认使用测试环境，实际部署时可以修改为 "production"
-            environment = "test"  # 或者从配置文件读取
+            # 检查是否在Docker容器中或生产环境
+            import os
+            if os.path.exists('/.dockerenv') or os.environ.get('PRODUCTION', '').lower() == 'true':
+                environment = "production"
+            else:
+                environment = "test"
+            
+            # 保存环境信息供其他组件使用
+            self.environment = environment
             
             self.mongo_api = SMYMongoDBAPI(environment)
             if self.mongo_api.is_connected():
@@ -244,6 +245,8 @@ class TCPGameServer(TCPServer):
             
             # 清理用户数据
             if client_id in self.user_data:
+                # 清理偷菜免被发现计数器
+                self._clear_player_steal_immunity(username)
                 del self.user_data[client_id]
                 
             self.log('INFO', f"用户 {username} 已离开游戏", 'SERVER')
@@ -283,31 +286,44 @@ class TCPGameServer(TCPServer):
 #=================================数据管理方法====================================
     #加载玩家数据
     def load_player_data(self, account_id):
-        """从文件加载玩家数据"""
-        file_path = os.path.join("game_saves", f"{account_id}.json")
-        
+        """从MongoDB加载玩家数据"""
         try:
-            if os.path.exists(file_path):
-                with open(file_path, 'r', encoding='utf-8') as file:
-                    player_data = json.load(file)
+            if not self.use_mongodb or not self.mongo_api:
+                self.log('ERROR', 'MongoDB未配置或不可用，无法加载玩家数据', 'SERVER')
+                return None
+                
+            player_data = self.mongo_api.get_player_data(account_id)
+            if player_data:
                 return player_data
-            return None
+            else:
+                self.log('DEBUG', f"MongoDB中未找到玩家 {account_id} 的数据", 'SERVER')
+                return None
+            
         except Exception as e:
             self.log('ERROR', f"读取玩家 {account_id} 的数据时出错: {str(e)}", 'SERVER')
             return None
     
     #保存玩家数据
     def save_player_data(self, account_id, player_data):
-        """保存玩家数据到文件"""
-        file_path = os.path.join("game_saves", f"{account_id}.json")
-        
+        """保存玩家数据到MongoDB"""
         try:
-            with open(file_path, 'w', encoding='utf-8') as file:
-                json.dump(player_data, file, indent=2, ensure_ascii=False)
-            return True
+            if not self.use_mongodb or not self.mongo_api:
+                self.log('ERROR', 'MongoDB未配置或不可用，无法保存玩家数据', 'SERVER')
+                return False
+                
+            success = self.mongo_api.save_player_data(account_id, player_data)
+            if success:
+                return True
+            else:
+                self.log('ERROR', f"MongoDB保存失败: {account_id}", 'SERVER')
+                return False
+            
         except Exception as e:
             self.log('ERROR', f"保存玩家 {account_id} 的数据时出错: {str(e)}", 'SERVER')
             return False
+    
+    #加载玩家数据（兼容旧方法名）
+
     
     #加载玩家数据
     def _load_player_data_with_check(self, client_id, action_type=None):
@@ -335,7 +351,7 @@ class TCPGameServer(TCPServer):
     
     #加载作物配置数据（优化版本）
     def _load_crop_data(self):
-        """加载作物配置数据（优先MongoDB，带缓存优化）"""
+        """加载作物配置数据（从MongoDB，带缓存优化）"""
         current_time = time.time()
         
         # 检查缓存是否有效
@@ -344,29 +360,22 @@ class TCPGameServer(TCPServer):
             return self.crop_data_cache
         
         # 缓存过期或不存在，重新加载
-        # 优先尝试从MongoDB加载
-        if self.use_mongodb and self.mongo_api:
-            try:
-                crop_data = self.mongo_api.get_crop_data_config()
-                if crop_data:
-                    self.crop_data_cache = crop_data
-                    self.crop_data_cache_time = current_time
-                    self.log('INFO', "成功从MongoDB加载作物数据配置", 'SERVER')
-                    return self.crop_data_cache
-                else:
-                    self.log('WARNING', "MongoDB中未找到作物数据配置，尝试JSON文件", 'SERVER')
-            except Exception as e:
-                self.log('ERROR', f"从MongoDB加载作物数据失败: {str(e)}，尝试JSON文件", 'SERVER')
-        
-        # MongoDB失败或不可用，尝试从JSON文件加载
+        if not self.use_mongodb or not self.mongo_api:
+            self.log('ERROR', 'MongoDB未配置或不可用，无法加载作物配置数据', 'SERVER')
+            return {}
+            
         try:
-            with open("config/crop_data.json", 'r', encoding='utf-8') as file:
-                self.crop_data_cache = json.load(file)
+            crop_data = self.mongo_api.get_crop_data_config()
+            if crop_data:
+                self.crop_data_cache = crop_data
                 self.crop_data_cache_time = current_time
-                self.log('INFO', "成功从JSON文件加载作物数据配置", 'SERVER')
+                self.log('INFO', "成功从MongoDB加载作物数据配置", 'SERVER')
                 return self.crop_data_cache
+            else:
+                self.log('ERROR', "MongoDB中未找到作物数据配置", 'SERVER')
+                return {}
         except Exception as e:
-            self.log('ERROR', f"无法加载作物数据: {str(e)}", 'SERVER')
+            self.log('ERROR', f"从MongoDB加载作物数据失败: {str(e)}", 'SERVER')
             return {}
     
     #更新玩家登录时间
@@ -656,6 +665,8 @@ class TCPGameServer(TCPServer):
             return self._handle_crop_data_request(client_id)
         elif message_type == "request_item_config":#请求道具配置数据
             return self._handle_item_config_request(client_id)
+        elif message_type == "request_pet_config":#请求宠物配置数据
+            return self._handle_pet_config_request(client_id)
         elif message_type == "visit_player":#拜访其他玩家农场
             return self._handle_visit_player_request(client_id, message)
         elif message_type == "return_my_farm":#返回我的农场
@@ -712,6 +723,8 @@ class TCPGameServer(TCPServer):
             return self._handle_buy_store_booth(client_id, message)
         elif message_type == "save_game_settings":#保存游戏设置
             return self._handle_save_game_settings(client_id, message)
+        elif message_type == "pet_battle_result":#宠物对战结果
+            return self._handle_pet_battle_result(client_id, message)
         #---------------------------------------------------------------------------
 
         elif message_type == "message":#处理聊天消息（暂未实现）
@@ -951,29 +964,20 @@ class TCPGameServer(TCPServer):
 
     #辅助函数-创建新用户
     def _create_new_user(self, client_id, username, password, farm_name, player_name):
-        """创建新用户（优先从MongoDB加载模板）"""
+        """创建新用户（从MongoDB加载模板）"""
         try:
-            # 优先从MongoDB加载初始玩家数据模板
-            player_data = None
-            if self.use_mongodb and self.mongo_api:
-                try:
-                    player_data = self.mongo_api.get_initial_player_data_template()
-                    if player_data:
-                        self.log('INFO', "成功从MongoDB加载初始玩家数据模板", 'SERVER')
-                    else:
-                        self.log('WARNING', "MongoDB中未找到初始玩家数据模板，尝试从JSON文件加载", 'SERVER')
-                except Exception as e:
-                    self.log('ERROR', f"从MongoDB加载初始玩家数据模板失败: {str(e)}，尝试从JSON文件加载", 'SERVER')
-            
-            # MongoDB加载失败或不可用，从JSON文件加载
-            if not player_data:
-                template_path = os.path.join("config", "initial_player_data_template.json")
-                if not os.path.exists(template_path):
-                    return self._send_register_error(client_id, "服务器配置错误，无法注册新用户")
-                    
-                with open(template_path, 'r', encoding='utf-8') as file:
-                    player_data = json.load(file)
-                self.log('INFO', "成功从JSON文件加载初始玩家数据模板", 'SERVER')
+            # 从MongoDB加载初始玩家数据模板
+            if not self.use_mongodb or not self.mongo_api:
+                return self._send_register_error(client_id, "MongoDB未配置或不可用，无法注册新用户")
+                
+            try:
+                player_data = self.mongo_api.get_initial_player_data_template()
+                if not player_data:
+                    return self._send_register_error(client_id, "MongoDB中未找到初始玩家数据模板，无法注册新用户")
+                self.log('INFO', "成功从MongoDB加载初始玩家数据模板", 'SERVER')
+            except Exception as e:
+                self.log('ERROR', f"从MongoDB加载初始玩家数据模板失败: {str(e)}", 'SERVER')
+                return self._send_register_error(client_id, f"加载初始玩家数据模板失败: {str(e)}")
             
             # 更新玩家基本信息
             current_time = datetime.datetime.now()
@@ -993,10 +997,9 @@ class TCPGameServer(TCPServer):
             # 确保必要字段存在
             self._ensure_player_data_fields(player_data)
             
-            # 保存新用户数据
-            file_path = os.path.join("game_saves", f"{username}.json")
-            with open(file_path, 'w', encoding='utf-8') as file:
-                json.dump(player_data, file, indent=2, ensure_ascii=False)
+            # 保存新用户数据到MongoDB
+            if not self.save_player_data(username, player_data):
+                return self._send_register_error(client_id, "保存用户数据失败，注册失败")
                 
             self.log('INFO', f"用户 {username} 注册成功，注册时间: {time_str}，享受3天新玩家10倍生长速度奖励", 'SERVER')
             
@@ -1449,11 +1452,11 @@ class TCPGameServer(TCPServer):
             }
         })
     
-    #辅助函数-处理偷菜逻辑（访问模式下收获其他玩家作物的操作）（优化版本）
+    #辅助函数-处理偷菜逻辑（访问模式下收获其他玩家作物的操作）
     def _process_steal_crop_optimized(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, crop_data):
-        """处理偷菜逻辑（收益给当前玩家，清空目标玩家的作物）（优化版本）"""
+        """处理偷菜逻辑（收益给当前玩家，清空目标玩家的作物）"""
         # 偷菜体力值消耗
-        stamina_cost = 2
+        stamina_cost = 1
         
         # 检查并更新当前玩家的体力值
         self._check_and_update_stamina(current_player_data)
@@ -1462,17 +1465,24 @@ class TCPGameServer(TCPServer):
         if not self._check_stamina_sufficient(current_player_data, stamina_cost):
             return self._send_action_error(client_id, "harvest_crop", f"体力值不足，偷菜需要 {stamina_cost} 点体力，当前体力：{current_player_data.get('体力值', 0)}")
         
-        # 检查是否被巡逻宠物发现（调试：100%概率）
+        # 检查是否被巡逻宠物发现（30%概率）
         patrol_pets = target_player_data.get("巡逻宠物", [])
         if patrol_pets and len(patrol_pets) > 0:
-            # 100%概率被发现（调试用）
-            import random
-            if random.random() <= 1.0:
-                # 被巡逻宠物发现了！
-                return self._handle_steal_caught_by_patrol(
-                    client_id, current_player_data, current_username, 
-                    target_player_data, target_username, patrol_pets[0]
-                )
+            # 先检查是否有免被发现次数
+            immunity_count = self._get_steal_immunity_count(current_username, target_username)
+            if immunity_count > 0:
+                # 有免被发现次数，消耗一次
+                self._consume_steal_immunity(current_username, target_username)
+                self.log('INFO', f"玩家 {current_username} 使用免被发现次数偷菜 {target_username}，剩余次数：{immunity_count - 1}", 'SERVER')
+            else:
+                # 30%概率被发现
+                import random
+                if random.random() <= 0.3:
+                    # 被巡逻宠物发现了！
+                    return self._handle_steal_caught_by_patrol(
+                        client_id, current_player_data, current_username, 
+                        target_player_data, target_username, patrol_pets[0]
+                    )
         
         # 获取作物类型和基本信息
         crop_type = target_lot["crop_type"]
@@ -1571,7 +1581,7 @@ class TCPGameServer(TCPServer):
                 "钱币": current_player_data["钱币"],
                 "经验值": current_player_data["经验值"],
                 "等级": current_player_data["等级"],
-                "体力值": current_player_data["体力值"],
+                "体力值": current_player_data.get("体力系统", {}).get("当前体力值", 20),
                 "种子仓库": current_player_data.get("种子仓库", []),
                 "作物仓库": current_player_data.get("作物仓库", [])
             }
@@ -1647,16 +1657,13 @@ class TCPGameServer(TCPServer):
         """根据巡逻宠物ID获取完整宠物数据"""
         pet_bag = player_data.get("宠物背包", [])
         for pet in pet_bag:
-            if pet.get("基本信息", {}).get("宠物ID", "") == patrol_pet_id:
+            if pet.get("pet_id", "") == patrol_pet_id:
                 # 添加场景路径
                 import copy
                 pet_data = copy.deepcopy(pet)
-                pet_type = pet.get("基本信息", {}).get("宠物类型", "")
-                pet_configs = self._load_pet_config()
-                if pet_type in pet_configs:
-                    pet_data["场景路径"] = pet_configs[pet_type].get("场景路径", "res://Scene/Pet/PetBase.tscn")
-                else:
-                    pet_data["场景路径"] = "res://Scene/Pet/PetBase.tscn"
+                # 直接从pet_image字段获取场景路径
+                scene_path = pet.get("pet_image", "res://Scene/Pet/PetBase.tscn")
+                pet_data["场景路径"] = scene_path
                 return pet_data
         return None
     
@@ -1665,16 +1672,13 @@ class TCPGameServer(TCPServer):
         """根据出战宠物ID获取完整宠物数据"""
         pet_bag = player_data.get("宠物背包", [])
         for pet in pet_bag:
-            if pet.get("基本信息", {}).get("宠物ID", "") == battle_pet_id:
+            if pet.get("pet_id", "") == battle_pet_id:
                 # 添加场景路径
                 import copy
                 pet_data = copy.deepcopy(pet)
-                pet_type = pet.get("基本信息", {}).get("宠物类型", "")
-                pet_configs = self._load_pet_config()
-                if pet_type in pet_configs:
-                    pet_data["场景路径"] = pet_configs[pet_type].get("场景路径", "res://Scene/Pet/PetBase.tscn")
-                else:
-                    pet_data["场景路径"] = "res://Scene/Pet/PetBase.tscn"
+                # 直接从pet_image字段获取场景路径
+                scene_path = pet.get("pet_image", "res://Scene/Pet/PetBase.tscn")
+                pet_data["场景路径"] = scene_path
                 return pet_data
         return None
     
@@ -1842,11 +1846,6 @@ class TCPGameServer(TCPServer):
             affected_players = 0
             total_weeds_added = 0
             
-            # 获取所有玩家存档文件
-            game_saves_dir = "game_saves"
-            if not os.path.exists(game_saves_dir):
-                return
-            
             # 获取作物数据以验证杂草类型
             crop_data = self._load_crop_data()
             if not crop_data:
@@ -1863,32 +1862,64 @@ class TCPGameServer(TCPServer):
                 self.log('WARNING', "没有找到可用的杂草类型，跳过杂草检查", 'SERVER')
                 return
             
-            # 遍历所有玩家文件
-            for filename in os.listdir(game_saves_dir):
-                if not filename.endswith('.json'):
-                    continue
+            # 优先使用MongoDB获取离线玩家
+            if self.use_mongodb and self.mongo_api:
+                offline_players = self.mongo_api.get_offline_players(self.offline_threshold_days)
                 
-                account_id = filename[:-5]  # 移除.json后缀
-                
-                try:
-                    # 加载玩家数据
-                    player_data = self.load_player_data(account_id)
-                    if not player_data:
+                for player_data in offline_players:
+                    account_id = player_data.get("玩家账号")
+                    if not account_id:
                         continue
                     
-                    # 检查玩家是否长时间离线
-                    if self._is_player_long_offline(player_data, current_time):
+                    try:
+                        # 获取完整玩家数据
+                        full_player_data = self.mongo_api.get_player_data(account_id)
+                        if not full_player_data:
+                            continue
+                        
                         # 为该玩家的空地生长杂草
-                        weeds_added = self._grow_weeds_for_player(player_data, account_id, available_weeds)
+                        weeds_added = self._grow_weeds_for_player(full_player_data, account_id, available_weeds)
                         if weeds_added > 0:
                             affected_players += 1
                             total_weeds_added += weeds_added
                             # 保存玩家数据
-                            self.save_player_data(account_id, player_data)
+                            self.mongo_api.save_player_data(account_id, full_player_data)
                             
-                except Exception as e:
-                    self.log('ERROR', f"处理玩家 {account_id} 的杂草生长时出错: {str(e)}", 'SERVER')
-                    continue
+                    except Exception as e:
+                        self.log('ERROR', f"处理玩家 {account_id} 的杂草生长时出错: {str(e)}", 'SERVER')
+                        continue
+            else:
+                # 降级到文件系统
+                game_saves_dir = "game_saves"
+                if not os.path.exists(game_saves_dir):
+                    return
+                
+                # 遍历所有玩家文件
+                for filename in os.listdir(game_saves_dir):
+                    if not filename.endswith('.json'):
+                        continue
+                    
+                    account_id = filename[:-5]  # 移除.json后缀
+                    
+                    try:
+                        # 加载玩家数据
+                        player_data = self.load_player_data(account_id)
+                        if not player_data:
+                            continue
+                        
+                        # 检查玩家是否长时间离线
+                        if self._is_player_long_offline(player_data, current_time):
+                            # 为该玩家的空地生长杂草
+                            weeds_added = self._grow_weeds_for_player(player_data, account_id, available_weeds)
+                            if weeds_added > 0:
+                                affected_players += 1
+                                total_weeds_added += weeds_added
+                                # 保存玩家数据
+                                self.save_player_data(account_id, player_data)
+                                
+                    except Exception as e:
+                        self.log('ERROR', f"处理玩家 {account_id} 的杂草生长时出错: {str(e)}", 'SERVER')
+                        continue
             
             self.log('INFO', f"杂草检查完成，共为 {affected_players} 个玩家的农场添加了 {total_weeds_added} 个杂草", 'SERVER')
             
@@ -1971,6 +2002,64 @@ class TCPGameServer(TCPServer):
         return weeds_added
 
 #==========================杂草生长处理==========================
+
+
+
+#==========================偷菜免被发现计数器管理==========================
+    def _get_steal_immunity_count(self, player_name, target_player_name):
+        """获取玩家对目标玩家的免被发现次数"""
+        return self.steal_immunity_counters.get(player_name, {}).get(target_player_name, 0)
+    
+    def _consume_steal_immunity(self, player_name, target_player_name):
+        """消耗一次免被发现次数"""
+        if player_name not in self.steal_immunity_counters:
+            return False
+        
+        if target_player_name not in self.steal_immunity_counters[player_name]:
+            return False
+        
+        if self.steal_immunity_counters[player_name][target_player_name] > 0:
+            self.steal_immunity_counters[player_name][target_player_name] -= 1
+            
+            # 如果计数器归零，清理该条目
+            if self.steal_immunity_counters[player_name][target_player_name] == 0:
+                del self.steal_immunity_counters[player_name][target_player_name]
+                
+                # 如果该玩家没有其他计数器，清理玩家条目
+                if not self.steal_immunity_counters[player_name]:
+                    del self.steal_immunity_counters[player_name]
+            
+            return True
+        
+        return False
+    
+    def _set_steal_immunity(self, player_name, target_player_name, count=3):
+        """设置玩家对目标玩家的免被发现次数"""
+        if player_name not in self.steal_immunity_counters:
+            self.steal_immunity_counters[player_name] = {}
+        
+        self.steal_immunity_counters[player_name][target_player_name] = count
+        self.log('INFO', f"为玩家 {player_name} 设置对 {target_player_name} 的免被发现次数: {count}", 'SERVER')
+    
+    def _clear_player_steal_immunity(self, player_name):
+        """清理玩家的所有免被发现计数器"""
+        if player_name in self.steal_immunity_counters:
+            del self.steal_immunity_counters[player_name]
+            self.log('INFO', f"清理玩家 {player_name} 的所有免被发现计数器", 'SERVER')
+    
+    def _clear_target_steal_immunity(self, player_name, target_player_name):
+        """清理玩家对特定目标的免被发现计数器"""
+        if player_name in self.steal_immunity_counters:
+            if target_player_name in self.steal_immunity_counters[player_name]:
+                del self.steal_immunity_counters[player_name][target_player_name]
+                
+                # 如果该玩家没有其他计数器，清理玩家条目
+                if not self.steal_immunity_counters[player_name]:
+                    del self.steal_immunity_counters[player_name]
+                
+                self.log('INFO', f"清理玩家 {player_name} 对 {target_player_name} 的免被发现计数器", 'SERVER')
+
+#==========================偷菜免被发现计数器管理==========================
 
 
 
@@ -2204,14 +2293,9 @@ class TCPGameServer(TCPServer):
             return {"success": False, "message": "该宠物不存在"}
         
         pet_info = pet_config[pet_name]
-        purchase_info = pet_info.get("购买信息", {})
         
-        # 检查宠物是否可购买
-        if not purchase_info.get("能否购买", False):
-            return {"success": False, "message": "该宠物不可购买"}
-        
-        # 验证价格
-        actual_cost = purchase_info.get("购买价格", 0)
+        # 从配置中获取宠物价格
+        actual_cost = pet_info.get("cost", 1000)  # 默认价格1000
         if pet_cost != actual_cost:
             return {"success": False, "message": f"宠物价格验证失败，实际价格为{actual_cost}元"}
         
@@ -2224,13 +2308,12 @@ class TCPGameServer(TCPServer):
     #处理宠物购买逻辑
     def _process_pet_purchase(self, client_id, player_data, username, pet_name, pet_info):
         """处理宠物购买逻辑"""
-        purchase_info = pet_info.get("购买信息", {})
-        pet_cost = purchase_info.get("购买价格", 0)
+        pet_cost = pet_info.get("cost", 1000)  # 从配置中获取价格，默认1000
         
         # 检查玩家金钱
         if player_data["钱币"] < pet_cost:
             return self._send_action_error(client_id, "buy_pet", 
-                f"金钱不足，无法购买此宠物。需要{pet_cost}元，当前只有{player_data['money']}元")
+                f"金钱不足，无法购买此宠物。需要{pet_cost}元，当前只有{player_data['钱币']}元")
         
         # 扣除金钱并添加宠物
         player_data["钱币"] -= pet_cost
@@ -2268,16 +2351,15 @@ class TCPGameServer(TCPServer):
         # 生成唯一ID和设置基本信息
         unique_id = str(int(time.time() * 1000))
         now = datetime.datetime.now()
-        birthday = f"{now.year}年{now.month}月{now.day}日{now.hour}时{now.minute}分{now.second}秒"
+        birthday = f"{now.year}-{now.month:02d}-{now.day:02d}"
         
-        if "基本信息" in pet_instance:
-            pet_instance["基本信息"].update({
-                "宠物主人": username,
-                "宠物ID": unique_id,
-                "宠物名称": f"{username}的{pet_name}",
-                "生日": birthday,
-                "年龄": 0
-            })
+        # 新格式：直接在根级别设置属性
+        pet_instance.update({
+            "pet_id": unique_id,
+            "pet_name": f"{username}的{pet_name}",
+            "pet_birthday": birthday,
+            "pet_owner": username
+        })
         
         return pet_instance
     
@@ -2286,36 +2368,29 @@ class TCPGameServer(TCPServer):
         """检查玩家是否已拥有指定类型的宠物"""
         pet_bag = player_data.get("宠物背包", [])
         for pet in pet_bag:
-            basic_info = pet.get("基本信息", {})
-            pet_type = basic_info.get("宠物类型", "")
+            pet_type = pet.get("pet_type", "")
             if pet_type == pet_name:
                 return True
         return False
     
     #加载宠物配置数据
     def _load_pet_config(self):
-        """优先从MongoDB加载宠物配置数据，失败时回退到JSON文件"""
+        """从MongoDB加载宠物配置数据"""
         try:
-            # 优先从MongoDB加载
-            if hasattr(self, 'mongo_api') and self.mongo_api:
-                config = self.mongo_api.get_pet_config()
-                if config:
-                    self.log('INFO', "成功从MongoDB加载宠物配置", 'SERVER')
-                    return config
-                else:
-                    self.log('WARNING', "MongoDB中未找到宠物配置，回退到JSON文件", 'SERVER')
-            
-            # 回退到JSON文件
-            with open("config/pet_data.json", 'r', encoding='utf-8') as file:
-                config = json.load(file)
-                self.log('INFO', "从JSON文件加载宠物配置", 'SERVER')
-                return config
+            if not hasattr(self, 'mongo_api') or not self.mongo_api:
+                self.log('ERROR', 'MongoDB未配置或不可用，无法加载宠物配置数据', 'SERVER')
+                return {}
                 
-        except json.JSONDecodeError as e:
-            self.log('ERROR', f"宠物配置JSON解析错误: {str(e)}", 'SERVER')
-            return {}
+            config = self.mongo_api.get_pet_config()
+            if config:
+                self.log('INFO', "成功从MongoDB加载宠物配置", 'SERVER')
+                return config
+            else:
+                self.log('ERROR', "MongoDB中未找到宠物配置", 'SERVER')
+                return {}
+                
         except Exception as e:
-            self.log('ERROR', f"加载宠物配置失败: {str(e)}", 'SERVER')
+            self.log('ERROR', f"从MongoDB加载宠物配置失败: {str(e)}", 'SERVER')
             return {}
     
     # 将巡逻宠物ID转换为完整宠物数据
@@ -2327,17 +2402,14 @@ class TCPGameServer(TCPServer):
         
         for patrol_pet_id in patrol_pets_ids:
             for pet in pet_bag:
-                if pet.get("基本信息", {}).get("宠物ID", "") == patrol_pet_id:
+                if pet.get("pet_id", "") == patrol_pet_id:
                     # 为巡逻宠物添加场景路径
                     import copy
                     patrol_pet_data = copy.deepcopy(pet)
                     
-                    # 根据宠物类型获取场景路径
-                    pet_type = pet.get("基本信息", {}).get("宠物类型", "")
-                    pet_configs = self._load_pet_config()
-                    if pet_type in pet_configs:
-                        scene_path = pet_configs[pet_type].get("场景路径", "")
-                        patrol_pet_data["场景路径"] = scene_path
+                    # 直接从pet_image字段获取场景路径
+                    scene_path = pet.get("pet_image", "")
+                    patrol_pet_data["场景路径"] = scene_path
                     
                     patrol_pets_data.append(patrol_pet_data)
                     break
@@ -2353,17 +2425,14 @@ class TCPGameServer(TCPServer):
         
         for battle_pet_id in battle_pets_ids:
             for pet in pet_bag:
-                if pet.get("基本信息", {}).get("宠物ID", "") == battle_pet_id:
+                if pet.get("pet_id", "") == battle_pet_id:
                     # 为出战宠物添加场景路径
                     import copy
                     battle_pet_data = copy.deepcopy(pet)
                     
-                    # 根据宠物类型获取场景路径
-                    pet_type = pet.get("基本信息", {}).get("宠物类型", "")
-                    pet_configs = self._load_pet_config()
-                    if pet_type in pet_configs:
-                        scene_path = pet_configs[pet_type].get("场景路径", "")
-                        battle_pet_data["场景路径"] = scene_path
+                    # 直接从pet_image字段获取场景路径
+                    scene_path = pet.get("pet_image", "")
+                    battle_pet_data["场景路径"] = scene_path
                     
                     battle_pets_data.append(battle_pet_data)
                     break
@@ -2405,14 +2474,13 @@ class TCPGameServer(TCPServer):
         pet_found = False
         
         for pet in pet_bag:
-            basic_info = pet.get("基本信息", {})
-            if basic_info.get("宠物ID", "") == pet_id:
+            if pet.get("pet_id", "") == pet_id:
                 # 检查宠物主人是否正确
-                if basic_info.get("宠物主人", "") != username:
+                if pet.get("pet_owner", "") != username:
                     return self._send_action_error(client_id, "rename_pet", "你不是该宠物的主人")
                 
                 # 更新宠物名字
-                basic_info["宠物名称"] = new_name
+                pet["pet_name"] = new_name
                 pet_found = True
                 break
         
@@ -2468,7 +2536,7 @@ class TCPGameServer(TCPServer):
         # 查找目标宠物
         target_pet = None
         for pet in pet_bag:
-            if pet.get("基本信息", {}).get("宠物ID", "") == pet_id:
+            if pet.get("pet_id", "") == pet_id:
                 target_pet = pet
                 break
         
@@ -2476,17 +2544,16 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "set_patrol_pet", "未找到指定的宠物")
         
         # 检查宠物主人是否正确
-        basic_info = target_pet.get("基本信息", {})
-        if basic_info.get("宠物主人", "") != username:
+        if target_pet.get("pet_owner", "") != username:
             return self._send_action_error(client_id, "set_patrol_pet", "你不是该宠物的主人")
         
-        pet_name = basic_info.get("宠物名称", basic_info.get("宠物类型", "未知宠物"))
+        pet_name = target_pet.get("pet_name", target_pet.get("pet_type", "未知宠物"))
         
         if is_patrolling:
             # 添加到巡逻列表
-            # 检查巡逻宠物数量限制（最多3个）
-            if len(patrol_pets) >= 3:
-                return self._send_action_error(client_id, "set_patrol_pet", "最多只能设置3个巡逻宠物")
+            # 检查巡逻宠物数量限制（最多4个）
+            if len(patrol_pets) >= 4:
+                return self._send_action_error(client_id, "set_patrol_pet", "最多只能设置4个巡逻宠物")
             
             # 检查是否已在巡逻列表中（现在只检查ID）
             for patrol_pet_id in patrol_pets:
@@ -2519,17 +2586,14 @@ class TCPGameServer(TCPServer):
         patrol_pets_data = []
         for patrol_pet_id in patrol_pets:
             for pet in pet_bag:
-                if pet.get("基本信息", {}).get("宠物ID", "") == patrol_pet_id:
+                if pet.get("pet_id", "") == patrol_pet_id:
                     # 为巡逻宠物添加场景路径
                     import copy
                     patrol_pet_data = copy.deepcopy(pet)
                     
-                    # 根据宠物类型获取场景路径
-                    pet_type = pet.get("基本信息", {}).get("宠物类型", "")
-                    pet_configs = self._load_pet_config()
-                    if pet_type in pet_configs:
-                        scene_path = pet_configs[pet_type].get("场景路径", "")
-                        patrol_pet_data["场景路径"] = scene_path
+                    # 新格式中场景路径已经在pet_image字段中
+                    if "pet_image" in pet:
+                        patrol_pet_data["scene_path"] = pet["pet_image"]
                     
                     patrol_pets_data.append(patrol_pet_data)
                     break
@@ -2576,14 +2640,14 @@ class TCPGameServer(TCPServer):
         # 查找宠物是否在背包中
         target_pet = None
         for pet in pet_bag:
-            if pet.get("基本信息", {}).get("宠物ID", "") == pet_id:
+            if pet.get("pet_id", "") == pet_id:
                 target_pet = pet
                 break
         
         if not target_pet:
             return self._send_action_error(client_id, "set_battle_pet", f"宠物背包中找不到ID为 {pet_id} 的宠物")
         
-        pet_name = target_pet.get("基本信息", {}).get("宠物名称", "未知宠物")
+        pet_name = target_pet.get("pet_name", "未知宠物")
         
         if is_battle:
             # 添加到出战列表
@@ -2595,9 +2659,9 @@ class TCPGameServer(TCPServer):
             if pet_id in patrol_pets:
                 return self._send_action_error(client_id, "set_battle_pet", f"{pet_name} 正在巡逻，不能同时设置为出战宠物")
             
-            # 检查出战宠物数量限制（最多1个）
-            if len(battle_pets) >= 1:
-                return self._send_action_error(client_id, "set_battle_pet", "最多只能设置1个出战宠物")
+            # 检查出战宠物数量限制（最多4个）
+            if len(battle_pets) >= 4:
+                return self._send_action_error(client_id, "set_battle_pet", "最多只能设置4个出战宠物")
             
             # 添加到出战列表
             battle_pets.append(pet_id)
@@ -2623,18 +2687,14 @@ class TCPGameServer(TCPServer):
         battle_pets_data = []
         for battle_pet_id in battle_pets:
             for pet in pet_bag:
-                if pet.get("基本信息", {}).get("宠物ID", "") == battle_pet_id:
+                if pet.get("pet_id", "") == battle_pet_id:
                     # 为出战宠物添加场景路径
                     import copy
                     battle_pet_data = copy.deepcopy(pet)
                     
-                    # 根据宠物类型获取场景路径
-                    pet_type = pet.get("基本信息", {}).get("宠物类型", "")
-                    pet_configs = self._load_pet_config()
-                    if pet_configs and pet_type in pet_configs:
-                        battle_pet_data["场景路径"] = pet_configs[pet_type].get("场景路径", "res://Scene/Pet/PetBase.tscn")
-                    else:
-                        battle_pet_data["场景路径"] = "res://Scene/Pet/PetBase.tscn"
+                    # 新格式中场景路径已经在pet_image字段中
+                    if "pet_image" in pet:
+                        battle_pet_data["scene_path"] = pet["pet_image"]
                     
                     battle_pets_data.append(battle_pet_data)
                     break
@@ -2673,6 +2733,8 @@ class TCPGameServer(TCPServer):
         new_intimacy = message.get("new_intimacy", 0)
         level_ups = message.get("level_ups", 0)
         level_bonus_multiplier = message.get("level_bonus_multiplier", 1.0)
+        is_steal_battle = message.get("is_steal_battle", False)
+        battle_winner = message.get("battle_winner", "")
         
         if not pet_id or not attacker_name:
             return self._send_action_error(client_id, "update_battle_pet_data", "无效的宠物ID或进攻者名称")
@@ -2688,6 +2750,14 @@ class TCPGameServer(TCPServer):
                                                new_intimacy, level_ups, level_bonus_multiplier)
         
         if success:
+            # 检查是否是偷菜对战且玩家获胜，如果是则设置免被发现计数器
+            if is_steal_battle and battle_winner == "team1":
+                # 获取当前访问的目标玩家名称（从客户端连接信息中获取）
+                target_player_name = self.user_data.get(client_id, {}).get("visiting_target", "")
+                if target_player_name:
+                    self._set_steal_immunity(attacker_name, target_player_name, 3)
+                    self.log('INFO', f"玩家 {attacker_name} 战胜巡逻宠物，获得对 {target_player_name} 的3次免被发现机会", 'SERVER')
+            
             # 保存玩家数据
             self.save_player_data(attacker_name, player_data)
             
@@ -2719,7 +2789,7 @@ class TCPGameServer(TCPServer):
         # 查找指定宠物
         target_pet = None
         for pet in player_data["宠物背包"]:
-            if pet.get("基本信息", {}).get("宠物ID") == pet_id:
+            if pet.get("pet_id") == pet_id:
                 target_pet = pet
                 break
         
@@ -2727,38 +2797,28 @@ class TCPGameServer(TCPServer):
             return False
         
         # 更新等级经验数据
-        level_exp_data = target_pet.setdefault("等级经验", {})
-        level_exp_data["宠物等级"] = new_level
-        level_exp_data["当前经验"] = new_experience
-        level_exp_data["最大经验"] = new_max_experience
-        level_exp_data["亲密度"] = new_intimacy
+        target_pet["pet_level"] = new_level
+        target_pet["pet_experience"] = new_experience
+        target_pet["pet_max_experience"] = new_max_experience
+        target_pet["pet_intimacy"] = new_intimacy
         
         # 如果有升级，更新属性
         if level_ups > 0:
-            health_defense_data = target_pet.setdefault("生命与防御", {})
-            
             # 计算升级后的属性（每级10%加成）
-            old_max_health = health_defense_data.get("最大生命值", 100.0)
-            old_max_shield = health_defense_data.get("最大护盾值", 0.0)
-            old_max_armor = health_defense_data.get("最大护甲值", 100.0)
+            old_max_health = target_pet.get("pet_max_health", 100.0)
+            old_max_armor = target_pet.get("pet_max_armor", 100.0)
+            old_attack_damage = target_pet.get("pet_attack_damage", 20.0)
             
             # 应用升级加成
             new_max_health = old_max_health * level_bonus_multiplier
-            new_max_shield = old_max_shield * level_bonus_multiplier
             new_max_armor = old_max_armor * level_bonus_multiplier
-            
-            health_defense_data["最大生命值"] = new_max_health
-            health_defense_data["当前生命值"] = new_max_health  # 升级回满血
-            health_defense_data["最大护盾值"] = new_max_shield
-            health_defense_data["当前护盾值"] = new_max_shield  # 升级回满护盾
-            health_defense_data["最大护甲值"] = new_max_armor
-            health_defense_data["当前护甲值"] = new_max_armor  # 升级回满护甲
-            
-            # 更新攻击属性
-            attack_data = target_pet.setdefault("基础攻击属性", {})
-            old_attack_damage = attack_data.get("基础攻击伤害", 20.0)
             new_attack_damage = old_attack_damage * level_bonus_multiplier
-            attack_data["基础攻击伤害"] = new_attack_damage
+            
+            target_pet["pet_max_health"] = new_max_health
+            target_pet["pet_current_health"] = new_max_health  # 升级回满血
+            target_pet["pet_max_armor"] = new_max_armor
+            target_pet["pet_current_armor"] = new_max_armor  # 升级回满护甲
+            target_pet["pet_attack_damage"] = new_attack_damage
         
         return True
 #==========================更新宠物对战数据处理==========================
@@ -2810,9 +2870,9 @@ class TCPGameServer(TCPServer):
         target_pet = None
         
         for pet in pet_bag:
-            if pet.get("基本信息", {}).get("宠物ID", "") == pet_id:
+            if pet.get("pet_id", "") == pet_id:
                 # 检查宠物主人是否正确
-                if pet.get("基本信息", {}).get("宠物主人", "") != username:
+                if pet.get("pet_owner", "") != username:
                     return self._send_action_error(client_id, "feed_pet", "你不是该宠物的主人")
                 target_pet = pet
                 break
@@ -2835,7 +2895,7 @@ class TCPGameServer(TCPServer):
             # 保存玩家数据
             self.save_player_data(username, player_data)
             
-            pet_name = target_pet.get("基本信息", {}).get("宠物名称", "未知宠物")
+            pet_name = target_pet.get("pet_name", "未知宠物")
             
             # 构建效果描述
             effect_descriptions = []
@@ -2877,18 +2937,12 @@ class TCPGameServer(TCPServer):
             # 记录实际应用的效果
             applied_effects = {}
             
-            # 获取宠物各个属性数据
-            level_exp_data = target_pet.setdefault("等级经验", {})
-            health_defense_data = target_pet.setdefault("生命与防御", {})
-            attack_data = target_pet.setdefault("基础攻击属性", {})
-            movement_data = target_pet.setdefault("移动与闪避", {})
-            
             # 处理经验效果
             if "经验" in feed_effects:
                 exp_gain = feed_effects["经验"]
-                current_exp = level_exp_data.get("当前经验", 0)
-                max_exp = level_exp_data.get("最大经验", 100)
-                current_level = level_exp_data.get("宠物等级", 1)
+                current_exp = target_pet.get("pet_experience", 0)
+                max_exp = target_pet.get("pet_max_experience", 100)
+                current_level = target_pet.get("pet_level", 1)
                 
                 new_exp = current_exp + exp_gain
                 applied_effects["经验"] = exp_gain
@@ -2903,9 +2957,9 @@ class TCPGameServer(TCPServer):
                     max_exp = int(max_exp * 1.2)
                 
                 # 更新经验数据
-                level_exp_data["当前经验"] = new_exp
-                level_exp_data["最大经验"] = max_exp
-                level_exp_data["宠物等级"] = current_level
+                target_pet["pet_experience"] = new_exp
+                target_pet["pet_max_experience"] = max_exp
+                target_pet["pet_level"] = current_level
                 
                 # 如果升级了，记录升级次数
                 if level_ups > 0:
@@ -2916,69 +2970,58 @@ class TCPGameServer(TCPServer):
             # 处理生命值效果
             if "生命值" in feed_effects:
                 hp_gain = feed_effects["生命值"]
-                current_hp = health_defense_data.get("当前生命值", 100)
-                max_hp = health_defense_data.get("最大生命值", 100)
+                current_hp = target_pet.get("pet_current_health", 100)
+                max_hp = target_pet.get("pet_max_health", 100)
                 
                 actual_hp_gain = min(hp_gain, max_hp - current_hp)  # 不能超过最大生命值
                 if actual_hp_gain > 0:
-                    health_defense_data["当前生命值"] = current_hp + actual_hp_gain
+                    target_pet["pet_current_health"] = current_hp + actual_hp_gain
                     applied_effects["生命值"] = actual_hp_gain
             
             # 处理攻击力效果
             if "攻击力" in feed_effects:
                 attack_gain = feed_effects["攻击力"]
-                current_attack = attack_data.get("基础攻击伤害", 20)
+                current_attack = target_pet.get("pet_attack_damage", 20)
                 new_attack = current_attack + attack_gain
-                attack_data["基础攻击伤害"] = new_attack
+                target_pet["pet_attack_damage"] = new_attack
                 applied_effects["攻击力"] = attack_gain
             
             # 处理移动速度效果
             if "移动速度" in feed_effects:
                 speed_gain = feed_effects["移动速度"]
-                current_speed = movement_data.get("移动速度", 100)
+                current_speed = target_pet.get("pet_move_speed", 100)
                 new_speed = current_speed + speed_gain
-                movement_data["移动速度"] = new_speed
+                target_pet["pet_move_speed"] = new_speed
                 applied_effects["移动速度"] = speed_gain
             
             # 处理亲密度效果
             if "亲密度" in feed_effects:
                 intimacy_gain = feed_effects["亲密度"]
-                current_intimacy = level_exp_data.get("亲密度", 0)
-                max_intimacy = level_exp_data.get("最大亲密度", 1000)
+                current_intimacy = target_pet.get("pet_intimacy", 0)
+                max_intimacy = target_pet.get("pet_max_intimacy", 1000)
                 
                 actual_intimacy_gain = min(intimacy_gain, max_intimacy - current_intimacy)
                 if actual_intimacy_gain > 0:
-                    level_exp_data["亲密度"] = current_intimacy + actual_intimacy_gain
+                    target_pet["pet_intimacy"] = current_intimacy + actual_intimacy_gain
                     applied_effects["亲密度"] = actual_intimacy_gain
             
             # 处理护甲值效果
             if "护甲值" in feed_effects:
                 armor_gain = feed_effects["护甲值"]
-                current_armor = health_defense_data.get("当前护甲值", 10)
-                max_armor = health_defense_data.get("最大护甲值", 10)
+                current_armor = target_pet.get("pet_current_armor", 10)
+                max_armor = target_pet.get("pet_max_armor", 10)
                 
                 actual_armor_gain = min(armor_gain, max_armor - current_armor)
                 if actual_armor_gain > 0:
-                    health_defense_data["当前护甲值"] = current_armor + actual_armor_gain
+                    target_pet["pet_current_armor"] = current_armor + actual_armor_gain
                     applied_effects["护甲值"] = actual_armor_gain
-            
-            # 处理护盾值效果
-            if "护盾值" in feed_effects:
-                shield_gain = feed_effects["护盾值"]
-                current_shield = health_defense_data.get("当前护盾值", 0)
-                max_shield = health_defense_data.get("最大护盾值", 0)
-                
-                actual_shield_gain = min(shield_gain, max_shield - current_shield)
-                if actual_shield_gain > 0:
-                    health_defense_data["当前护盾值"] = current_shield + actual_shield_gain
-                    applied_effects["护盾值"] = actual_shield_gain
             
             # 处理暴击率效果
             if "暴击率" in feed_effects:
                 crit_gain = feed_effects["暴击率"] / 100.0  # 转换为小数
-                current_crit = attack_data.get("暴击率", 0.1)
+                current_crit = target_pet.get("pet_crit_rate", 0.1)
                 new_crit = min(current_crit + crit_gain, 1.0)  # 最大100%
-                attack_data["暴击率"] = new_crit
+                target_pet["pet_crit_rate"] = new_crit
                 applied_effects["暴击率"] = feed_effects["暴击率"]
             
             # 处理闪避率效果
@@ -3002,28 +3045,152 @@ class TCPGameServer(TCPServer):
         level_bonus_multiplier = 1.1 ** level_ups
         
         # 更新生命和防御属性
-        health_defense_data = target_pet.setdefault("生命与防御", {})
-        old_max_hp = health_defense_data.get("最大生命值", 100)
-        old_max_armor = health_defense_data.get("最大护甲值", 10)
-        old_max_shield = health_defense_data.get("最大护盾值", 0)
+        old_max_hp = target_pet.get("pet_max_health", 100)
+        old_max_armor = target_pet.get("pet_max_armor", 10)
         
         new_max_hp = old_max_hp * level_bonus_multiplier
         new_max_armor = old_max_armor * level_bonus_multiplier
-        new_max_shield = old_max_shield * level_bonus_multiplier
         
-        health_defense_data["最大生命值"] = new_max_hp
-        health_defense_data["当前生命值"] = new_max_hp  # 升级回满血
-        health_defense_data["最大护甲值"] = new_max_armor
-        health_defense_data["当前护甲值"] = new_max_armor
-        health_defense_data["最大护盾值"] = new_max_shield
-        health_defense_data["当前护盾值"] = new_max_shield
+        target_pet["pet_max_health"] = new_max_hp
+        target_pet["pet_current_health"] = new_max_hp  # 升级回满血
+        target_pet["pet_max_armor"] = new_max_armor
+        target_pet["pet_current_armor"] = new_max_armor
         
         # 更新攻击属性
-        attack_data = target_pet.setdefault("基础攻击属性", {})
-        old_attack = attack_data.get("基础攻击伤害", 20)
+        old_attack = target_pet.get("pet_attack_damage", 20)
         new_attack = old_attack * level_bonus_multiplier
-        attack_data["基础攻击伤害"] = new_attack
+        target_pet["pet_attack_damage"] = new_attack
 #==========================宠物喂食处理==========================
+
+
+#==========================宠物对战结果处理==========================
+    def _handle_pet_battle_result(self, client_id, message):
+        """处理宠物对战结果"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "提交宠物对战结果", "pet_battle_result")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "pet_battle_result")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        # 获取对战结果数据
+        battle_data = message.get("battle_data", {})
+        winner = battle_data.get("winner", "")
+        attacker_name = battle_data.get("attacker_name", "")
+        defender_name = battle_data.get("defender_name", "")
+        battle_type = battle_data.get("battle_type", "")
+        attacker_pets = battle_data.get("attacker_pets", [])
+        defender_pets = battle_data.get("defender_pets", [])
+        duration = battle_data.get("duration", 0)
+        timestamp = battle_data.get("timestamp", time.time())
+        
+        # 验证必要参数
+        if not winner or not attacker_name or not defender_name:
+            return self._send_action_error(client_id, "pet_battle_result", "对战结果数据不完整")
+        
+        # 记录对战结果到日志
+        self.log('INFO', f"宠物对战结果 - 获胜方: {winner}, 攻击方: {attacker_name}, 防守方: {defender_name}, 类型: {battle_type}, 持续时间: {duration}秒", 'BATTLE')
+        
+        # 初始化对战历史记录
+        if "对战历史" not in player_data:
+            player_data["对战历史"] = []
+        
+        # 添加对战记录
+        battle_record = {
+            "获胜方": winner,
+            "攻击方": attacker_name,
+            "防守方": defender_name,
+            "对战类型": battle_type,
+            "攻击方宠物": attacker_pets,
+            "防守方宠物": defender_pets,
+            "持续时间": duration,
+            "时间戳": timestamp,
+            "日期": datetime.datetime.fromtimestamp(timestamp).strftime("%Y年%m月%d日%H时%M分%S秒")
+        }
+        
+        player_data["对战历史"].append(battle_record)
+        
+        # 限制历史记录数量（保留最近100条）
+        if len(player_data["对战历史"]) > 100:
+            player_data["对战历史"] = player_data["对战历史"][-100:]
+        
+        # 更新对战统计
+        if "对战统计" not in player_data:
+            player_data["对战统计"] = {
+                "总对战次数": 0,
+                "胜利次数": 0,
+                "失败次数": 0,
+                "胜率": 0.0
+            }
+        
+        stats = player_data["对战统计"]
+        stats["总对战次数"] += 1
+        
+        if winner == username:
+            stats["胜利次数"] += 1
+        else:
+            stats["失败次数"] += 1
+        
+        # 计算胜率
+        if stats["总对战次数"] > 0:
+            stats["胜率"] = round(stats["胜利次数"] / stats["总对战次数"] * 100, 2)
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        # 如果是与其他玩家的对战，也更新对方的记录
+        if defender_name != username and defender_name != "系统":
+            defender_data = self.load_player_data(defender_name)
+            if defender_data:
+                # 初始化对方的对战历史和统计
+                if "对战历史" not in defender_data:
+                    defender_data["对战历史"] = []
+                if "对战统计" not in defender_data:
+                    defender_data["对战统计"] = {
+                        "总对战次数": 0,
+                        "胜利次数": 0,
+                        "失败次数": 0,
+                        "胜率": 0.0
+                    }
+                
+                # 添加对战记录
+                defender_data["对战历史"].append(battle_record)
+                
+                # 限制历史记录数量
+                if len(defender_data["对战历史"]) > 100:
+                    defender_data["对战历史"] = defender_data["对战历史"][-100:]
+                
+                # 更新对战统计
+                defender_stats = defender_data["对战统计"]
+                defender_stats["总对战次数"] += 1
+                
+                if winner == defender_name:
+                    defender_stats["胜利次数"] += 1
+                else:
+                    defender_stats["失败次数"] += 1
+                
+                # 计算胜率
+                if defender_stats["总对战次数"] > 0:
+                    defender_stats["胜率"] = round(defender_stats["胜利次数"] / defender_stats["总对战次数"] * 100, 2)
+                
+                # 保存对方数据
+                self.save_player_data(defender_name, defender_data)
+        
+        return self.send_data(client_id, {
+            "type": "action_response",
+            "action_type": "pet_battle_result",
+            "success": True,
+            "message": "对战结果已记录",
+            "updated_data": {
+                "对战统计": player_data["对战统计"]
+            }
+        })
+#==========================宠物对战结果处理==========================
+
+
 
 
 #==========================开垦土地处理==========================
@@ -3108,7 +3275,7 @@ class TCPGameServer(TCPServer):
         self._push_crop_update_to_player(username, player_data)
         
         # 构建奖励消息
-        reward_message = f"获得 {rewards['money']} 金钱、{rewards['experience']} 经验"
+        reward_message = f"获得 {rewards['钱币']} 金钱、{rewards['经验值']} 经验"
         if rewards["seeds"]:
             seed_list = [f"{name} x{qty}" for name, qty in rewards["seeds"].items()]
             reward_message += f"、种子：{', '.join(seed_list)}"
@@ -3725,30 +3892,21 @@ class TCPGameServer(TCPServer):
     
     #加载道具配置数据
     def _load_item_config(self):
-        """优先从MongoDB加载道具配置数据，失败时回退到JSON文件"""
-        # 首先尝试从MongoDB加载
-        if self.mongo_api and self.mongo_api.is_connected():
-            try:
-                config = self.mongo_api.get_item_config()
-                if config:
-                    self.log('INFO', '成功从MongoDB加载道具配置', 'SERVER')
-                    return config
-                else:
-                    self.log('WARNING', 'MongoDB中未找到道具配置，回退到JSON文件', 'SERVER')
-            except Exception as e:
-                self.log('WARNING', f'从MongoDB加载道具配置失败: {e}，回退到JSON文件', 'SERVER')
-        
-        # 回退到JSON文件
-        try:
-            with open("config/item_config.json", 'r', encoding='utf-8') as file:
-                config = json.load(file)
-                self.log('INFO', '从JSON文件加载道具配置', 'SERVER')
-                return config
-        except json.JSONDecodeError as e:
-            self.log('ERROR', f'JSON文件格式错误: {e}', 'SERVER')
+        """从MongoDB加载道具配置数据"""
+        if not self.mongo_api or not self.mongo_api.is_connected():
+            self.log('ERROR', 'MongoDB未配置或不可用，无法加载道具配置数据', 'SERVER')
             return {}
+            
+        try:
+            config = self.mongo_api.get_item_config()
+            if config:
+                self.log('INFO', '成功从MongoDB加载道具配置', 'SERVER')
+                return config
+            else:
+                self.log('ERROR', 'MongoDB中未找到道具配置', 'SERVER')
+                return {}
         except Exception as e:
-            self.log('ERROR', f'无法加载道具数据: {e}', 'SERVER')
+            self.log('ERROR', f'从MongoDB加载道具配置失败: {e}', 'SERVER')
             return {}
 #==========================购买道具处理==========================
 
@@ -4702,7 +4860,7 @@ class TCPGameServer(TCPServer):
         pet_bag = player_data.get("宠物背包", [])
         pet_index = -1
         for i, pet in enumerate(pet_bag):
-            if pet.get("基本信息", {}).get("宠物ID") == pet_id:
+            if pet.get("pet_id") == pet_id:
                 pet_index = i
                 break
         
@@ -4760,27 +4918,27 @@ class TCPGameServer(TCPServer):
                 # 启用死亡免疫机制
                 pet_data["特殊机制开关"]["启用死亡免疫机制"] = True
                 pet_data["特殊属性"]["死亡免疫"] = True
-                return True, f"宠物 {pet_data['基本信息']['宠物名称']} 获得了死亡免疫能力！", pet_data
+                return True, f"宠物 {pet_data['pet_name']} 获得了死亡免疫能力！", pet_data
                 
             elif item_name == "荆棘护甲":
                 # 启用伤害反弹机制
                 pet_data["特殊机制开关"]["启用伤害反弹机制"] = True
                 pet_data["特殊属性"]["伤害反弹"] = 0.3  # 反弹30%伤害
-                return True, f"宠物 {pet_data['基本信息']['宠物名称']} 获得了荆棘护甲！", pet_data
+                return True, f"宠物 {pet_data['pet_name']} 获得了荆棘护甲！", pet_data
                 
             elif item_name == "狂暴药水":
                 # 启用狂暴模式机制
                 pet_data["特殊机制开关"]["启用狂暴模式机制"] = True
                 pet_data["特殊属性"]["狂暴阈值"] = 0.3  # 血量低于30%时触发
                 pet_data["特殊属性"]["狂暴状态伤害倍数"] = 2.0  # 狂暴时伤害翻倍
-                return True, f"宠物 {pet_data['基本信息']['宠物名称']} 获得了狂暴能力！", pet_data
+                return True, f"宠物 {pet_data['pet_name']} 获得了狂暴能力！", pet_data
                 
             elif item_name == "援军令牌":
                 # 启用援助召唤机制
                 pet_data["特殊机制开关"]["启用援助召唤机制"] = True
                 pet_data["援助系统"]["援助触发阈值"] = 0.2  # 血量低于20%时触发
                 pet_data["援助系统"]["援助召唤数量"] = 3  # 召唤3个援军
-                return True, f"宠物 {pet_data['基本信息']['宠物名称']} 获得了援军召唤能力！", pet_data
+                return True, f"宠物 {pet_data['pet_name']} 获得了援军召唤能力！", pet_data
                 
             elif item_name in ["金刚图腾", "灵木图腾", "潮汐图腾", "烈焰图腾", "敦岩图腾"]:
                 # 改变宠物元素
@@ -4806,7 +4964,7 @@ class TCPGameServer(TCPServer):
                 pet_data["元素属性"]["元素类型"] = new_element
                 pet_data["元素属性"]["元素克制额外伤害"] = 100.0  # 元素克制时额外伤害
                 
-                return True, f"宠物 {pet_data['基本信息']['宠物名称']} 的元素属性已改变为{element_name}元素！", pet_data
+                return True, f"宠物 {pet_data['pet_name']} 的元素属性已改变为{element_name}元素！", pet_data
             
             else:
                 return False, f"未知的宠物道具: {item_name}"
@@ -4816,7 +4974,6 @@ class TCPGameServer(TCPServer):
             return False, "道具效果处理失败"
     
 #==========================宠物使用道具处理==========================
-
 
 
 
@@ -4967,6 +5124,24 @@ class TCPGameServer(TCPServer):
                 "type": "item_config_response",
                 "success": False,
                 "message": "无法读取道具配置数据"
+            })
+    
+    def _handle_pet_config_request(self, client_id):
+        """处理客户端请求宠物配置数据"""
+        pet_config = self._load_pet_config()
+        
+        if pet_config:
+            self.log('INFO', f"向客户端 {client_id} 发送宠物配置数据，宠物种类：{len(pet_config)}", 'SERVER')
+            return self.send_data(client_id, {
+                "type": "pet_config_response",
+                "success": True,
+                "pet_config": pet_config
+            })
+        else:
+            return self.send_data(client_id, {
+                "type": "pet_config_response",
+                "success": False,
+                "message": "无法读取宠物配置数据"
             })
 #==========================道具配置数据处理==========================
 
@@ -5774,32 +5949,28 @@ class TCPGameServer(TCPServer):
             return self.send_data(client_id, response)
         
         # 获取排序和筛选参数
-        sort_by = message.get("sort_by", "等级")  # 排序字段：seed_count, level, online_time, login_time, like_num, money
-        sort_order = message.get("sort_order", "desc")  # 排序顺序：asc, desc
+        sort_by = message.get("sort_by", "等级")  # 排序字段
+        sort_order = message.get("sort_order", "desc")  # 排序顺序
         filter_online = message.get("filter_online", False)  # 是否只显示在线玩家
         search_qq = message.get("search_qq", "")  # 搜索的QQ号
         
-        # 获取所有玩家存档文件
-        save_files = glob.glob(os.path.join("game_saves", "*.json"))
-        players_data = []
-        
-        # 统计注册总人数
-        total_registered_players = len(save_files)
-        
-        for save_file in save_files:
-            try:
-                # 从文件名提取账号ID
-                account_id = os.path.basename(save_file).split('.')[0]
+        try:
+            players_data = []
+            total_registered_players = 0
+            
+            # 优先使用MongoDB
+            if self.use_mongodb and self.mongo_api:
+                # 获取所有玩家基本信息
+                all_players = self.mongo_api.get_all_players_basic_info()
+                total_registered_players = len(all_players)
                 
-                # 如果有搜索条件，先检查是否匹配
-                if search_qq and search_qq not in account_id:
-                    continue
-                
-                # 加载玩家数据
-                with open(save_file, 'r', encoding='utf-8') as file:
-                    player_data = json.load(file)
-                
-                if player_data:
+                for player_data in all_players:
+                    account_id = player_data.get("玩家账号", "")
+                    
+                    # 如果有搜索条件，先检查是否匹配
+                    if search_qq and search_qq not in account_id:
+                        continue
+                    
                     # 统计背包中的种子数量
                     seed_count = sum(item.get("count", 0) for item in player_data.get("种子仓库", []))
                     
@@ -5821,13 +5992,13 @@ class TCPGameServer(TCPServer):
                     last_login_str = player_data.get("最后登录时间", "未知")
                     last_login_timestamp = self._parse_login_time_to_timestamp(last_login_str)
                     
-                    # 获取所需的玩家信息
+                    # 获取体力值
                     stamina_system = player_data.get("体力系统", {})
                     current_stamina = stamina_system.get("当前体力值", 20)
                     
                     player_info = {
-                        "玩家账号": player_data.get("玩家账号", account_id),
-                        "玩家昵称": player_data.get("玩家昵称", player_data.get("玩家账号", account_id)),
+                        "玩家账号": account_id,
+                        "玩家昵称": player_data.get("玩家昵称", account_id),
                         "农场名称": player_data.get("农场名称", ""),
                         "等级": player_data.get("等级", 1),
                         "钱币": player_data.get("钱币", 0),
@@ -5843,49 +6014,119 @@ class TCPGameServer(TCPServer):
                     }
                     
                     players_data.append(player_info)
-            except Exception as e:
-                self.log('ERROR', f"读取玩家 {account_id} 的数据时出错: {str(e)}", 'SERVER')
-        
-        # 根据排序参数进行排序
-        reverse_order = (sort_order == "desc")
-        
-        if sort_by == "seed_count":
-            players_data.sort(key=lambda x: x["seed_count"], reverse=reverse_order)
-        elif sort_by == "等级":
-            players_data.sort(key=lambda x: x["等级"], reverse=reverse_order)
-        elif sort_by == "online_time":
-            players_data.sort(key=lambda x: x["total_time_seconds"], reverse=reverse_order)
-        elif sort_by == "login_time":
-            players_data.sort(key=lambda x: x["last_login_timestamp"], reverse=reverse_order)
-        elif sort_by == "like_num":
-            players_data.sort(key=lambda x: x["like_num"], reverse=reverse_order)
-        elif sort_by == "钱币":
-            players_data.sort(key=lambda x: x["钱币"], reverse=reverse_order)
-        else:
-            # 默认按等级排序
-            players_data.sort(key=lambda x: x["等级"], reverse=True)
-        
-        # 统计在线玩家数量
-        online_count = sum(1 for player in players_data if player.get("is_online", False))
-        
-        # 记录日志
-        search_info = f"，搜索QQ：{search_qq}" if search_qq else ""
-        filter_info = "，仅在线玩家" if filter_online else ""
-        sort_info = f"，按{sort_by}{'降序' if reverse_order else '升序'}排序"
-        
-        self.log('INFO', f"玩家 {self.user_data[client_id].get('username')} 请求玩家排行榜{search_info}{filter_info}{sort_info}，返回 {len(players_data)} 个玩家数据，注册总人数：{total_registered_players}，在线人数：{online_count}", 'SERVER')
-        
-        # 返回排行榜数据（包含注册总人数）
-        return self.send_data(client_id, {
-            "type": "player_rankings_response",
-            "success": True,
-            "players": players_data,
-            "total_registered_players": total_registered_players,
-            "sort_by": sort_by,
-            "sort_order": sort_order,
-            "filter_online": filter_online,
-            "search_qq": search_qq
-        })
+            else:
+                # 降级到文件系统
+                save_files = glob.glob(os.path.join("game_saves", "*.json"))
+                total_registered_players = len(save_files)
+                
+                for save_file in save_files:
+                    try:
+                        # 从文件名提取账号ID
+                        account_id = os.path.basename(save_file).split('.')[0]
+                        
+                        # 如果有搜索条件，先检查是否匹配
+                        if search_qq and search_qq not in account_id:
+                            continue
+                        
+                        # 加载玩家数据
+                        with open(save_file, 'r', encoding='utf-8') as file:
+                            player_data = json.load(file)
+                        
+                        if player_data:
+                            # 统计背包中的种子数量
+                            seed_count = sum(item.get("count", 0) for item in player_data.get("种子仓库", []))
+                            
+                            # 检查玩家是否在线
+                            is_online = any(
+                                user_info.get("username") == account_id and user_info.get("logged_in", False) 
+                                for user_info in self.user_data.values()
+                            )
+                            
+                            # 如果筛选在线玩家，跳过离线玩家
+                            if filter_online and not is_online:
+                                continue
+                            
+                            # 解析总游玩时间为秒数（用于排序）
+                            total_time_str = player_data.get("总游玩时间", "0时0分0秒")
+                            total_time_seconds = self._parse_time_to_seconds(total_time_str)
+                            
+                            # 解析最后登录时间为时间戳（用于排序）
+                            last_login_str = player_data.get("最后登录时间", "未知")
+                            last_login_timestamp = self._parse_login_time_to_timestamp(last_login_str)
+                            
+                            # 获取所需的玩家信息
+                            stamina_system = player_data.get("体力系统", {})
+                            current_stamina = stamina_system.get("当前体力值", 20)
+                            
+                            player_info = {
+                                "玩家账号": player_data.get("玩家账号", account_id),
+                                "玩家昵称": player_data.get("玩家昵称", player_data.get("玩家账号", account_id)),
+                                "农场名称": player_data.get("农场名称", ""),
+                                "等级": player_data.get("等级", 1),
+                                "钱币": player_data.get("钱币", 0),
+                                "经验值": player_data.get("经验值", 0),
+                                "体力值": current_stamina,
+                                "seed_count": seed_count,
+                                "最后登录时间": last_login_str,
+                                "last_login_timestamp": last_login_timestamp,
+                                "总游玩时间": total_time_str,
+                                "total_time_seconds": total_time_seconds,
+                                "like_num": player_data.get("点赞系统", {}).get("总点赞数", 0),
+                                "is_online": is_online
+                            }
+                            
+                            players_data.append(player_info)
+                    except Exception as e:
+                        self.log('ERROR', f"读取玩家 {account_id} 的数据时出错: {str(e)}", 'SERVER')
+            
+            # 根据排序参数进行排序
+            reverse_order = (sort_order == "desc")
+            
+            if sort_by == "seed_count":
+                players_data.sort(key=lambda x: x["seed_count"], reverse=reverse_order)
+            elif sort_by == "等级":
+                players_data.sort(key=lambda x: x["等级"], reverse=reverse_order)
+            elif sort_by == "online_time":
+                players_data.sort(key=lambda x: x["total_time_seconds"], reverse=reverse_order)
+            elif sort_by == "login_time":
+                players_data.sort(key=lambda x: x["last_login_timestamp"], reverse=reverse_order)
+            elif sort_by == "like_num":
+                players_data.sort(key=lambda x: x["like_num"], reverse=reverse_order)
+            elif sort_by == "钱币":
+                players_data.sort(key=lambda x: x["钱币"], reverse=reverse_order)
+            else:
+                # 默认按等级排序
+                players_data.sort(key=lambda x: x["等级"], reverse=True)
+            
+            # 统计在线玩家数量
+            online_count = sum(1 for player in players_data if player.get("is_online", False))
+            
+            # 记录日志
+            search_info = f"，搜索QQ：{search_qq}" if search_qq else ""
+            filter_info = "，仅在线玩家" if filter_online else ""
+            sort_info = f"，按{sort_by}{'降序' if reverse_order else '升序'}排序"
+            
+            self.log('INFO', f"玩家 {self.user_data[client_id].get('username')} 请求玩家排行榜{search_info}{filter_info}{sort_info}，返回 {len(players_data)} 个玩家数据，注册总人数：{total_registered_players}，在线人数：{online_count}", 'SERVER')
+            
+            # 返回排行榜数据（包含注册总人数）
+            return self.send_data(client_id, {
+                "type": "player_rankings_response",
+                "success": True,
+                "players": players_data,
+                "total_registered_players": total_registered_players,
+                "sort_by": sort_by,
+                "sort_order": sort_order,
+                "filter_online": filter_online,
+                "search_qq": search_qq
+            })
+            
+        except Exception as e:
+            self.log('ERROR', f"处理玩家排行榜请求时出错: {str(e)}", 'SERVER')
+            return self.send_data(client_id, {
+                "type": "player_rankings_response",
+                "success": False,
+                "message": "获取排行榜数据失败"
+            })
     
     # 辅助函数：将时间字符串转换为秒数
     def _parse_time_to_seconds(self, time_str):
@@ -6038,6 +6279,9 @@ class TCPGameServer(TCPServer):
         # 清除访问状态
         self.user_data[client_id]["visiting_mode"] = False
         self.user_data[client_id]["visiting_target"] = ""
+        
+        # 清理偷菜免被发现计数器
+        self._clear_player_steal_immunity(username)
         
         self.log('INFO', f"玩家 {username} 返回了自己的农场", 'SERVER')
         
@@ -6428,7 +6672,7 @@ class TCPGameServer(TCPServer):
         
         # 保存消息到MongoDB
         if self.mongo_api and self.mongo_api.is_connected():
-            success = self.mongo_api.save_chat_message(username, player_name, content, current_timestamp)
+            success = self.mongo_api.save_chat_message(username, player_name, content)
             if not success:
                 self.log('WARNING', f"保存聊天消息到MongoDB失败，尝试保存到本地文件", 'BROADCAST')
                 self._save_broadcast_message_to_log(username, player_name, content)
@@ -7728,11 +7972,6 @@ class TCPGameServer(TCPServer):
 #==========================发送游戏操作错误处理==========================   
 
 
-
-
-
-
-
 # ================================账户设置处理方法================================
     def _handle_modify_account_info_request(self, client_id, message):
         """处理修改账号信息请求"""
@@ -7811,11 +8050,11 @@ class TCPGameServer(TCPServer):
         username = self.user_data[client_id]["username"]
         
         try:
-            # 删除玩家文件
-            file_path = os.path.join("game_saves", f"{username}.json")
-            if os.path.exists(file_path):
-                os.remove(file_path)
-                self.log('INFO', f"已删除玩家文件: {file_path}", 'ACCOUNT')
+            # 优先从MongoDB删除
+            if self.use_mongodb and self.mongo_api:
+                success = self.mongo_api.delete_player_data(username)
+                if not success:
+                    self.log('WARNING', f"MongoDB删除失败，尝试删除文件: {username}", 'ACCOUNT')
             
             # 清理用户数据
             if client_id in self.user_data:
@@ -7856,8 +8095,8 @@ class TCPGameServer(TCPServer):
         username = self.user_data[client_id]["username"]
         
         try:
-            # 强制从文件重新加载最新数据
-            player_data = self._load_player_data_from_file(username)
+            # 强制从数据库重新加载最新数据
+            player_data = self.load_player_data(username)
             if not player_data:
                 return self._send_refresh_info_error(client_id, "无法加载玩家数据")
             
@@ -8113,7 +8352,6 @@ class TCPGameServer(TCPServer):
     
     def _load_scare_crow_config(self):
         """加载稻草人配置"""
-        # 优先从MongoDB加载配置
         try:
             if hasattr(self, 'mongo_api') and self.mongo_api and self.mongo_api.is_connected():
                 config = self.mongo_api.get_scare_crow_config()
@@ -8121,27 +8359,21 @@ class TCPGameServer(TCPServer):
                     self.log('INFO', "成功从MongoDB加载稻草人配置", 'SERVER')
                     return config
                 else:
-                    self.log('WARNING', "MongoDB中未找到稻草人配置，回退到JSON文件", 'SERVER')
+                    self.log('WARNING', "MongoDB中未找到稻草人配置，使用默认配置", 'SERVER')
+            else:
+                self.log('WARNING', "MongoDB未连接，使用默认稻草人配置", 'SERVER')
         except Exception as e:
-            self.log('ERROR', f"从MongoDB加载稻草人配置失败: {str(e)}，回退到JSON文件", 'SERVER')
+            self.log('ERROR', f"从MongoDB加载稻草人配置失败: {str(e)}，使用默认配置", 'SERVER')
         
-        # 回退到从JSON文件加载
-        try:
-            with open("config/scare_crow_config.json", 'r', encoding='utf-8') as file:
-                config = json.load(file)
-                self.log('INFO', "成功从JSON文件加载稻草人配置", 'SERVER')
-                return config
-        except Exception as e:
-            self.log('ERROR', f"无法加载稻草人配置: {str(e)}", 'SERVER')
-            # 返回默认配置
-            return {
-                "稻草人类型": {
-                    "稻草人1": {"图片": "res://assets/道具图片/稻草人1.webp", "价格": 1000},
-                    "稻草人2": {"图片": "res://assets/道具图片/稻草人2.webp", "价格": 1000},
-                    "稻草人3": {"图片": "res://assets/道具图片/稻草人3.webp", "价格": 1000}
-                },
-                "修改稻草人配置花费": 300
-            }
+        # 返回默认配置
+        return {
+            "稻草人类型": {
+                "稻草人1": {"图片": "res://assets/道具图片/稻草人1.webp", "价格": 1000},
+                "稻草人2": {"图片": "res://assets/道具图片/稻草人2.webp", "价格": 1000},
+                "稻草人3": {"图片": "res://assets/道具图片/稻草人3.webp", "价格": 1000}
+            },
+            "修改稻草人配置花费": 300
+        }
     
     def _send_buy_scare_crow_error(self, client_id, message):
         """发送购买稻草人错误响应"""
@@ -9324,6 +9556,8 @@ class TCPGameServer(TCPServer):
             }
         })
 #==========================小卖部管理处理==========================
+
+
 
 
 def console_input_thread(server):

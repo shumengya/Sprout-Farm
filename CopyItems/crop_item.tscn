@@ -46,7 +46,7 @@ texture = ExtResource("1_bns1c")
 
 [node name="crop_sprite" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_s5pb0")
-position = Vector2(51, 45)
+position = Vector2(51, 40)
 scale = Vector2(0.339844, 0.363281)
 
 [node name="ProgressBar" type="ProgressBar" parent="."]

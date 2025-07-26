@@ -247,15 +247,20 @@ func handle_wisdom_tree_operation_response(success: bool, message: String, opera
 		# 根据操作类型显示不同的提示
 		match operation_type:
 			"water":
-				Toast.show("浇水成功！" + message, Color.CYAN)
+				#Toast.show("浇水成功！" + message, Color.CYAN)
+				pass
 			"fertilize":
-				Toast.show("施肥成功！" + message, Color.PURPLE)
+				#Toast.show("施肥成功！" + message, Color.PURPLE)
+				pass
 			"kill_grass":
-				Toast.show("除草成功！" + message, Color.GREEN)
+				#Toast.show("除草成功！" + message, Color.GREEN)
+				pass
 			"kill_bug":
-				Toast.show("杀虫成功！" + message, Color.GREEN)
+				#Toast.show("杀虫成功！" + message, Color.GREEN)
+				pass
 			"play_music":
-				Toast.show("放音乐成功！" + message, Color.MAGENTA)
+				#Toast.show("放音乐成功！" + message, Color.MAGENTA)
+				pass
 				# 放音乐时可能获得随机消息，需要特殊处理
 				if updated_data.has("random_message"):
 					var random_message = updated_data["random_message"]
@@ -293,7 +298,7 @@ func handle_wisdom_tree_message_response(success: bool, message: String, updated
 			main_game.money = updated_data["钱币"]
 			main_game._update_ui()
 		
-		Toast.show("消息发送成功！", Color.GREEN)
+		#Toast.show("消息发送成功！", Color.GREEN)
 	else:
 		Toast.show(message, Color.RED)
 

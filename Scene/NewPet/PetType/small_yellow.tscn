@@ -1,0 +1,52 @@
+[gd_scene load_steps=6 format=3 uid="uid://is5klrhiktg4"]
+
+[ext_resource type="Texture2D" uid="uid://lx0l12qrituk" path="res://assets/宠物图片/一堆小怪.png" id="1_qrx6w"]
+[ext_resource type="Texture2D" uid="uid://dciakkwnchcga" path="res://assets/我的世界图片/武器工具/木剑.png" id="2_dkex0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_trhvc"]
+atlas = ExtResource("1_qrx6w")
+region = Rect2(144, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k5jn7"]
+atlas = ExtResource("1_qrx6w")
+region = Rect2(168, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yhcbw"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trhvc")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_trhvc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k5jn7")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}]
+
+[node name="PetImage" type="AnimatedSprite2D"]
+scale = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_yhcbw")
+animation = &"walk"
+autoplay = "walk"
+
+[node name="LeftToolImage" type="Sprite2D" parent="."]
+z_index = 5
+position = Vector2(-10.5, 3)
+texture = ExtResource("2_dkex0")
+flip_h = true
+
+[node name="RightToolImage" type="Sprite2D" parent="."]
+show_behind_parent = true
+position = Vector2(-7.5, -6.25)
+texture = ExtResource("2_dkex0")
+flip_h = true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bypjb28h4ntdr"]
+[gd_scene load_steps=12 format=3 uid="uid://bypjb28h4ntdr"]
 
 [ext_resource type="Script" uid="uid://badqjgdfhg7vt" path="res://GUI/MainMenuPanel.gd" id="1_wpehy"]
 [ext_resource type="Texture2D" uid="uid://ddcmrh50o1y0q" path="res://assets/菜单UI/背景1.webp" id="2_eghpk"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dgdootc5bny5q" path="res://assets/菜单UI/QQ群.webp" id="4_eghpk"]
 [ext_resource type="Script" uid="uid://kj7v1uxk2i6h" path="res://GUI/GameUpdatePanel.gd" id="4_fys16"]
 [ext_resource type="Texture2D" uid="uid://ccav04woielxa" path="res://assets/菜单UI/柚小青装饰品.webp" id="5_6jmhb"]
+[ext_resource type="Texture2D" uid="uid://be4fa6qo525y1" path="res://assets/菜单UI/灵创招新群.png" id="5_m77al"]
 [ext_resource type="Script" uid="uid://ciwjx67wjubdy" path="res://GUI/CheckUpdatePanel.gd" id="9_6jmhb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eghpk"]
@@ -86,6 +87,18 @@ offset_bottom = 718.0
 theme_override_font_sizes/font_size = 30
 text = "版本号：v1.0.1"
 
+[node name="Developer" type="RichTextLabel" parent="GUI"]
+layout_mode = 0
+offset_left = 1194.0
+offset_top = 676.0
+offset_right = 1398.0
+offset_bottom = 718.0
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[rainbow freq=1 sat=2 val=100]By-树萌芽[/rainbow]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="AddGroupLabel" type="Label" parent="GUI"]
 self_modulate = Color(1, 1, 0, 1)
 layout_mode = 0
@@ -105,6 +118,14 @@ offset_bottom = 1229.0
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("4_eghpk")
 
+[node name="QQGroupImage2" type="TextureRect" parent="GUI/AddGroupLabel"]
+layout_mode = 0
+offset_left = -832.0
+offset_right = 103.0
+offset_bottom = 1186.0
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("5_m77al")
+
 [node name="YouXiaoQing" type="TextureRect" parent="GUI/AddGroupLabel"]
 layout_mode = 0
 offset_left = 298.0
@@ -113,6 +134,19 @@ offset_right = 1233.0
 offset_bottom = 1268.0
 scale = Vector2(0.14, 0.14)
 texture = ExtResource("5_6jmhb")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="GUI/AddGroupLabel"]
+self_modulate = Color(0.580392, 1, 0, 1)
+layout_mode = 0
+offset_left = -896.0
+offset_top = -47.0
+offset_right = -420.0
+offset_bottom = -7.0
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "欢迎了解灵创新媒实验室"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 0
@@ -217,11 +251,17 @@ text = "玩法介绍：
 3.电脑Windows平台按住wsad或者方向键可以移动视角，鼠标滚轮可以缩放视角；安卓则为拖动和双指缩放
 3.注册账号一定一定要用QQ号，目前游戏的所有登录服务都是围绕着腾讯QQ来验证，注册时会向您输入的QQ号对应的QQ邮箱发送一封注册邮件。
 4.不要一上来就把钱用完了（比如某某人一上来就十连抽）,可以去偷别人的菜
+5.玩家排行榜有一些特殊农场，可以直接搜索访问： 杂交农场（666） 花卉农场（520） 稻香（111） 小麦谷（222） 访问有惊喜
+6.全服大喇叭也有一些小彩蛋
+7.记得在小卖部向其他玩家出售你不需要的东西
+8.玩家太多无法找到你的好友的农场？试试直接搜索QQ号
+9.如果有条件尽量还是玩电脑版吧，毕竟电脑版优化是最好的，手机版或多或少有些问题（
 
 致谢名单：
 程序牛马：（作物处理+抠图）
-虚空领主：（抠图）
-豆包：（万能的美术）"
+虚空领主：（美术+抠图）
+豆包：（万能的美术）
+ChatGPT：（超级美术）"
 
 [node name="GameUpdatePanel" type="Panel" parent="."]
 visible = false

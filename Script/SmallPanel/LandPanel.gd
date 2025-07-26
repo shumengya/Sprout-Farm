@@ -427,7 +427,7 @@ func _on_harvest_button_pressed():
 
 
 
-#=================面板通用函数==========================
+#===================面板通用函数==========================
 #退出
 func _on_quit_button_pressed():
 	self.hide()
@@ -447,7 +447,7 @@ func _on_visibility_changed():
 		GlobalVariables.isZoomDisabled = false
 		pass
 	
-#=================面板通用函数==========================
+#===================面板通用函数==========================
 
 # 更新面板信息显示
 func _update_panel_information():

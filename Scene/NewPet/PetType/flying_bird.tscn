@@ -1,0 +1,64 @@
+[gd_scene load_steps=8 format=3 uid="uid://bpkq40vvq3cxy"]
+
+[ext_resource type="Texture2D" uid="uid://lx0l12qrituk" path="res://assets/宠物图片/一堆小怪.png" id="1_lxn61"]
+[ext_resource type="Texture2D" uid="uid://dciakkwnchcga" path="res://assets/我的世界图片/武器工具/木剑.png" id="2_wrr70"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lgi35"]
+atlas = ExtResource("1_lxn61")
+region = Rect2(192, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wn6km"]
+atlas = ExtResource("1_lxn61")
+region = Rect2(144, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qmpjj"]
+atlas = ExtResource("1_lxn61")
+region = Rect2(168, 48, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1mpkc"]
+atlas = ExtResource("1_lxn61")
+region = Rect2(192, 48, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_b73qu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lgi35")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wn6km")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qmpjj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1mpkc")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 10.0
+}]
+
+[node name="PetImage" type="AnimatedSprite2D"]
+scale = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_b73qu")
+animation = &"walk"
+autoplay = "walk"
+frame_progress = 0.111287
+
+[node name="LeftToolImage" type="Sprite2D" parent="."]
+z_index = 5
+position = Vector2(-10.5, 3)
+texture = ExtResource("2_wrr70")
+flip_h = true
+
+[node name="RightToolImage" type="Sprite2D" parent="."]
+show_behind_parent = true
+position = Vector2(-7.5, -6.25)
+texture = ExtResource("2_wrr70")
+flip_h = true

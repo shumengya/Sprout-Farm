@@ -1,0 +1,103 @@
+[gd_scene load_steps=13 format=3 uid="uid://dvkix032ikul3"]
+
+[ext_resource type="Texture2D" uid="uid://b75oytao5cgjo" path="res://assets/宠物图片/绿色史莱姆.png" id="1_m1ura"]
+[ext_resource type="Texture2D" uid="uid://dciakkwnchcga" path="res://assets/我的世界图片/武器工具/木剑.png" id="2_58kah"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ou315"]
+atlas = ExtResource("1_m1ura")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_saxlb"]
+atlas = ExtResource("1_m1ura")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bxslx"]
+atlas = ExtResource("1_m1ura")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dvhl1"]
+atlas = ExtResource("1_m1ura")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0t1ns"]
+atlas = ExtResource("1_m1ura")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sbjn0"]
+atlas = ExtResource("1_m1ura")
+region = Rect2(72, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qvnbx"]
+atlas = ExtResource("1_m1ura")
+region = Rect2(48, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n0kjo"]
+atlas = ExtResource("1_m1ura")
+region = Rect2(24, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_obu0n"]
+atlas = ExtResource("1_m1ura")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yhcbw"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ou315")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_saxlb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bxslx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dvhl1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0t1ns")
+}],
+"loop": false,
+"name": &"wake",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sbjn0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qvnbx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n0kjo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_obu0n")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 8.0
+}]
+
+[node name="PetImage" type="AnimatedSprite2D"]
+scale = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_yhcbw")
+animation = &"idle"
+autoplay = "walk"
+
+[node name="LeftToolImage" type="Sprite2D" parent="."]
+z_index = 5
+position = Vector2(-10.5, 3)
+texture = ExtResource("2_58kah")
+flip_h = true
+
+[node name="RightToolImage" type="Sprite2D" parent="."]
+show_behind_parent = true
+position = Vector2(-7.5, -6.25)
+texture = ExtResource("2_58kah")
+flip_h = true

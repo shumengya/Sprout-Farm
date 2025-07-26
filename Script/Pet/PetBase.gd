@@ -53,14 +53,9 @@ extends CharacterBody2D
 #- 亲密度（额外加属性）
 #- 品质（白/绿/蓝/橙/红/紫）
 
-#基本攻击方式：
 #近战
 #近战攻击伤害
 #近战攻击速度
-
-#远程
-#远程攻击伤害
-#远程攻击速度
 
 #附录
 #- 护甲公式示例：实际伤害 = 基础伤害 × (1 - 护甲值/(护甲值 + 100))，搭配"护甲穿透"可直接减少目标护甲值
@@ -111,7 +106,7 @@ var current_armor: float = 100.0	# 当前护甲值
 # 攻击属性
 var attack_type: AttackType = AttackType.RANGED		# 攻击类型
 var attack_damage: float = 20.0		# 基础攻击伤害
-var attack_range: float = 300.0		# 攻击距离
+var attack_range: float = 400.0		# 攻击距离
 var crit_rate: float = 0.1  		# 暴击率（0.0-1.0）
 var crit_damage: float = 1.5  		# 暴击伤害倍数
 var life_steal: float = 0.1			# 生命汲取（0.0-1.0）
@@ -152,7 +147,7 @@ enum RangedAttackMode {
 	PIERCING	# 穿透攻击
 }
 
-# 内部状态变量（不需要导出）
+
 var attack_speed: float = 1.0  		# 当前攻击速度（根据攻击类型动态设置）
 var gatling_firing: bool = false				# 是否正在加特林射击
 var gatling_current_bullet: int = 0				# 当前加特林子弹计数
@@ -219,13 +214,57 @@ var is_attacking: bool = false					# 是否正在攻击
 var is_berserker: bool = false					# 是否处于狂暴状态
 var is_stunned: bool = false					# 是否被眩晕
 var is_invulnerable: bool = false				# 是否无敌
-var is_being_knocked_back: bool = false			# 是否正在被击退
 var current_target: CharacterBody2D = null		# 当前目标
 var last_attacker: CharacterBody2D = null		# 最后攻击者（用于击杀奖励）
 var last_attack_time: float = 0.0				# 上次攻击时间
 var last_regen_time: float = 0.0				# 上次恢复时间
 var last_target_check_time: float = 0.0		# 上次目标检查时间
-var knockback_velocity: Vector2 = Vector2.ZERO	# 击退速度
+
+# 受伤动画相关
+var hurt_tween: Tween = null					# 受伤动画缓动
+var original_modulate: Color = Color.WHITE		# 原始颜色
+var last_hurt_time: float = 0.0				# 上次受伤时间（防止受伤动画过于频繁）
+var hurt_animation_cooldown: float = 0.3		# 受伤动画冷却时间
+
+# 攻击频率控制
+var min_attack_interval: float = 0.5			# 最小攻击间隔（防止攻击过于频繁）
+
+# 伤害反弹保护
+var damage_reflect_depth: int = 0				# 伤害反弹递归深度
+var max_reflect_depth: int = 3					# 最大反弹深度（防止无限递归）
+
+# 性能保护
+var performance_mode: bool = false				# 性能模式（减少特效和计算）
+var frame_skip_counter: int = 0					# 帧跳跃计数器
+
+# 升级系统 - 基础属性列表（每次升级随机选择加点）
+var base_upgrade_attributes: Array[String] = [
+	"max_health",      # 最大生命值
+	"attack_damage",   # 攻击伤害  
+	"move_speed",      # 移动速度
+	"max_shield",      # 最大护盾值
+	"max_armor",       # 最大护甲值
+	"crit_rate",       # 暴击率
+	"health_regen",    # 生命恢复
+	"attack_range"     # 攻击距离
+]
+
+# 每次升级随机选择的属性数量
+var attributes_per_level: int = 3
+
+# 每5级额外属性奖励表
+var level_milestone_bonuses: Dictionary = {
+	5: {"max_health": 20, "attack_damage": 5, "crit_rate": 0.02}, 
+	10: {"max_shield": 30, "armor_penetration": 5, "life_steal": 0.05},
+	15: {"max_armor": 25, "knockback_resist": 0.1, "dodge_rate": 0.03},
+	20: {"health_regen": 2, "move_speed": 15, "attack_range": 30},
+	25: {"max_health": 40, "attack_damage": 10, "enable_berserker_mode": true},
+	30: {"max_shield": 50, "shield_regen": 1, "enable_damage_reflect": true},
+	35: {"crit_damage": 0.3, "berserker_bonus": 0.2, "damage_reflect": 0.05},
+	40: {"max_armor": 40, "control_resist": 0.15, "enable_aid_system": true},
+	45: {"projectile_speed": 50, "pierce_count": 1, "enable_death_immunity": true},
+	50: {"max_health": 100, "attack_damage": 25, "enable_resurrection": true}
+}
 
 # 巡逻状态
 var is_patrolling: bool = false					# 是否正在巡逻
@@ -642,6 +681,10 @@ func _ready():
 	# 初始化生日
 	initialize_birthday()
 	
+	# 保存原始颜色
+	if pet_image:
+		original_modulate = pet_image.modulate
+	
 	# 延迟初始化UI显示，确保所有节点都已准备好
 	call_deferred("update_ui")
 	
@@ -702,10 +745,20 @@ func clamp_to_battle_area():
 	global_position.x = clamp(global_position.x, battle_area_min.x, battle_area_max.x)
 	global_position.y = clamp(global_position.y, battle_area_min.y, battle_area_max.y)
 
-#宠物物理更新
+#宠物物理更新（带性能保护）
 func _physics_process(delta):
 	if not is_alive or is_dying:
 		return
+	
+	# 性能保护：每3帧执行一次非关键逻辑
+	frame_skip_counter += 1
+	var should_skip_frame = performance_mode and (frame_skip_counter % 3 != 0)
+	
+	# 检测性能问题（如果帧时间过长，自动启用性能模式）
+	if delta > 0.025:  # 帧时间超过25ms（低于40FPS）
+		if not performance_mode:
+			performance_mode = true
+			print("⚡ " + pet_name + " 启用性能模式（帧时间: " + str("%.3f" % delta) + "s）")
 	
 	# 巡逻宠物特殊处理
 	if is_patrolling:
@@ -713,24 +766,29 @@ func _physics_process(delta):
 		return
 	
 	# 处理生命和护盾恢复
-	handle_regeneration(delta)
+	if not should_skip_frame:
+		handle_regeneration(delta)
 	
-	# 更新年龄和亲密度
-	update_age_and_intimacy(delta)
+	# 更新年龄和亲密度（低优先级，可跳帧）
+	if not should_skip_frame:
+		update_age_and_intimacy(delta)
 	
 	# 检查狂暴状态
-	check_berserker_mode()
+	if not should_skip_frame:
+		check_berserker_mode()
 	
-	# 检查援助系统
-	check_aid_system()
+	# 检查援助系统（低优先级，可跳帧）
+	if not should_skip_frame:
+		check_aid_system()
 	
 	# 如果被眩晕则不能行动
 	if is_stunned:
 		return
 		
-	# 定期检查目标状态（每0.5秒检查一次）
+	# 定期检查目标状态（性能模式下降低检查频率）
 	var current_time = Time.get_ticks_msec() / 1000.0
-	if current_time - last_target_check_time >= 0.5:
+	var check_interval = 0.5 if not performance_mode else 1.0
+	if current_time - last_target_check_time >= check_interval:
 		check_target_validity()
 		last_target_check_time = current_time
 	
@@ -791,15 +849,7 @@ func update_ai_state(delta):
 
 #宠物移动
 func handle_movement(delta):
-	# 处理击退效果
-	if is_being_knocked_back:
-		velocity = knockback_velocity
-		# 击退衰减
-		knockback_velocity = knockback_velocity.lerp(Vector2.ZERO, 5.0 * delta)
-		if knockback_velocity.length() < 10.0:
-			is_being_knocked_back = false
-			knockback_velocity = Vector2.ZERO
-	elif current_state == PetState.MOVING_TO_TARGET and current_target:
+	if current_state == PetState.MOVING_TO_TARGET and current_target:
 		var distance_to_target = global_position.distance_to(current_target.global_position)
 		var direction = (current_target.global_position - global_position).normalized()
 		
@@ -832,7 +882,7 @@ func handle_movement(delta):
 	else:
 		velocity = Vector2.ZERO
 
-#宠物攻击
+#宠物攻击（带频率保护）
 func handle_attack(delta):
 	if current_state == PetState.ATTACKING and current_target:
 		var current_time = Time.get_ticks_msec() / 1000.0  # 转换为秒
@@ -841,8 +891,9 @@ func handle_attack(delta):
 		if ranged_mode == RangedAttackMode.GATLING:
 			handle_gatling_attack(current_time, delta)
 		else:
-			# 普通攻击频率控制
-			if current_time - last_attack_time >= 1.0 / attack_speed:
+			# 普通攻击频率控制（确保最小攻击间隔）
+			var attack_interval = max(1.0 / attack_speed, min_attack_interval)
+			if current_time - last_attack_time >= attack_interval:
 				perform_attack(current_target)
 				last_attack_time = current_time
 
@@ -959,9 +1010,9 @@ func perform_melee_attack(target: CharacterBody2D):
 		var heal_amount = damage * life_steal
 		heal(heal_amount)
 	
-	# 击退效果
-	if knockback_force > 0:
-		apply_knockback_to_target(target)
+	# 击退效果已禁用
+	# if knockback_force > 0:
+	#	apply_knockback_to_target(target)
 
 # 根据攻击模式发射子弹
 func fire_projectile_by_mode(target: CharacterBody2D):
@@ -1090,15 +1141,29 @@ func create_and_fire_projectile(start_pos: Vector2, target_pos: Vector2, damage:
 				RangedAttackMode.PIERCING:
 					projectile.get_node("ProjectileSprite").modulate = Color.PURPLE
 
-#宠物受到伤害
+#宠物受到伤害（带死循环保护）
 func take_damage(damage: float, armor_pen: float = 0.0, attacker_element: ElementType = ElementType.NONE, attacker: CharacterBody2D = null):
 	if not is_alive or is_invulnerable:
+		return
+	
+	# 防止过于频繁的伤害处理（性能保护）
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_attack_time < 0.05:  # 50ms最小伤害间隔
+		return
+	
+	# 增加伤害反弹递归深度
+	damage_reflect_depth += 1
+	
+	# 递归深度保护（防止无限反弹）
+	if damage_reflect_depth > max_reflect_depth:
+		damage_reflect_depth = max(0, damage_reflect_depth - 1)
 		return
 	
 	# 闪避检测
 	if randf() < dodge_rate:
 		if attacker and is_instance_valid(attacker):
 			add_battle_detail_to_panel("✨ " + pet_name + " 闪避了 " + attacker.pet_name + " 的攻击！", Color.CYAN)
+		damage_reflect_depth = max(0, damage_reflect_depth - 1)
 		return
 	
 	var actual_damage = damage
@@ -1123,8 +1188,11 @@ func take_damage(damage: float, armor_pen: float = 0.0, attacker_element: Elemen
 	if actual_damage > 0:
 		current_health -= actual_damage
 	
-	# 添加受伤细节
-	if attacker and is_instance_valid(attacker):
+	# 播放受伤动画（带冷却保护）
+	play_hurt_animation()
+	
+	# 添加受伤细节（性能模式下减少文本输出）
+	if not performance_mode and attacker and is_instance_valid(attacker):
 		var damage_text = "💔 " + pet_name + " 受到 " + str(int(actual_damage)) + " 点伤害"
 		if element_extra_damage > 0:
 			damage_text += " （元素克制 +" + str(int(element_extra_damage)) + "）"
@@ -1135,15 +1203,19 @@ func take_damage(damage: float, armor_pen: float = 0.0, attacker_element: Elemen
 		last_attacker = attacker
 	
 	# 反击机制：立即将攻击者设为目标（只有启用战斗时才反击）
+	# 添加反击冷却，防止过于频繁的目标切换
 	if combat_enabled and attacker and is_instance_valid(attacker) and attacker.is_alive:
 		if attacker.get_team() != pet_team:  # 确保不攻击队友
-			current_target = attacker
-			current_state = PetState.MOVING_TO_TARGET
+			# 只有当前没有目标或当前目标已死亡时才切换目标
+			if not current_target or not is_instance_valid(current_target) or not current_target.is_alive:
+				current_target = attacker
+				current_state = PetState.MOVING_TO_TARGET
 	
-	# 伤害反弹
-	if enable_damage_reflect and damage_reflect > 0.0 and attacker and is_instance_valid(attacker):
-		var reflect_damage = damage * damage_reflect
-		attacker.take_damage(reflect_damage, 0.0, element_type, self)  # 反弹伤害也会触发反击
+	# 伤害反弹（带递归深度保护）
+	if enable_damage_reflect and damage_reflect > 0.0 and attacker and is_instance_valid(attacker) and damage_reflect_depth <= max_reflect_depth:
+		var reflect_damage = damage * damage_reflect * 0.5  # 反弹伤害减半，防止无限递归
+		# 延迟反弹，避免同帧内的递归调用
+		call_deferred("apply_reflect_damage", attacker, reflect_damage)
 	
 	# 检查死亡
 	if current_health <= 0:
@@ -1159,8 +1231,16 @@ func take_damage(damage: float, armor_pen: float = 0.0, attacker_element: Elemen
 			if not is_dying:  # 防止重复调用die()
 				call_deferred("die")
 	
+	# 减少伤害反弹递归深度
+	damage_reflect_depth = max(0, damage_reflect_depth - 1)
+	
 	# 更新UI
 	call_deferred("update_ui")
+
+# 延迟应用反弹伤害（防止递归调用）
+func apply_reflect_damage(target: CharacterBody2D, reflect_damage: float):
+	if target and is_instance_valid(target) and target.is_alive:
+		target.take_damage(reflect_damage, 0.0, element_type, self)
 
 #宠物死亡
 func die():
@@ -1416,6 +1496,10 @@ func apply_quality_bonuses():
 func get_team() -> String:
 	return pet_team
 
+# 获取攻击类型（调试用）
+func get_attack_type() -> AttackType:
+	return attack_type
+
 # 处理生命和护盾恢复
 func handle_regeneration(delta: float):
 	var current_time = Time.get_ticks_msec() / 1000.0
@@ -1516,7 +1600,7 @@ func gain_experience(amount: float):
 	while pet_experience >= max_experience and pet_level < 50:
 		level_up()
 
-# 升级
+# 升级（新的随机属性系统）
 func level_up():
 	pet_experience -= max_experience
 	pet_level += 1
@@ -1524,24 +1608,196 @@ func level_up():
 	# 计算新的升级经验需求（指数增长）
 	max_experience = 100.0 * pow(1.2, pet_level - 1)
 	
-	# 升级属性加成
-	var level_bonus = 1.1  # 每级10%属性加成
+	# 随机选择属性进行升级
+	var upgraded_attributes = apply_random_attribute_upgrade()
 	
-	max_health *= level_bonus
-	current_health = max_health  # 升级回满血
-	attack_damage *= level_bonus
-	max_shield *= level_bonus
-	current_shield = max_shield  # 升级回满护盾
-	max_armor *= level_bonus
-	current_armor = max_armor  # 升级回满护甲
+	# 检查是否有里程碑奖励（每5级）
+	var milestone_rewards = apply_milestone_bonus()
+	
+	# 升级回血和护盾护甲
+	current_health = max_health
+	current_shield = max_shield
+	current_armor = max_armor
 	
 	# 升级特效
 	show_level_up_effect()
 	
 	# 添加升级细节
-	add_battle_detail_to_panel("🎉 " + pet_name + " 升级到 " + str(pet_level) + " 级！", Color.GOLD)
+	var upgrade_text = "🎉 " + pet_name + " 升级到 " + str(pet_level) + " 级！"
+	upgrade_text += "\n📈 随机提升：" + ", ".join(upgraded_attributes)
+	if milestone_rewards.size() > 0:
+		upgrade_text += "\n🏆 里程碑奖励：" + ", ".join(milestone_rewards)
+	
+	add_battle_detail_to_panel(upgrade_text, Color.GOLD)
 	
 	call_deferred("update_ui")
+
+# 应用随机属性升级
+func apply_random_attribute_upgrade() -> Array[String]:
+	var upgraded_attributes: Array[String] = []
+	var available_attributes = base_upgrade_attributes.duplicate()
+	
+	# 随机选择几个属性进行升级
+	for i in range(min(attributes_per_level, available_attributes.size())):
+		var random_index = randi() % available_attributes.size()
+		var selected_attribute = available_attributes[random_index]
+		available_attributes.remove_at(random_index)
+		
+		# 应用属性升级
+		var upgrade_applied = apply_single_attribute_upgrade(selected_attribute)
+		if upgrade_applied:
+			upgraded_attributes.append(upgrade_applied)
+	
+	return upgraded_attributes
+
+# 应用单个属性升级
+func apply_single_attribute_upgrade(attribute_name: String) -> String:
+	match attribute_name:
+		"max_health":
+			var bonus = randf_range(8.0, 15.0)  # 随机8-15点生命值
+			max_health += bonus
+			return "生命值 +" + str(int(bonus))
+		"attack_damage":
+			var bonus = randf_range(2.0, 5.0)  # 随机2-5点攻击力
+			attack_damage += bonus
+			return "攻击力 +" + str(int(bonus))
+		"move_speed":
+			var bonus = randf_range(3.0, 8.0)  # 随机3-8点移动速度
+			move_speed += bonus
+			return "移动速度 +" + str(int(bonus))
+		"max_shield":
+			var bonus = randf_range(5.0, 12.0)  # 随机5-12点护盾值
+			max_shield += bonus
+			return "护盾值 +" + str(int(bonus))
+		"max_armor":
+			var bonus = randf_range(4.0, 10.0)  # 随机4-10点护甲值
+			max_armor += bonus
+			return "护甲值 +" + str(int(bonus))
+		"crit_rate":
+			var bonus = randf_range(0.01, 0.03)  # 随机1-3%暴击率
+			crit_rate = min(1.0, crit_rate + bonus)  # 暴击率上限100%
+			return "暴击率 +" + str(int(bonus * 100)) + "%"
+		"health_regen":
+			var bonus = randf_range(0.3, 0.8)  # 随机0.3-0.8点生命恢复
+			health_regen += bonus
+			return "生命恢复 +" + str("%.1f" % bonus)
+		"attack_range":
+			var bonus = randf_range(8.0, 20.0)  # 随机8-20点攻击距离
+			attack_range += bonus
+			return "攻击距离 +" + str(int(bonus))
+		_:
+			return ""
+
+# 应用里程碑奖励
+func apply_milestone_bonus() -> Array[String]:
+	var milestone_rewards: Array[String] = []
+	
+	if not level_milestone_bonuses.has(pet_level):
+		return milestone_rewards
+	
+	var bonuses = level_milestone_bonuses[pet_level]
+	
+	for bonus_key in bonuses.keys():
+		var bonus_value = bonuses[bonus_key]
+		var reward_text = apply_milestone_bonus_single(bonus_key, bonus_value)
+		if reward_text != "":
+			milestone_rewards.append(reward_text)
+	
+	return milestone_rewards
+
+# 应用单个里程碑奖励
+func apply_milestone_bonus_single(bonus_key: String, bonus_value) -> String:
+	match bonus_key:
+		"max_health":
+			max_health += bonus_value
+			return "生命值 +" + str(bonus_value)
+		"attack_damage":
+			attack_damage += bonus_value
+			return "攻击力 +" + str(bonus_value)
+		"max_shield":
+			max_shield += bonus_value
+			return "护盾值 +" + str(bonus_value)
+		"max_armor":
+			max_armor += bonus_value
+			return "护甲值 +" + str(bonus_value)
+		"crit_rate":
+			crit_rate = min(1.0, crit_rate + bonus_value)
+			return "暴击率 +" + str(int(bonus_value * 100)) + "%"
+		"armor_penetration":
+			armor_penetration += bonus_value
+			return "护甲穿透 +" + str(bonus_value)
+		"life_steal":
+			life_steal = min(1.0, life_steal + bonus_value)
+			return "生命汲取 +" + str(int(bonus_value * 100)) + "%"
+		"knockback_resist":
+			knockback_resist = min(1.0, knockback_resist + bonus_value)
+			return "击退抗性 +" + str(int(bonus_value * 100)) + "%"
+		"dodge_rate":
+			dodge_rate = min(1.0, dodge_rate + bonus_value)
+			return "闪避率 +" + str(int(bonus_value * 100)) + "%"
+		"health_regen":
+			health_regen += bonus_value
+			return "生命恢复 +" + str(bonus_value)
+		"move_speed":
+			move_speed += bonus_value
+			return "移动速度 +" + str(bonus_value)
+		"attack_range":
+			attack_range += bonus_value
+			return "攻击距离 +" + str(bonus_value)
+		"shield_regen":
+			shield_regen += bonus_value
+			return "护盾恢复 +" + str(bonus_value)
+		"crit_damage":
+			crit_damage += bonus_value
+			return "暴击伤害 +" + str(int(bonus_value * 100)) + "%"
+		"berserker_bonus":
+			berserker_bonus += bonus_value
+			return "狂暴加成 +" + str(int(bonus_value * 100)) + "%"
+		"damage_reflect":
+			damage_reflect = min(1.0, damage_reflect + bonus_value)
+			return "伤害反弹 +" + str(int(bonus_value * 100)) + "%"
+		"control_resist":
+			control_resist = min(1.0, control_resist + bonus_value)
+			return "控制抗性 +" + str(int(bonus_value * 100)) + "%"
+		"projectile_speed":
+			projectile_speed += bonus_value
+			return "子弹速度 +" + str(bonus_value)
+		"pierce_count":
+			pierce_count += bonus_value
+			return "穿透数量 +" + str(bonus_value)
+		"enable_berserker_mode":
+			if bonus_value:
+				enable_berserker_mode = true
+				return "解锁狂暴模式"
+			else:
+				return ""
+		"enable_damage_reflect":
+			if bonus_value:
+				enable_damage_reflect = true
+				return "解锁伤害反弹"
+			else:
+				return ""
+		"enable_aid_system":
+			if bonus_value:
+				enable_aid_system = true
+				return "解锁援助召唤"
+			else:
+				return ""
+		"enable_death_immunity":
+			if bonus_value:
+				enable_death_immunity = true
+				death_immunity = true
+				return "解锁死亡免疫"
+			else:
+				return ""
+		"enable_resurrection":
+			if bonus_value:
+				enable_resurrection = true
+				return "解锁死亡重生"
+			else:
+				return ""
+		_:
+			return ""
 
 # 显示升级特效
 func show_level_up_effect():
@@ -1677,34 +1933,24 @@ func heal(amount: float):
 	current_health = min(max_health, current_health + amount)
 	call_deferred("update_ui")
 
-# 对目标应用击退效果
+# 击退效果已禁用
 func apply_knockback_to_target(target: CharacterBody2D):
-	if not target or not is_instance_valid(target):
-		return
-	
-	# 计算击退方向
-	var direction = (target.global_position - global_position).normalized()
-	
-	# 计算击退力度（考虑目标的击退抗性）
-	var effective_knockback = knockback_force * (1.0 - target.knockback_resist)
-	
-	if effective_knockback > 0:
-		target.apply_knockback(direction, effective_knockback)
-		add_battle_detail_to_panel(pet_name + " 击退了 " + target.pet_name)
+	# 击退功能暂时禁用
+	pass
 
-# 被击退时调用
+# 击退效果已禁用
 func apply_knockback(direction: Vector2, force: float):
-	if not is_alive:
-		return
+	# 击退功能暂时禁用
+	pass
+
+# 将位置限制在战斗区域内
+func clamp_position_to_battle_area(pos: Vector2) -> Vector2:
+	var battle_area_min = Vector2(50, 50)
+	var battle_area_max = Vector2(1350, 670)
 	
-	# 设置击退状态
-	is_being_knocked_back = true
-	knockback_velocity = direction * force
-	
-	# 击退时短暂失去目标（可选）
-	if current_target and randf() < 0.3:  # 30%概率失去目标
-		current_target = null
-		current_state = PetState.IDLE
+	pos.x = clamp(pos.x, battle_area_min.x, battle_area_max.x)
+	pos.y = clamp(pos.y, battle_area_min.y, battle_area_max.y)
+	return pos
 
 # 元素克制计算
 func get_element_multiplier(attacker_element: ElementType, defender_element: ElementType) -> float:
@@ -1827,3 +2073,82 @@ func clamp_to_patrol_area():
 		# 限制位置
 		position.x = clamp(position.x, min_x, max_x)
 		position.y = clamp(position.y, min_y, max_y)
+
+# 播放受伤动画（带冷却保护）
+func play_hurt_animation():
+	if not pet_image:
+		return
+	
+	# 检查受伤动画冷却时间
+	var current_time = Time.get_ticks_msec() / 1000.0
+	if current_time - last_hurt_time < hurt_animation_cooldown:
+		return  # 冷却中，不播放动画
+	
+	last_hurt_time = current_time
+	
+	# 如果已经有受伤动画在播放，停止之前的
+	if hurt_tween:
+		hurt_tween.kill()
+		hurt_tween = null
+	
+	# 性能模式下简化动画
+	if performance_mode:
+		# 简单的颜色变化，无需Tween
+		pet_image.modulate = Color.RED
+		# 使用计时器恢复颜色（更轻量）
+		await get_tree().create_timer(0.1).timeout
+		if pet_image:  # 确保宠物还存在
+			pet_image.modulate = original_modulate
+		return
+	
+	# 创建受伤动画（闪红效果）
+	hurt_tween = create_tween()
+	
+	# 立即变红
+	pet_image.modulate = Color.RED
+	
+	# 0.2秒后恢复原色
+	hurt_tween.tween_property(pet_image, "modulate", original_modulate, 0.2)
+	
+	# 动画结束后清理
+	hurt_tween.tween_callback(func():
+		hurt_tween = null
+	)
+
+# 切换性能模式
+func toggle_performance_mode():
+	performance_mode = !performance_mode
+	var mode_text = "性能模式" if performance_mode else "正常模式"
+	add_battle_detail_to_panel("⚡ " + pet_name + " 切换到 " + mode_text, Color.YELLOW)
+	print("⚡ " + pet_name + " 切换到 " + mode_text)
+
+# 输出宠物性能状态
+func debug_performance_status():
+	print("=== " + pet_name + " 性能状态调试 ===")
+	print("性能模式: " + str(performance_mode))
+	print("伤害反弹深度: " + str(damage_reflect_depth))
+	print("帧跳跃计数: " + str(frame_skip_counter))
+	print("上次受伤时间: " + str(last_hurt_time))
+	print("上次攻击时间: " + str(last_attack_time))
+	print("当前状态: " + str(current_state))
+	print("是否存活: " + str(is_alive))
+	print("是否正在死亡: " + str(is_dying))
+	print("============================")
+
+# 重置性能状态（紧急恢复）
+func reset_performance_state():
+	performance_mode = false
+	damage_reflect_depth = 0
+	frame_skip_counter = 0
+	
+	# 清理可能卡住的动画
+	if hurt_tween:
+		hurt_tween.kill()
+		hurt_tween = null
+	
+	# 恢复正常颜色
+	if pet_image:
+		pet_image.modulate = original_modulate
+	
+	print("🔄 " + pet_name + " 性能状态已重置")
+	add_battle_detail_to_panel("🔄 " + pet_name + " 性能状态已重置", Color.GREEN)

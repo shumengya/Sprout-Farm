@@ -293,7 +293,7 @@ func _show_item_info(item_name: String, item_count: int):
 		info_text += "描述: " + description
 		
 		if not _is_item_usable(item_name):
-			info_text += "\n注意: 此道具功能暂未实现"
+			pass
 	else:
 		info_text = item_name + " (数量: " + str(item_count) + ")\n描述: 暂无信息"
 	
@@ -363,7 +363,7 @@ func _send_farm_item_use_request(item_name: String):
 	# 发送请求
 	tcp_network_manager_panel.send_message(message)
 	
-	Toast.show("正在使用道具...", Color.BLUE, 2.0, 1.0)
+	#Toast.show("正在使用道具...", Color.BLUE, 2.0, 1.0)
 
 # 显示宠物使用道具确认对话框
 func _show_pet_item_confirmation_dialog(item_name: String, item_count: int):
@@ -431,13 +431,12 @@ func _send_pet_item_use_request(item_name: String, pet_id: String):
 	# 退出宠物使用道具模式
 	_exit_pet_item_mode()
 	
-	Toast.show("正在使用道具...", Color.BLUE, 2.0, 1.0)
+	#Toast.show("正在使用道具...", Color.BLUE, 2.0, 1.0)
 
 # 退出宠物使用道具模式
 func _exit_pet_item_mode():
 	is_pet_item_mode = false
 	current_pet_data = {}
-	
 	# 刷新UI
 	update_item_bag_ui()
 
@@ -496,13 +495,12 @@ func _on_quit_button_pressed() -> void:
 func _on_refresh_button_pressed() -> void:
 	# 刷新道具背包UI
 	update_item_bag_ui()
-	Toast.show("道具背包已刷新", Color.GREEN, 2.0, 1.0)
+	#Toast.show("道具背包已刷新", Color.GREEN, 2.0, 1.0)
 	
 #面板显示与隐藏切换处理
 func _on_visibility_changed():
 	if visible:
 		GlobalVariables.isZoomDisabled = true
-		# 面板显示时自动刷新数据
 		update_item_bag_ui()
 		pass
 	else:

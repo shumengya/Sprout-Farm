@@ -12,11 +12,15 @@ config_version=5
 
 config/name="萌芽农场"
 config/description="一款支持多人联机的农场游戏"
-config/version="1.0.3"
+config/version="2.0.0"
 run/main_scene="uid://bypjb28h4ntdr"
 config/features=PackedStringArray("4.4", "Mobile")
+boot_splash/bg_color=Color(0.901961, 1, 1, 1)
 boot_splash/fullsize=false
+boot_splash/use_filter=false
+boot_splash/image="uid://bl1oahn5noklf"
 config/icon="res://assets/logo2.png"
+boot_splash/minimum_display_time=1500
 
 [autoload]
 
@@ -29,6 +33,8 @@ GlobalVariables="*res://GlobalScript/GlobalVariables.gd"
 window/size/viewport_width=1400
 window/size/viewport_height=720
 window/size/resizable=false
+window/frame_pacing/android/enable_frame_pacing=false
+window/frame_pacing/android/swappy_mode=0
 window/stretch/mode="viewport"
 window/per_pixel_transparency/allowed=true
 window/vsync/vsync_mode=0
@@ -72,10 +78,16 @@ ui_load={
 ]
 }
 
+[physics]
+
+2d/run_on_separate_thread=true
+common/physics_interpolation=true
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
-renderer/rendering_method="mobile"
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
 textures/webp_compression/compression_method=3
 viewport/hdr_2d=true

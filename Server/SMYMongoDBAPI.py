@@ -31,12 +31,16 @@ class SMYMongoDBAPI:
             "test": {
                 "host": "localhost",
                 "port": 27017,
-                "database": "mengyafarm"
+                "database": "mengyafarm",
+                "username": None,
+                "password": None
             },
             "production": {
                 "host": "192.168.31.233", 
                 "port": 27017,
-                "database": "mengyafarm"
+                "database": "mengyafarm",
+                "username": "shumengya",
+                "password": "tyh@19900420"
             }
         }
         
@@ -55,8 +59,17 @@ class SMYMongoDBAPI:
             bool: 连接是否成功
         """
         try:
+            from urllib.parse import quote_plus
             current_config = self.config[self.environment]
-            connection_string = f"mongodb://{current_config['host']}:{current_config['port']}/"
+            
+            # 构建连接字符串
+            if current_config.get('username') and current_config.get('password'):
+                # 对用户名和密码进行URL编码以处理特殊字符
+                username = quote_plus(current_config['username'])
+                password = quote_plus(current_config['password'])
+                connection_string = f"mongodb://{username}:{password}@{current_config['host']}:{current_config['port']}/{current_config['database']}?authSource=admin"
+            else:
+                connection_string = f"mongodb://{current_config['host']}:{current_config['port']}/"
             
             self.client = pymongo.MongoClient(
                 connection_string,
@@ -386,302 +399,604 @@ class SMYMongoDBAPI:
     #=====================初始玩家数据模板系统======================
 
 
-    #=====================验证码系统======================
-    def get_verification_codes(self) -> Optional[Dict[str, Any]]:
-        """获取验证码数据"""
-        return self._get_config_by_id(self.CONFIG_IDS["verification_codes"], "验证码数据")
+    #=====================玩家数据管理======================
+
+    # ========================= 验证码系统 =========================
     
-    def update_verification_codes(self, codes_data: Dict[str, Any]) -> bool:
-        """更新验证码数据"""
-        return self._update_config_by_id(self.CONFIG_IDS["verification_codes"], codes_data, "验证码数据")
-    
-    #=====================聊天消息系统======================
-    def save_chat_message(self, username: str, player_name: str, content: str, timestamp: float = None) -> bool:
-        """保存聊天消息到MongoDB"""
-        try:
-            if timestamp is None:
-                timestamp = datetime.now().timestamp()
-            
-            # 获取日期字符串作为文档标识
-            date_obj = datetime.fromtimestamp(timestamp)
-            date_str = date_obj.strftime("%Y-%m-%d")
-            
-            # 创建消息记录
-            message_record = {
-                "username": username,
-                "player_name": player_name,
-                "content": content,
-                "timestamp": timestamp,
-                "time_str": date_obj.strftime("%Y年%m月%d日 %H:%M:%S")
-            }
-            
-            collection = self.get_collection("chat")
-            
-            # 查找当天的文档
-            query = {"date": date_str}
-            existing_doc = collection.find_one(query)
-            
-            if existing_doc:
-                # 如果文档存在，添加消息到messages数组
-                result = collection.update_one(
-                    query,
-                    {
-                        "$push": {"messages": message_record},
-                        "$set": {"updated_at": datetime.now()}
-                    }
-                )
-                success = result.acknowledged and result.modified_count > 0
-            else:
-                # 如果文档不存在，创建新文档
-                new_doc = {
-                    "date": date_str,
-                    "messages": [message_record],
-                    "created_at": datetime.now(),
-                    "updated_at": datetime.now()
-                }
-                result = collection.insert_one(new_doc)
-                success = result.acknowledged
-            
-            if success:
-                self.logger.info(f"成功保存聊天消息: {username}({player_name}): {content[:20]}...")
-            else:
-                self.logger.error(f"保存聊天消息失败: {username}({player_name}): {content[:20]}...")
-            
-            return success
-            
-        except Exception as e:
-            self.logger.error(f"保存聊天消息异常: {e}")
-            return False
-    
-    def get_chat_history(self, days: int = 3, limit: int = 500) -> List[Dict[str, Any]]:
-        """获取聊天历史消息"""
-        try:
-            collection = self.get_collection("chat")
-            
-            # 计算日期范围
-            end_date = datetime.now()
-            start_date = end_date - timedelta(days=days-1)
-            
-            # 生成日期列表
-            date_list = []
-            current_date = start_date
-            while current_date <= end_date:
-                date_list.append(current_date.strftime("%Y-%m-%d"))
-                current_date += timedelta(days=1)
-            
-            # 查询这些日期的文档
-            query = {"date": {"$in": date_list}}
-            docs = collection.find(query).sort("date", 1)
-            
-            # 收集所有消息
-            all_messages = []
-            for doc in docs:
-                messages = doc.get("messages", [])
-                all_messages.extend(messages)
-            
-            # 按时间戳排序
-            all_messages.sort(key=lambda x: x.get("timestamp", 0))
-            
-            # 限制数量
-            if limit > 0 and len(all_messages) > limit:
-                all_messages = all_messages[-limit:]
-            
-            self.logger.info(f"获取聊天历史消息成功: {len(all_messages)} 条消息（最近{days}天）")
-            return all_messages
-            
-        except Exception as e:
-            self.logger.error(f"获取聊天历史消息失败: {e}")
-            return []
-    
-    def get_latest_chat_message(self) -> Optional[Dict[str, Any]]:
-        """获取最新的一条聊天消息"""
-        try:
-            collection = self.get_collection("chat")
-            
-            # 获取最近的文档
-            latest_doc = collection.find().sort("date", -1).limit(1)
-            
-            for doc in latest_doc:
-                messages = doc.get("messages", [])
-                if messages:
-                    # 返回最后一条消息
-                    latest_message = messages[-1]
-                    self.logger.info(f"获取最新聊天消息成功: {latest_message.get('username', 'N/A')}: {latest_message.get('content', '')[:20]}...")
-                    return latest_message
-            
-            self.logger.info("没有找到聊天消息")
-            return None
-            
-        except Exception as e:
-            self.logger.error(f"获取最新聊天消息失败: {e}")
-            return None
-    
-    def clean_old_chat_messages(self, keep_days: int = 30) -> int:
-        """清理旧的聊天消息"""
-        try:
-            collection = self.get_collection("chat")
-            
-            # 计算保留的最早日期
-            cutoff_date = datetime.now() - timedelta(days=keep_days)
-            cutoff_date_str = cutoff_date.strftime("%Y-%m-%d")
-            
-            # 删除早于cutoff_date的文档
-            query = {"date": {"$lt": cutoff_date_str}}
-            result = collection.delete_many(query)
-            
-            deleted_count = result.deleted_count
-            self.logger.info(f"清理旧聊天消息完成: 删除了 {deleted_count} 个文档（{keep_days}天前的消息）")
-            return deleted_count
-            
-        except Exception as e:
-            self.logger.error(f"清理旧聊天消息失败: {e}")
-            return 0
-    #=====================聊天消息系统======================
-    
-    def save_verification_code(self, qq_number: str, verification_code: str, expiry_time: int = 300, code_type: str = "register") -> bool:
-        """保存单个验证码到MongoDB"""
-        import time
+    def save_verification_code(self, qq_number: str, verification_code: str, 
+                              expiry_time: int = 300, code_type: str = "register") -> bool:
+        """
+        保存验证码到MongoDB
         
+        Args:
+            qq_number: QQ号
+            verification_code: 验证码
+            expiry_time: 过期时间（秒），默认5分钟
+            code_type: 验证码类型，"register" 或 "reset_password"
+            
+        Returns:
+            bool: 保存成功返回True，否则返回False
+        """
         try:
-            # 获取当前验证码数据
-            codes_data = self.get_verification_codes() or {}
+            import time
+            from datetime import datetime, timedelta
             
-            # 添加新的验证码
-            expire_at = time.time() + expiry_time
-            current_time = time.time()
+            collection = self.get_collection("verification_codes")
             
-            codes_data[qq_number] = {
+            # 计算过期时间
+            expire_at = datetime.now() + timedelta(seconds=expiry_time)
+            
+            # 验证码文档
+            verification_doc = {
+                "qq_number": qq_number,
                 "code": verification_code,
-                "expire_at": expire_at,
                 "code_type": code_type,
-                "created_at": current_time,
+                "created_at": datetime.now(),
+                "expire_at": expire_at,
                 "used": False
             }
             
-            # 更新到MongoDB
-            success = self.update_verification_codes(codes_data)
-            if success:
-                self.logger.info(f"为QQ {qq_number} 保存{code_type}验证码: {verification_code}, 过期时间: {expire_at}")
-            return success
+            # 使用upsert更新或插入（覆盖同一QQ号的旧验证码）
+            query = {"qq_number": qq_number, "code_type": code_type}
+            result = collection.replace_one(query, verification_doc, upsert=True)
             
+            if result.acknowledged:
+                self.logger.info(f"成功保存验证码: QQ {qq_number}, 类型 {code_type}")
+                return True
+            else:
+                self.logger.error(f"保存验证码失败: QQ {qq_number}")
+                return False
+                
         except Exception as e:
-            self.logger.error(f"保存验证码失败: {e}")
+            self.logger.error(f"保存验证码异常 [QQ {qq_number}]: {e}")
             return False
     
-    def verify_verification_code(self, qq_number: str, input_code: str, code_type: str = "register") -> tuple[bool, str]:
-        """验证验证码"""
-        import time
+    def verify_verification_code(self, qq_number: str, input_code: str, 
+                                code_type: str = "register") -> tuple[bool, str]:
+        """
+        验证用户输入的验证码
         
-        try:
-            # 获取验证码数据
-            codes_data = self.get_verification_codes()
-            if not codes_data:
-                self.logger.warning(f"QQ {qq_number} 验证失败: 验证码数据不存在")
-                return False, "验证码不存在或已过期"
+        Args:
+            qq_number: QQ号
+            input_code: 用户输入的验证码
+            code_type: 验证码类型，"register" 或 "reset_password"
             
-            # 检查该QQ号是否有验证码
-            if qq_number not in codes_data:
-                self.logger.warning(f"QQ {qq_number} 验证失败: 没有找到验证码记录")
+        Returns:
+            tuple: (验证成功, 消息)
+        """
+        try:
+            from datetime import datetime
+            
+            collection = self.get_collection("verification_codes")
+            
+            # 查找验证码
+            query = {"qq_number": qq_number, "code_type": code_type}
+            code_doc = collection.find_one(query)
+            
+            if not code_doc:
                 return False, "验证码不存在，请重新获取"
             
-            # 获取存储的验证码信息
-            code_info = codes_data[qq_number]
-            stored_code = code_info.get("code", "")
-            expire_at = code_info.get("expire_at", 0)
-            stored_code_type = code_info.get("code_type", "register")
-            is_used = code_info.get("used", False)
-            created_at = code_info.get("created_at", 0)
+            # 检查是否已使用
+            if code_doc.get("used", False):
+                return False, "验证码已使用，请重新获取"
             
-            self.logger.info(f"QQ {qq_number} 验证码详情: 存储码={stored_code}, 输入码={input_code}, 类型={stored_code_type}, 已使用={is_used}, 创建时间={created_at}")
-            
-            # 检查验证码类型是否匹配
-            if stored_code_type != code_type:
-                self.logger.warning(f"QQ {qq_number} 验证失败: 验证码类型不匹配，存储类型={stored_code_type}, 请求类型={code_type}")
-                return False, f"验证码类型不匹配，请重新获取{code_type}验证码"
-            
-            # 检查验证码是否已被使用
-            if is_used:
-                self.logger.warning(f"QQ {qq_number} 验证失败: 验证码已被使用")
-                return False, "验证码已被使用，请重新获取"
-            
-            # 检查验证码是否过期
-            current_time = time.time()
-            if current_time > expire_at:
-                # 移除过期的验证码
-                del codes_data[qq_number]
-                self.update_verification_codes(codes_data)
-                self.logger.warning(f"QQ {qq_number} 验证失败: 验证码已过期")
+            # 检查是否过期
+            if datetime.now() > code_doc.get("expire_at", datetime.now()):
                 return False, "验证码已过期，请重新获取"
             
-            # 验证码比较（不区分大小写）
-            if input_code.upper() == stored_code.upper():
-                # 验证成功，标记为已使用
-                codes_data[qq_number]["used"] = True
-                codes_data[qq_number]["used_at"] = current_time
-                
-                success = self.update_verification_codes(codes_data)
-                if success:
-                    self.logger.info(f"QQ {qq_number} 验证成功: 验证码已标记为已使用")
-                else:
-                    self.logger.warning(f"标记验证码已使用时失败，但验证成功")
-                return True, "验证码正确"
+            # 验证码码
+            if input_code.upper() != code_doc.get("code", "").upper():
+                return False, "验证码错误，请重新输入"
+            
+            # 标记为已使用
+            update_result = collection.update_one(
+                query, 
+                {"$set": {"used": True, "used_at": datetime.now()}}
+            )
+            
+            if update_result.acknowledged:
+                self.logger.info(f"验证码验证成功: QQ {qq_number}, 类型 {code_type}")
+                return True, "验证码验证成功"
             else:
-                self.logger.warning(f"QQ {qq_number} 验证失败: 验证码不匹配")
-                return False, "验证码错误"
+                self.logger.error(f"标记验证码已使用失败: QQ {qq_number}")
+                return False, "验证码验证失败"
                 
         except Exception as e:
-            self.logger.error(f"验证验证码异常: {e}")
+            self.logger.error(f"验证验证码异常 [QQ {qq_number}]: {e}")
             return False, "验证码验证失败"
     
     def clean_expired_verification_codes(self) -> int:
-        """清理过期的验证码和已使用的验证码"""
-        import time
+        """
+        清理过期的验证码和已使用的验证码
         
+        Returns:
+            int: 清理的验证码数量
+        """
         try:
-            codes_data = self.get_verification_codes()
-            if not codes_data:
+            from datetime import datetime, timedelta
+            
+            collection = self.get_collection("verification_codes")
+            
+            current_time = datetime.now()
+            one_hour_ago = current_time - timedelta(hours=1)
+            
+            # 删除条件：过期的验证码 或 已使用超过1小时的验证码
+            delete_query = {
+                "$or": [
+                    {"expire_at": {"$lt": current_time}},  # 过期的
+                    {"used": True, "used_at": {"$lt": one_hour_ago}}  # 已使用超过1小时的
+                ]
+            }
+            
+            result = collection.delete_many(delete_query)
+            
+            if result.acknowledged:
+                deleted_count = result.deleted_count
+                self.logger.info(f"清理验证码完成: 删除了 {deleted_count} 个验证码")
+                return deleted_count
+            else:
+                self.logger.error("清理验证码失败")
                 return 0
-            
-            current_time = time.time()
-            removed_keys = []
-            
-            # 找出过期的验证码和已使用的验证码（超过1小时）
-            for qq_number, code_info in codes_data.items():
-                expire_at = code_info.get("expire_at", 0)
-                is_used = code_info.get("used", False)
-                used_at = code_info.get("used_at", 0)
                 
-                should_remove = False
-                
-                # 过期的验证码
-                if current_time > expire_at:
-                    should_remove = True
-                    self.logger.info(f"移除过期验证码: QQ {qq_number}")
-                
-                # 已使用超过1小时的验证码
-                elif is_used and used_at > 0 and (current_time - used_at) > 3600:
-                    should_remove = True
-                    self.logger.info(f"移除已使用的验证码: QQ {qq_number}")
-                
-                if should_remove:
-                    removed_keys.append(qq_number)
-            
-            # 移除标记的验证码
-            for key in removed_keys:
-                del codes_data[key]
-            
-            # 保存更新后的数据
-            if removed_keys:
-                self.update_verification_codes(codes_data)
-                self.logger.info(f"共清理了 {len(removed_keys)} 个验证码")
-            
-            return len(removed_keys)
-            
         except Exception as e:
-            self.logger.error(f"清理验证码失败: {e}")
+            self.logger.error(f"清理验证码异常: {e}")
             return 0
+    
     #=====================验证码系统======================
 
+    # ========================= 通用数据库操作 =========================
+    
+    def get_player_data(self, account_id: str) -> Optional[Dict[str, Any]]:
+        """获取玩家数据
+        
+        Args:
+            account_id: 玩家账号ID
+            
+        Returns:
+            Dict: 玩家数据，如果未找到返回None
+        """
+        try:
+            collection = self.get_collection("playerdata")
+            
+            # 根据玩家账号查找文档
+            query = {"玩家账号": account_id}
+            result = collection.find_one(query)
+            
+            if result:
+                # 移除MongoDB的_id字段
+                if "_id" in result:
+                    del result["_id"]
+                
+                # 转换datetime对象为字符串，避免JSON序列化错误
+                result = self._convert_datetime_to_string(result)
+                    
+                self.logger.info(f"成功获取玩家数据: {account_id}")
+                return result
+            else:
+                self.logger.warning(f"未找到玩家数据: {account_id}")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"获取玩家数据失败 [{account_id}]: {e}")
+            return None
+    
+    def save_player_data(self, account_id: str, player_data: Dict[str, Any]) -> bool:
+        """保存玩家数据
+        
+        Args:
+            account_id: 玩家账号ID
+            player_data: 玩家数据
+            
+        Returns:
+            bool: 是否成功
+        """
+        try:
+            collection = self.get_collection("playerdata")
+            
+            # 添加更新时间
+            update_data = {
+                "updated_at": datetime.now(),
+                **player_data
+            }
+            
+            # 使用upsert更新或插入
+            query = {"玩家账号": account_id}
+            result = collection.replace_one(query, update_data, upsert=True)
+            
+            if result.acknowledged:
+                self.logger.info(f"成功保存玩家数据: {account_id}")
+                return True
+            else:
+                self.logger.error(f"保存玩家数据失败: {account_id}")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"保存玩家数据异常 [{account_id}]: {e}")
+            return False
+    
+    def delete_player_data(self, account_id: str) -> bool:
+        """删除玩家数据
+        
+        Args:
+            account_id: 玩家账号ID
+            
+        Returns:
+            bool: 是否成功
+        """
+        try:
+            collection = self.get_collection("playerdata")
+            
+            query = {"玩家账号": account_id}
+            result = collection.delete_one(query)
+            
+            if result.acknowledged and result.deleted_count > 0:
+                self.logger.info(f"成功删除玩家数据: {account_id}")
+                return True
+            else:
+                self.logger.warning(f"删除玩家数据失败或数据不存在: {account_id}")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"删除玩家数据异常 [{account_id}]: {e}")
+            return False
+    
+    def get_all_players_basic_info(self, projection: Dict[str, int] = None) -> List[Dict[str, Any]]:
+        """获取所有玩家的基本信息（优化版本，用于排行榜等）
+        
+        Args:
+            projection: 字段投影，指定需要返回的字段
+            
+        Returns:
+            List: 玩家基本信息列表
+        """
+        try:
+            collection = self.get_collection("playerdata")
+            
+            # 默认投影字段（只获取必要信息）
+            if projection is None:
+                projection = {
+                    "_id": 0,
+                    "玩家账号": 1,
+                    "玩家昵称": 1,
+                    "农场名称": 1,
+                    "等级": 1,
+                    "钱币": 1,
+                    "经验值": 1,
+                    "最后登录时间": 1,
+                    "总游玩时间": 1,
+                    "种子仓库": 1,
+                    "点赞系统": 1,
+                    "体力系统.当前体力值": 1
+                }
+            
+            cursor = collection.find({}, projection)
+            players = list(cursor)
+            
+            # 转换datetime对象为字符串
+            players = [self._convert_datetime_to_string(player) for player in players]
+            
+            self.logger.info(f"成功获取 {len(players)} 个玩家的基本信息")
+            return players
+            
+        except Exception as e:
+            self.logger.error(f"获取玩家基本信息失败: {e}")
+            return []
+    
+    def get_players_by_condition(self, condition: Dict[str, Any], 
+                                projection: Dict[str, int] = None,
+                                limit: int = 0) -> List[Dict[str, Any]]:
+        """根据条件获取玩家数据
+        
+        Args:
+            condition: 查询条件
+            projection: 字段投影
+            limit: 限制数量
+            
+        Returns:
+            List: 符合条件的玩家数据列表
+        """
+        try:
+            collection = self.get_collection("playerdata")
+            
+            cursor = collection.find(condition, projection)
+            if limit > 0:
+                cursor = cursor.limit(limit)
+            
+            players = list(cursor)
+            
+            # 移除_id字段并转换datetime对象
+            for player in players:
+                if "_id" in player:
+                    del player["_id"]
+                player = self._convert_datetime_to_string(player)
+            
+            # 重新转换整个列表确保所有datetime都被处理
+            players = [self._convert_datetime_to_string(player) for player in players]
+            
+            self.logger.info(f"根据条件查询到 {len(players)} 个玩家")
+            return players
+            
+        except Exception as e:
+            self.logger.error(f"根据条件获取玩家数据失败: {e}")
+            return []
+    
+    def get_offline_players(self, offline_days: int = 3) -> List[Dict[str, Any]]:
+        """获取长时间离线的玩家（用于杂草生长等）
+        
+        Args:
+            offline_days: 离线天数阈值
+            
+        Returns:
+            List: 离线玩家数据列表
+        """
+        try:
+            import time
+            from datetime import datetime, timedelta
+            
+            # 计算阈值时间戳
+            threshold_time = datetime.now() - timedelta(days=offline_days)
+            
+            collection = self.get_collection("playerdata")
+            
+            # 查询条件：最后登录时间早于阈值
+            # 注意：这里需要根据实际的时间格式进行调整
+            cursor = collection.find({
+                "最后登录时间": {"$exists": True}
+            }, {
+                "_id": 0,
+                "玩家账号": 1,
+                "最后登录时间": 1,
+                "农场土地": 1
+            })
+            
+            offline_players = []
+            for player in cursor:
+                last_login = player.get("最后登录时间", "")
+                if self._is_player_offline_by_time(last_login, offline_days):
+                    offline_players.append(player)
+            
+            # 转换datetime对象为字符串
+            offline_players = [self._convert_datetime_to_string(player) for player in offline_players]
+            
+            self.logger.info(f"找到 {len(offline_players)} 个离线超过 {offline_days} 天的玩家")
+            return offline_players
+            
+        except Exception as e:
+            self.logger.error(f"获取离线玩家失败: {e}")
+            return []
+    
+    def _is_player_offline_by_time(self, last_login_str: str, offline_days: int) -> bool:
+        """检查玩家是否离线超过指定天数"""
+        try:
+            if not last_login_str or last_login_str == "未知":
+                return False
+            
+            # 解析时间格式：2024年01月01日12时30分45秒
+            import datetime
+            dt = datetime.datetime.strptime(last_login_str, "%Y年%m月%d日%H时%M分%S秒")
+            
+            # 计算离线天数
+            now = datetime.datetime.now()
+            offline_duration = now - dt
+            return offline_duration.days >= offline_days
+            
+        except Exception:
+            return False
+    
+    def _convert_datetime_to_string(self, data: Any) -> Any:
+        """
+        递归转换数据中的datetime对象为字符串
+        
+        Args:
+            data: 要转换的数据
+            
+        Returns:
+            转换后的数据
+        """
+        from datetime import datetime
+        
+        if isinstance(data, datetime):
+            return data.strftime("%Y年%m月%d日%H时%M分%S秒")
+        elif isinstance(data, dict):
+            return {key: self._convert_datetime_to_string(value) for key, value in data.items()}
+        elif isinstance(data, list):
+            return [self._convert_datetime_to_string(item) for item in data]
+        else:
+            return data
+    
+    def count_total_players(self) -> int:
+        """统计玩家总数
+        
+        Returns:
+            int: 玩家总数
+        """
+        try:
+            collection = self.get_collection("playerdata")
+            count = collection.count_documents({})
+            
+            self.logger.info(f"玩家总数: {count}")
+            return count
+            
+        except Exception as e:
+            self.logger.error(f"统计玩家总数失败: {e}")
+            return 0
+    
+    def update_player_field(self, account_id: str, field_updates: Dict[str, Any]) -> bool:
+        """更新玩家的特定字段
+        
+        Args:
+            account_id: 玩家账号ID
+            field_updates: 要更新的字段和值
+            
+        Returns:
+            bool: 是否成功
+        """
+        try:
+            collection = self.get_collection("playerdata")
+            
+            # 添加更新时间
+            update_data = {
+                "updated_at": datetime.now(),
+                **field_updates
+            }
+            
+            query = {"玩家账号": account_id}
+            result = collection.update_one(query, {"$set": update_data})
+            
+            if result.acknowledged and result.matched_count > 0:
+                self.logger.info(f"成功更新玩家字段: {account_id}")
+                return True
+            else:
+                self.logger.warning(f"更新玩家字段失败或玩家不存在: {account_id}")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"更新玩家字段异常 [{account_id}]: {e}")
+            return False
+    #=====================玩家数据管理======================
+
+    # ========================= 验证码系统 =========================
+    
+    def save_verification_code(self, qq_number: str, verification_code: str, 
+                              expiry_time: int = 300, code_type: str = "register") -> bool:
+        """
+        保存验证码到MongoDB
+        
+        Args:
+            qq_number: QQ号
+            verification_code: 验证码
+            expiry_time: 过期时间（秒），默认5分钟
+            code_type: 验证码类型，"register" 或 "reset_password"
+            
+        Returns:
+            bool: 保存成功返回True，否则返回False
+        """
+        try:
+            import time
+            from datetime import datetime, timedelta
+            
+            collection = self.get_collection("verification_codes")
+            
+            # 计算过期时间
+            expire_at = datetime.now() + timedelta(seconds=expiry_time)
+            
+            # 验证码文档
+            verification_doc = {
+                "qq_number": qq_number,
+                "code": verification_code,
+                "code_type": code_type,
+                "created_at": datetime.now(),
+                "expire_at": expire_at,
+                "used": False
+            }
+            
+            # 使用upsert更新或插入（覆盖同一QQ号的旧验证码）
+            query = {"qq_number": qq_number, "code_type": code_type}
+            result = collection.replace_one(query, verification_doc, upsert=True)
+            
+            if result.acknowledged:
+                self.logger.info(f"成功保存验证码: QQ {qq_number}, 类型 {code_type}")
+                return True
+            else:
+                self.logger.error(f"保存验证码失败: QQ {qq_number}")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"保存验证码异常 [QQ {qq_number}]: {e}")
+            return False
+    
+    def verify_verification_code(self, qq_number: str, input_code: str, 
+                                code_type: str = "register") -> tuple:
+        """
+        验证用户输入的验证码
+        
+        Args:
+            qq_number: QQ号
+            input_code: 用户输入的验证码
+            code_type: 验证码类型，"register" 或 "reset_password"
+            
+        Returns:
+            tuple: (验证成功, 消息)
+        """
+        try:
+            from datetime import datetime
+            
+            collection = self.get_collection("verification_codes")
+            
+            # 查找验证码
+            query = {"qq_number": qq_number, "code_type": code_type}
+            code_doc = collection.find_one(query)
+            
+            if not code_doc:
+                return False, "验证码不存在，请重新获取"
+            
+            # 检查是否已使用
+            if code_doc.get("used", False):
+                return False, "验证码已使用，请重新获取"
+            
+            # 检查是否过期
+            if datetime.now() > code_doc.get("expire_at", datetime.now()):
+                return False, "验证码已过期，请重新获取"
+            
+            # 验证码码
+            if input_code.upper() != code_doc.get("code", "").upper():
+                return False, "验证码错误，请重新输入"
+            
+            # 标记为已使用
+            update_result = collection.update_one(
+                query, 
+                {"$set": {"used": True, "used_at": datetime.now()}}
+            )
+            
+            if update_result.acknowledged:
+                self.logger.info(f"验证码验证成功: QQ {qq_number}, 类型 {code_type}")
+                return True, "验证码验证成功"
+            else:
+                self.logger.error(f"标记验证码已使用失败: QQ {qq_number}")
+                return False, "验证码验证失败"
+                
+        except Exception as e:
+            self.logger.error(f"验证验证码异常 [QQ {qq_number}]: {e}")
+            return False, "验证码验证失败"
+    
+    def clean_expired_verification_codes(self) -> int:
+        """
+        清理过期的验证码和已使用的验证码
+        
+        Returns:
+            int: 清理的验证码数量
+        """
+        try:
+            from datetime import datetime, timedelta
+            
+            collection = self.get_collection("verification_codes")
+            
+            current_time = datetime.now()
+            one_hour_ago = current_time - timedelta(hours=1)
+            
+            # 删除条件：过期的验证码 或 已使用超过1小时的验证码
+            delete_query = {
+                "$or": [
+                    {"expire_at": {"$lt": current_time}},  # 过期的
+                    {"used": True, "used_at": {"$lt": one_hour_ago}}  # 已使用超过1小时的
+                ]
+            }
+            
+            result = collection.delete_many(delete_query)
+            
+            if result.acknowledged:
+                deleted_count = result.deleted_count
+                self.logger.info(f"清理验证码完成: 删除了 {deleted_count} 个验证码")
+                return deleted_count
+            else:
+                self.logger.error("清理验证码失败")
+                return 0
+                
+        except Exception as e:
+            self.logger.error(f"清理验证码异常: {e}")
+            return 0
+    
+    #=====================验证码系统======================
 
     # ========================= 通用数据库操作 =========================
     
@@ -735,10 +1050,13 @@ class SMYMongoDBAPI:
             
             documents = list(cursor)
             
-            # 转换ObjectId为字符串
+            # 转换ObjectId为字符串并转换datetime对象
             for doc in documents:
                 if "_id" in doc:
                     doc["_id"] = str(doc["_id"])
+            
+            # 转换datetime对象为字符串
+            documents = [self._convert_datetime_to_string(doc) for doc in documents]
             
             return documents
             
@@ -789,6 +1107,202 @@ class SMYMongoDBAPI:
         except Exception as e:
             self.logger.error(f"删除文档失败 [{collection_name}]: {e}")
             return False
+    
+    # ========================= 聊天消息管理 =========================
+    
+    def save_chat_message(self, username: str, player_name: str, content: str) -> bool:
+        """
+        保存聊天消息到MongoDB（按天存储）
+        
+        Args:
+            username: 用户名（QQ号）
+            player_name: 玩家昵称
+            content: 消息内容
+            
+        Returns:
+            bool: 是否保存成功
+        """
+        try:
+            import time
+            from datetime import datetime
+            
+            collection = self.get_collection("chat")
+            
+            # 获取当前日期
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            current_time = datetime.now()
+            
+            # 创建消息对象
+            message = {
+                "username": username,
+                "player_name": player_name,
+                "content": content,
+                "timestamp": time.time(),
+                "time_str": current_time.strftime("%Y年%m月%d日 %H:%M:%S")
+            }
+            
+            # 查找当天的文档
+            query = {"date": current_date}
+            existing_doc = collection.find_one(query)
+            
+            if existing_doc:
+                # 如果当天的文档已存在，添加消息到messages数组
+                result = collection.update_one(
+                    query,
+                    {
+                        "$push": {"messages": message},
+                        "$set": {"updated_at": current_time}
+                    }
+                )
+            else:
+                # 如果当天的文档不存在，创建新文档
+                new_doc = {
+                    "date": current_date,
+                    "messages": [message],
+                    "created_at": current_time,
+                    "updated_at": current_time
+                }
+                result = collection.insert_one(new_doc)
+            
+            if result.acknowledged:
+                self.logger.info(f"成功保存聊天消息: {username} - {content[:20]}...")
+                return True
+            else:
+                self.logger.error(f"保存聊天消息失败: {username}")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"保存聊天消息异常: {e}")
+            return False
+    
+    def get_chat_history(self, days: int = 3, limit: int = 500) -> List[Dict[str, Any]]:
+        """
+        获取聊天历史消息（从按天存储的chat集合）
+        
+        Args:
+            days: 获取最近几天的消息
+            limit: 最大消息数量
+            
+        Returns:
+            List: 聊天消息列表
+        """
+        try:
+            from datetime import datetime, timedelta
+            
+            collection = self.get_collection("chat")
+            
+            # 计算日期范围
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days-1)
+            
+            # 生成日期列表
+            date_list = []
+            current_date = start_date
+            while current_date <= end_date:
+                date_list.append(current_date.strftime("%Y-%m-%d"))
+                current_date += timedelta(days=1)
+            
+            # 查询条件
+            query = {"date": {"$in": date_list}}
+            
+            # 获取文档
+            cursor = collection.find(query).sort("date", 1)
+            docs = list(cursor)
+            
+            # 提取所有消息
+            all_messages = []
+            for doc in docs:
+                messages = doc.get("messages", [])
+                for msg in messages:
+                    # 移除MongoDB的_id字段（如果存在）
+                    if "_id" in msg:
+                        del msg["_id"]
+                    all_messages.append(msg)
+            
+            # 按时间戳排序
+            all_messages.sort(key=lambda x: x.get("timestamp", 0))
+            
+            # 限制消息数量
+            if len(all_messages) > limit:
+                all_messages = all_messages[-limit:]
+            
+            self.logger.info(f"成功获取聊天历史: {len(all_messages)} 条消息（最近{days}天）")
+            return all_messages
+            
+        except Exception as e:
+            self.logger.error(f"获取聊天历史失败: {e}")
+            return []
+    
+    def get_latest_chat_message(self) -> Optional[Dict[str, Any]]:
+        """
+        获取最新的聊天消息（从按天存储的chat集合）
+        
+        Returns:
+            Dict: 最新的聊天消息，如果没有返回None
+        """
+        try:
+            collection = self.get_collection("chat")
+            
+            # 按日期降序排序，获取最新的文档
+            cursor = collection.find().sort("date", -1).limit(10)  # 获取最近10天的文档
+            docs = list(cursor)
+            
+            latest_message = None
+            latest_timestamp = 0
+            
+            # 遍历文档，找到最新的消息
+            for doc in docs:
+                messages = doc.get("messages", [])
+                for msg in messages:
+                    timestamp = msg.get("timestamp", 0)
+                    if timestamp > latest_timestamp:
+                        latest_timestamp = timestamp
+                        latest_message = msg.copy()
+                        # 移除MongoDB的_id字段（如果存在）
+                        if "_id" in latest_message:
+                            del latest_message["_id"]
+            
+            if latest_message:
+                self.logger.info(f"成功获取最新聊天消息: {latest_message.get('content', '')[:20]}...")
+                return latest_message
+            else:
+                self.logger.info("暂无聊天消息")
+                return None
+                
+        except Exception as e:
+            self.logger.error(f"获取最新聊天消息失败: {e}")
+            return None
+    
+    def clean_old_chat_messages(self, keep_days: int = 30) -> int:
+        """
+        清理旧的聊天消息（从按天存储的chat集合）
+        
+        Args:
+            keep_days: 保留最近几天的消息
+            
+        Returns:
+            int: 删除的文档数量
+        """
+        try:
+            from datetime import datetime, timedelta
+            
+            collection = self.get_collection("chat")
+            
+            # 计算删除日期点
+            cutoff_date = datetime.now() - timedelta(days=keep_days)
+            cutoff_date_str = cutoff_date.strftime("%Y-%m-%d")
+            
+            # 删除旧文档
+            query = {"date": {"$lt": cutoff_date_str}}
+            result = collection.delete_many(query)
+            
+            deleted_count = result.deleted_count
+            self.logger.info(f"成功清理 {deleted_count} 个旧聊天文档（保留最近{keep_days}天）")
+            return deleted_count
+            
+        except Exception as e:
+            self.logger.error(f"清理旧聊天消息失败: {e}")
+            return 0
 
 # ========================= 测试和使用示例 =========================
 

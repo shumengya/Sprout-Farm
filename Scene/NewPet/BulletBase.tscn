@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://cqtv1dob3dm8b"]
+
+[ext_resource type="Script" uid="uid://bt57qac8hmg1u" path="res://Scene/NewPet/BulletBase.gd" id="1_guena"]
+[ext_resource type="Texture2D" uid="uid://by01joyt7e4qh" path="res://assets/子弹图片/01.png" id="2_2q4gn"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 8.0
+
+[node name="BulletBase" type="Area2D"]
+script = ExtResource("1_guena")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 0, 0.8)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_2q4gn")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1")
+
+[node name="Trail" type="Line2D" parent="."]
+width = 2.0
+default_color = Color(1, 1, 0, 0.5)
+
+[node name="HitEffect" type="Node2D" parent="."]
+
+[node name="LifeTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+autostart = true

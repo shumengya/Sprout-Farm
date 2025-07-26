@@ -20,7 +20,6 @@ show_help() {
     echo "  logs     - 查看日志"
     echo "  status   - 查看状态"
     echo "  build    - 重新构建镜像"
-    echo "  clean    - 清理停止的容器和未使用的镜像"
     echo "  help     - 显示此帮助信息"
 }
 
@@ -41,17 +40,10 @@ check_docker() {
 start_server() {
     echo "🚀 启动萌芽农场服务器..."
     
-    # 检查配置文件是否存在
-    if [ ! -f "config/crop_data.json" ]; then
-        echo "⚠️  警告: 配置文件不存在，请确保 config 目录包含必要的配置文件"
-    fi
-    
     # 启动容器
     docker-compose up -d
     
     echo "✅ 服务器启动成功!"
-    echo "📡 服务器地址: localhost:6060"
-    echo "📝 查看日志: $0 logs"
 }
 
 # 停止服务器
@@ -83,11 +75,6 @@ show_status() {
     if docker-compose ps | grep -q "Up"; then
         echo "✅ 服务器正在运行"
         echo "🔗 端口映射: 6060:6060"
-        
-        # 显示资源使用情况
-        echo ""
-        echo "📈 资源使用情况:"
-        docker stats --no-stream $CONTAINER_NAME 2>/dev/null || echo "无法获取资源使用情况"
     else
         echo "❌ 服务器未运行"
     fi
@@ -100,13 +87,6 @@ build_image() {
     echo "✅ 镜像构建完成"
 }
 
-# 清理
-clean_up() {
-    echo "🧹 清理停止的容器和未使用的镜像..."
-    docker-compose down
-    docker system prune -f
-    echo "✅ 清理完成"
-}
 
 # 主函数
 main() {
@@ -130,9 +110,6 @@ main() {
             ;;
         "build")
             build_image
-            ;;
-        "clean")
-            clean_up
             ;;
         "help"|*)
             show_help

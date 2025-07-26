@@ -25,24 +25,24 @@ class ConsoleCommandsAPI:
         """
         self.server = server
         self.commands = {
-            "addmoney": self.cmd_add_money,
-            "addxp": self.cmd_add_experience,
-            "addlevel": self.cmd_add_level,
-            "addseed": self.cmd_add_seed,
-            "lsplayer": self.cmd_list_players,
-            "playerinfo": self.cmd_player_info,
-            "resetland": self.cmd_reset_land,
-            "weather": self.cmd_weather,
-            "help": self.cmd_help,
-            "stop": self.cmd_stop,
-            "save": self.cmd_save_all,
-            "reload": self.cmd_reload_config,
+            "addmoney": self.cmd_add_money, # 给玩家添加金币
+            "addxp": self.cmd_add_experience, # 给玩家添加经验值
+            "addlevel": self.cmd_add_level, # 给玩家添加等级
+            "addseed": self.cmd_add_seed, # 给玩家添加种子
+            "lsplayer": self.cmd_list_players, # 列出所有玩家
+            "playerinfo": self.cmd_player_info, # 查看玩家信息
+            "resetland": self.cmd_reset_land, # 重置玩家土地
+            "weather": self.cmd_weather, # 设置天气
+            "help": self.cmd_help, # 显示帮助信息
+            "stop": self.cmd_stop, # 停止服务器
+            "save": self.cmd_save_all, # 保存所有玩家数据
+            "reload": self.cmd_reload_config, # 重新加载配置文件
             # MongoDB管理命令
-            "dbtest": self.cmd_db_test,
-            "dbconfig": self.cmd_db_config,
-            "dbchat": self.cmd_db_chat,
-            "dbclean": self.cmd_db_clean,
-            "dbbackup": self.cmd_db_backup
+            "dbtest": self.cmd_db_test, # 测试MongoDB连接
+            "dbconfig": self.cmd_db_config, # 配置MongoDB连接
+            "dbchat": self.cmd_db_chat, # 管理聊天数据
+            "dbclean": self.cmd_db_clean, # 清理数据库
+            "dbbackup": self.cmd_db_backup # 备份数据库
         }
         
         # 初始化MongoDB API
@@ -227,36 +227,36 @@ class ConsoleCommandsAPI:
     
     def cmd_list_players(self, args: List[str]):
         """列出所有玩家命令: /lsplayer"""
-        saves_dir = "game_saves"
-        if not os.path.exists(saves_dir):
-            print("❌ 游戏存档目录不存在")
-            return
-            
-        player_files = [f for f in os.listdir(saves_dir) if f.endswith('.json')]
-        if not player_files:
-            print("📭 暂无已注册玩家")
-            return
-            
-        print(f"📋 已注册玩家列表 (共 {len(player_files)} 人):")
-        print("-" * 80)
-        print(f"{'QQ号':<12} {'昵称':<15} {'等级':<6} {'金币':<10} {'最后登录':<20}")
-        print("-" * 80)
-        
-        for i, filename in enumerate(sorted(player_files), 1):
-            qq_number = filename.replace('.json', '')
-            try:
-                player_data = self.server._load_player_data_from_file(qq_number)
-                if player_data:
-                    nickname = player_data.get("玩家昵称", "未设置")
-                    level = player_data.get("等级", 1)
-                    money = player_data.get("钱币", 0)
-                    last_login = player_data.get("最后登录时间", "从未登录")
+        try:
+            # 使用MongoDB获取玩家数据
+            if hasattr(self.server, 'mongo_api') and self.server.mongo_api:
+                players_data = self.server.mongo_api.get_all_players_basic_info()
+                
+                if not players_data:
+                    print("📭 暂无已注册玩家")
+                    return
+                
+                print(f"📋 已注册玩家列表 (共 {len(players_data)} 人):")
+                print("-" * 80)
+                print(f"{'QQ号':<12} {'昵称':<15} {'等级':<6} {'金币':<10} {'最后登录':<20}")
+                print("-" * 80)
+                
+                for player in players_data:
+                    qq_number = player.get("玩家账号", "未知")
+                    nickname = player.get("玩家昵称", "未设置")
+                    level = player.get("等级", 1)
+                    money = player.get("钱币", 0)
+                    last_login = player.get("最后登录时间", "从未登录")
                     
                     print(f"{qq_number:<12} {nickname:<15} {level:<6} {money:<10} {last_login:<20}")
-            except Exception as e:
-                print(f"{qq_number:<12} {'数据错误':<15} {'--':<6} {'--':<10} {'无法读取':<20}")
-        
-        print("-" * 80)
+                
+                print("-" * 80)
+            else:
+                print("❌ 未配置MongoDB连接")
+                
+        except Exception as e:
+            print(f"❌ 列出玩家时出错: {str(e)}")
+    
     
     def cmd_player_info(self, args: List[str]):
         """查看玩家信息命令: /playerinfo QQ号"""

@@ -64,6 +64,9 @@ func _ready():
 	# 创建TCP客户端实例
 	self.add_child(client)
 	
+	# 禁用自动重连，避免频繁的本地连接
+	client.auto_reconnect = false
+	
 	# 连接信号
 	client.connected_to_server.connect(_on_connected)
 	client.connection_failed.connect(_on_connection_failed)
@@ -345,8 +348,20 @@ func _on_data_received(data):
 		elif action_type == "set_patrol_pet":
 			if success:
 				main_game.patrol_pets = updated_data["巡逻宠物"]
-				main_game.update_patrol_pets()
+				main_game.update_patrol_pets(updated_data["巡逻宠物"])
 				pet_inform_panel._refresh_patrol_button()
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
+		# 设置出战宠物响应
+		elif action_type == "set_battle_pet":
+			if success:
+				main_game.battle_pets = updated_data["出战宠物"]
+				pet_inform_panel._refresh_battle_button()
+				# 更新对战按钮显示状态
+				if main_game.has_method("_update_battle_button_visibility"):
+					main_game._update_battle_button_visibility()
 				Toast.show(message, Color.GREEN)
 			else:
 				Toast.show(message, Color.RED)
@@ -533,6 +548,11 @@ func _on_data_received(data):
 		main_game._handle_crop_data_response(data)
 	elif message_type == "item_config_response":
 		main_game._handle_item_config_response(data)
+	elif message_type == "pet_config_response":
+		# 保存宠物配置到MainGame
+		main_game._handle_pet_config_response(data)
+		# 同时传递给宠物商店面板
+		pet_store_panel._on_pet_config_received(data)
 	elif message_type == "visit_player_response":
 		main_game._handle_visit_player_response(data)
 	elif message_type == "return_my_farm_response":
@@ -934,6 +954,16 @@ func sendGetItemConfig():
 	})
 	return true
 
+#发送获取宠物配置数据请求
+func sendGetPetConfig():
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "request_pet_config"
+	})
+	return true
+
 #发送访问玩家请求
 func sendVisitPlayer(target_username):
 	if not client.is_client_connected():
@@ -1165,6 +1195,18 @@ func send_get_wisdom_tree_config():
 		
 	client.send_data({
 		"type": "get_wisdom_tree_config",
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送宠物对战结果
+func send_pet_battle_result(battle_result: Dictionary):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "pet_battle_result",
+		"battle_result": battle_result,
 		"timestamp": Time.get_unix_time_from_system()
 	})
 	return true

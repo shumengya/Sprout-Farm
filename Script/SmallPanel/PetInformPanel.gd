@@ -60,9 +60,8 @@ func show_pet_info(pet_name: String, pet_data: Dictionary):
 	# 设置宠物图片
 	_set_pet_image(pet_name)
 	
-	# 设置宠物名称
-	var basic_info = pet_data.get("基本信息", {})
-	var pet_owner_name = basic_info.get("宠物名称", pet_name)
+	# 设置宠物名称（新格式：直接从pet_name字段获取）
+	var pet_owner_name = pet_data.get("pet_name", pet_name)
 	pet_name_edit.text = pet_owner_name
 	
 	# 设置宠物详细信息
@@ -85,26 +84,40 @@ func _set_pet_image(pet_name: String):
 
 # 获取宠物纹理
 func _get_pet_texture(pet_name: String) -> Texture2D:
-	var pet_config = _load_pet_config()
+	# 从服务器的宠物配置获取场景路径
+	var pet_config = main_game.pet_config  # 使用服务器返回的宠物配置
 	if pet_config.has(pet_name):
 		var pet_info = pet_config[pet_name]
-		var scene_path = pet_info.get("场景路径", "")
+		var scene_path = pet_info.get("pet_image", "")  # 使用服务器数据的pet_image字段
+		print("宠物信息面板 ", pet_name, " 的图片路径：", scene_path)
 		
 		if scene_path != "" and ResourceLoader.exists(scene_path):
+			print("宠物信息面板开始加载宠物场景：", scene_path)
 			var pet_scene = load(scene_path)
 			if pet_scene:
 				var pet_instance = pet_scene.instantiate()
-				var pet_image_node = pet_instance.get_node_or_null("PetImage")
-				if pet_image_node and pet_image_node.sprite_frames:
-					var animation_names = pet_image_node.sprite_frames.get_animation_names()
+				# 直接使用实例化的场景根节点，因为根节点就是PetImage
+				if pet_instance and pet_instance.sprite_frames:
+					var animation_names = pet_instance.sprite_frames.get_animation_names()
 					if animation_names.size() > 0:
 						var default_animation = animation_names[0]
-						var frame_count = pet_image_node.sprite_frames.get_frame_count(default_animation)
+						var frame_count = pet_instance.sprite_frames.get_frame_count(default_animation)
 						if frame_count > 0:
-							var texture = pet_image_node.sprite_frames.get_frame_texture(default_animation, 0)
+							var texture = pet_instance.sprite_frames.get_frame_texture(default_animation, 0)
+							print("宠物信息面板成功获取宠物纹理：", pet_name)
 							pet_instance.queue_free()
 							return texture
+					else:
+						print("宠物信息面板场景没有动画：", pet_name)
+				else:
+					print("宠物信息面板场景没有PetImage节点或sprite_frames：", pet_name)
 				pet_instance.queue_free()
+			else:
+				print("宠物信息面板无法加载宠物场景：", scene_path)
+		else:
+			print("宠物信息面板图片路径无效或文件不存在：", scene_path)
+	else:
+		print("宠物信息面板配置中没有找到：", pet_name)
 	return null
 
 # 加载宠物配置数据
@@ -123,19 +136,10 @@ func _load_pet_config() -> Dictionary:
 	
 	return json.data
 
-# 设置宠物详细信息（使用bbcode美化）
+# 设置宠物详细信息（使用bbcode美化）- 新格式
 func _set_pet_detailed_info(pet_name: String, pet_data: Dictionary):
-	var basic_info = pet_data.get("基本信息", {})
-	var level_exp = pet_data.get("等级经验", {})
-	var purchase_info = pet_data.get("购买信息", {})
-	var health_defense = pet_data.get("生命与防御", {})
-	var attack_info = pet_data.get("基础攻击属性", {})
-	var movement = pet_data.get("移动与闪避", {})
-	var element = pet_data.get("元素属性", {})
-	var quality = pet_data.get("品质系统", {})
-	
 	# 计算宠物年龄
-	var pet_birthday = basic_info.get("生日", "")
+	var pet_birthday = pet_data.get("pet_birthday", "")
 	var pet_age = 0
 	if pet_birthday != "":
 		pet_age = _calculate_pet_age(pet_birthday)
@@ -145,75 +149,63 @@ func _set_pet_detailed_info(pet_name: String, pet_data: Dictionary):
 	
 	# 基本信息
 	info_text += "[color=pink][b]🐾 基本信息[/b][/color]\n"
-	info_text += "宠物类型：[color=yellow]" + str(basic_info.get("宠物类型", "未知")) + "[/color]\n"
-	info_text += "宠物编号：[color=gray]" + str(basic_info.get("宠物ID", "无")) + "[/color]\n"
-	info_text += "性格特点：[color=cyan]" + str(basic_info.get("性格", "活泼")) + "[/color]\n"
+	info_text += "宠物类型：[color=yellow]" + str(pet_data.get("pet_type", "未知")) + "[/color]\n"
+	info_text += "宠物编号：[color=gray]" + str(pet_data.get("pet_id", "无")) + "[/color]\n"
+	info_text += "性格特点：[color=cyan]" + str(pet_data.get("pet_temperament", "活泼")) + "[/color]\n"
 	info_text += "出生日期：[color=green]" + str(pet_birthday) + "[/color]\n"
 	info_text += "年龄天数：[color=orange]" + str(pet_age) + " 天[/color]\n"
+	info_text += "爱好：[color=magenta]" + str(pet_data.get("pet_hobby", "无")) + "[/color]\n"
+	info_text += "介绍：[color=lime]" + str(pet_data.get("pet_introduction", "无")) + "[/color]\n\n"
 
 	# 等级经验
 	info_text += "[color=gold][b]⭐ 等级经验[/b][/color]\n"
-	info_text += "当前等级：[color=yellow]" + str(level_exp.get("宠物等级", 1)) + " 级[/color]\n"
-	info_text += "经验值：[color=cyan]" + str(level_exp.get("当前经验", 0)) + "/" + str(level_exp.get("最大经验", 100)) + "[/color]\n"
-	info_text += "亲密度：[color=pink]" + str(level_exp.get("亲密度", 0)) + "/" + str(level_exp.get("最大亲密度", 1000)) + "[/color]\n\n"
+	info_text += "当前等级：[color=yellow]" + str(pet_data.get("pet_level", 1)) + " 级[/color]\n"
+	info_text += "经验值：[color=cyan]" + str(pet_data.get("pet_experience", 0)) + "/" + str(pet_data.get("pet_max_experience", 1000)) + "[/color]\n"
+	info_text += "亲密度：[color=pink]" + str(pet_data.get("pet_intimacy", 0)) + "/" + str(pet_data.get("pet_max_intimacy", 1000)) + "[/color]\n\n"
 	
 	# 生命与防御
 	info_text += "[color=red][b]❤️ 生命与防御[/b][/color]\n"
-	info_text += "生命值：[color=red]" + str(health_defense.get("当前生命值", 0)) + "/" + str(health_defense.get("最大生命值", 0)) + "[/color]\n"
-	info_text += "护甲值：[color=blue]" + str(health_defense.get("当前护甲值", 0)) + "/" + str(health_defense.get("最大护甲值", 0)) + "[/color]\n"
-	info_text += "护盾值：[color=cyan]" + str(health_defense.get("当前护盾值", 0)) + "/" + str(health_defense.get("最大护盾值", 0)) + "[/color]\n"
-	info_text += "生命恢复：[color=lime]" + str(health_defense.get("生命恢复速度", 0)) + "/秒[/color]\n\n"
+	info_text += "生命值：[color=red]" + str(pet_data.get("pet_current_health", pet_data.get("max_health", 100))) + "/" + str(pet_data.get("max_health", 100)) + "[/color]\n"
+	info_text += "护甲值：[color=blue]" + str(pet_data.get("pet_current_armor", pet_data.get("max_armor", 0))) + "/" + str(pet_data.get("max_armor", 0)) + "[/color]\n"
+	info_text += "护盾值：[color=cyan]" + str(pet_data.get("pet_current_shield", pet_data.get("max_shield", 0))) + "/" + str(pet_data.get("max_shield", 0)) + "[/color]\n"
+	info_text += "生命恢复：[color=lime]" + str(pet_data.get("health_regen", 0)) + "/秒[/color]\n"
+	info_text += "护盾恢复：[color=cyan]" + str(pet_data.get("shield_regen", 0)) + "/秒[/color]\n\n"
 	
 	# 攻击属性
 	info_text += "[color=orange][b]⚔️ 攻击属性[/b][/color]\n"
-	info_text += "攻击类型：[color=yellow]" + _get_attack_type_name(str(attack_info.get("攻击类型", "MELEE"))) + "[/color]\n"
-	info_text += "攻击伤害：[color=red]" + str(attack_info.get("基础攻击伤害", 0)) + " 点[/color]\n"
-	info_text += "攻击距离：[color=green]" + str(attack_info.get("攻击距离", 0)) + " 像素[/color]\n"
-	info_text += "暴击几率：[color=purple]" + str(attack_info.get("暴击率", 0) * 100) + "%[/color]\n"
-	info_text += "暴击倍数：[color=purple]" + str(attack_info.get("暴击伤害倍数", 1.0)) + " 倍[/color]\n"
-	info_text += "生命汲取：[color=magenta]" + str(attack_info.get("生命汲取", 0) * 100) + "%[/color]\n\n"
+	info_text += "攻击伤害：[color=red]" + str(pet_data.get("base_attack_damage", 0)) + " 点[/color]\n"
+	info_text += "暴击几率：[color=purple]" + str(pet_data.get("crit_rate", 0) * 100) + "%[/color]\n"
+	info_text += "暴击倍数：[color=purple]" + str(pet_data.get("crit_damage", 1.0)) + " 倍[/color]\n"
+	info_text += "护甲穿透：[color=orange]" + str(pet_data.get("armor_penetration", 0)) + " 点[/color]\n"
+	info_text += "左手武器：[color=yellow]" + str(pet_data.get("left_weapon", "无")) + "[/color]\n"
+	info_text += "右手武器：[color=yellow]" + str(pet_data.get("right_weapon", "无")) + "[/color]\n\n"
 	
 	# 移动与闪避
 	info_text += "[color=green][b]🏃 移动与闪避[/b][/color]\n"
-	info_text += "移动速度：[color=cyan]" + str(movement.get("移动速度", 0)) + " 像素/秒[/color]\n"
-	info_text += "闪避几率：[color=yellow]" + str(movement.get("闪避率", 0) * 100) + "%[/color]\n"
-	info_text += "击退力度：[color=red]" + str(movement.get("击退力度", 0)) + " 点[/color]\n"
-	info_text += "击退抗性：[color=blue]" + str(movement.get("击退抗性", 0) * 100) + "%[/color]\n\n"
+	info_text += "移动速度：[color=cyan]" + str(pet_data.get("move_speed", 0)) + " 像素/秒[/color]\n"
+	info_text += "闪避几率：[color=yellow]" + str(pet_data.get("dodge_rate", 0) * 100) + "%[/color]\n\n"
 	
 	# 元素属性
 	info_text += "[color=purple][b]🔥 元素属性[/b][/color]\n"
-	info_text += "元素类型：[color=yellow]" + _get_element_name(str(element.get("元素类型", "NONE"))) + "[/color]\n"
-	info_text += "元素伤害：[color=orange]" + str(element.get("元素克制额外伤害", 0)) + " 点[/color]\n\n"
+	info_text += "元素类型：[color=yellow]" + _get_element_name(str(pet_data.get("element_type", "NONE"))) + "[/color]\n"
+	info_text += "元素伤害：[color=orange]" + str(pet_data.get("element_damage_bonus", 0)) + " 点[/color]\n\n"
 	
-	# 品质系统
-	var quality_text = str(quality.get("宠物品质", "COMMON"))
-	var quality_color = "white"
-	var quality_name = ""
-	if quality_text == "COMMON":
-		quality_color = "gray"
-		quality_name = "普通"
-	elif quality_text == "RARE":
-		quality_color = "blue"
-		quality_name = "稀有"
-	elif quality_text == "EPIC":
-		quality_color = "purple"
-		quality_name = "史诗"
-	elif quality_text == "LEGENDARY":
-		quality_color = "orange"
-		quality_name = "传说"
-	else:
-		quality_name = quality_text
-	
-	info_text += "[color=gold][b]✨ 品质系统[/b][/color]\n"
-	info_text += "宠物品质：[color=" + quality_color + "]" + quality_name + "[/color]\n\n"
-	
-	# 购买信息
-	info_text += "[color=gold][b]💰 购买信息[/b][/color]\n"
-	info_text += "购买价格：[color=yellow]" + str(purchase_info.get("购买价格", 0)) + " 金币[/color]\n"
+	# 技能系统
+	info_text += "[color=gold][b]✨ 技能系统[/b][/color]\n"
+	if pet_data.get("enable_multi_projectile_skill", false):
+		info_text += "多重弹射：[color=green]已激活[/color] (延迟: " + str(pet_data.get("multi_projectile_delay", 0)) + "秒)\n"
+	if pet_data.get("enable_berserker_skill", false):
+		info_text += "狂暴技能：[color=red]已激活[/color] (倍数: " + str(pet_data.get("berserker_bonus", 1.0)) + ", 持续: " + str(pet_data.get("berserker_duration", 0)) + "秒)\n"
+	if pet_data.get("enable_self_destruct_skill", false):
+		info_text += "自爆技能：[color=orange]已激活[/color]\n"
+	if pet_data.get("enable_summon_pet_skill", false):
+		info_text += "召唤技能：[color=cyan]已激活[/color] (数量: " + str(pet_data.get("summon_count", 0)) + ", 缩放: " + str(pet_data.get("summon_scale", 1.0)) + ")\n"
+	if pet_data.get("enable_death_respawn_skill", false):
+		info_text += "死亡重生：[color=purple]已激活[/color] (生命: " + str(pet_data.get("respawn_health_percentage", 0) * 100) + "%)\n"
+	info_text += "\n"
 	
 	# 设置文本
 	pet_inform.text = info_text
-
 
 # 获取攻击类型名称
 func _get_attack_type_name(attack_type: String) -> String:
@@ -340,9 +332,8 @@ func on_edit_inform_button_pressed():
 		Toast.show("宠物名字太长，最多20个字符", Color.RED, 2.0, 1.0)
 		return
 	
-	# 获取当前宠物名字
-	var basic_info = current_pet_data.get("基本信息", {})
-	var current_name = basic_info.get("宠物名称", "")
+	# 获取当前宠物名字（新格式）
+	var current_name = current_pet_data.get("pet_name", "")
 	
 	# 检查名字是否有变化
 	if new_pet_name == current_name:
@@ -383,9 +374,8 @@ func _on_confirm_rename_pet(new_name: String, dialog: AcceptDialog):
 
 # 取消重命名宠物
 func _on_cancel_rename_pet(dialog: AcceptDialog):
-	# 恢复原名字
-	var basic_info = current_pet_data.get("基本信息", {})
-	var original_name = basic_info.get("宠物名称", "")
+	# 恢复原名字（新格式）
+	var original_name = current_pet_data.get("pet_name", "")
 	pet_name_edit.text = original_name
 	dialog.queue_free()
 
@@ -395,9 +385,8 @@ func _send_rename_pet_request(new_name: String):
 		Toast.show("网络功能不可用", Color.RED, 2.0, 1.0)
 		return
 	
-	# 获取宠物ID
-	var basic_info = current_pet_data.get("基本信息", {})
-	var pet_id = basic_info.get("宠物ID", "")
+	# 获取宠物ID（新格式）
+	var pet_id = current_pet_data.get("pet_id", "")
 	
 	if pet_id == "":
 		Toast.show("宠物ID无效", Color.RED, 2.0, 1.0)
@@ -411,9 +400,9 @@ func _send_rename_pet_request(new_name: String):
 
 # 处理重命名成功的响应（从宠物背包或其他地方调用）
 func on_rename_pet_success(pet_id: String, new_name: String):
-	# 更新当前宠物数据
-	if current_pet_data.get("基本信息", {}).get("宠物ID", "") == pet_id:
-		current_pet_data["基本信息"]["宠物名称"] = new_name
+	# 更新当前宠物数据（新格式）
+	if current_pet_data.get("pet_id", "") == pet_id:
+		current_pet_data["pet_name"] = new_name
 		pet_name_edit.text = new_name
 		Toast.show("宠物名字修改成功！", Color.GREEN, 2.0, 1.0)
 		
@@ -469,11 +458,6 @@ func on_use_item_button_pressed():
 
 # 巡逻按钮点击事件
 func _on_patrol_button_pressed():
-	#直接在客户端
-	patro_button.text = "取消巡逻"
-	patro_button.modulate = Color.ORANGE
-	
-	
 	if current_pet_data.is_empty():
 		Toast.show("没有选择宠物", Color.RED, 2.0, 1.0)
 		return
@@ -484,65 +468,61 @@ func _on_patrol_button_pressed():
 		return
 	
 	# 获取宠物ID
-	var basic_info = current_pet_data.get("基本信息", {})
-	var pet_id = basic_info.get("宠物ID", "")
-	
+	var pet_id = current_pet_data.get("pet_id", "")
 	if pet_id == "":
 		Toast.show("宠物ID无效", Color.RED, 2.0, 1.0)
 		return
 	
-	# 检查当前宠物是否已在巡逻
-	var is_currently_patrolling = _is_pet_patrolling(pet_id)
+	# 检查是否已经在巡逻
+	var is_patrolling = _is_pet_patrolling(pet_id)
 	
-	if is_currently_patrolling:
-		# 取消巡逻
-		_remove_from_patrol(pet_id)
+	if is_patrolling:
+		# 取消巡逻 - 发送到服务器
+		_send_patrol_request(pet_id, false)
+		var pet_name = current_pet_data.get("pet_name", "宠物")
+		Toast.show("正在取消 " + pet_name + " 的巡逻...", Color.YELLOW, 2.0, 1.0)
 	else:
-		# 添加到巡逻
-		_add_to_patrol(pet_id)
+		# 检查巡逻宠物数量限制
+		if main_game.patrol_pet_instances.size() >= 4:
+			Toast.show("最多只能设置4个巡逻宠物", Color.RED, 2.0, 1.0)
+			return
+		
+		# 开始巡逻 - 发送到服务器
+		_send_patrol_request(pet_id, true)
+		var pet_name = current_pet_data.get("pet_name", "宠物")
+		#Toast.show("正在设置 " + pet_name + " 为巡逻宠物...", Color.GREEN, 2.0, 1.0)
 
-# 检查宠物是否正在巡逻（基于服务器数据）
+# 发送巡逻请求到服务器
+func _send_patrol_request(pet_id: String, is_patrolling: bool):
+	var message = {
+		"type": "set_patrol_pet",
+		"pet_id": pet_id,
+		"is_patrolling": is_patrolling
+	}
+	tcp_network_manager_panel.client.send_data(message)
+
+# 检查宠物是否在巡逻
 func _is_pet_patrolling(pet_id: String) -> bool:
-	# 检查服务器的巡逻宠物数据
-	if main_game.patrol_pets == null or main_game.patrol_pets.size() == 0:
-		return false
-	
-	# 遍历巡逻宠物列表，查找匹配的ID
-	for patrol_pet in main_game.patrol_pets:
-		var patrol_pet_id = patrol_pet.get("基本信息", {}).get("宠物ID", "")
-		if patrol_pet_id == pet_id:
-			return true
-	
+	# 检查本地 patrol_pet_instances 数组
+	for pet_instance in main_game.patrol_pet_instances:
+		if pet_instance and is_instance_valid(pet_instance):
+			if pet_instance.pet_id == pet_id:
+				return true
 	return false
 
-# 添加到巡逻（新的基于ID的逻辑）
-func _add_to_patrol(pet_id: String):
-	# 检查巡逻宠物数量限制（目前服务器设置最多3个）
-	if main_game.patrol_pets != null and main_game.patrol_pets.size() >= 3:
-		Toast.show("最多只能设置3个巡逻宠物", Color.ORANGE, 3.0, 1.0)
-		return
+# 移除巡逻宠物
+func _remove_patrol_pet(pet_id: String):
+	# 查找并移除对应的巡逻宠物实例
+	for pet_instance in main_game.patrol_pet_instances:
+		if pet_instance and is_instance_valid(pet_instance):
+			# 检查是否是对应的巡逻宠物
+			if pet_instance.pet_id == pet_id:
+				pet_instance.queue_free()
+				main_game.patrol_pet_instances.erase(pet_instance)
+				print("移除巡逻宠物实例: " + pet_instance.pet_name)
+				return
 	
-	# 目前简化为只允许一个巡逻宠物
-	if main_game.patrol_pets != null and main_game.patrol_pets.size() >= 1:
-		Toast.show("已有宠物在巡逻，请先取消当前巡逻", Color.ORANGE, 3.0, 1.0)
-		return
-	
-	# 如果不是访问模式，则发送到服务器保存
-	if not main_game.is_visiting_mode:
-		# 发送到服务器保存
-		tcp_network_manager_panel.sendSetPatrolPet(pet_id, true)
-		var pet_name = current_pet_data.get("基本信息", {}).get("宠物名称", "未知")
-	else:
-		Toast.show("访问模式下无法设置巡逻宠物", Color.ORANGE, 2.0, 1.0)
-
-# 从巡逻中移除（新的基于ID的逻辑）
-func _remove_from_patrol(pet_id: String):
-	# 如果不是访问模式，则发送到服务器保存
-	if not main_game.is_visiting_mode:
-		# 发送到服务器移除
-		tcp_network_manager_panel.sendSetPatrolPet(pet_id, false)
-	else:
-		Toast.show("访问模式下无法取消巡逻宠物", Color.ORANGE, 2.0, 1.0)
+	print("未找到对应的巡逻宠物实例: " + pet_id)
 
 # 更新巡逻按钮文本
 func _update_patrol_button_text(is_patrolling: bool):
@@ -558,8 +538,7 @@ func _refresh_patrol_button():
 	if current_pet_data.is_empty():
 		return
 	
-	var basic_info = current_pet_data.get("基本信息", {})
-	var pet_id = basic_info.get("宠物ID", "")
+	var pet_id = current_pet_data.get("pet_id", "")
 	
 	if pet_id == "":
 		return
@@ -578,9 +557,8 @@ func _on_battle_button_pressed():
 		Toast.show("访问模式下无法设置出战宠物", Color.ORANGE, 2.0, 1.0)
 		return
 	
-	# 获取宠物ID
-	var basic_info = current_pet_data.get("基本信息", {})
-	var pet_id = basic_info.get("宠物ID", "")
+	# 获取宠物ID（新格式）
+	var pet_id = current_pet_data.get("pet_id", "")
 	
 	if pet_id == "":
 		Toast.show("宠物ID无效", Color.RED, 2.0, 1.0)
@@ -602,9 +580,9 @@ func _is_pet_battling(pet_id: String) -> bool:
 	if main_game.battle_pets == null or main_game.battle_pets.size() == 0:
 		return false
 	
-	# 遍历出战宠物列表，查找匹配的ID
+	# 遍历出战宠物列表，查找匹配的ID（新格式）
 	for battle_pet in main_game.battle_pets:
-		var battle_pet_id = battle_pet.get("基本信息", {}).get("宠物ID", "")
+		var battle_pet_id = battle_pet.get("pet_id", "")
 		if battle_pet_id == pet_id:
 			return true
 	
@@ -612,9 +590,9 @@ func _is_pet_battling(pet_id: String) -> bool:
 
 # 添加到出战（新的基于ID的逻辑）
 func _add_to_battle(pet_id: String):
-	# 检查出战宠物数量限制（目前服务器设置最多1个）
-	if main_game.battle_pets != null and main_game.battle_pets.size() >= 1:
-		Toast.show("最多只能设置1个出战宠物", Color.ORANGE, 3.0, 1.0)
+	# 检查出战宠物数量限制（目前服务器设置最多4个）
+	if main_game.battle_pets != null and main_game.battle_pets.size() >= 4:
+		Toast.show("最多只能设置4个出战宠物", Color.ORANGE, 3.0, 1.0)
 		return
 	
 	# 检查是否在巡逻中（出战宠物不能是巡逻宠物）
@@ -626,7 +604,7 @@ func _add_to_battle(pet_id: String):
 	if not main_game.is_visiting_mode:
 		# 发送到服务器保存
 		tcp_network_manager_panel.sendSetBattlePet(pet_id, true)
-		var pet_name = current_pet_data.get("基本信息", {}).get("宠物名称", "未知")
+		var pet_name = current_pet_data.get("pet_name", "未知")
 		Toast.show("正在设置 " + pet_name + " 为出战宠物...", Color.YELLOW, 2.0, 1.0)
 	else:
 		Toast.show("访问模式下无法设置出战宠物", Color.ORANGE, 2.0, 1.0)
@@ -655,8 +633,7 @@ func _refresh_battle_button():
 	if current_pet_data.is_empty():
 		return
 	
-	var basic_info = current_pet_data.get("基本信息", {})
-	var pet_id = basic_info.get("宠物ID", "")
+	var pet_id = current_pet_data.get("pet_id", "")
 	
 	if pet_id == "":
 		return

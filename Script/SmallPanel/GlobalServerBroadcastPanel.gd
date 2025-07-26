@@ -95,8 +95,9 @@ func _add_message_to_history(data: Dictionary):
 	# 如果有玩家昵称，优先显示昵称
 	var display_name = player_name if player_name != "" else username
 	
-	# 格式化时间
-	var datetime = Time.get_datetime_dict_from_unix_time(timestamp)
+	# 格式化时间 - 确保timestamp是整数类型
+	var timestamp_int = int(timestamp) if typeof(timestamp) == TYPE_STRING else timestamp
+	var datetime = Time.get_datetime_dict_from_unix_time(timestamp_int)
 	var time_str = "%04d年%02d月%02d日 %02d:%02d:%02d" % [datetime.year, datetime.month, datetime.day, datetime.hour, datetime.minute, datetime.second]
 	
 	# 创建消息记录

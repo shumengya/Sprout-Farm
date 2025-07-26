@@ -69,7 +69,7 @@ offset_top = 21.25
 offset_right = 378.0
 offset_bottom = 78.25
 theme_override_font_sizes/font_size = 35
-text = "输入要搜索的人"
+placeholder_text = "输入要搜索的人"
 
 [node name="RefreshButton" type="Button" parent="."]
 custom_minimum_size = Vector2(55, 55)

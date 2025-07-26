@@ -3,7 +3,7 @@ extends Node
 # 变量定义
 @onready var grid_container : GridContainer = $GridContainer  # 农场地块的 GridContainer
 @onready var crop_item : Button = $CopyNodes/CropItem
-@onready var pet_patrol_path_line: Line2D = $PetPatrolPathLine #宠物农场巡逻线
+
 
 #显示信息栏
 @onready var show_money : Label =   $UI/GUI/GameInfoHBox1/money				# 显示当前剩余的钱
@@ -26,6 +26,7 @@ extends Node
 #访问模式按钮 
 @onready var return_my_farm_button: Button = $UI/GUI/VisitVBox/ReturnMyFarmButton	#返回我的农场
 @onready var like_button: Button = $UI/GUI/VisitVBox/LikeButton						#给别人点赞
+@onready var battle_button: Button = $UI/GUI/VisitVBox/BattleButton						#发起对战
 
 #和农场操作相关的按钮
 @onready var one_click_harvestbutton: Button = $UI/GUI/FarmVBox/OneClickHarvestButton	#一键收获
@@ -58,7 +59,7 @@ extends Node
 @onready var tcp_network_manager_panel: Panel = $UI/BigPanel/TCPNetworkManagerPanel  #网络管理器面板
 @onready var item_store_panel: Panel = $UI/BigPanel/ItemStorePanel  #道具商店面板
 @onready var item_bag_panel: Panel = $UI/BigPanel/ItemBagPanel  #道具背包面板
-@onready var player_bag_panel: Panel = $UI/BigPanel/PlayerBagPanel  #种子背包面板
+@onready var player_bag_panel: Panel = $UI/BigPanel/PlayerBagPanel  #种子仓库面板
 @onready var crop_warehouse_panel: Panel = $UI/BigPanel/CropWarehousePanel  #作物仓库面板
 @onready var crop_store_panel: Panel = $UI/BigPanel/CropStorePanel  #种子商店面板
 @onready var player_ranking_panel: Panel = $UI/BigPanel/PlayerRankingPanel  #玩家排行榜面板
@@ -69,6 +70,7 @@ extends Node
 @onready var pet_inform_panel: Panel = $UI/SmallPanel/PetInformPanel #宠物信息面板
 @onready var player_store_panel: Panel = $UI/BigPanel/PlayerStorePanel #玩家小卖部面板
 @onready var game_setting_panel: Panel = $UI/BigPanel/GameSettingPanel #游戏设置面板
+
 
 
 #小面板
@@ -113,6 +115,16 @@ extends Node
 @onready var visit_v_box: VBoxContainer = $UI/GUI/VisitVBox
 @onready var other_v_box: VBoxContainer = $UI/GUI/OtherVBox
 
+@onready var pet_battle_panel: PetBattlePanel = $UI/BigPanel/PetBattlePanel #新的宠物对战场景
+
+
+@onready var pet_patrol_points: Node = $PetPatrolPoints
+@onready var pos_1: Marker2D = $PetPatrolPoints/Pos1 #生成点1
+@onready var pos_2: Marker2D = $PetPatrolPoints/Pos2#生成点2
+@onready var pos_3: Marker2D = $PetPatrolPoints/Pos3#生成点3
+@onready var pos_4: Marker2D = $PetPatrolPoints/Pos4#生成点4
+
+
 
 #玩家基本信息
 var money: int = 500  # 默认每个人初始为100元
@@ -147,6 +159,8 @@ var battle_pets : Array = []
 var can_planted_crop : Dictionary = {}
 #道具配置数据
 var item_config_data : Dictionary = {}
+# 宠物配置数据
+var pet_config : Dictionary = {}
 # 新手大礼包领取状态
 var new_player_gift_claimed : bool = false
 
@@ -199,6 +213,11 @@ var climate_death_timer : int = 0
 #=======================脚本基础方法=======================
 
 func _ready():
+	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+	Engine.max_fps = 0  # 0 表示解锁
+	print("V-Sync disabled，max_fps =", Engine.max_fps)
+	
+	
 	# 显示加载进度面板，隐藏其他所有UI
 	load_progress_panel.show()
 	load_progress_bar.value = 0
@@ -253,6 +272,9 @@ func _ready():
 	# 连接AcceptDialog的确认信号
 	accept_dialog.confirmed.connect(_on_accept_dialog_confirmed)
 	
+	# 连接宠物对战面板的battle_ended信号
+	pet_battle_panel.battle_ended.connect(_on_pet_battle_ended)
+	
 	# 启动在线人数更新定时器
 	_start_online_players_timer()
 	
@@ -263,6 +285,9 @@ func _ready():
 	# 启动后稍等片刻尝试从服务器获取最新数据
 	await get_tree().create_timer(0.5).timeout
 	_try_load_from_server()
+	
+	# 初始化对战按钮显示状态
+	_update_battle_button_visibility()
 
 
 func _process(delta: float) -> void:
@@ -402,6 +427,9 @@ func _handle_visit_player_response(data):
 		is_visiting_mode = true
 		visited_player_data = target_player_data
 		
+		# 控制对战按钮显示
+		_update_battle_button_visibility()
+		
 		# 更新显示数据
 		money = target_player_data.get("钱币", 0)
 		experience = target_player_data.get("经验值", 0)
@@ -442,6 +470,10 @@ func _handle_visit_player_response(data):
 			pet_bag_panel.update_pet_bag_ui()
 		
 		# 初始化巡逻宠物（访问模式）
+		print("[访问模式] 准备初始化巡逻宠物，数据量: ", patrol_pets.size())
+		for i in range(patrol_pets.size()):
+			var pet_data = patrol_pets[i]
+			print("[访问模式] 巡逻宠物", i, ": ", pet_data.get("pet_name", "未知"), " ID:", pet_data.get("pet_id", "无ID"))
 		if has_method("init_patrol_pets"):
 			init_patrol_pets()
 		
@@ -479,6 +511,9 @@ func _handle_return_my_farm_response(data):
 	if success:
 		var player_data = data.get("player_data", {})
 		
+		# 隐藏对战按钮（返回自己农场时）
+		battle_button.hide()
+		
 		# 恢复玩家数据
 		money = player_data.get("钱币", 500)
 		experience = player_data.get("经验值", 0)
@@ -490,6 +525,7 @@ func _handle_return_my_farm_response(data):
 		item_bag = player_data.get("道具背包", [])
 		pet_bag = player_data.get("宠物背包", [])
 		patrol_pets = player_data.get("巡逻宠物", [])
+		battle_pets = player_data.get("出战宠物", [])
 		
 		# 恢复UI显示
 		show_player_name.text = "玩家昵称：" + player_data.get("玩家昵称", "未知")
@@ -525,6 +561,10 @@ func _handle_return_my_farm_response(data):
 			pet_bag_panel.update_pet_bag_ui()
 		
 		# 初始化巡逻宠物（返回自己农场）
+		print("[返回农场] 准备初始化巡逻宠物，数据量: ", patrol_pets.size())
+		for i in range(patrol_pets.size()):
+			var pet_data = patrol_pets[i]
+			print("[返回农场] 巡逻宠物", i, ": ", pet_data.get("pet_name", "未知"), " ID:", pet_data.get("pet_id", "无ID"))
 		if has_method("init_patrol_pets"):
 			init_patrol_pets()
 		
@@ -545,7 +585,6 @@ func _handle_return_my_farm_response(data):
 	else:
 		Toast.show("返回农场失败：" + message, Color.RED)
 		print("返回农场失败：", message)
-
 
 #访客模式下返回我的农场
 func _on_return_my_farm_button_pressed() -> void:
@@ -643,12 +682,8 @@ func _handle_crop_update(update_data):
 	# 更新UI显示
 	_update_farm_lots_state()
 
-# 原来的修复背包数据函数已移除，因为不再需要quality字段
-
 # 处理登录成功
 func handle_login_success(player_data: Dictionary):
-	
-	# 背包数据兼容性处理已移除，品质信息直接从crop_data获取
 	
 	# 更新新手大礼包状态
 	new_player_gift_claimed = player_data.get("new_player_gift_claimed", false)
@@ -666,6 +701,13 @@ func handle_login_success(player_data: Dictionary):
 		tcp_network_manager_panel.sendGetOnlinePlayers()
 		print("登录成功后请求在线人数更新")
 	
+	# 登录成功后请求宠物配置数据
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendGetPetConfig"):
+		if tcp_network_manager_panel.sendGetPetConfig():
+			print("登录成功后请求宠物配置数据")
+		else:
+			print("登录成功后请求宠物配置数据失败")
+	
 	# 其他登录成功后的初始化逻辑可以在这里添加
 	start_game = true
 	
@@ -678,10 +720,11 @@ func handle_login_success(player_data: Dictionary):
 	# 初始化智慧树显示
 	update_wisdom_tree_display()
 	
+	# 初始化对战按钮显示状态
+	_update_battle_button_visibility()
+	
 	# 立即请求服务器历史消息以刷新显示
 	call_deferred("_request_server_history_for_refresh")
-
-
 
 #创建作物按钮
 func _create_crop_button(crop_name: String, crop_quality: String) -> Button:
@@ -729,7 +772,6 @@ func _create_farm_buttons():
 		button.connect("pressed", Callable(self, "_on_item_selected").bind(i))
 		
 		grid_container.add_child(button)
-
 
 # 更新农场地块状态
 func _update_farm_lots_state():
@@ -840,12 +882,10 @@ func _update_farm_lots_state():
 
 	dig_money = digged_count * 1000
 
-
 # 仅在加载游戏或特定情况下完全刷新地块 - 用于与服务器同步时
 func _refresh_farm_lots():
 	_create_farm_buttons()
 	_update_farm_lots_state()
-
 
 # 更新玩家信息显示
 func _update_ui():
@@ -857,15 +897,12 @@ func _update_ui():
 	var my_likes = login_data.get("点赞数", 0)
 	show_like.text = "点赞数：" + str(int(my_likes))
 
-
-
 #打开玩家排行榜面板
 func _on_player_ranking_button_pressed() -> void:
 	
 	player_ranking_panel.show()
 	player_ranking_panel.request_player_rankings()
 	pass 
-
 
 #打开设置面板
 func _on_setting_button_pressed() -> void:
@@ -877,8 +914,6 @@ func _on_watch_broadcast_button_pressed() -> void:
 	# 显示全服大喇叭面板
 	global_server_broadcast_panel.show()
 	global_server_broadcast_panel.move_to_front()
-
-
 
 # 处理AcceptDialog的确认信号
 func _on_accept_dialog_confirmed() -> void:
@@ -896,7 +931,6 @@ func _on_accept_dialog_confirmed() -> void:
 	else:
 		# 处理其他类型的确认逻辑
 		pass
-
 
 #打开一键种植面板
 func _on_one_click_plant_button_pressed() -> void:
@@ -994,10 +1028,9 @@ func _on_pet_store_button_pressed() -> void:
 #===============================================初始化数据处理===============================================
 # 从服务器获取作物数据
 func _load_crop_data():
-	var network_manager = get_node("/root/main/UI/TCPNerworkManager")
-	if network_manager and network_manager.is_connected_to_server():
+	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
 		# 从服务器请求作物数据
-		network_manager.sendGetCropData()
+		tcp_network_manager_panel.sendGetCropData()
 	else:
 		# 如果无法连接服务器，尝试加载本地数据
 		print("无法连接服务器，尝试加载本地作物数据...")
@@ -1154,6 +1187,24 @@ func _handle_item_config_response(response_data):
 		var message = response_data.get("message", "未知错误")
 		print("从服务器获取道具配置数据失败：", message)
 		_load_local_item_config()
+
+# 处理服务器宠物配置响应
+func _handle_pet_config_response(response_data):
+	var success = response_data.get("success", false)
+	
+	if success:
+		var config_data = response_data.get("pet_config", {})
+		if config_data:
+			# 设置全局变量
+			pet_config = config_data
+			print("宠物配置数据已从服务器更新，宠物种类：", pet_config.size())
+		else:
+			print("服务器返回的宠物配置数据为空")
+			pet_config = {}
+	else:
+		var message = response_data.get("message", "未知错误")
+		print("从服务器获取宠物配置数据失败：", message)
+		pet_config = {}
 
 #===============================================初始化数据处理===============================================
 
@@ -2182,6 +2233,8 @@ func _handle_new_player_gift_response(data):
 		# 更新宠物背包UI
 		if updated_data.has("宠物背包"):
 			pet_bag_panel.update_pet_bag_ui()
+			# 更新对战按钮显示
+			_update_battle_button_visibility()
 		
 		# 显示成功消息
 		Toast.show(message, Color.GOLD, 3.0, 1.0)
@@ -2221,7 +2274,7 @@ func _handle_global_broadcast_response(data: Dictionary):
 
 # 处理全服大喇叭历史消息响应
 func _handle_broadcast_history_response(data: Dictionary):
-	print("收到历史消息响应: ", data.get("messages", []).size(), " 条消息")
+	#print("收到历史消息响应: ", data.get("messages", []).size(), " 条消息")
 	
 	if global_server_broadcast_panel and global_server_broadcast_panel.has_method("receive_history_messages"):
 		global_server_broadcast_panel.receive_history_messages(data)
@@ -2239,7 +2292,7 @@ func update_broadcast_display_from_message(data: Dictionary):
 		# 优先显示玩家昵称
 		var display_name = player_name if player_name != "" else username
 		global_server_broadcast.text = display_name + ": " + content
-		print("主界面大喇叭已更新为: ", global_server_broadcast.text)
+		#print("主界面大喇叭已更新为: ", global_server_broadcast.text)
 
 # 从面板获取最新消息更新大喇叭显示
 func update_broadcast_display_from_panel():
@@ -2247,7 +2300,7 @@ func update_broadcast_display_from_panel():
 		var latest_message = global_server_broadcast_panel.get_latest_message()
 		if latest_message != "暂无消息" and latest_message != "全服大喇叭":
 			global_server_broadcast.text = latest_message
-			print("主界面大喇叭已更新为: ", latest_message)
+			#print("主界面大喇叭已更新为: ", latest_message)
 		else:
 			global_server_broadcast.text = "全服大喇叭"
 
@@ -2278,8 +2331,17 @@ func _load_broadcast_from_local():
 			if parse_result == OK:
 				var data = json.data
 				if data is Array and data.size() > 0:
-					# 按时间戳排序
-					data.sort_custom(func(a, b): return a.get("timestamp", 0) < b.get("timestamp", 0))
+					# 按时间戳排序，确保类型一致
+					data.sort_custom(func(a, b): 
+						var timestamp_a = a.get("timestamp", 0)
+						var timestamp_b = b.get("timestamp", 0)
+						# 确保都是数字类型
+						if timestamp_a is String:
+							timestamp_a = float(timestamp_a)
+						if timestamp_b is String:
+							timestamp_b = float(timestamp_b)
+						return timestamp_a < timestamp_b
+					)
 					# 获取最新消息
 					var latest = data[-1]
 					var display_name = latest.get("display_name", "匿名")
@@ -2327,11 +2389,19 @@ func _on_one_click_screen_shot_pressed() -> void:
 	# 保存当前UI状态
 	var ui_state = _save_ui_visibility_state()
 	
+	# 临时禁用UI自动显示逻辑
+	var original_start_game = start_game
+	start_game = false
+	
 	# 隐藏所有UI
 	_hide_all_ui_for_screenshot()
 	
-
-	await get_tree().create_timer(10.0).timeout
+	# 等待5秒
+	await get_tree().create_timer(5.0).timeout
+	
+	# 恢复游戏状态
+	start_game = original_start_game
+	
 	# 恢复UI显示
 	_restore_ui_visibility_state(ui_state)
 	
@@ -2505,6 +2575,8 @@ func _handle_use_pet_item_response(data: Dictionary):
 			# 更新宠物背包UI
 			if pet_bag_panel and pet_bag_panel.has_method("update_pet_bag_ui"):
 				pet_bag_panel.update_pet_bag_ui()
+			# 更新对战按钮显示
+			_update_battle_button_visibility()
 		
 		# 安全更新道具背包数据
 		if updated_data.has("道具背包"):
@@ -2915,180 +2987,175 @@ func _clear_item_selection():
 
 
 
+
 #===============================================巡逻宠物管理===============================================
-var current_patrol_pet: CharacterBody2D = null
+# 简单的巡逻宠物管理
+var patrol_pet_instances: Array[Area2D] = []
 
-# 初始化巡逻宠物（登录时调用）
-func init_patrol_pets():
-	if patrol_pets == null:
-		patrol_pets = []
-	
-	if pet_patrol_path_line:
-		print("巡逻线节点找到，路径点数: " + str(pet_patrol_path_line.points.size()))
-	else:
-		print("错误：找不到巡逻线节点 PetPatrolPathLine")
+func _create_single_patrol_pet(pet_data: Dictionary, position_index: int):
+	# 检查巡逻点节点
+	if not pet_patrol_points:
+		print("错误：找不到巡逻点节点")
 		return
 	
-	update_patrol_pets()
+	# 获取四个巡逻点
+	var patrol_positions = []
+	if pos_1: patrol_positions.append(pos_1.global_position)
+	if pos_2: patrol_positions.append(pos_2.global_position)
+	if pos_3: patrol_positions.append(pos_3.global_position)
+	if pos_4: patrol_positions.append(pos_4.global_position)
 
-# 更新巡逻宠物显示
-func update_patrol_pets():
-	clear_patrol_pets()
+
 	
-	if patrol_pets == null or patrol_pets.size() == 0:
+	if patrol_positions.size() == 0:
+		print("错误：没有找到有效的巡逻点")
 		return
 	
-	# 目前只支持一个巡逻宠物
-	var first_patrol_pet = patrol_pets[0]
-	var pet_id = first_patrol_pet.get("基本信息", {}).get("宠物ID", "")
+	# 确保位置索引有效
+	if position_index >= patrol_positions.size():
+		position_index = position_index % patrol_positions.size()
 	
-	if pet_id != "":
-		_create_patrol_pet_instance(first_patrol_pet)
-
-# 清除巡逻宠物实例
-func clear_patrol_pets():
-	if current_patrol_pet and is_instance_valid(current_patrol_pet):
-		current_patrol_pet.queue_free()
-		current_patrol_pet = null
-	
-	if pet_patrol_path_line:
-		for child in pet_patrol_path_line.get_children():
-			if child is CharacterBody2D:
-				child.queue_free()
-
-# 根据宠物ID设置巡逻宠物
-func set_patrol_pet_by_id(pet_id: String):
-	if pet_id == "":
-		print("警告：宠物ID为空")
+	# 实例化NewPetBase场景
+	var newpet_scene_path = "res://Scene/NewPet/NewPetBase.tscn"
+	if not ResourceLoader.exists(newpet_scene_path):
+		print("错误：找不到NewPetBase场景")
 		return
 	
-	var pet_data = _find_pet_by_id(pet_id)
-	if pet_data.is_empty():
-		print("错误：找不到宠物ID: " + pet_id)
-		return
+	var pet_scene = load(newpet_scene_path)
+	var pet_instance = pet_scene.instantiate()
 	
-	clear_patrol_pets()
+	# 设置基本属性
+	var pet_name = pet_data.get("pet_name", pet_data.get("pet_type", "巡逻宠物"))
+	pet_instance.pet_name = pet_name
+	pet_instance.pet_id = pet_data.get("pet_id", "")
+	pet_instance.pet_type = pet_data.get("pet_type", "")
+	pet_instance.pet_level = pet_data.get("pet_level", 1)
+	
+	# 设置为巡逻状态
+	pet_instance.is_patrolling = true
+	
+	# 添加到场景
+	pet_patrol_points.add_child(pet_instance)
+	patrol_pet_instances.append(pet_instance)
+	
+	# 在添加到场景后设置位置（避免坐标系转换问题）
+	pet_instance.global_position = patrol_positions[position_index]
+	
+	# 设置巡逻中心点
+	pet_instance.set_patrol_center(patrol_positions[position_index])
+	
+	# 应用宠物图片
+	var pet_type = pet_data.get("pet_type", "")
+	var image_scene_path = _get_pet_image_path(pet_type)
+	print("应用宠物图片: " + pet_type + " -> " + image_scene_path)
+	
+	# 等待一帧确保节点完全添加到场景树
 	await get_tree().process_frame
 	
-	_create_patrol_pet_instance(pet_data)
+	if pet_instance.has_method("apply_pet_image") and image_scene_path != "":
+		pet_instance.apply_pet_image(pet_instance, image_scene_path)
+		print("宠物图片应用完成")
+	else:
+		print("无法应用宠物图片: " + str(pet_instance.has_method("apply_pet_image")) + ", " + image_scene_path)
+	
+	print("创建巡逻宠物成功: " + pet_instance.pet_name + " 在位置" + str(position_index + 1))
 
-# 查找宠物数据
-func _find_pet_by_id(pet_id: String) -> Dictionary:
+# 获取宠物图片路径
+func _get_pet_image_path(pet_type: String) -> String:
+	print("[调试] 获取宠物图片路径，宠物类型: " + pet_type)
+	print("[调试] 服务器pet_config大小: " + str(pet_config.size()))
+	
+	# 类型映射表
+	var type_mapping = {
+		"小绿": "大蓝虫", "小蓝": "大蓝虫", "小红": "烈焰鸟", "小黄": "烈焰鸟",
+		"小紫": "大蓝虫", "小橙": "烈焰鸟", "小粉": "大蓝虫", "小黑": "大蓝虫",
+		"小白": "大蓝虫", "小灰": "大蓝虫", "大甲壳虫": "大蓝虫", "小甲壳虫": "大蓝虫",
+		"飞鸟": "烈焰鸟", "小骑士": "大蓝虫", "绿史莱姆": "大蓝虫", "小钻头": "大蓝虫"
+	}
+	
+	# 优先使用本地PetConfig配置（更可靠）
+	var local_pet_config = PetConfig.new()
+	
+	# 首先尝试直接匹配宠物类型
+	var config_data = local_pet_config.get_pet_config(pet_type)
+	if config_data.has("pet_image") and config_data["pet_image"] != "":
+		print("[调试] 从本地配置直接获取图片路径: " + pet_type + " -> " + config_data["pet_image"])
+		return config_data["pet_image"]
+	
+	# 如果直接匹配失败，使用类型映射
+	var mapped_type = type_mapping.get(pet_type, "大蓝虫")
+	#print("[调试] 使用类型映射: " + pet_type + " -> " + mapped_type)
+	
+	config_data = local_pet_config.get_pet_config(mapped_type)
+	if config_data.has("pet_image") and config_data["pet_image"] != "":
+		#print("[调试] 从本地配置获取映射图片路径: " + mapped_type + " -> " + config_data["pet_image"])
+		return config_data["pet_image"]
+	
+	# 检查服务器配置（作为备选）
+	if pet_config.has(pet_type):
+		var server_config_data = pet_config[pet_type]
+		if server_config_data.has("pet_image") and server_config_data["pet_image"] != "":
+			#print("[调试] 从服务器配置获取图片路径: " + pet_type + " -> " + server_config_data["pet_image"])
+			return server_config_data["pet_image"]
+	
+	if pet_config.has(mapped_type):
+		var server_config_data = pet_config[mapped_type]
+		if server_config_data.has("pet_image") and server_config_data["pet_image"] != "":
+			#print("[调试] 从服务器配置获取映射图片路径: " + mapped_type + " -> " + server_config_data["pet_image"])
+			return server_config_data["pet_image"]
+	
+	# 默认返回大蓝虫场景
+	print("[调试] 使用默认图片路径: big_beetle.tscn")
+	return "res://Scene/NewPet/PetType/big_beetle.tscn"
+
+# 更新巡逻宠物（从服务器数据）
+func update_patrol_pets(patrol_pets_data: Array):
+	# 清除现有巡逻宠物
+	clear_patrol_pets()
+	
+	print("[update_patrol_pets] 开始更新巡逻宠物，输入数据量: ", patrol_pets_data.size())
+	print("[update_patrol_pets] 当前访问模式: ", is_visiting_mode)
+	
+	# 限制最多4个巡逻宠物
+	var max_pets = min(patrol_pets_data.size(), 4)
+	
+	# 为每个巡逻宠物创建实例
+	for i in range(max_pets):
+		var pet_data = patrol_pets_data[i]
+		print("[update_patrol_pets] 处理宠物", i, ": ", pet_data.get("pet_name", "未知") if pet_data else "空数据")
+		if pet_data and pet_data.has("pet_id"):
+			_create_single_patrol_pet(pet_data, i)
+		else:
+			print("[update_patrol_pets] 跳过无效宠物数据")
+	
+	print("更新巡逻宠物完成，共创建 " + str(max_pets) + " 个巡逻宠物")
+
+# 清除所有巡逻宠物
+func clear_patrol_pets():
+	for pet_instance in patrol_pet_instances:
+		if pet_instance and is_instance_valid(pet_instance):
+			pet_instance.queue_free()
+	patrol_pet_instances.clear()
+
+# 根据宠物ID查找宠物数据
+func get_pet_data_by_id(pet_id: String) -> Dictionary:
 	if pet_bag == null:
 		return {}
 	
 	for pet_data in pet_bag:
-		var current_id = pet_data.get("基本信息", {}).get("宠物ID", "")
+		var current_id = pet_data.get("pet_id", "")
 		if current_id == pet_id:
 			return pet_data
-	
 	return {}
 
-# 创建巡逻宠物实例（统一的创建逻辑）
-func _create_patrol_pet_instance(pet_data: Dictionary):
-	if not _validate_patrol_prerequisites():
-		return
-	
-	var scene_path = pet_data.get("场景路径", "")
-	if scene_path == "" or not ResourceLoader.exists(scene_path):
-		print("错误：无效的场景路径: " + scene_path)
-		return
-	
-	var pet_scene = load(scene_path)
-	if not pet_scene:
-		print("错误：无法加载宠物场景: " + scene_path)
-		return
-	
-	var pet_instance = pet_scene.instantiate()
-	if not pet_instance:
-		print("错误：无法创建宠物实例")
-		return
-	
-	_setup_patrol_pet(pet_instance, pet_data)
-	
-	pet_patrol_path_line.add_child(pet_instance)
-	current_patrol_pet = pet_instance
-	pet_instance.position = pet_patrol_path_line.points[0]
-	
-	var pet_name = pet_data.get("基本信息", {}).get("宠物名称", "未知")
-	print("创建巡逻宠物成功: " + pet_name)
-
-# 验证巡逻前提条件
-func _validate_patrol_prerequisites() -> bool:
-	if not pet_patrol_path_line:
-		print("错误：找不到巡逻线节点")
-		return false
-	
-	if pet_patrol_path_line.points.size() < 2:
-		print("警告：巡逻路径点数少于2个")
-		return false
-	
-	return true
-
-# 设置巡逻宠物属性
-func _setup_patrol_pet(pet_instance: CharacterBody2D, pet_data: Dictionary):
-	var basic_info = pet_data.get("基本信息", {})
-	var level_exp = pet_data.get("等级经验", {})
-	var health_defense = pet_data.get("生命与防御", {})
-	
-	# 基本信息
-	var original_name = basic_info.get("宠物名称", basic_info.get("宠物类型", "未知宠物"))
-	pet_instance.pet_name = "[巡逻] " + original_name
-	pet_instance.pet_id = basic_info.get("宠物ID", "")
-	pet_instance.pet_type = basic_info.get("宠物类型", "")
-	pet_instance.pet_birthday = basic_info.get("生日", "")
-	pet_instance.pet_personality = basic_info.get("性格", "活泼")
-	pet_instance.pet_team = "patrol"
-	
-	# 等级经验
-	pet_instance.pet_level = level_exp.get("宠物等级", 1)
-	pet_instance.pet_experience = level_exp.get("当前经验", 0.0)
-	pet_instance.max_experience = level_exp.get("最大经验", 100.0)
-	pet_instance.pet_intimacy = level_exp.get("亲密度", 0.0)
-	
-	# 生命防御
-	pet_instance.max_health = health_defense.get("最大生命值", 100.0)
-	pet_instance.current_health = health_defense.get("当前生命值", pet_instance.max_health)
-	pet_instance.max_shield = health_defense.get("最大护盾值", 0.0)
-	pet_instance.current_shield = health_defense.get("当前护盾值", 0.0)
-	pet_instance.max_armor = health_defense.get("最大护甲值", 0.0)
-	pet_instance.current_armor = health_defense.get("当前护甲值", 0.0)
-	
-	# 巡逻设置
-	pet_instance.is_patrolling = true
-	pet_instance.patrol_path = pet_patrol_path_line.points.duplicate()
-	pet_instance.patrol_speed = 80.0
-	pet_instance.current_patrol_index = 0
-	pet_instance.patrol_wait_time = 0.0
-	pet_instance.current_state = pet_instance.PetState.PATROLLING
-	
-	# 禁用战斗行为
-	if pet_instance.has_method("set_combat_enabled"):
-		pet_instance.set_combat_enabled(false)
-	
-	# 显示状态栏和名称
-	if pet_instance.has_node("PetInformVBox"):
-		pet_instance.get_node("PetInformVBox").visible = true
-	
-	if pet_instance.pet_name_rich_text:
-		pet_instance.pet_name_rich_text.text = pet_instance.pet_name
-		pet_instance.pet_name_rich_text.modulate = Color.YELLOW
-		pet_instance.pet_name_rich_text.visible = true
-
+# 初始化巡逻宠物
+func init_patrol_pets():
+	# 使用新的更新函数来初始化巡逻宠物
+	update_patrol_pets(patrol_pets)
 
 # 检查出战宠物和巡逻宠物是否冲突
 func check_battle_patrol_conflict(battle_pet_id: String, patrol_pet_id: String) -> bool:
-	if battle_pet_id == "" or patrol_pet_id == "":
-		return false
 	return battle_pet_id == patrol_pet_id
-
-# 根据宠物ID获取完整的宠物数据
-func get_pet_data_by_id(pet_id: String) -> Dictionary:
-	for pet_data in pet_bag:
-		var current_id = pet_data.get("基本信息", {}).get("宠物ID", "")
-		if current_id == pet_id:
-			return pet_data
-	return {}
 
 #===============================================巡逻宠物管理===============================================
 
@@ -3138,22 +3205,30 @@ func _show_steal_caught_dialog(message: String, patrol_pet_data: Dictionary, bat
 		print("错误：找不到AcceptDialog")
 		return
 	
-	# 获取巡逻宠物和出战宠物信息
-	var patrol_pet_name = patrol_pet_data.get("基本信息", {}).get("宠物名称", "未知宠物")
-	var patrol_pet_level = patrol_pet_data.get("等级经验", {}).get("宠物等级", 1)
-	var patrol_pet_type = patrol_pet_data.get("基本信息", {}).get("宠物类型", "未知类型")
-	
-	var battle_pet_name = battle_pet_data.get("基本信息", {}).get("宠物名称", "未知宠物")
-	var battle_pet_level = battle_pet_data.get("等级经验", {}).get("宠物等级", 1)
-	var battle_pet_type = battle_pet_data.get("基本信息", {}).get("宠物类型", "未知类型")
-	
 	# 构建对话框内容
 	var dialog_content = message + "\n\n"
+	
+	# 显示对方的巡逻宠物（所有）
 	dialog_content += "🛡️ " + target_username + "的巡逻宠物：\n"
-	dialog_content += "   " + patrol_pet_name + " (类型:" + patrol_pet_type + ", 等级:" + str(patrol_pet_level) + ")\n\n"
-	dialog_content += "⚔️ 你的出战宠物：\n"
-	dialog_content += "   " + battle_pet_name + " (类型:" + battle_pet_type + ", 等级:" + str(battle_pet_level) + ")\n\n"
-	dialog_content += "请选择你的行动：\n"
+	var defender_pets = visited_player_data.get("巡逻宠物", [patrol_pet_data])
+	for i in range(min(4, defender_pets.size())):
+		var pet = defender_pets[i]
+		var pet_name = pet.get("pet_name", "未知宠物")
+		var pet_level = pet.get("pet_level", 1)
+		var pet_type = pet.get("pet_type", "未知类型")
+		dialog_content += "   %d. %s (类型:%s, 等级:%d)\n" % [i+1, pet_name, pet_type, pet_level]
+	
+	dialog_content += "\n⚔️ 你的出战宠物：\n"
+	# 显示自己的出战宠物（所有）
+	var attacker_pets = battle_pets if battle_pets.size() > 0 else [battle_pet_data]
+	for i in range(min(4, attacker_pets.size())):
+		var pet = attacker_pets[i]
+		var pet_name = pet.get("pet_name", "未知宠物")
+		var pet_level = pet.get("pet_level", 1)
+		var pet_type = pet.get("pet_type", "未知类型")
+		dialog_content += "   %d. %s (类型:%s, 等级:%d)\n" % [i+1, pet_name, pet_type, pet_level]
+	
+	dialog_content += "\n请选择你的行动：\n"
 	dialog_content += "💰 逃跑：支付 " + str(escape_cost) + " 金币\n"
 	dialog_content += "⚔️ 对战：如果失败支付 " + str(battle_cost) + " 金币"
 	
@@ -3189,9 +3264,9 @@ func _show_steal_caught_dialog(message: String, patrol_pet_data: Dictionary, bat
 func _on_steal_battle_confirmed(patrol_pet_data: Dictionary, battle_pet_data: Dictionary, target_username: String):
 	print("玩家选择宠物对战")
 	
-	# 验证宠物数据完整性
-	var battle_pet_id = battle_pet_data.get("基本信息", {}).get("宠物ID", "")
-	var patrol_pet_id = patrol_pet_data.get("基本信息", {}).get("宠物ID", "")
+	# 验证宠物数据完整性（新格式）
+	var battle_pet_id = battle_pet_data.get("pet_id", "")
+	var patrol_pet_id = patrol_pet_data.get("pet_id", "")
 	
 	if battle_pet_id == "" or patrol_pet_id == "":
 		Toast.show("宠物数据不完整，无法开始对战", Color.RED, 3.0)
@@ -3203,15 +3278,18 @@ func _on_steal_battle_confirmed(patrol_pet_data: Dictionary, battle_pet_data: Di
 		return
 	
 	# 停止宠物对战面板的自动对战逻辑
-	if pet_fight_panel and pet_fight_panel.has_method("stop_auto_battle"):
-		pet_fight_panel.stop_auto_battle()
+	if pet_battle_panel and pet_battle_panel.has_method("stop_auto_battle"):
+		pet_battle_panel.stop_auto_battle()
 	
 	# 加载双方宠物数据到对战面板
-	if pet_fight_panel and pet_fight_panel.has_method("setup_steal_battle"):
-		pet_fight_panel.setup_steal_battle(battle_pet_data, patrol_pet_data, user_name, target_username)
+	if pet_battle_panel and pet_battle_panel.has_method("setup_steal_battle"):
+		# 传递完整的出战宠物数组和巡逻宠物数组
+		var attacker_pets = battle_pets if battle_pets.size() > 0 else [battle_pet_data]
+		var defender_pets = visited_player_data.get("巡逻宠物", [patrol_pet_data])
+		pet_battle_panel.setup_steal_battle(attacker_pets, defender_pets, user_name, target_username)
 	
 	# 显示宠物对战面板
-	pet_fight_panel.show()
+	pet_battle_panel.show()
 	GlobalVariables.isZoomDisabled = true
 	
 	Toast.show("准备进入宠物对战！", Color.YELLOW, 2.0)
@@ -3229,6 +3307,142 @@ func _on_steal_escape_confirmed(escape_cost: int):
 #====================================偷菜被发现-宠物对战处理=========================================
 
 
+#========================访问模式直接向巡逻宠物发起战斗========================
+func _on_battle_button_pressed() -> void:
+	# 检查是否为访问模式
+	if not is_visiting_mode:
+		Toast.show("只有在访问模式下才能向巡逻宠物发起对战", Color.ORANGE, 3.0)
+		return
+	
+	# 检查对方是否有巡逻宠物
+	if not visited_player_data.has("巡逻宠物") or visited_player_data["巡逻宠物"].size() == 0:
+		Toast.show("对方没有巡逻宠物，无法发起对战", Color.RED, 3.0)
+		return
+	
+	# 检查自己是否有出战宠物
+	if not battle_pets or battle_pets.size() == 0:
+		Toast.show("你没有出战宠物，无法发起对战", Color.RED, 3.0)
+		return
+	
+	# 获取对方的巡逻宠物数据（取第一个）- 新格式
+	var target_patrol_pet = visited_player_data["巡逻宠物"][0]
+	var target_patrol_pet_name = target_patrol_pet.get("pet_name", "未知宠物")
+	var target_patrol_pet_level = target_patrol_pet.get("pet_level", 1)
+	var target_patrol_pet_type = target_patrol_pet.get("pet_type", "未知类型")
+	
+	# 获取自己的出战宠物数据（取第一个）- 新格式
+	var my_battle_pet = battle_pets[0]
+	var my_battle_pet_name = my_battle_pet.get("pet_name", "未知宠物")
+	var my_battle_pet_level = my_battle_pet.get("pet_level", 1)
+	var my_battle_pet_type = my_battle_pet.get("pet_type", "未知类型")
+	
+	# 检查是否为同一个宠物（防止冲突）- 新格式
+	var my_battle_pet_id = my_battle_pet.get("pet_id", "")
+	var target_patrol_pet_id = target_patrol_pet.get("pet_id", "")
+	if check_battle_patrol_conflict(my_battle_pet_id, target_patrol_pet_id):
+		Toast.show("出战宠物和巡逻宠物不能为同一个！", Color.RED, 3.0)
+		return
+	
+	# 显示对战确认弹窗
+	_show_battle_confirmation_dialog(
+		target_patrol_pet, 
+		my_battle_pet, 
+		visited_player_data.get("玩家昵称", "未知玩家")
+	)
+
+# 显示对战确认弹窗
+func _show_battle_confirmation_dialog(target_patrol_pet: Dictionary, my_battle_pet: Dictionary, target_player_name: String) -> void:
+	# 构建对话框内容
+	var dialog_content = "确定要向 %s 的巡逻宠物发起对战吗？\n\n" % target_player_name
+	
+	# 显示对方的巡逻宠物（所有）
+	dialog_content += "🛡️ 对方巡逻宠物：\n"
+	var defender_pets = visited_player_data.get("巡逻宠物", [target_patrol_pet])
+	for i in range(min(4, defender_pets.size())):
+		var pet = defender_pets[i]
+		var pet_name = pet.get("pet_name", "未知宠物")
+		var pet_level = pet.get("pet_level", 1)
+		var pet_type = pet.get("pet_type", "未知类型")
+		dialog_content += "   %d. %s (类型:%s, 等级:%d)\n" % [i+1, pet_name, pet_type, pet_level]
+	
+	dialog_content += "\n⚔️ 你的出战宠物：\n"
+	# 显示自己的出战宠物（所有）
+	var attacker_pets = battle_pets if battle_pets.size() > 0 else [my_battle_pet]
+	for i in range(min(4, attacker_pets.size())):
+		var pet = attacker_pets[i]
+		var pet_name = pet.get("pet_name", "未知宠物")
+		var pet_level = pet.get("pet_level", 1)
+		var pet_type = pet.get("pet_type", "未知类型")
+		dialog_content += "   %d. %s (类型:%s, 等级:%d)\n" % [i+1, pet_name, pet_type, pet_level]
+	
+	dialog_content += "\n⚠️ 注意：对战失败可能会有惩罚！"
+	
+	# 使用现有的accept_dialog
+	if not accept_dialog:
+		Toast.show("对话框不可用", Color.RED, 2.0)
+		return
+	
+	# 清除之前的信号连接
+	if accept_dialog.confirmed.is_connected(_on_direct_battle_confirmed):
+		accept_dialog.confirmed.disconnect(_on_direct_battle_confirmed)
+	if accept_dialog.canceled.is_connected(_on_direct_battle_canceled):
+		accept_dialog.canceled.disconnect(_on_direct_battle_canceled)
+	
+	# 设置对话框内容
+	accept_dialog.set_dialog_title("宠物对战确认")
+	accept_dialog.set_dialog_content(dialog_content)
+	accept_dialog.set_ok_text("发起对战")
+	accept_dialog.set_cancel_text("取消")
+	
+	# 连接信号
+	accept_dialog.confirmed.connect(_on_direct_battle_confirmed.bind(target_patrol_pet, my_battle_pet))
+	accept_dialog.canceled.connect(_on_direct_battle_canceled)
+	
+	# 显示对话框
+	accept_dialog.popup_centered()
+
+# 确认发起对战
+func _on_direct_battle_confirmed(target_patrol_pet: Dictionary, my_battle_pet: Dictionary) -> void:
+	# 获取玩家名称
+	var my_name = show_player_name.text.replace("玩家昵称：", "")
+	var target_name = visited_player_data.get("玩家昵称", "对方")
+	
+	# 设置对战面板数据
+	pet_battle_panel.setup_steal_battle(
+		battle_pets,  # 传递完整的出战宠物数组
+		visited_player_data.get("巡逻宠物", [target_patrol_pet]),  # 传递完整的巡逻宠物数组
+		my_name,
+		target_name
+	)
+	
+	# 显示对战面板
+	pet_battle_panel.show()
+	GlobalVariables.isZoomDisabled = true
+	
+	Toast.show("对战开始！", Color.GREEN, 2.0)
+
+# 取消发起对战
+func _on_direct_battle_canceled() -> void:
+	Toast.show("已取消对战", Color.GRAY, 2.0)
+
+# 更新对战按钮显示状态
+func _update_battle_button_visibility() -> void:
+	
+	# 检查对方是否有巡逻宠物
+	var has_patrol_pets = visited_player_data.has("巡逻宠物") and visited_player_data["巡逻宠物"].size() > 0
+	
+	# 检查自己是否有出战宠物
+	var has_battle_pets = battle_pets and battle_pets.size() > 0
+	
+	# 只有当对方有巡逻宠物且自己有出战宠物时才显示对战按钮
+	if has_patrol_pets and has_battle_pets:
+		battle_button.show()
+	else:
+		battle_button.hide()
+#========================访问模式直接向巡逻宠物发起战斗========================
+
+
+
 
 #=======================================智慧树系统=========================================
 #智慧树按钮点击
@@ -3237,7 +3451,6 @@ func _on_wisdom_tree_pressed() -> void:
 		Toast.show("访问模式不能打开智慧树配置面板",Color.RED)
 		return
 	wisdom_tree_panel.show()
-
 
 # 更新智慧树显示
 func update_wisdom_tree_display():
@@ -3258,8 +3471,6 @@ func _update_wisdom_tree_display(config: Dictionary):
 		tree_status.text = "等级lv：" + str(level) + "  高度：" + str(height) + "cm"
 	
 	if wisdom_tree_image:
-		var scale_factor = 0.5 + min((height - 20.0) / 80.0, 1.1)
-		wisdom_tree_image.scale = Vector2(scale_factor, scale_factor)
 		
 		if current_health <= 0:
 			wisdom_tree_image.self_modulate = Color(0.5, 0.5, 0.5)
@@ -3299,8 +3510,6 @@ func handle_wisdom_tree_response(data: Dictionary):
 # 确保智慧树配置格式正确
 func _ensure_wisdom_tree_config_format(config: Dictionary) -> Dictionary:
 	var new_config = config.duplicate()
-	
-	
 	# 确保必需字段
 	for key in ["当前生命值", "最大生命值", "当前经验值"]:
 		if not new_config.has(key):
@@ -3361,22 +3570,129 @@ func _handle_save_game_settings_response(data):
 
 #打开小卖部面板
 func _on_my_store_button_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人小卖部",Color.RED)
+		return
 	player_store_panel.show()
 	pass
 
 #打开小卖部面板
 func _on_player_store_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人小卖部",Color.RED)
+		return
 	player_store_panel.show()
 	pass 
 
+#打开种子商店
 func _on_seed_store_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人种子商店",Color.RED)
+		return
 	crop_store_panel.show()
 	pass 
 
+#打开道具商店
 func _on_item_store_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人道具商店",Color.RED)
+		return
 	item_store_panel.show()
 	pass 
 
+#打开宠物商店
 func _on_pet_store_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人宠物商店",Color.RED)
+		return
 	pet_store_panel.show()
 	pass
+
+#打开作物仓库
+func _on_crop_warehouse_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人作物仓库",Color.RED)
+		return
+	crop_warehouse_panel.show()
+	pass 
+
+#打开种子仓库
+func _on_seed_warehouse_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人种子仓库",Color.RED)
+		return	
+	crop_store_panel.show()
+	pass 
+
+#打开玩家排行榜
+func _on_player_rank_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人玩家排行榜",Color.RED)
+		return
+	player_ranking_panel.show()
+	pass 
+
+#打开每日签到
+func _on_daily_checkin_gift_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人每日签到礼包",Color.RED)
+		return
+	daily_check_in_panel.show()
+	pass 
+
+#打开在线礼包
+func _on_online_time_gift_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人在线时长礼包",Color.RED)
+		return
+	online_gift_panel.show()
+	pass 
+
+#打开宠物背包
+func _on_pet_bag_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人宠物背包",Color.RED)
+		return
+	pet_bag_panel.show()
+	pass 
+
+#打开道具背包
+func _on_item_bag_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人道具背包",Color.RED)
+		return
+	item_bag_panel.show()
+	pass
+
+# ======================================= 宠物对战系统 =========================================
+# 处理宠物对战结束
+func _on_pet_battle_ended(winner_team: String, battle_data: Dictionary):
+	"""处理宠物对战结束后的逻辑"""
+	print("[宠物对战] 对战结束，获胜方: ", winner_team)
+	print("[宠物对战] 对战数据: ", battle_data)
+	
+	# 准备发送到服务器的对战结果数据
+	var battle_result = {
+		"winner_team": winner_team,
+		"attacker_name": user_name,  # 攻击方（玩家自己）
+		"defender_name": visited_player_data.get("玩家昵称", "未知玩家"),  # 防守方（被访问玩家）
+		"battle_type": "steal_battle",  # 对战类型：偷菜对战
+		"attacker_pets": battle_data.get("attacker_pets", []),  # 攻击方宠物数据
+		"defender_pets": battle_data.get("defender_pets", []),  # 防守方宠物数据
+		"battle_duration": battle_data.get("battle_duration", 0),  # 对战持续时间
+		"timestamp": Time.get_unix_time_from_system()  # 对战时间戳
+	}
+	
+	# 发送对战结果到服务器
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("send_pet_battle_result"):
+		tcp_network_manager_panel.send_pet_battle_result(battle_result)
+		print("[宠物对战] 对战结果已发送到服务器")
+	else:
+		print("[宠物对战] 无法发送对战结果到服务器")
+	
+	# 显示对战结果提示
+	if winner_team == "attacker":
+		Toast.show("恭喜！您在偷菜对战中获胜！", Color.GREEN)
+	else:
+		Toast.show("很遗憾，您在偷菜对战中失败了。", Color.RED)
+# ======================================= 宠物对战系统 =========================================

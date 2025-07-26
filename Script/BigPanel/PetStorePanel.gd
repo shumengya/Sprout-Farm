@@ -24,6 +24,8 @@ extends Panel
 
 # 宠物配置数据
 var pet_config: Dictionary = {}
+# 请求状态标志，防止重复请求
+var is_requesting_config: bool = false
 
 # 准备函数
 func _ready():
@@ -57,20 +59,23 @@ func update_pet_store_ui():
 		child.queue_free()
 	
 	print("更新宠物商店UI，宠物种类：", pet_config.size())
+	print("宠物配置数据：", pet_config)
 	
 	# 为每个宠物配置创建按钮
 	for pet_name in pet_config.keys():
 		var pet_info = pet_config[pet_name]
-		var purchase_info = pet_info.get("购买信息", {})
-		var can_buy = purchase_info.get("能否购买", false)
+		print("处理宠物：", pet_name, "，数据：", pet_info)
+		
+		# 适配扁平化数据格式
+		var can_buy = pet_info.get("can_purchase", false)
 		
 		# 只显示可购买的宠物
 		if not can_buy:
+			print("宠物 ", pet_name, " 不可购买，跳过")
 			continue
 			
-		var pet_cost = purchase_info.get("购买价格", 0)
-		var basic_info = pet_info.get("基本信息", {})
-		var pet_desc = basic_info.get("简介", "可爱的宠物伙伴")
+		var pet_cost = pet_info.get("cost", 0)
+		var pet_desc = pet_info.get("description", "可爱的宠物伙伴")
 		
 		# 检查玩家是否已购买该宠物
 		var is_owned = _check_pet_owned(pet_name)
@@ -88,6 +93,7 @@ func update_pet_store_ui():
 			button.pressed.connect(func(): _on_store_pet_selected(pet_name, pet_cost, pet_desc))
 		
 		store_grid.add_child(button)
+		print("已添加宠物按钮：", pet_name)
 
 # 检查玩家是否已拥有某种宠物
 func _check_pet_owned(pet_name: String) -> bool:
@@ -95,8 +101,7 @@ func _check_pet_owned(pet_name: String) -> bool:
 		return false
 	
 	for pet_data in main_game.pet_bag:
-		var basic_info = pet_data.get("基本信息", {})
-		var pet_type = basic_info.get("宠物类型", "")
+		var pet_type = pet_data.get("pet_type", "")
 		if pet_type == pet_name:
 			return true
 	return false
@@ -144,28 +149,44 @@ func _update_button_pet_image(button: Button, pet_name: String):
 	# 检查按钮是否有CropImage节点
 	var pet_image = button.get_node_or_null("CropImage")
 	if not pet_image:
+		print("按钮没有CropImage节点，跳过图片设置")
 		return
 	
 	# 从宠物配置获取场景路径
 	var texture = null
 	if pet_config.has(pet_name):
 		var pet_info = pet_config[pet_name]
-		var scene_path = pet_info.get("场景路径", "")
+		var scene_path = pet_info.get("pet_image", "")
+		print("宠物 ", pet_name, " 的图片路径：", scene_path)
 		
 		if scene_path != "" and ResourceLoader.exists(scene_path):
+			print("开始加载宠物场景：", scene_path)
 			# 加载宠物场景并获取PetImage的纹理
 			var pet_scene = load(scene_path)
 			if pet_scene:
 				var pet_instance = pet_scene.instantiate()
-				var pet_image_node = pet_instance.get_node_or_null("PetImage")
+				# 场景的根节点就是PetImage，直接使用
+				var pet_image_node = pet_instance
 				if pet_image_node and pet_image_node.sprite_frames:
 					# 获取默认动画的第一帧
-					var default_animation = pet_image_node.sprite_frames.get_animation_names()[0]
-					var frame_count = pet_image_node.sprite_frames.get_frame_count(default_animation)
-					if frame_count > 0:
-						texture = pet_image_node.sprite_frames.get_frame_texture(default_animation, 0)
+					var animation_names = pet_image_node.sprite_frames.get_animation_names()
+					if animation_names.size() > 0:
+						var default_animation = animation_names[0]
+						var frame_count = pet_image_node.sprite_frames.get_frame_count(default_animation)
+						if frame_count > 0:
+							texture = pet_image_node.sprite_frames.get_frame_texture(default_animation, 0)
+							print("成功获取宠物纹理：", pet_name)
+					else:
+						print("宠物场景没有动画：", pet_name)
+				else:
+					print("宠物场景没有PetImage节点或sprite_frames：", pet_name)
 				pet_instance.queue_free()
-	
+			else:
+				print("无法加载宠物场景：", scene_path)
+		else:
+			print("宠物图片路径无效或文件不存在：", scene_path)
+	else:
+		print("宠物配置中没有找到：", pet_name)
 	
 	# 设置图片
 	if texture:
@@ -174,31 +195,52 @@ func _update_button_pet_image(button: Button, pet_name: String):
 		pet_image.scale = Vector2(10, 10)
 		# 确保图片居中显示
 		pet_image.centered = true
-		
+		print("成功设置宠物图片：", pet_name)
 	else:
+		# 如果无法获取图片，隐藏图片节点但保留按钮
 		pet_image.visible = false
+		print("无法获取宠物图片，隐藏图片节点：", pet_name)
 
-# 从主游戏脚本获取宠物配置数据
+# 从服务器获取MongoDB中的宠物配置数据
 func _load_pet_config_from_main():
-	# 从宠物数据文件加载配置
-	var file = FileAccess.open("res://Data/pet_data.json", FileAccess.READ)
-	if file == null:
-		print("宠物商店：无法打开宠物配置文件")
-		pet_config = {}
+	# 如果正在请求中，避免重复发送
+	if is_requesting_config:
+		print("宠物商店：正在请求配置数据中，跳过重复请求")
 		return
 	
-	var json = JSON.new()
-	var json_string = file.get_as_text()
-	file.close()
-	
-	var parse_result = json.parse(json_string)
-	if parse_result != OK:
-		print("宠物商店：解析宠物配置文件失败")
+	# 发送请求到服务器获取宠物配置
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendGetPetConfig"):
+		is_requesting_config = true
+		if tcp_network_manager_panel.sendGetPetConfig():
+			print("宠物商店：已发送获取宠物配置请求")
+			# 等待服务器响应，配置数据将通过网络回调更新
+		else:
+			print("宠物商店：发送获取宠物配置请求失败")
+			pet_config = {}
+			is_requesting_config = false
+	else:
+		print("宠物商店：网络管理器不可用，无法获取宠物配置")
 		pet_config = {}
-		return
+		is_requesting_config = false
+
+# 处理服务器返回的宠物配置数据
+func _on_pet_config_received(response_data: Dictionary):
+	"""处理从服务器接收到的宠物配置数据"""
+	# 重置请求状态
+	is_requesting_config = false
 	
-	pet_config = json.data
-	print("宠物商店：成功加载宠物配置数据，宠物种类：", pet_config.size())
+	var success = response_data.get("success", false)
+	if success:
+		pet_config = response_data.get("pet_config", {})
+		print("宠物商店：成功接收宠物配置数据，宠物种类：", pet_config.size())
+		# 只更新UI，不重新发送请求
+		update_pet_store_ui()
+	else:
+		var error_message = response_data.get("message", "获取宠物配置失败")
+		print("宠物商店：获取宠物配置失败：", error_message)
+		pet_config = {}
+		# 显示错误提示
+		Toast.show(error_message, Color.RED, 3.0, 1.0)
 
 # 商店宠物点击处理 - 购买宠物
 func _on_store_pet_selected(pet_name: String, pet_cost: int, pet_desc: String):
@@ -269,9 +311,12 @@ func _send_buy_pet_request(pet_name: String, pet_cost: int):
 #=========================面板通用处理=========================
 # 手动刷新宠物商店面板
 func _on_refresh_button_pressed() -> void:
+	# 清空现有配置和请求状态，强制重新获取
+	pet_config = {}
+	is_requesting_config = false
 	# 重新初始化宠物商店
 	init_pet_store()
-	Toast.show("宠物商店已刷新", Color.GREEN, 2.0, 1.0)
+	#Toast.show("宠物商店已刷新", Color.GREEN, 2.0, 1.0)
 
 # 关闭宠物商店面板
 func _on_quit_button_pressed() -> void:
@@ -283,8 +328,12 @@ func _on_quit_button_pressed() -> void:
 func _on_visibility_changed():
 	if visible:
 		GlobalVariables.isZoomDisabled = true
-		# 面板显示时自动刷新数据
-		update_pet_store_ui()
+		# 面板显示时只在没有配置数据时才请求
+		if pet_config.is_empty():
+			init_pet_store()
+		else:
+			# 如果已有配置数据，直接更新UI
+			update_pet_store_ui()
 		pass
 	else:
 		GlobalVariables.isZoomDisabled = false

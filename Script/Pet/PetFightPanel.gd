@@ -57,7 +57,7 @@ var current_attacker_name: String = ""  # 当前进攻者用户名
 
 
 func _ready():
-	# 加载宠物配置
+	visibility_changed.connect(_on_visibility_changed)
 	load_pet_configs()
 	
 	# 连接返回农场按钮
@@ -69,7 +69,6 @@ func _ready():
 		battle_end_panel.visible = false
 	if pet_battle_details_panel:
 		pet_battle_details_panel.visible = false
-	
 
 # 加载宠物配置
 func load_pet_configs():
@@ -115,10 +114,17 @@ func clear_battle_details():
 	if battle_details:
 		battle_details.text = ""
 
+# 战斗结束检查计时器
+var battle_check_timer: float = 0.0
+var battle_check_interval: float = 0.5  # 每0.5秒检查一次，减少性能开销
+
 func _process(delta):
-	# 只有启用自动对战时才检查战斗结束
+	# 只有启用自动对战时才检查战斗结束，并使用计时器减少检查频率
 	if auto_battle_enabled and battle_started and not battle_ended:
-		check_battle_end()
+		battle_check_timer += delta
+		if battle_check_timer >= battle_check_interval:
+			battle_check_timer = 0.0
+			check_battle_end()
 
 
 # 获取队伍节点 - 供宠物调用
@@ -224,12 +230,6 @@ func end_battle(winner: String):
 # 显示战斗结算面板
 func show_battle_end_panel(winner: String):
 	var result_text = ""
-	var team1_survivors = 0
-	var team2_survivors = 0
-	var team1_total_damage = 0.0
-	var team2_total_damage = 0.0
-	var team1_pets_info: Array[String] = []
-	var team2_pets_info: Array[String] = []
 	
 	# 统计存活宠物和详细信息 - 从宠物组中获取
 	var all_pets = get_tree().get_nodes_in_group("pets")
@@ -237,22 +237,6 @@ func show_battle_end_panel(winner: String):
 		if not is_instance_valid(pet):
 			continue
 			
-		var status = "💀死亡"
-		if pet.is_alive:
-			status = "❤️存活(" + str(int(pet.current_health)) + ")"
-			if pet.pet_team == "team1":
-				team1_survivors += 1
-			elif pet.pet_team == "team2":
-				team2_survivors += 1
-		
-		# 统计战力
-		if pet.pet_team == "team1":
-			team1_total_damage += pet.attack_damage
-			team1_pets_info.append(pet.pet_name + " " + status)
-		elif pet.pet_team == "team2":
-			team2_total_damage += pet.attack_damage
-			team2_pets_info.append(pet.pet_name + " " + status)
-	
 	# 构建结算文本
 	result_text += "=== 战斗结算 ===\n\n"
 	
@@ -416,39 +400,46 @@ func clear_all_pets():
 	# 清空对战细节
 	clear_battle_details()
 	
-	# 先移除宠物组标签
-	var all_pets = get_tree().get_nodes_in_group("pets")
-	for pet in all_pets:
-		if is_instance_valid(pet):
-			# 检查是否是当前面板下的宠物
-			if pet.get_parent() == team1_node or pet.get_parent() == team2_node or pet.get_parent() == neutral_node:
-				pet.remove_from_group("pets")
-				pet.remove_from_group("team1")
-				pet.remove_from_group("team2")
-				pet.remove_from_group("neutral")
+	# 批量处理宠物清理，提高性能
+	var nodes_to_clear = [team1_node, team2_node, neutral_node]
 	
-	# 清理现有宠物
-	for child in team1_node.get_children():
-		if is_instance_valid(child):
-			child.queue_free()
-	
-	for child in team2_node.get_children():
-		if is_instance_valid(child):
-			child.queue_free()
-	
-	for child in neutral_node.get_children():
-		if is_instance_valid(child):
-			child.queue_free()
+	for node in nodes_to_clear:
+		if not is_instance_valid(node):
+			continue
+			
+		# 先移除组标签，再清理节点
+		for child in node.get_children():
+			if is_instance_valid(child):
+				# 停止宠物的所有行为，防止在清理过程中继续执行逻辑
+				if child.has_method("set_combat_enabled"):
+					child.set_combat_enabled(false)
+					
+				# 移除所有组标签
+				child.remove_from_group("pets")
+				child.remove_from_group("team1")
+				child.remove_from_group("team2")
+				child.remove_from_group("neutral")
+				child.remove_from_group("aid_minions")
+					
+				# 立即销毁，避免延迟
+				node.remove_child(child)
+				child.queue_free()
 	
 	# 清空队伍数组
 	team1_pets.clear()
 	team2_pets.clear()
 	
-	# 清理所有子弹
-	var all_projectiles = get_tree().get_nodes_in_group("projectiles")
-	for projectile in all_projectiles:
-		if is_instance_valid(projectile):
-			projectile.queue_free()
+	# 清理所有子弹和援助宠物
+	var groups_to_clear = ["projectiles", "aid_minions"]
+	for group_name in groups_to_clear:
+		var group_nodes = get_tree().get_nodes_in_group(group_name)
+		for node in group_nodes:
+			if is_instance_valid(node):
+				node.remove_from_group(group_name)
+				node.queue_free()
+	
+	# 等待一帧确保清理完成
+	await get_tree().process_frame
 
 # 处理偷菜对战结果
 func handle_steal_battle_result(winner: String):
@@ -556,7 +547,9 @@ func update_battle_pet_data(pet_id: String, attacker_name: String, exp_gained: f
 		"new_max_experience": max_exp,
 		"new_intimacy": current_intimacy,
 		"level_ups": level_ups,
-		"level_bonus_multiplier": level_bonus_multiplier
+		"level_bonus_multiplier": level_bonus_multiplier,
+		"is_steal_battle": is_steal_battle,
+		"battle_winner": winner_team
 	}
 	
 	# 发送数据到服务器

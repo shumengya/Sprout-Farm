@@ -1,0 +1,318 @@
+[gd_scene load_steps=3 format=3 uid="uid://diwbnwhnq026"]
+
+[ext_resource type="Script" uid="uid://bt06n5cxip4kr" path="res://Scene/NewPet/PetBattlePanel.gd" id="1_0uw4q"]
+[ext_resource type="Texture2D" uid="uid://dh0dsw3jr0gra" path="res://assets/宠物对战背景图片/背景2.webp" id="2_c80tv"]
+
+[node name="PetBattlePanel" type="Panel"]
+offset_right = 1400.0
+offset_bottom = 720.0
+script = ExtResource("1_0uw4q")
+
+[node name="MapBackGround" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1557.0
+offset_bottom = 867.0
+scale = Vector2(0.9, 0.9)
+texture = ExtResource("2_c80tv")
+
+[node name="TeamB" type="Node2D" parent="."]
+position = Vector2(1239, 421)
+
+[node name="Pos1" type="Marker2D" parent="TeamB"]
+position = Vector2(17, -166)
+
+[node name="Pos2" type="Marker2D" parent="TeamB"]
+position = Vector2(42, 160)
+
+[node name="Pos3" type="Marker2D" parent="TeamB"]
+position = Vector2(42, -38)
+
+[node name="Pos4" type="Marker2D" parent="TeamB"]
+position = Vector2(21, -315)
+
+[node name="Pos5" type="Marker2D" parent="TeamB"]
+position = Vector2(42, -102)
+
+[node name="Pos6" type="Marker2D" parent="TeamB"]
+position = Vector2(42, 96)
+
+[node name="Pos7" type="Marker2D" parent="TeamB"]
+position = Vector2(42, 32)
+
+[node name="Pos8" type="Marker2D" parent="TeamB"]
+position = Vector2(21, -251)
+
+[node name="Pos9" type="Marker2D" parent="TeamB"]
+position = Vector2(42, -230)
+
+[node name="Pos10" type="Marker2D" parent="TeamB"]
+position = Vector2(42, 224)
+
+[node name="TeamA" type="Node2D" parent="."]
+position = Vector2(138, 134)
+
+[node name="Pos1" type="Marker2D" parent="TeamA"]
+position = Vector2(-37, 408)
+
+[node name="Pos2" type="Marker2D" parent="TeamA"]
+position = Vector2(-41, 93)
+
+[node name="Pos3" type="Marker2D" parent="TeamA"]
+position = Vector2(-38, 313)
+
+[node name="Pos4" type="Marker2D" parent="TeamA"]
+position = Vector2(-38, 223)
+
+[node name="Pos5" type="Marker2D" parent="TeamA"]
+position = Vector2(-38, 133)
+
+[node name="Pos6" type="Marker2D" parent="TeamA"]
+position = Vector2(-38, 43)
+
+[node name="Pos7" type="Marker2D" parent="TeamA"]
+position = Vector2(-38, 358)
+
+[node name="Pos8" type="Marker2D" parent="TeamA"]
+position = Vector2(-38, 268)
+
+[node name="Pos9" type="Marker2D" parent="TeamA"]
+position = Vector2(-38, 178)
+
+[node name="Pos10" type="Marker2D" parent="TeamA"]
+position = Vector2(-38, 453)
+
+[node name="PlayerSkillPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 1143.0
+offset_right = 1400.0
+offset_bottom = 720.0
+
+[node name="Title" type="Label" parent="PlayerSkillPanel"]
+self_modulate = Color(0, 1, 0, 1)
+layout_mode = 0
+offset_right = 257.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 25
+text = "辅助功能"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TeamASkills" type="VBoxContainer" parent="PlayerSkillPanel"]
+layout_mode = 0
+offset_top = 50.0
+offset_right = 257.0
+offset_bottom = 300.0
+
+[node name="TeamAHeal" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "团队治疗"
+
+[node name="TeamARage" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "团队狂暴"
+
+[node name="TeamAShield" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "团队护盾"
+
+[node name="test" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="test2" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="test3" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="test4" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="test5" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="test6" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="test7" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="test8" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="test9" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="test10" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="test11" type="Button" parent="PlayerSkillPanel/TeamASkills"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+disabled = true
+text = "测试"
+
+[node name="BattleControls" type="VBoxContainer" parent="PlayerSkillPanel"]
+layout_mode = 0
+offset_top = 580.0
+offset_right = 257.0
+offset_bottom = 720.0
+
+[node name="StartBattleButton" type="Button" parent="PlayerSkillPanel/BattleControls"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "开始战斗"
+
+[node name="StopBattleButton" type="Button" parent="PlayerSkillPanel/BattleControls"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "逃跑"
+
+[node name="BattleEndPanel" type="Panel" parent="."]
+visible = false
+top_level = true
+layout_mode = 0
+offset_left = 294.0
+offset_right = 1071.0
+offset_bottom = 720.0
+
+[node name="Title" type="Label" parent="BattleEndPanel"]
+layout_mode = 0
+offset_right = 777.0
+offset_bottom = 104.0
+theme_override_colors/font_color = Color(0.991435, 0.798103, 0.357309, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 60
+text = "战斗结束"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Contents" type="RichTextLabel" parent="BattleEndPanel"]
+layout_mode = 0
+offset_top = 104.0
+offset_right = 777.0
+offset_bottom = 567.0
+theme_override_font_sizes/normal_font_size = 30
+bbcode_enabled = true
+text = "[宠物名字]获得300经验，
+增加200亲密度"
+horizontal_alignment = 1
+
+[node name="ReturnFarmButton" type="Button" parent="BattleEndPanel"]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 567.0
+offset_right = 502.0
+offset_bottom = 644.0
+theme_override_font_sizes/font_size = 50
+text = "返回农场"
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_right = 1400.0
+offset_bottom = 55.0
+theme_override_colors/font_color = Color(0.623819, 1, 0.593898, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/font_size = 50
+text = "宠物对战"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Time" type="Label" parent="."]
+layout_mode = 0
+offset_left = 574.0
+offset_top = 60.0
+offset_right = 813.0
+offset_bottom = 129.0
+theme_override_colors/font_color = Color(0.623529, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 5
+theme_override_constants/shadow_offset_y = 5
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/font_size = 35
+text = "[05:00]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PetBattleDetailsPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 257.0
+offset_bottom = 720.0
+
+[node name="Title" type="Label" parent="PetBattleDetailsPanel"]
+layout_mode = 0
+offset_right = 257.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 30
+text = "战斗细节"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BattleDetails" type="RichTextLabel" parent="PetBattleDetailsPanel"]
+layout_mode = 0
+offset_top = 42.0
+offset_right = 257.0
+offset_bottom = 720.0
+bbcode_enabled = true
+
+[node name="ConfirmDialog" type="ConfirmationDialog" parent="."]
+title = "弹窗标题"
+initial_position = 1
+size = Vector2i(400, 300)
+unresizable = true
+ok_button_text = "确认"
+dialog_text = "弹窗内容"
+dialog_autowrap = true
+cancel_button_text = "取消"
+
+[connection signal="pressed" from="PlayerSkillPanel/TeamASkills/TeamAHeal" to="." method="_on_team_a_heal_pressed"]
+[connection signal="pressed" from="PlayerSkillPanel/TeamASkills/TeamARage" to="." method="_on_team_a_rage_pressed"]
+[connection signal="pressed" from="PlayerSkillPanel/TeamASkills/TeamAShield" to="." method="_on_team_a_shield_pressed"]
+[connection signal="pressed" from="PlayerSkillPanel/BattleControls/StopBattleButton" to="." method="_on_stop_battle_button_pressed"]

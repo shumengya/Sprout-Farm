@@ -1,4 +1,5 @@
 # Game Server Dependencies
 colorama>=0.4.6    # For colored terminal output
+pymongo>=4.6.0     # MongoDB driver for Python
 # Email Requirements
-# Standard library dependencies are not listed (socket, threading, json, etc.) 
+# Standard library dependencies are not listed (socket, threading, json, etc.)

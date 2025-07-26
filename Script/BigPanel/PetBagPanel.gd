@@ -61,9 +61,9 @@ func update_pet_bag_ui():
 	
 	# 为背包中的每个宠物创建按钮
 	for pet_data in main_game.pet_bag:
-		var pet_name = pet_data.get("基本信息", {}).get("宠物类型", "未知宠物")
-		var pet_level = pet_data.get("等级经验", {}).get("宠物等级", 1)
-		var pet_owner_name = pet_data.get("基本信息", {}).get("宠物名称", pet_name)
+		var pet_name = pet_data.get("pet_type", "未知宠物")
+		var pet_level = pet_data.get("pet_level", 1)
+		var pet_owner_name = pet_data.get("pet_name", pet_name)
 		
 		# 创建宠物按钮
 		var button = _create_pet_button(pet_name, pet_level, pet_owner_name)
@@ -118,31 +118,45 @@ func _update_button_pet_image(button: Button, pet_name: String):
 	# 检查按钮是否有CropImage节点
 	var pet_image = button.get_node_or_null("CropImage")
 	if not pet_image:
+		print("宠物背包按钮没有找到CropImage节点：", button.name)
 		return
 	
-	# 从宠物配置获取场景路径
+	# 从服务器的宠物配置获取场景路径
 	var texture = null
-	var pet_config = _load_pet_config()
+	var pet_config = main_game.pet_config  # 使用服务器返回的宠物配置
 	
 	if pet_config.has(pet_name):
 		var pet_info = pet_config[pet_name]
-		var scene_path = pet_info.get("场景路径", "")
+		var scene_path = pet_info.get("pet_image", "")  # 使用服务器数据的pet_image字段
+		print("宠物背包 ", pet_name, " 的图片路径：", scene_path)
 		
 		if scene_path != "" and ResourceLoader.exists(scene_path):
+			print("宠物背包开始加载宠物场景：", scene_path)
 			# 加载宠物场景并获取PetImage的纹理
 			var pet_scene = load(scene_path)
 			if pet_scene:
 				var pet_instance = pet_scene.instantiate()
-				var pet_image_node = pet_instance.get_node_or_null("PetImage")
-				if pet_image_node and pet_image_node.sprite_frames:
+				# 直接使用实例化的场景根节点，因为根节点就是PetImage
+				if pet_instance and pet_instance.sprite_frames:
 					# 获取默认动画的第一帧
-					var animation_names = pet_image_node.sprite_frames.get_animation_names()
+					var animation_names = pet_instance.sprite_frames.get_animation_names()
 					if animation_names.size() > 0:
 						var default_animation = animation_names[0]
-						var frame_count = pet_image_node.sprite_frames.get_frame_count(default_animation)
+						var frame_count = pet_instance.sprite_frames.get_frame_count(default_animation)
 						if frame_count > 0:
-							texture = pet_image_node.sprite_frames.get_frame_texture(default_animation, 0)
+							texture = pet_instance.sprite_frames.get_frame_texture(default_animation, 0)
+							print("宠物背包成功获取宠物纹理：", pet_name)
+					else:
+						print("宠物背包场景没有动画：", pet_name)
+				else:
+					print("宠物背包场景没有PetImage节点或sprite_frames：", pet_name)
 				pet_instance.queue_free()
+			else:
+				print("宠物背包无法加载宠物场景：", scene_path)
+		else:
+			print("宠物背包图片路径无效或文件不存在：", scene_path)
+	else:
+		print("宠物背包配置中没有找到：", pet_name)
 	
 	# 设置图片
 	if texture:
@@ -151,8 +165,10 @@ func _update_button_pet_image(button: Button, pet_name: String):
 		pet_image.scale = Vector2(10, 10)
 		# 确保图片居中显示
 		pet_image.centered = true
+		print("宠物背包成功设置宠物图片：", pet_name)
 	else:
 		pet_image.visible = false
+		print("宠物背包无法获取宠物图片：", pet_name)
 
 # 加载宠物配置数据
 func _load_pet_config() -> Dictionary:
