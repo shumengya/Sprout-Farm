@@ -18,6 +18,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_n8m38")
 script = ExtResource("1_xnwaq")
 
 [node name="LoginVBox" type="VBoxContainer" parent="."]
+visible = false
 layout_mode = 2
 
 [node name="Title" type="Label" parent="LoginVBox"]
@@ -100,7 +101,6 @@ text = "连接状态"
 horizontal_alignment = 1
 
 [node name="RegisterVbox" type="VBoxContainer" parent="."]
-visible = false
 layout_mode = 2
 
 [node name="Title" type="Label" parent="RegisterVbox"]
@@ -226,6 +226,11 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "注册"
 
+[node name="Register2LoginButton" type="Button" parent="RegisterVbox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "返回登录"
+
 [node name="Note" type="Label" parent="RegisterVbox"]
 modulate = Color(1, 0.552941, 1, 1)
 layout_mode = 2
@@ -321,6 +326,11 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "确认"
 
+[node name="Forget2LoginButton" type="Button" parent="ForgetPasswordVbox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "确认"
+
 [node name="Note" type="Label" parent="ForgetPasswordVbox"]
 modulate = Color(1, 0.552941, 1, 1)
 layout_mode = 2
@@ -337,3 +347,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "连接状态"
 horizontal_alignment = 1
+
+[connection signal="pressed" from="RegisterVbox/Register2LoginButton" to="." method="_on_register_2_login_button_pressed"]
+[connection signal="pressed" from="ForgetPasswordVbox/Forget2LoginButton" to="." method="_on_forget_2_login_button_pressed"]

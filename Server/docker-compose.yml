@@ -6,7 +6,7 @@ services:
     container_name: mengyafarm-server
     restart: unless-stopped
     ports:
-      - "6060:6060"
+      - "7070:7070"
     volumes:
       # 持久化游戏存档
       - ./game_saves:/app/game_saves

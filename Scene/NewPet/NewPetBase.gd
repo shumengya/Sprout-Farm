@@ -95,7 +95,7 @@ var berserker_triggered: bool = false  # 是否已触发过狂暴（防止重复
 var is_berserker: bool = false  # 是否处于狂暴状态
 var berserker_end_time: float = 0.0  # 狂暴结束时间
 
-#技能-自爆
+#技能-死亡自爆
 var enable_self_destruct_skill: bool = false
 var self_destruct_damage: float = 50.0  # 自爆伤害值
 
@@ -111,6 +111,12 @@ var enable_death_respawn_skill: bool = false
 var respawn_health_percentage: float = 0.3  # 重生时恢复的血量百分比（30%）
 var max_respawn_count: int = 1  # 最大重生次数
 var current_respawn_count: int = 0  # 当前已重生次数
+
+#技能-反弹伤害
+var enable_damage_reflection_skill: bool = false
+var damage_reflection_cooldown: float = 10.0  # 反弹伤害冷却时间（秒）
+var damage_reflection_cooldown_end_time: float = 0.0  # 反弹伤害冷却结束时间
+var damage_reflection_percentage: float = 0.5  # 反弹伤害百分比（50%）
 
 #击退效果
 var enable_knockback: bool = true  # 是否启用击退效果
@@ -179,6 +185,8 @@ var update_ui_timer: float = 0.0
 var ui_update_interval: float = 0.2  # UI更新间隔，减少频繁更新
 var ai_update_timer: float = 0.0
 var ai_update_interval: float = 0.05  # AI更新间隔，平衡性能和反应速度
+
+var last_direction_x = -1  # 假设初始向右
 #============================杂项未处理===============================
 
 
@@ -359,25 +367,31 @@ func move_towards_target():
 	var direction = (current_target.global_position - global_position).normalized()
 	velocity = direction * move_speed
 	
-	# 翻转精灵
-	if direction.x < 0:
-		pet_image.flip_h = false
-		left_tool_image.flip_h = true
-		right_tool_image.flip_h = true
-		left_tool_image.position = Vector2(-12.5,3.5)
-		right_tool_image.position = Vector2(-7.5,-6.25)
-		#left_tool_image.rotation = 21.8
-		#right_tool_image.rotation = -14.5
+#==================只有当方向发生变化时才执行翻转逻辑=======================
+	if direction.x != last_direction_x:
+		if direction.x < 0:
+			# 向左转
+			pet_image.flip_h = false
+			left_tool_image.flip_h = true
+			right_tool_image.flip_h = true
+			
+			# 只翻转一次位置（使用初始位置的相反数）
+			left_tool_image.position.x = -abs(left_tool_image.position.x)
+			right_tool_image.position.x = -abs(right_tool_image.position.x)
+		else:
+			# 向右转
+			pet_image.flip_h = true
+			left_tool_image.flip_h = false
+			right_tool_image.flip_h = false
+			
+			# 只翻转一次位置（使用初始位置的绝对值）
+			left_tool_image.position.x = abs(left_tool_image.position.x)
+			right_tool_image.position.x = abs(right_tool_image.position.x)
 		
+		# 更新上一次的方向记录
+		last_direction_x = direction.x
+#==================只有当方向发生变化时才执行翻转逻辑=======================
 
-	else:
-		pet_image.flip_h = true
-		left_tool_image.flip_h = false
-		right_tool_image.flip_h = false
-		left_tool_image.position = Vector2(12.5,3.5)
-		right_tool_image.position = Vector2(7.5,-6.25)
-		#left_tool_image.rotation = -21.8
-		#right_tool_image.rotation = 14.5
 
 #检查边界碰撞并处理反弹和伤害
 func check_boundary_collision():
@@ -461,7 +475,6 @@ func perform_melee_attack():
 		#right_tool_image.visible = false
 		current_state = PetState.IDLE
 	)
-
 
 #应用宠物外观图片
 func apply_pet_image(pet: NewPetBase, image_path: String):
@@ -614,6 +627,20 @@ func take_damage(damage: float, attacker: NewPetBase):
 		# 闪避成功
 		return  # 闪避成功
 	
+	# 反弹伤害技能检查
+	if enable_damage_reflection_skill and attacker != null and is_instance_valid(attacker) and attacker != self:
+		var current_time = Time.get_ticks_msec() / 1000.0
+		# 检查冷却时间
+		if current_time >= damage_reflection_cooldown_end_time:
+			# 计算反弹伤害
+			var reflection_damage = damage * damage_reflection_percentage
+			# 对攻击者造成反弹伤害（不会再次触发反弹，避免无限循环）
+			attacker.take_reflection_damage(reflection_damage, self)
+			# 设置冷却时间
+			damage_reflection_cooldown_end_time = current_time + damage_reflection_cooldown
+			# 发射技能信号
+			pet_skill_used.emit(self, "反弹伤害")
+	
 	# 护盾优先吸收伤害
 	if current_shield > 0:
 		var shield_damage = min(current_shield, damage)
@@ -628,6 +655,39 @@ func take_damage(damage: float, attacker: NewPetBase):
 		
 		# 受伤视觉效果（短暂变红）
 		if not is_berserker:  # 狂暴状态下不覆盖红色效果
+			pet_image.modulate = Color(1.3, 0.7, 0.7, 1.0)
+			get_tree().create_timer(0.15).timeout.connect(func(): 
+				if not is_berserker and is_alive:
+					pet_image.modulate = Color(1.0, 1.0, 1.0, 1.0)
+			)
+	
+	# 检查死亡
+	if current_health <= 0:
+		die()
+
+#受到反弹伤害（不会再次触发反弹效果）
+func take_reflection_damage(damage: float, reflector: NewPetBase):
+	"""受到反弹伤害（不会再次触发反弹效果）"""
+	if not is_alive:
+		return
+	
+	# 闪避检查
+	if randf() < dodge_rate:
+		# 闪避成功
+		return
+	
+	# 护盾优先吸收伤害
+	if current_shield > 0:
+		var shield_damage = min(current_shield, damage)
+		current_shield -= shield_damage
+		damage -= shield_damage
+	
+	# 护盾消耗完后，剩余伤害扣除生命值
+	if damage > 0:
+		current_health -= damage
+		
+		# 受伤视觉效果（短暂变红）
+		if not is_berserker:
 			pet_image.modulate = Color(1.3, 0.7, 0.7, 1.0)
 			get_tree().create_timer(0.15).timeout.connect(func(): 
 				if not is_berserker and is_alive:
@@ -1033,11 +1093,31 @@ func update_patrol_ai():
 		pet_image.animation = "walk"
 		velocity = direction * patrol_speed
 		
-		# 翻转精灵
-		if direction.x < 0:
-			pet_image.flip_h = false
-		else:
-			pet_image.flip_h = true
+#==================只有当方向发生变化时才执行翻转逻辑=======================
+		if direction.x != last_direction_x:
+			if direction.x < 0:
+				# 向左转
+				pet_image.flip_h = false
+				left_tool_image.flip_h = true
+				right_tool_image.flip_h = true
+				
+				# 只翻转一次位置（使用初始位置的相反数）
+				left_tool_image.position.x = -abs(left_tool_image.position.x)
+				right_tool_image.position.x = -abs(right_tool_image.position.x)
+			else:
+				# 向右转
+				pet_image.flip_h = true
+				left_tool_image.flip_h = false
+				right_tool_image.flip_h = false
+				
+				# 只翻转一次位置（使用初始位置的绝对值）
+				left_tool_image.position.x = abs(left_tool_image.position.x)
+				right_tool_image.position.x = abs(right_tool_image.position.x)
+			
+			# 更新上一次的方向记录
+			last_direction_x = direction.x
+#==================只有当方向发生变化时才执行翻转逻辑=======================
+
 	else:
 		# 到达目标位置，待机
 		current_state = PetState.IDLE

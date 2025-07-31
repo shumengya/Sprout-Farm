@@ -32,9 +32,8 @@ extends Panel
 @onready var login_panel: PanelContainer = $'../LoginPanel'
 
 
-# 作物图片缓存（复用主游戏的缓存系统）
-var crop_textures_cache : Dictionary = {}
-var crop_frame_counts : Dictionary = {}
+# 注意：作物图片现在使用主游戏的CropTextureManager缓存系统
+# 不再需要本地缓存变量
 
 # 当前过滤和排序设置
 var current_filter_quality = ""
@@ -84,7 +83,7 @@ func set_pet_feeding_mode(feeding_mode: bool, pet_data: Dictionary = {}):
 	# 更新UI以反映当前模式
 	if is_pet_feeding_mode:
 		# 宠物喂食模式下，只显示有喂养效果的作物
-		var pet_name = pet_data.get("基本信息", {}).get("宠物名称", "未知宠物")
+		var pet_name = pet_data.get("pet_name", "未知宠物")
 		Toast.show("宠物喂食模式：选择要喂给 " + pet_name + " 的作物", Color.CYAN, 3.0, 1.0)
 	else:
 		# 普通模式
@@ -423,8 +422,8 @@ func _on_crop_feed_selected(crop_name: String, crop_count: int):
 	var feed_effects = crop_data.get("喂养效果", {})
 	
 	# 获取宠物信息
-	var pet_name = current_pet_data.get("基本信息", {}).get("宠物名称", "未知宠物")
-	var pet_id = current_pet_data.get("基本信息", {}).get("宠物ID", "")
+	var pet_name = current_pet_data.get("pet_name", "未知宠物")
+	var pet_id = current_pet_data.get("pet_id", "")
 	
 	if pet_id == "":
 		Toast.show("宠物ID无效", Color.RED, 2.0, 1.0)
@@ -511,7 +510,8 @@ func _send_feed_pet_request(crop_name: String, pet_id: String, feed_effects: Dic
 
 # 获取作物的收获物图片（用于仓库显示）
 func _get_crop_harvest_texture(crop_name: String) -> Texture2D:
-	# 尝试加载"收获物.webp"图片
+	# 使用作物键名（而不是成熟物名称）来构建图片路径
+	# crop_name 是作物的键名，如"可可豆"、"向日葵"等
 	var crop_path = "res://assets/作物/" + crop_name + "/"
 	var harvest_texture_path = crop_path + "收获物.webp"
 	
@@ -521,8 +521,7 @@ func _get_crop_harvest_texture(crop_name: String) -> Texture2D:
 			print("仓库加载作物收获物图片：", crop_name)
 			return texture
 	
-	
-	# 如果都没有找到，使用默认的收获物图片
+	# 如果没有找到，使用默认的收获物图片
 	var default_harvest_path = "res://assets/作物/默认/收获物.webp"
 	if ResourceLoader.exists(default_harvest_path):
 		var texture = load(default_harvest_path)

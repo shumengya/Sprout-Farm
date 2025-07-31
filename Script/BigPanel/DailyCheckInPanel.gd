@@ -10,6 +10,9 @@ signal check_in_failed(error_message: String)
 @onready var main_game = get_node("/root/main")
 @onready var tcp_network_manager_panel: Panel = $'../TCPNetworkManagerPanel'
 
+@onready var confirm_dialog: ConfirmationDialog = $ConfirmDialog #确认弹窗
+
+
 var check_in_history: Dictionary = {}
 var consecutive_days: int = 0
 var has_checked_in_today: bool = false
@@ -35,7 +38,9 @@ func handle_daily_check_in_response(response: Dictionary) -> void:
 		consecutive_days = response.get("consecutive_days", 0)
 		has_checked_in_today = true
 		
-		_show_reward_animation(rewards)
+		# 显示奖励内容
+		_show_reward_content(rewards)
+		
 		_set_button_state(false, "已签到", Color(0.7, 0.7, 0.7, 1))
 		
 		check_in_completed.emit(rewards)
@@ -86,17 +91,6 @@ func execute_check_in() -> void:
 		daily_check_in_button.disabled = false
 		daily_check_in_button.text = "签到"
 
-func _show_reward_animation(rewards: Dictionary) -> void:
-	daily_check_in_reward.text = _format_reward_text(rewards)
-	daily_check_in_reward.show()
-	
-	var tween = create_tween()
-	tween.parallel().tween_method(_animate_reward_display, 0.0, 1.0, 0.5)
-
-func _animate_reward_display(progress: float) -> void:
-	daily_check_in_reward.modulate.a = progress
-	var scale = 0.8 + (0.2 * progress)
-	daily_check_in_reward.scale = Vector2(scale, scale)
 
 func _format_reward_text(rewards: Dictionary) -> String:
 	var text = ""
@@ -162,6 +156,11 @@ func _get_rarity_color(rarity: String) -> String:
 		"传奇": return "#FF8C00"
 		_: return "#FFFFFF"
 
+func _show_reward_content(rewards: Dictionary) -> void:
+	var reward_text = _format_reward_text(rewards)
+	daily_check_in_reward.text = reward_text
+	daily_check_in_reward.show()
+
 func _update_display() -> void:
 	var history_text = "[center][color=#FFB6C1]📋 签到历史[/color][/center]\n"
 	
@@ -194,6 +193,16 @@ func _on_quit_button_pressed() -> void:
 	self.hide()
 
 func _on_daily_check_in_button_pressed() -> void:
+	# 显示确认弹窗
+	confirm_dialog.title = "每日签到确认"
+	confirm_dialog.dialog_text = "确定要进行今日签到吗？\n签到可获得金币、经验和种子奖励！"
+	confirm_dialog.popup_centered()
+	
+	# 连接确认信号（如果还没连接的话）
+	if not confirm_dialog.confirmed.is_connected(_on_confirm_check_in):
+		confirm_dialog.confirmed.connect(_on_confirm_check_in)
+
+func _on_confirm_check_in() -> void:
 	execute_check_in()
 
 func _on_visibility_changed():

@@ -567,3 +567,13 @@ func _set_status(label: Label, text: String, color: Color):
 #面板显示与隐藏切换处理
 func _on_visibility_changed():
 	GlobalVariables.isZoomDisabled = visible
+
+#注册面板返回登录面板
+func _on_register_2_login_button_pressed() -> void:
+	_switch_to_login_panel()
+	pass 
+
+#找回密码面板返回登录面板
+func _on_forget_2_login_button_pressed() -> void:
+	_switch_to_login_panel()
+	pass

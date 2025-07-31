@@ -49,6 +49,8 @@ func _ready() -> void:
 	# 隐藏模板
 	player_info_template.visible = false
 
+	# 连接可见性改变信号
+	visibility_changed.connect(_on_visibility_changed)
 	# 连接按钮信号
 	refresh_button.pressed.connect(_on_refresh_button_pressed)
 	quit_button.pressed.connect(_on_quit_button_pressed)
@@ -265,6 +267,37 @@ func _on_visit_player_pressed(username):
 	else:
 		Toast.show("网络管理器不可用", Color.RED)
 
+
+#搜索按钮点击 - 通过QQ号查询玩家
+func _on_search_button_pressed():
+	var search_text = search_line_edit.text.strip_edges()
+	
+	# 如果搜索框为空，清除搜索条件
+	if search_text == "":
+		current_search_qq = ""
+		Toast.show("已清除搜索条件", Color.YELLOW)
+	else:
+		# 验证输入是否为数字（QQ号）
+		if not search_text.is_valid_int():
+			Toast.show("请输入有效的QQ号（纯数字）", Color.RED)
+			return
+		
+		current_search_qq = search_text
+		Toast.show("搜索QQ号：" + search_text, Color.YELLOW)
+	
+	# 重新请求排行榜
+	request_player_rankings()
+
+#===================通用面板处理======================
+# 面板显示时的处理
+func _on_visibility_changed():
+	if visible:
+		GlobalVariables.isZoomDisabled = true
+		pass
+	else:
+		GlobalVariables.isZoomDisabled = false
+		pass
+
 # 刷新按钮点击
 func _on_refresh_button_pressed():
 	# 检查网络连接
@@ -299,22 +332,4 @@ func _on_quit_button_pressed():
 	
 	self.hide()
 
-#搜索按钮点击 - 通过QQ号查询玩家
-func _on_search_button_pressed():
-	var search_text = search_line_edit.text.strip_edges()
-	
-	# 如果搜索框为空，清除搜索条件
-	if search_text == "":
-		current_search_qq = ""
-		Toast.show("已清除搜索条件", Color.YELLOW)
-	else:
-		# 验证输入是否为数字（QQ号）
-		if not search_text.is_valid_int():
-			Toast.show("请输入有效的QQ号（纯数字）", Color.RED)
-			return
-		
-		current_search_qq = search_text
-		Toast.show("搜索QQ号：" + search_text, Color.YELLOW)
-	
-	# 重新请求排行榜
-	request_player_rankings()
+#===================通用面板处理======================

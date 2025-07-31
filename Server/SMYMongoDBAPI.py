@@ -399,6 +399,172 @@ class SMYMongoDBAPI:
     #=====================初始玩家数据模板系统======================
 
 
+    def batch_update_offline_players_crops(self, growth_multiplier: float = 1.0, exclude_online_players: List[str] = None) -> int:
+        """
+        批量更新离线玩家的作物生长（优化版本，支持完整的加速效果计算）
+        
+        Args:
+            growth_multiplier: 基础生长倍数，默认1.0
+            exclude_online_players: 要排除的在线玩家列表
+            
+        Returns:
+            int: 更新的玩家数量
+        """
+        try:
+            import time
+            from datetime import datetime
+            
+            collection = self.get_collection("playerdata")
+            
+            if exclude_online_players is None:
+                exclude_online_players = []
+            
+            # 查询符合条件的玩家（包含注册时间用于新手奖励判断）
+            query = {
+                "玩家账号": {"$nin": exclude_online_players},
+                "农场土地": {
+                    "$elemMatch": {
+                        "is_diged": True,
+                        "is_planted": True,
+                        "is_dead": False,
+                        "grow_time": {"$exists": True},
+                        "max_grow_time": {"$exists": True}
+                    }
+                }
+            }
+            
+            # 获取需要更新的玩家数据（包含注册时间）
+            players_cursor = collection.find(query, {"玩家账号": 1, "农场土地": 1, "注册时间": 1})
+            updated_count = 0
+            
+            for player in players_cursor:
+                account_id = player.get("玩家账号")
+                farm_lands = player.get("农场土地", [])
+                register_time_str = player.get("注册时间", "")
+                
+                # 判断是否享受新手奖励
+                is_new_player_bonus = self._is_new_player_bonus_active(register_time_str)
+                
+                # 检查是否有需要更新的土地
+                has_updates = False
+                current_time = time.time()
+                
+                for land in farm_lands:
+                    if (land.get("is_diged") and land.get("is_planted") and 
+                        not land.get("is_dead") and 
+                        land.get("grow_time", 0) < land.get("max_grow_time", 0)):
+                        
+                        # 计算生长速度增量（累加方式）
+                        growth_increase = growth_multiplier  # 基础生长速度：每次更新增长1秒
+                        
+                        # 新手奖励：注册后3天内额外增加9秒（总共10倍速度）
+                        if is_new_player_bonus:
+                            growth_increase += 9
+                        
+                        # 土地等级影响 - 根据不同等级额外增加生长速度
+                        land_level = land.get("土地等级", 0)
+                        land_speed_bonus = {
+                            0: 0,   # 默认土地：无额外加成
+                            1: 1,   # 黄土地：额外+1秒（总共2倍速）
+                            2: 3,   # 红土地：额外+3秒（总共4倍速）
+                            3: 5,   # 紫土地：额外+5秒（总共6倍速）
+                            4: 9    # 黑土地：额外+9秒（总共10倍速）
+                        }
+                        growth_increase += land_speed_bonus.get(land_level, 0)
+                        
+                        # 施肥影响 - 支持不同类型的道具施肥
+                        if land.get("已施肥", False) and "施肥时间" in land:
+                            fertilize_time = land.get("施肥时间", 0)
+                            
+                            # 获取施肥类型和对应的持续时间、加成
+                            fertilize_duration = land.get("施肥持续时间", 600)  # 默认10分钟
+                            fertilize_bonus = land.get("施肥加成", 1)  # 默认额外+1秒
+                            
+                            if current_time - fertilize_time <= fertilize_duration:
+                                # 施肥效果仍在有效期内，累加施肥加成
+                                growth_increase += fertilize_bonus
+                            else:
+                                # 施肥效果过期，清除施肥状态
+                                land["已施肥"] = False
+                                if "施肥时间" in land:
+                                    del land["施肥时间"]
+                                if "施肥类型" in land:
+                                    del land["施肥类型"]
+                                if "施肥倍数" in land:
+                                    del land["施肥倍数"]
+                                if "施肥持续时间" in land:
+                                    del land["施肥持续时间"]
+                                if "施肥加成" in land:
+                                    del land["施肥加成"]
+                        
+                        # 确保最小增长量为1
+                        if growth_increase < 1:
+                            growth_increase = 1
+                        
+                        # 更新生长时间，但不超过最大生长时间
+                        new_grow_time = min(
+                            land["grow_time"] + growth_increase,
+                            land["max_grow_time"]
+                        )
+                        land["grow_time"] = new_grow_time
+                        has_updates = True
+                
+                # 如果有更新，保存到数据库
+                if has_updates:
+                    update_result = collection.update_one(
+                        {"玩家账号": account_id},
+                        {
+                            "$set": {
+                                "农场土地": farm_lands,
+                                "updated_at": datetime.now()
+                            }
+                        }
+                    )
+                    
+                    if update_result.acknowledged and update_result.matched_count > 0:
+                        updated_count += 1
+            
+            self.logger.info(f"批量更新了 {updated_count} 个离线玩家的作物生长（包含完整加速效果）")
+            return updated_count
+            
+        except Exception as e:
+            self.logger.error(f"批量更新离线玩家作物失败: {e}")
+            return 0
+    
+    def _is_new_player_bonus_active(self, register_time_str: str) -> bool:
+        """
+        检查玩家是否在新玩家奖励期内（注册后3天内享受10倍生长速度）
+        
+        Args:
+            register_time_str: 注册时间字符串
+            
+        Returns:
+            bool: 是否享受新手奖励
+        """
+        try:
+            import datetime
+            
+            # 如果没有注册时间或者是默认的老玩家时间，则不享受奖励
+            if not register_time_str or register_time_str == "2025年05月21日15时00分00秒":
+                return False
+            
+            # 解析注册时间
+            register_time = datetime.datetime.strptime(register_time_str, "%Y年%m月%d日%H时%M分%S秒")
+            current_time = datetime.datetime.now()
+            
+            # 计算注册天数
+            time_diff = current_time - register_time
+            days_since_register = time_diff.total_seconds() / 86400  # 转换为天数
+            
+            # 3天内享受新玩家奖励
+            return days_since_register <= 3
+            
+        except ValueError as e:
+            self.logger.warning(f"解析注册时间格式错误: {register_time_str}, 错误: {str(e)}")
+            return False
+    
+    # 注意：get_offline_players_with_crops 方法已被移除
+    # 现在使用优化的 batch_update_offline_players_crops 方法直接在 MongoDB 中处理查询和更新
     #=====================玩家数据管理======================
 
     # ========================= 验证码系统 =========================

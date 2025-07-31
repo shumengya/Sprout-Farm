@@ -289,6 +289,7 @@ func _on_confirm_buy_pet(pet_name: String, pet_cost: int, dialog: AcceptDialog):
 	
 	# 发送购买请求到服务器
 	_send_buy_pet_request(pet_name, pet_cost)
+	init_pet_store()
 	dialog.queue_free()
 
 # 取消购买宠物
@@ -310,6 +311,7 @@ func _send_buy_pet_request(pet_name: String, pet_cost: int):
 
 #=========================面板通用处理=========================
 # 手动刷新宠物商店面板
+#刷新按钮点击
 func _on_refresh_button_pressed() -> void:
 	# 清空现有配置和请求状态，强制重新获取
 	pet_config = {}

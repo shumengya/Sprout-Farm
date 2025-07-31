@@ -371,8 +371,8 @@ func _show_pet_item_confirmation_dialog(item_name: String, item_count: int):
 		Toast.show("宠物数据丢失，请重新选择宠物", Color.RED, 2.0, 1.0)
 		return
 	
-	var pet_name = current_pet_data.get("基本信息", {}).get("宠物名称", "未知宠物")
-	var pet_id = current_pet_data.get("基本信息", {}).get("宠物ID", "")
+	var pet_name = current_pet_data.get("pet_name", "未知宠物")
+	var pet_id = current_pet_data.get("pet_id", "")
 	
 	# 获取道具信息
 	var item_config = _load_item_config()
@@ -514,4 +514,4 @@ func get_selected_item_name() -> String:
 
 # 检查是否有道具被选择
 func is_item_currently_selected() -> bool:
-	return is_item_selected 
+	return is_item_selected

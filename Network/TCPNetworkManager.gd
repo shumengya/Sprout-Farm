@@ -23,7 +23,7 @@ extends Panel
 @onready var item_bag_panel: Panel = $'../ItemBagPanel'
 @onready var pet_store_panel: Panel = $'../PetStorePanel'
 @onready var pet_bag_panel: Panel = $'../PetBagPanel'
-@onready var pet_fight_panel: Panel = $'../PetFightPanel'
+
 #小面板
 @onready var land_panel: Panel = $'../../SmallPanel/LandPanel'
 @onready var load_progress_panel: Panel = $'../../SmallPanel/LoadProgressPanel'
@@ -366,6 +366,31 @@ func _on_data_received(data):
 			else:
 				Toast.show(message, Color.RED)
 		
+		# 宠物喂食响应
+		elif action_type == "feed_pet":
+			if success:
+				# 更新宠物背包和作物仓库
+				main_game.pet_bag = updated_data["宠物背包"]
+				main_game.crop_warehouse = updated_data["作物仓库"]
+				
+				# 更新UI
+				main_game.pet_bag_panel.update_pet_bag_ui()
+				main_game.crop_warehouse_panel.update_crop_warehouse_ui()
+				
+				# 如果宠物信息面板正在显示当前宠物，刷新显示
+				var pet_id = data.get("pet_id", "")
+				if pet_inform_panel.current_pet_data.get("pet_id", "") == pet_id:
+					# 从更新后的宠物背包中获取最新的宠物数据
+					for pet_data in main_game.pet_bag:
+						if pet_data.get("pet_id", "") == pet_id:
+							pet_inform_panel.current_pet_data = pet_data
+							pet_inform_panel.show_pet_info(pet_data.get("pet_name", ""), pet_data)
+							break
+				
+				Toast.show(message, Color.GREEN)
+			else:
+				Toast.show(message, Color.RED)
+		
 		# 使用道具响应
 		elif action_type == "use_item":
 			if success:
@@ -626,6 +651,21 @@ func _on_data_received(data):
 	# 游戏设置响应
 	elif message_type == "save_game_settings_response":
 		main_game._handle_save_game_settings_response(data)
+	
+	# 占卜响应
+	elif message_type == "today_divination_response":
+		var success = data.get("success", false)
+		var message = data.get("message", "")
+		var divination_data = data.get("divination_data", {})
+		
+		# 更新主游戏中的占卜数据
+		if success and divination_data.has("今日占卜对象"):
+			main_game._handle_divination_response(divination_data)
+		
+		# 通知占卜面板
+		var divination_panel = get_node_or_null("/root/main/UI/SmallPanel/TodayDivinationPanel")
+		if divination_panel and divination_panel.has_method("handle_divination_response"):
+			divination_panel.handle_divination_response(success, message, divination_data)
 # ============================= 客户端与服务端通信核心 =====================================
 
 
@@ -1207,6 +1247,17 @@ func send_pet_battle_result(battle_result: Dictionary):
 	client.send_data({
 		"type": "pet_battle_result",
 		"battle_result": battle_result,
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送占卜请求
+func sendDivinationRequest():
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "today_divination",
 		"timestamp": Time.get_unix_time_from_system()
 	})
 	return true

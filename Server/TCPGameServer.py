@@ -22,7 +22,7 @@ from ConsoleCommandsAPI import ConsoleCommandsAPI #导入控制台命令API模�
 ====================================================================
 """
 server_host: str = "0.0.0.0"
-server_port: int = 6060
+server_port: int = 7070
 buffer_size: int = 4096
 server_version: str = "2.0.1"
 
@@ -70,6 +70,7 @@ class TCPGameServer(TCPServer):
         self.start_weed_growth_timer()
         self.start_wisdom_tree_health_decay_timer()
         self.start_verification_code_cleanup_timer()
+        self.start_offline_crop_update_timer()
     
     #初始化MongoDB API
     def _init_mongodb_api(self):
@@ -130,8 +131,6 @@ class TCPGameServer(TCPServer):
         self.crop_timer.daemon = True
         self.crop_timer.start()
     
-
-    
     #启动杂草生长计时器
     def start_weed_growth_timer(self):
         """启动杂草生长计时器，每天检查一次"""
@@ -175,6 +174,18 @@ class TCPGameServer(TCPServer):
         self.verification_cleanup_timer.daemon = True
         self.verification_cleanup_timer.start()
     
+    def start_offline_crop_update_timer(self):
+        """启动离线玩家作物更新定时器"""
+        try:
+            self.update_offline_players_crops()
+        except Exception as e:
+            self.log('ERROR', f"离线玩家作物更新时出错: {str(e)}", 'SERVER')
+        
+        # 创建下一个离线作物更新计时器（每1分钟检查一次）
+        self.offline_crop_timer = threading.Timer(60, self.start_offline_crop_update_timer)  # 每1分钟更新一次
+        self.offline_crop_timer.daemon = True
+        self.offline_crop_timer.start()
+    
     #获取服务器统计信息
     def get_server_stats(self):
         """获取服务器统计信息"""
@@ -212,6 +223,12 @@ class TCPGameServer(TCPServer):
             self.verification_cleanup_timer.cancel()
             self.verification_cleanup_timer = None
             self.log('INFO', "验证码清理定时器已停止", 'SERVER')
+        
+        # 停止离线作物更新定时器
+        if hasattr(self, 'offline_crop_timer') and self.offline_crop_timer:
+            self.offline_crop_timer.cancel()
+            self.offline_crop_timer = None
+            self.log('INFO', "离线作物更新定时器已停止", 'SERVER')
         
         # 显示服务器统计信息
         stats = self.get_server_stats()
@@ -321,10 +338,7 @@ class TCPGameServer(TCPServer):
         except Exception as e:
             self.log('ERROR', f"保存玩家 {account_id} 的数据时出错: {str(e)}", 'SERVER')
             return False
-    
-    #加载玩家数据（兼容旧方法名）
-
-    
+        
     #加载玩家数据
     def _load_player_data_with_check(self, client_id, action_type=None):
         """加载玩家数据并进行错误检查的通用方法"""
@@ -446,6 +460,33 @@ class TCPGameServer(TCPServer):
         except ValueError as e:
             self.log('WARNING', f"解析注册时间格式错误: {register_time_str}, 错误: {str(e)}", 'SERVER')
             return False
+    
+    def update_offline_players_crops(self):
+        """更新离线玩家的作物生长"""
+        try:
+            if not self.use_mongodb or not self.mongo_api:
+                self.log('WARNING', 'MongoDB未配置或不可用，无法更新离线玩家作物', 'SERVER')
+                return
+            
+            # 获取当前在线玩家列表
+            online_players = []
+            for client_id, user_info in self.user_data.items():
+                if user_info.get("logged_in", False) and user_info.get("username"):
+                    online_players.append(user_info["username"])
+            
+            # 直接调用优化后的批量更新方法，传入在线玩家列表进行排除
+            updated_count = self.mongo_api.batch_update_offline_players_crops(
+                growth_multiplier=1.0, 
+                exclude_online_players=online_players
+            )
+            
+            if updated_count > 0:
+                self.log('INFO', f"成功更新了 {updated_count} 个离线玩家的作物生长", 'SERVER')
+            else:
+                self.log('DEBUG', "没有离线玩家的作物需要更新", 'SERVER')
+                
+        except Exception as e:
+            self.log('ERROR', f"更新离线玩家作物时出错: {str(e)}", 'SERVER')
 
 #=================================数据管理方法====================================
 
@@ -485,23 +526,23 @@ class TCPGameServer(TCPServer):
             if (farm_lot.get("crop_type") and farm_lot.get("is_planted") and 
                 not farm_lot.get("is_dead") and farm_lot["grow_time"] < farm_lot["max_grow_time"]):
                 
-                # 计算生长速度倍数
-                growth_multiplier = 1.0
+                # 计算生长速度增量（累加方式）
+                growth_increase = 1  # 基础生长速度：每次更新增长1秒
                 
-                # 新玩家注册奖励：注册后3天内享受10倍生长速度
+                # 新玩家注册奖励：注册后3天内额外增加9秒（总共10倍速度）
                 if self._is_new_player_bonus_active(player_data):
-                    growth_multiplier *= 10.0
+                    growth_increase += 9
                     
-                # 土地等级影响 - 根据不同等级应用不同倍数
+                # 土地等级影响 - 根据不同等级额外增加生长速度
                 land_level = farm_lot.get("土地等级", 0)
-                land_speed_multipliers = {
-                    0: 1.0,   # 默认土地：正常生长速度
-                    1: 2.0,   # 黄土地：2倍速
-                    2: 4.0,   # 红土地：4倍速
-                    3: 6.0,   # 紫土地：6倍速
-                    4: 10.0   # 黑土地：10倍速
+                land_speed_bonus = {
+                    0: 0,   # 默认土地：无额外加成
+                    1: 1,   # 黄土地：额外+1秒（总共2倍速）
+                    2: 3,   # 红土地：额外+3秒（总共4倍速）
+                    3: 5,   # 紫土地：额外+5秒（总共6倍速）
+                    4: 9    # 黑土地：额外+9秒（总共10倍速）
                 }
-                growth_multiplier *= land_speed_multipliers.get(land_level, 1.0)
+                growth_increase += land_speed_bonus.get(land_level, 0)
                 
                 # 施肥影响 - 支持不同类型的道具施肥
                 if farm_lot.get("已施肥", False) and "施肥时间" in farm_lot:
@@ -511,11 +552,11 @@ class TCPGameServer(TCPServer):
                     # 获取施肥类型和对应的持续时间、倍数
                     fertilize_type = farm_lot.get("施肥类型", "普通施肥")
                     fertilize_duration = farm_lot.get("施肥持续时间", 600)  # 默认10分钟
-                    fertilize_multiplier = farm_lot.get("施肥倍数", 2.0)  # 默认2倍速
+                    fertilize_bonus = farm_lot.get("施肥加成", 1)  # 默认额外+1秒
                     
                     if current_time - fertilize_time <= fertilize_duration:
-                        # 施肥效果仍在有效期内
-                        growth_multiplier *= fertilize_multiplier
+                        # 施肥效果仍在有效期内，累加施肥加成
+                        growth_increase += fertilize_bonus
                     else:
                         # 施肥效果过期，清除施肥状态
                         farm_lot["已施肥"] = False
@@ -527,9 +568,10 @@ class TCPGameServer(TCPServer):
                             del farm_lot["施肥倍数"]
                         if "施肥持续时间" in farm_lot:
                             del farm_lot["施肥持续时间"]
+                        if "施肥加成" in farm_lot:
+                            del farm_lot["施肥加成"]
                 
-                # 应用生长速度倍数
-                growth_increase = int(growth_multiplier)
+                # 确保最小增长量为1
                 if growth_increase < 1:
                     growth_increase = 1
                 
@@ -725,6 +767,8 @@ class TCPGameServer(TCPServer):
             return self._handle_save_game_settings(client_id, message)
         elif message_type == "pet_battle_result":#宠物对战结果
             return self._handle_pet_battle_result(client_id, message)
+        elif message_type == "today_divination":#今日占卜
+            return self._handle_today_divination(client_id, message)
         #---------------------------------------------------------------------------
 
         elif message_type == "message":#处理聊天消息（暂未实现）
@@ -1395,7 +1439,7 @@ class TCPGameServer(TCPServer):
         
         # 添加成熟物到作物仓库（如果允许）
         if will_get_mature_item:
-            self._add_crop_to_warehouse_optimized(player_data, {"name": crop_type, "count": harvest_count}, mature_item_name, crop_info.get("品质", "普通"))
+            self._add_crop_to_warehouse_optimized(player_data, {"name": crop_type, "count": harvest_count}, crop_type, crop_info.get("品质", "普通"))
         
         # 添加种子奖励到背包
         if seed_reward:
@@ -1406,7 +1450,7 @@ class TCPGameServer(TCPServer):
         if player_data["经验值"] >= level_up_experience:
             player_data["等级"] += 1
             player_data["经验值"] -= level_up_experience
-            self.log('INFO', f"玩家 {username} 升级到 {player_data['level']} 级", 'SERVER')
+            self.log('INFO', f"玩家 {username} 升级到 {player_data['等级']} 级", 'SERVER')
         
         # 清理地块（批量更新）
         lot.update({
@@ -1528,7 +1572,7 @@ class TCPGameServer(TCPServer):
         
         # 添加成熟物到作物仓库（如果允许）
         if will_get_mature_item:
-            self._add_crop_to_warehouse_optimized(current_player_data, {"name": crop_type, "count": harvest_count}, mature_item_name, crop_info.get("品质", "普通"))
+            self._add_crop_to_warehouse_optimized(current_player_data, {"name": crop_type, "count": harvest_count}, crop_type, crop_info.get("品质", "普通"))
         
         # 添加种子奖励到背包
         if seed_reward:
@@ -1539,7 +1583,7 @@ class TCPGameServer(TCPServer):
         if current_player_data["经验值"] >= level_up_experience:
             current_player_data["等级"] += 1
             current_player_data["经验值"] -= level_up_experience
-            self.log('INFO', f"玩家 {current_username} 升级到 {current_player_data['level']} 级", 'SERVER')
+            self.log('INFO', f"玩家 {current_username} 升级到 {current_player_data['等级']} 级", 'SERVER')
         
         # 清理目标玩家的地块（批量更新）
         target_lot.update({
@@ -2361,6 +2405,10 @@ class TCPGameServer(TCPServer):
             "pet_owner": username
         })
         
+        # 初始化当前生命值为最大生命值
+        max_health = pet_instance.get("max_health", 100)
+        pet_instance["pet_current_health"] = max_health
+        
         return pet_instance
     
     #检查玩家是否已拥有某种宠物
@@ -2851,7 +2899,7 @@ class TCPGameServer(TCPServer):
             return self._send_action_error(client_id, "feed_pet", "作物名称不能为空")
         
         # 检查玩家是否有该作物
-        crop_warehouse = player_data.get("crop_warehouse", [])
+        crop_warehouse = player_data.get("作物仓库", [])
         crop_found = False
         crop_index = -1
         
@@ -2916,7 +2964,7 @@ class TCPGameServer(TCPServer):
                 "applied_effects": applied_effects,
                 "updated_data": {
                     "宠物背包": player_data["宠物背包"],
-                    "crop_warehouse": player_data["crop_warehouse"]
+                    "作物仓库": player_data["作物仓库"]
                 }
             })
         else:
@@ -2927,7 +2975,7 @@ class TCPGameServer(TCPServer):
         """处理宠物喂食逻辑，支持多种属性提升"""
         try:
             # 消耗作物
-            crop_warehouse = player_data.get("crop_warehouse", [])
+            crop_warehouse = player_data.get("作物仓库", [])
             if crop_index >= 0 and crop_index < len(crop_warehouse):
                 crop_warehouse[crop_index]["count"] -= 1
                 # 如果数量为0，移除该作物
@@ -2967,31 +3015,34 @@ class TCPGameServer(TCPServer):
                     # 升级时应用属性加成
                     self._apply_level_up_bonus(target_pet, level_ups)
             
-            # 处理生命值效果
+            # 处理生命值效果（增加最大生命值）
             if "生命值" in feed_effects:
-                hp_gain = feed_effects["生命值"]
-                current_hp = target_pet.get("pet_current_health", 100)
-                max_hp = target_pet.get("pet_max_health", 100)
+                max_hp_gain = feed_effects["生命值"]
+                # 增加最大生命值
+                current_max_hp = target_pet.get("max_health", 100)
+                new_max_hp = current_max_hp + max_hp_gain
+                target_pet["max_health"] = new_max_hp
                 
-                actual_hp_gain = min(hp_gain, max_hp - current_hp)  # 不能超过最大生命值
-                if actual_hp_gain > 0:
-                    target_pet["pet_current_health"] = current_hp + actual_hp_gain
-                    applied_effects["生命值"] = actual_hp_gain
+                # 同时恢复相应的当前生命值
+                current_hp = target_pet.get("pet_current_health", current_max_hp)
+                target_pet["pet_current_health"] = current_hp + max_hp_gain
+                
+                applied_effects["生命值"] = max_hp_gain
             
             # 处理攻击力效果
             if "攻击力" in feed_effects:
                 attack_gain = feed_effects["攻击力"]
-                current_attack = target_pet.get("pet_attack_damage", 20)
+                current_attack = target_pet.get("base_attack_damage", 20)
                 new_attack = current_attack + attack_gain
-                target_pet["pet_attack_damage"] = new_attack
+                target_pet["base_attack_damage"] = new_attack
                 applied_effects["攻击力"] = attack_gain
             
             # 处理移动速度效果
             if "移动速度" in feed_effects:
                 speed_gain = feed_effects["移动速度"]
-                current_speed = target_pet.get("pet_move_speed", 100)
+                current_speed = target_pet.get("move_speed", 100)
                 new_speed = current_speed + speed_gain
-                target_pet["pet_move_speed"] = new_speed
+                target_pet["move_speed"] = new_speed
                 applied_effects["移动速度"] = speed_gain
             
             # 处理亲密度效果
@@ -3008,29 +3059,40 @@ class TCPGameServer(TCPServer):
             # 处理护甲值效果
             if "护甲值" in feed_effects:
                 armor_gain = feed_effects["护甲值"]
-                current_armor = target_pet.get("pet_current_armor", 10)
-                max_armor = target_pet.get("pet_max_armor", 10)
+                current_armor = target_pet.get("current_armor", target_pet.get("max_armor", 10))
+                max_armor = target_pet.get("max_armor", 10)
                 
                 actual_armor_gain = min(armor_gain, max_armor - current_armor)
                 if actual_armor_gain > 0:
-                    target_pet["pet_current_armor"] = current_armor + actual_armor_gain
+                    target_pet["current_armor"] = current_armor + actual_armor_gain
                     applied_effects["护甲值"] = actual_armor_gain
             
             # 处理暴击率效果
             if "暴击率" in feed_effects:
                 crit_gain = feed_effects["暴击率"] / 100.0  # 转换为小数
-                current_crit = target_pet.get("pet_crit_rate", 0.1)
+                current_crit = target_pet.get("crit_rate", 0.1)
                 new_crit = min(current_crit + crit_gain, 1.0)  # 最大100%
-                target_pet["pet_crit_rate"] = new_crit
+                target_pet["crit_rate"] = new_crit
                 applied_effects["暴击率"] = feed_effects["暴击率"]
             
             # 处理闪避率效果
             if "闪避率" in feed_effects:
                 dodge_gain = feed_effects["闪避率"] / 100.0  # 转换为小数
-                current_dodge = movement_data.get("闪避率", 0.05)
+                current_dodge = target_pet.get("dodge_rate", 0.05)
                 new_dodge = min(current_dodge + dodge_gain, 1.0)  # 最大100%
-                movement_data["闪避率"] = new_dodge
+                target_pet["dodge_rate"] = new_dodge
                 applied_effects["闪避率"] = feed_effects["闪避率"]
+            
+            # 处理护盾值效果
+            if "护盾值" in feed_effects:
+                shield_gain = feed_effects["护盾值"]
+                current_shield = target_pet.get("current_shield", target_pet.get("max_shield", 0))
+                max_shield = target_pet.get("max_shield", 0)
+                
+                actual_shield_gain = min(shield_gain, max_shield - current_shield)
+                if actual_shield_gain > 0:
+                    target_pet["current_shield"] = current_shield + actual_shield_gain
+                    applied_effects["护盾值"] = actual_shield_gain
             
             return True, applied_effects
             
@@ -3045,21 +3107,33 @@ class TCPGameServer(TCPServer):
         level_bonus_multiplier = 1.1 ** level_ups
         
         # 更新生命和防御属性
-        old_max_hp = target_pet.get("pet_max_health", 100)
-        old_max_armor = target_pet.get("pet_max_armor", 10)
+        old_max_hp = target_pet.get("max_health", 100)
+        old_max_armor = target_pet.get("max_armor", 10)
+        old_max_shield = target_pet.get("max_shield", 0)
         
-        new_max_hp = old_max_hp * level_bonus_multiplier
-        new_max_armor = old_max_armor * level_bonus_multiplier
+        new_max_hp = int(old_max_hp * level_bonus_multiplier)
+        new_max_armor = int(old_max_armor * level_bonus_multiplier)
+        new_max_shield = int(old_max_shield * level_bonus_multiplier)
         
-        target_pet["pet_max_health"] = new_max_hp
+        target_pet["max_health"] = new_max_hp
         target_pet["pet_current_health"] = new_max_hp  # 升级回满血
-        target_pet["pet_max_armor"] = new_max_armor
-        target_pet["pet_current_armor"] = new_max_armor
+        target_pet["max_armor"] = new_max_armor
+        target_pet["current_armor"] = new_max_armor  # 升级回满护甲
+        
+        # 如果有护盾系统，也更新护盾
+        if old_max_shield > 0:
+            target_pet["max_shield"] = new_max_shield
+            target_pet["current_shield"] = new_max_shield  # 升级回满护盾
         
         # 更新攻击属性
-        old_attack = target_pet.get("pet_attack_damage", 20)
-        new_attack = old_attack * level_bonus_multiplier
-        target_pet["pet_attack_damage"] = new_attack
+        old_attack = target_pet.get("base_attack_damage", 20)
+        new_attack = int(old_attack * level_bonus_multiplier)
+        target_pet["base_attack_damage"] = new_attack
+        
+        # 更新移动速度
+        old_speed = target_pet.get("move_speed", 100)
+        new_speed = int(old_speed * level_bonus_multiplier)
+        target_pet["move_speed"] = new_speed
 #==========================宠物喂食处理==========================
 
 
@@ -4077,29 +4151,29 @@ class TCPGameServer(TCPServer):
         current_time = time.time()
         
         if item_name == "农家肥":
-            # 30分钟内2倍速生长
+            # 30分钟内额外+1秒/次生长
             lot["已施肥"] = True
             lot["施肥时间"] = current_time
             lot["施肥类型"] = "农家肥"
-            lot["施肥倍数"] = 2.0
+            lot["施肥加成"] = 1
             lot["施肥持续时间"] = 1800  # 30分钟
-            message = f"使用 {item_name} 成功！作物将在30分钟内以2倍速度生长"
+            message = f"使用 {item_name} 成功！作物将在30分钟内获得额外生长加成"
         elif item_name == "金坷垃":
-            # 5分钟内5倍速生长
+            # 5分钟内额外+4秒/次生长
             lot["已施肥"] = True
             lot["施肥时间"] = current_time
             lot["施肥类型"] = "金坷垃"
-            lot["施肥倍数"] = 5.0
+            lot["施肥加成"] = 4
             lot["施肥持续时间"] = 300  # 5分钟
-            message = f"使用 {item_name} 成功！作物将在5分钟内以5倍速度生长"
+            message = f"使用 {item_name} 成功！作物将在5分钟内获得强力生长加成"
         elif item_name == "生长素":
-            # 10分钟内3倍速生长
+            # 10分钟内额外+2秒/次生长
             lot["已施肥"] = True
             lot["施肥时间"] = current_time
             lot["施肥类型"] = "生长素"
-            lot["施肥倍数"] = 3.0
+            lot["施肥加成"] = 2
             lot["施肥持续时间"] = 600  # 10分钟
-            message = f"使用 {item_name} 成功！作物将在10分钟内以3倍速度生长"
+            message = f"使用 {item_name} 成功！作物将在10分钟内获得中等生长加成"
         else:
             return self._send_action_error(client_id, "use_item", f"不支持的施肥道具: {item_name}")
         
@@ -4211,29 +4285,29 @@ class TCPGameServer(TCPServer):
         current_time = time.time()
         
         if item_name == "农家肥":
-            # 30分钟内2倍速生长
+            # 30分钟内额外+1秒/次生长
             target_lot["已施肥"] = True
             target_lot["施肥时间"] = current_time
             target_lot["施肥类型"] = "农家肥"
-            target_lot["施肥倍数"] = 2.0
+            target_lot["施肥加成"] = 1
             target_lot["施肥持续时间"] = 1800  # 30分钟
-            message = f"帮助施肥成功！{target_username} 的作物将在30分钟内以2倍速度生长"
+            message = f"帮助施肥成功！{target_username} 的作物将在30分钟内获得额外生长加成"
         elif item_name == "金坷垃":
-            # 5分钟内5倍速生长
+            # 5分钟内额外+4秒/次生长
             target_lot["已施肥"] = True
             target_lot["施肥时间"] = current_time
             target_lot["施肥类型"] = "金坷垃"
-            target_lot["施肥倍数"] = 5.0
+            target_lot["施肥加成"] = 4
             target_lot["施肥持续时间"] = 300  # 5分钟
-            message = f"帮助施肥成功！{target_username} 的作物将在5分钟内以5倍速度生长"
+            message = f"帮助施肥成功！{target_username} 的作物将在5分钟内获得强力生长加成"
         elif item_name == "生长素":
-            # 10分钟内3倍速生长
+            # 10分钟内额外+2秒/次生长
             target_lot["已施肥"] = True
             target_lot["施肥时间"] = current_time
             target_lot["施肥类型"] = "生长素"
-            target_lot["施肥倍数"] = 3.0
+            target_lot["施肥加成"] = 2
             target_lot["施肥持续时间"] = 600  # 10分钟
-            message = f"帮助施肥成功！{target_username} 的作物将在10分钟内以3倍速度生长"
+            message = f"帮助施肥成功！{target_username} 的作物将在10分钟内获得中等生长加成"
         else:
             return self._send_action_error(client_id, "use_item", f"不支持的施肥道具: {item_name}")
         
@@ -4915,29 +4989,37 @@ class TCPGameServer(TCPServer):
         try:
             # 根据道具类型应用不同的效果
             if item_name == "不死图腾":
-                # 启用死亡免疫机制
-                pet_data["特殊机制开关"]["启用死亡免疫机制"] = True
-                pet_data["特殊属性"]["死亡免疫"] = True
-                return True, f"宠物 {pet_data['pet_name']} 获得了死亡免疫能力！", pet_data
+                # 启用死亡重生技能
+                if "enable_death_respawn_skill" not in pet_data:
+                    pet_data["enable_death_respawn_skill"] = True
+                else:
+                    pet_data["enable_death_respawn_skill"] = True
+                if "respawn_health_percentage" not in pet_data:
+                    pet_data["respawn_health_percentage"] = 0.5  # 重生时50%血量
+                return True, f"宠物 {pet_data['pet_name']} 获得了死亡重生能力！", pet_data
                 
             elif item_name == "荆棘护甲":
-                # 启用伤害反弹机制
-                pet_data["特殊机制开关"]["启用伤害反弹机制"] = True
-                pet_data["特殊属性"]["伤害反弹"] = 0.3  # 反弹30%伤害
+                # 启用反伤机制
+                if "enable_damage_reflection_skill" not in pet_data:
+                    pet_data["enable_damage_reflection_skill"] = True
+                else:
+                    pet_data["enable_damage_reflection_skill"] = True
                 return True, f"宠物 {pet_data['pet_name']} 获得了荆棘护甲！", pet_data
                 
             elif item_name == "狂暴药水":
-                # 启用狂暴模式机制
-                pet_data["特殊机制开关"]["启用狂暴模式机制"] = True
-                pet_data["特殊属性"]["狂暴阈值"] = 0.3  # 血量低于30%时触发
-                pet_data["特殊属性"]["狂暴状态伤害倍数"] = 2.0  # 狂暴时伤害翻倍
+                # 启用狂暴技能
+                if "enable_berserker_skill" not in pet_data:
+                    pet_data["enable_berserker_skill"] = True
+                else:
+                    pet_data["enable_berserker_skill"] = True
                 return True, f"宠物 {pet_data['pet_name']} 获得了狂暴能力！", pet_data
                 
             elif item_name == "援军令牌":
-                # 启用援助召唤机制
-                pet_data["特殊机制开关"]["启用援助召唤机制"] = True
-                pet_data["援助系统"]["援助触发阈值"] = 0.2  # 血量低于20%时触发
-                pet_data["援助系统"]["援助召唤数量"] = 3  # 召唤3个援军
+                # 启用召唤宠物技能
+                if "enable_summon_pet_skill" not in pet_data:
+                    pet_data["enable_summon_pet_skill"] = True
+                else:
+                    pet_data["enable_summon_pet_skill"] = True
                 return True, f"宠物 {pet_data['pet_name']} 获得了援军召唤能力！", pet_data
                 
             elif item_name in ["金刚图腾", "灵木图腾", "潮汐图腾", "烈焰图腾", "敦岩图腾"]:
@@ -4961,17 +5043,20 @@ class TCPGameServer(TCPServer):
                 new_element = element_map[item_name]
                 element_name = element_name_map[item_name]
                 
-                pet_data["元素属性"]["元素类型"] = new_element
-                pet_data["元素属性"]["元素克制额外伤害"] = 100.0  # 元素克制时额外伤害
+                # 根据实际宠物数据结构更新元素类型
+                pet_data["element_type"] = new_element
+                # 如果没有元素伤害加成字段，则添加
+                if "element_damage_bonus" not in pet_data:
+                    pet_data["element_damage_bonus"] = 100.0
                 
                 return True, f"宠物 {pet_data['pet_name']} 的元素属性已改变为{element_name}元素！", pet_data
             
             else:
-                return False, f"未知的宠物道具: {item_name}"
+                return False, f"未知的宠物道具: {item_name}", None
                 
         except Exception as e:
             self.log('ERROR', f"处理宠物道具效果失败: {str(e)}", 'PET_ITEM')
-            return False, "道具效果处理失败"
+            return False, "道具效果处理失败", None
     
 #==========================宠物使用道具处理==========================
 
@@ -7957,8 +8042,6 @@ class TCPGameServer(TCPServer):
 #==========================幸运抽奖处理==========================
 
 
-
-
 #==========================发送游戏操作错误处理==========================
     #发送游戏操作错误
     def _send_action_error(self, client_id, action_type, message):
@@ -8150,7 +8233,6 @@ class TCPGameServer(TCPServer):
             "message": message
         })
 # ================================账户设置处理方法================================
-
 
 
 #==========================稻草人系统处理==========================
@@ -8391,8 +8473,6 @@ class TCPGameServer(TCPServer):
             "message": message
         })
 #==========================稻草人系统处理==========================
-
-
 
 
 #==========================智慧树系统处理==========================
@@ -9558,6 +9638,182 @@ class TCPGameServer(TCPServer):
 #==========================小卖部管理处理==========================
 
 
+#==========================今日占卜处理==========================
+    def _handle_today_divination(self, client_id, message):
+        """处理今日占卜请求"""
+        # 检查用户是否已登录
+        logged_in, response = self._check_user_logged_in(client_id, "今日占卜", "today_divination")
+        if not logged_in:
+            return self.send_data(client_id, response)
+        
+        # 获取玩家数据
+        player_data, username, response = self._load_player_data_with_check(client_id, "today_divination")
+        if not player_data:
+            return self.send_data(client_id, response)
+        
+        # 获取今日日期
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        
+        # 检查今日占卜对象是否存在
+        if "今日占卜对象" not in player_data:
+            player_data["今日占卜对象"] = {}
+        
+        divination_data = player_data["今日占卜对象"]
+        
+        # 检查今日是否已经占卜过
+        if "占卜日期" in divination_data and divination_data["占卜日期"] == today:
+            return self.send_data(client_id, {
+                "type": "today_divination_response",
+                "success": False,
+                "message": "今日已经占卜过了，明天再来吧！",
+                "divination_data": player_data
+            })
+        
+        # 生成占卜结果
+        divination_result = self._generate_divination_result()
+        
+        # 更新玩家占卜数据
+        divination_data["占卜日期"] = today
+        divination_data["占卜结果"] = divination_result["result"]
+        divination_data["占卜等级"] = divination_result["level"]
+        divination_data["卦象"] = divination_result["hexagram"]
+        divination_data["建议"] = divination_result["advice"]
+        
+        # 保存玩家数据
+        self.save_player_data(username, player_data)
+        
+        self.log('INFO', f"玩家 {username} 进行今日占卜，等级：{divination_result['level']}", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "today_divination_response",
+            "success": True,
+            "message": "占卜完成！",
+            "divination_data": player_data
+        })
+    
+    def _generate_divination_result(self):
+        """生成占卜结果"""
+        import random
+        
+        # 占卜等级配置（权重越高，出现概率越大）
+        levels = [
+            {"name": "大吉", "weight": 5, "color": "#FFD700"},
+            {"name": "中吉", "weight": 15, "color": "#FFA500"},
+            {"name": "小吉", "weight": 25, "color": "#90EE90"},
+            {"name": "平", "weight": 30, "color": "#87CEEB"},
+            {"name": "小凶", "weight": 20, "color": "#DDA0DD"},
+            {"name": "凶", "weight": 5, "color": "#FF6347"}
+        ]
+        
+        # 易经八卦
+        hexagrams = [
+            {"name": "乾卦", "symbol": "☰", "meaning": "天行健，君子以自强不息"},
+            {"name": "坤卦", "symbol": "☷", "meaning": "地势坤，君子以厚德载物"},
+            {"name": "震卦", "symbol": "☳", "meaning": "雷声隆隆，万物复苏"},
+            {"name": "巽卦", "symbol": "☴", "meaning": "风行天下，顺势而为"},
+            {"name": "坎卦", "symbol": "☵", "meaning": "水流不息，智慧如泉"},
+            {"name": "离卦", "symbol": "☲", "meaning": "火光明亮，照耀前程"},
+            {"name": "艮卦", "symbol": "☶", "meaning": "山高水长，稳如磐石"},
+            {"name": "兑卦", "symbol": "☱", "meaning": "泽润万物，和谐共生"}
+        ]
+        
+        # 占卜结果文案
+        results = {
+            "大吉": [
+                "今日运势如虹，万事皆宜，财运亨通，贵人相助！",
+                "紫气东来，福星高照，今日必有喜事临门！",
+                "天时地利人和，今日是您大展宏图的好日子！"
+            ],
+            "中吉": [
+                "今日运势不错，做事顺利，宜把握机会！",
+                "春风得意，今日适合开展新计划！",
+                "运势上升，今日努力必有收获！"
+            ],
+            "小吉": [
+                "今日运势平稳向好，小有收获！",
+                "和风细雨，今日宜静心修身！",
+                "运势渐佳，今日适合稳步前进！"
+            ],
+            "平": [
+                "今日运势平稳，宜守不宜攻！",
+                "平平淡淡才是真，今日适合休养生息！",
+                "运势平和，今日宜保持现状！"
+            ],
+            "小凶": [
+                "今日运势略有波折，宜谨慎行事！",
+                "小心驶得万年船，今日宜低调处事！",
+                "运势稍逊，今日宜多思而后行！"
+            ],
+            "凶": [
+                "今日运势欠佳，宜静待时机！",
+                "山雨欲来风满楼，今日宜避其锋芒！",
+                "运势低迷，今日宜韬光养晦！"
+            ]
+        }
+        
+        # 建议文案
+        advice_list = {
+            "大吉": [
+                "今日宜：投资理财、开展新业务、拜访贵人",
+                "今日宜：签订合同、举办庆典、求婚表白",
+                "今日宜：出行旅游、购买重要物品、做重大决定"
+            ],
+            "中吉": [
+                "今日宜：学习进修、拓展人脉、适度投资",
+                "今日宜：整理规划、健身运动、与朋友聚会",
+                "今日宜：处理积压事务、改善居住环境"
+            ],
+            "小吉": [
+                "今日宜：读书思考、轻松娱乐、关爱家人",
+                "今日宜：整理物品、制定计划、适度休息",
+                "今日宜：培养兴趣、与人为善、保持乐观"
+            ],
+            "平": [
+                "今日宜：维持现状、按部就班、稳中求进",
+                "今日宜：反思总结、调整心态、积蓄力量",
+                "今日宜：关注健康、陪伴家人、平和处事"
+            ],
+            "小凶": [
+                "今日忌：冲动决定、大额消费、与人争执",
+                "今日忌：签重要合同、做重大变动、外出远行",
+                "今日宜：谨言慎行、低调做人、耐心等待"
+            ],
+            "凶": [
+                "今日忌：投资冒险、开展新项目、做重要决定",
+                "今日忌：与人冲突、外出办事、签署文件",
+                "今日宜：静心修养、反省自身、等待转机"
+            ]
+        }
+        
+        # 按权重随机选择等级
+        total_weight = sum(level["weight"] for level in levels)
+        rand_num = random.randint(1, total_weight)
+        current_weight = 0
+        
+        selected_level = None
+        for level in levels:
+            current_weight += level["weight"]
+            if rand_num <= current_weight:
+                selected_level = level
+                break
+        
+        # 随机选择卦象
+        selected_hexagram = random.choice(hexagrams)
+        
+        # 随机选择对应等级的结果和建议
+        level_name = selected_level["name"]
+        selected_result = random.choice(results[level_name])
+        selected_advice = random.choice(advice_list[level_name])
+        
+        return {
+            "level": level_name,
+            "level_color": selected_level["color"],
+            "result": selected_result,
+            "hexagram": f"{selected_hexagram['symbol']} {selected_hexagram['name']}",
+            "hexagram_meaning": selected_hexagram["meaning"],
+            "advice": selected_advice
+        }
+#==========================今日占卜处理==========================
 
 
 def console_input_thread(server):

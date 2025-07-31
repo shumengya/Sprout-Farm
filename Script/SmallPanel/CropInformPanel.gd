@@ -186,7 +186,6 @@ func _on_add_to_store_pressed():
 			_on_cancel_add_to_store
 		)
 	else:
-		Toast.show("添加商品功能暂未实现", Color.RED, 2.0, 1.0)
 		print("错误：找不到AddProduct2StorePopup或相关方法")
 
 # 确认添加到小卖部回调

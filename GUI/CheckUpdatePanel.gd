@@ -5,7 +5,7 @@ extends Control
 
 # 配置
 const GAME_ID = "mengyafarm"
-const SERVER_URL = "http://47.108.90.0:5000"
+const SERVER_URL = "https://app.shumengya.top"
 const CURRENT_VERSION = GlobalVariables.client_version
 
 # 更新信息
@@ -133,8 +133,7 @@ func _on_download_button_pressed() -> void:
 		show_message("无法打开浏览器，下载链接已复制到剪贴板")
 	else:
 		show_message("正在打开下载页面...")
-		# 可选：隐藏更新面板
-		self.hide()
+
 
 # 关闭更新面板
 func _on_close_button_pressed() -> void:

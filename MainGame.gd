@@ -66,7 +66,6 @@ extends Node
 @onready var login_panel: PanelContainer = $UI/BigPanel/LoginPanel  #登录面板
 @onready var pet_bag_panel: Panel = $UI/BigPanel/PetBagPanel  #宠物背包面板
 @onready var pet_store_panel: Panel = $UI/BigPanel/PetStorePanel  #宠物商店面板
-@onready var pet_fight_panel: Panel = $UI/BigPanel/PetFightPanel  #宠物战斗面板
 @onready var pet_inform_panel: Panel = $UI/SmallPanel/PetInformPanel #宠物信息面板
 @onready var player_store_panel: Panel = $UI/BigPanel/PlayerStorePanel #玩家小卖部面板
 @onready var game_setting_panel: Panel = $UI/BigPanel/GameSettingPanel #游戏设置面板
@@ -83,6 +82,7 @@ extends Node
 @onready var global_server_broadcast_panel: Panel = $UI/SmallPanel/GlobalServerBroadcastPanel  #全服大喇叭面板
 @onready var scare_crow_panel: Panel = $UI/SmallPanel/ScareCrowPanel #农场稻草人设置面板 
 @onready var wisdom_tree_panel: Panel = $UI/SmallPanel/WisdomTreePanel #智慧树设置面板
+@onready var today_divination_panel: PanelContainer = $UI/SmallPanel/TodayDivinationPanel
 
 
 #稻草人系统
@@ -103,6 +103,7 @@ extends Node
 #各种弹窗
 @onready var accept_dialog: AcceptDialog = $UI/DiaLog/AcceptDialog
 @onready var batch_buy_popup: PanelContainer = $UI/DiaLog/BatchBuyPopup
+@onready var escape_dialog: ConfirmationDialog = $UI/DiaLog/EscapeDialog #被宠物发现专用弹窗
 
 
 @onready var load_progress_bar: ProgressBar = $UI/SmallPanel/LoadProgressPanel/LoadProgressBar	#显示加载进度进度条
@@ -129,7 +130,6 @@ extends Node
 #玩家基本信息
 var money: int = 500  # 默认每个人初始为100元
 var experience: float = 0.0  # 初始每个玩家的经验为0
-#var grow_speed: float = 1  # 作物生长速度
 var level: int = 1  # 初始玩家等级为1
 var dig_money : int = 1000 #开垦费用
 var stamina: int = 20  # 玩家体力值，默认20点
@@ -137,7 +137,6 @@ var stamina: int = 20  # 玩家体力值，默认20点
 var user_name : String = ""
 var user_password : String = ""
 var login_data : Dictionary = {}
-#var data : Dictionary = {}
 
 var start_game : bool = false
 var remaining_likes : int = 10  # 今日剩余点赞次数
@@ -247,6 +246,7 @@ func _ready():
 	global_server_broadcast_panel.hide()
 	game_setting_panel.hide()
 	accept_dialog.hide()
+	escape_dialog.hide()
 	
 
 	
@@ -271,6 +271,9 @@ func _ready():
 #==================================初始化比较重要的几个面板==================================
 	# 连接AcceptDialog的确认信号
 	accept_dialog.confirmed.connect(_on_accept_dialog_confirmed)
+	
+	# 连接EscapeDialog的信号（初始化时不连接具体处理函数，使用时再连接）
+	# escape_dialog信号将在使用时动态连接
 	
 	# 连接宠物对战面板的battle_ended信号
 	pet_battle_panel.battle_ended.connect(_on_pet_battle_ended)
@@ -446,8 +449,9 @@ func _handle_visit_player_response(data):
 		show_player_name.text = "玩家昵称：" + target_player_data.get("玩家昵称", "未知")
 		show_farm_name.text = "农场名称：" + target_player_data.get("农场名称", "未知农场")
 		
-		# 显示被访问玩家的点赞数
-		var target_likes = target_player_data.get("点赞数", 0)
+		# 显示被访问玩家的点赞数 - 从点赞系统中获取总点赞数
+		var target_like_system = target_player_data.get("点赞系统", {})
+		var target_likes = target_like_system.get("总点赞数", 0)
 		show_like.text = "点赞数：" + str(int(target_likes))
 		
 		_update_ui()
@@ -531,8 +535,9 @@ func _handle_return_my_farm_response(data):
 		show_player_name.text = "玩家昵称：" + player_data.get("玩家昵称", "未知")
 		show_farm_name.text = "农场名称：" + player_data.get("农场名称", "我的农场")
 		
-		# 显示自己的点赞数
-		var my_likes = player_data.get("点赞数", 0)
+		# 显示自己的点赞数 - 从点赞系统中获取总点赞数
+		var my_like_system = player_data.get("点赞系统", {})
+		var my_likes = my_like_system.get("总点赞数", 0)
 		show_like.text = "点赞数：" + str(int(my_likes))
 		
 		# 退出访问模式
@@ -893,8 +898,9 @@ func _update_ui():
 	show_experience.text = "经验值：" + str(experience) + " 点"
 	show_level.text = "等级：" + str(level) + " 级"
 	show_hunger_value.text = "体力值：" + str(stamina)
-	# 显示点赞数
-	var my_likes = login_data.get("点赞数", 0)
+	# 显示点赞数 - 从点赞系统中获取总点赞数
+	var like_system = login_data.get("点赞系统", {})
+	var my_likes = like_system.get("总点赞数", 0)
 	show_like.text = "点赞数：" + str(int(my_likes))
 
 #打开玩家排行榜面板
@@ -967,6 +973,7 @@ func _on_connection_lost():
 	global_server_broadcast_panel.hide()
 	land_panel.hide()
 	accept_dialog.hide()
+	escape_dialog.hide()
 	
 	# 重置访问模式
 	if is_visiting_mode:
@@ -1894,11 +1901,15 @@ func _on_one_click_harvestbutton_pressed() -> void:
 		Toast.show("访问模式下无法使用一键收获", Color.ORANGE)
 		return
 	
-	# 统计有多少成熟的作物
+	# 统计有多少成熟的作物（排除杂草）
 	var mature_crops_count = 0
 	for lot in farm_lots:
 		if lot["is_diged"] and lot["is_planted"] and not lot.get("is_dead", false):
 			if lot["grow_time"] >= lot["max_grow_time"]:
+				# 检查是否为杂草，如果是杂草则不计入统计
+				var crop_type = lot.get("crop_type", "")
+				if can_planted_crop.has(crop_type) and can_planted_crop[crop_type].get("是否杂草", false):
+					continue
 				mature_crops_count += 1
 	
 	# 如果没有成熟的作物
@@ -1925,6 +1936,7 @@ func _execute_one_click_harvest():
 	var one_click_cost = 400
 	var harvested_count = 0
 	var success_count = 0
+	var skipped_weeds_count = 0
 	
 	# 先扣除费用
 	money -= one_click_cost
@@ -1935,6 +1947,13 @@ func _execute_one_click_harvest():
 		var lot = farm_lots[i]
 		if lot["is_diged"] and lot["is_planted"] and not lot.get("is_dead", false):
 			if lot["grow_time"] >= lot["max_grow_time"]:
+				# 检查是否为杂草，如果是杂草则跳过
+				var crop_type = lot.get("crop_type", "")
+				if can_planted_crop.has(crop_type) and can_planted_crop[crop_type].get("是否杂草", false):
+					skipped_weeds_count += 1
+					print("跳过杂草：", crop_type, "，地块索引：", i)
+					continue
+				
 				harvested_count += 1
 				# 发送收获请求到服务器
 				if tcp_network_manager_panel and tcp_network_manager_panel.sendHarvestCrop(i):
@@ -1944,8 +1963,11 @@ func _execute_one_click_harvest():
 	
 	# 显示结果
 	if success_count > 0:
-		Toast.show("一键收获完成！成功收获 " + str(success_count) + " 个作物，花费 " + str(one_click_cost) + " 元", Color.GREEN)
-		print("一键收获完成，收获了 ", success_count, " 个作物")
+		var message = "一键收获完成！成功收获 " + str(success_count) + " 个作物，花费 " + str(one_click_cost) + " 元"
+		if skipped_weeds_count > 0:
+			message += "，跳过 " + str(skipped_weeds_count) + " 个杂草"
+		Toast.show(message, Color.GREEN)
+		print("一键收获完成，收获了 ", success_count, " 个作物，跳过了 ", skipped_weeds_count, " 个杂草")
 	else:
 		Toast.show("一键收获失败，请检查网络连接", Color.RED)
 		# 如果失败，退还费用
@@ -2096,7 +2118,9 @@ func _handle_like_player_response(data):
 		Toast.show(message, Color.PINK)
 		
 		# 更新被访问玩家的点赞数显示
-		visited_player_data["点赞数"] = target_likes
+		if not visited_player_data.has("点赞系统"):
+			visited_player_data["点赞系统"] = {}
+		visited_player_data["点赞系统"]["总点赞数"] = target_likes
 		show_like.text = "点赞数：" + str(int(target_likes))
 		
 		# 显示剩余点赞次数提示
@@ -2590,11 +2614,11 @@ func _handle_use_pet_item_response(data: Dictionary):
 		if pet_inform_panel and pet_inform_panel.has_method("show_pet_info"):
 			# 如果宠物信息面板当前有显示的宠物，刷新其信息
 			if not pet_inform_panel.current_pet_data.is_empty():
-				var current_pet_id = pet_inform_panel.current_pet_data.get("基本信息", {}).get("宠物ID", "")
+				var current_pet_id = pet_inform_panel.current_pet_data.get("pet_id", "")
 				if current_pet_id != "":
 					# 查找更新后的宠物数据
 					for pet in pet_bag:
-						if pet.get("基本信息", {}).get("宠物ID", "") == current_pet_id:
+						if pet.get("pet_id", "") == current_pet_id:
 							pet_inform_panel.show_pet_info(pet_inform_panel.current_pet_name, pet)
 							break
 		
@@ -3161,6 +3185,110 @@ func check_battle_patrol_conflict(battle_pet_id: String, patrol_pet_id: String) 
 
 
 
+# 通用对话框显示函数
+func _show_battle_dialog(title: String, content: String, ok_text: String, cancel_text: String, ok_callback: Callable, cancel_callback: Callable):
+	# 使用专用的EscapeDialog创建对战选择弹窗
+	if not escape_dialog:
+		print("错误：找不到EscapeDialog")
+		return
+	
+	# 设置对话框
+	escape_dialog.title = title
+	escape_dialog.dialog_text = content
+	escape_dialog.ok_button_text = ok_text
+	escape_dialog.cancel_button_text = cancel_text
+	
+	# 应用主题美化
+	_apply_escape_dialog_theme()
+	
+	# 清除之前的信号连接
+	if escape_dialog.confirmed.is_connected(_on_steal_battle_confirmed):
+		escape_dialog.confirmed.disconnect(_on_steal_battle_confirmed)
+	if escape_dialog.canceled.is_connected(_on_steal_escape_confirmed):
+		escape_dialog.canceled.disconnect(_on_steal_escape_confirmed)
+	if escape_dialog.confirmed.is_connected(_on_direct_battle_confirmed):
+		escape_dialog.confirmed.disconnect(_on_direct_battle_confirmed)
+	if escape_dialog.canceled.is_connected(_on_direct_battle_canceled):
+		escape_dialog.canceled.disconnect(_on_direct_battle_canceled)
+	
+	# 连接新的信号处理
+	escape_dialog.confirmed.connect(ok_callback)
+	escape_dialog.canceled.connect(cancel_callback)
+	
+	# 居中显示对话框
+	escape_dialog.popup_centered()
+
+# 为EscapeDialog应用主题美化
+func _apply_escape_dialog_theme():
+	# 设置面板背景样式
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color("#2d3748")  # 深蓝灰色背景
+	panel_style.set_border_width_all(3)
+	panel_style.border_color = Color("#4a5568")  # 边框颜色
+	#panel_style.set_corner_radius_all(12)  # 圆角
+	panel_style.shadow_color = Color(0, 0, 0, 0.3)
+	panel_style.shadow_size = 8
+	escape_dialog.add_theme_stylebox_override("panel", panel_style)
+	
+	# 设置标题样式
+	escape_dialog.add_theme_color_override("title_color", Color("#f7fafc"))  # 白色标题
+	escape_dialog.add_theme_font_size_override("title_size", 24)
+	
+	# 设置内容文字样式
+	var label = escape_dialog.get_label()
+	if label:
+		label.add_theme_color_override("font_color", Color("#e2e8f0"))  # 浅灰色文字
+		label.add_theme_font_size_override("font_size", 12)
+	
+	# 美化确认按钮（宠物对战）
+	var ok_button = escape_dialog.get_ok_button()
+	if ok_button:
+		_customize_escape_button(ok_button, Color("#e53e3e"), Color("#c53030"), Color("#9b2c2c"))  # 红色系
+		ok_button.custom_minimum_size = Vector2(120, 45)
+	
+	# 美化取消按钮（逃跑）
+	var cancel_button = escape_dialog.get_cancel_button()
+	if cancel_button:
+		_customize_escape_button(cancel_button, Color("#38a169"), Color("#2f855a"), Color("#276749"))  # 绿色系
+		cancel_button.custom_minimum_size = Vector2(120, 45)
+	
+	# 设置按钮间距
+	escape_dialog.add_theme_constant_override("buttons_separation", 20)
+	
+	# 设置对话框最小尺寸
+	escape_dialog.min_size = Vector2(500, 350)
+
+func _customize_escape_button(button: Button, normal_color: Color, hover_color: Color, pressed_color: Color):
+	# 创建按钮样式
+	var button_style_normal := StyleBoxFlat.new()
+	button_style_normal.bg_color = normal_color
+	#button_style_normal.set_corner_radius_all(8)
+	button_style_normal.set_border_width_all(2)
+	button_style_normal.border_color = normal_color.darkened(0.2)
+	
+	var button_style_hover := StyleBoxFlat.new()
+	button_style_hover.bg_color = hover_color
+	#button_style_hover.set_corner_radius_all(8)
+	button_style_hover.set_border_width_all(2)
+	button_style_hover.border_color = hover_color.darkened(0.2)
+	
+	var button_style_pressed := StyleBoxFlat.new()
+	button_style_pressed.bg_color = pressed_color
+	button_style_pressed.set_corner_radius_all(8)
+	button_style_pressed.set_border_width_all(2)
+	button_style_pressed.border_color = pressed_color.darkened(0.2)
+	
+	# 应用样式
+	button.add_theme_stylebox_override("normal", button_style_normal)
+	button.add_theme_stylebox_override("hover", button_style_hover)
+	button.add_theme_stylebox_override("pressed", button_style_pressed)
+	
+	# 设置文字颜色
+	button.add_theme_color_override("font_color", Color.WHITE)
+	button.add_theme_color_override("font_color_hover", Color.WHITE)
+	button.add_theme_color_override("font_color_pressed", Color.WHITE)
+	button.add_theme_font_size_override("font_size", 18)
+
 #====================================偷菜被发现-宠物对战处理=========================================
 # 处理偷菜被发现响应
 func _handle_steal_caught_response(data: Dictionary):
@@ -3200,11 +3328,6 @@ func _handle_steal_caught_response(data: Dictionary):
 
 # 显示偷菜被发现对话框
 func _show_steal_caught_dialog(message: String, patrol_pet_data: Dictionary, battle_pet_data: Dictionary, escape_cost: int, battle_cost: int, target_username: String, current_username: String):
-	# 使用AcceptDialog创建对战选择弹窗
-	if not accept_dialog:
-		print("错误：找不到AcceptDialog")
-		return
-	
 	# 构建对话框内容
 	var dialog_content = message + "\n\n"
 	
@@ -3232,32 +3355,15 @@ func _show_steal_caught_dialog(message: String, patrol_pet_data: Dictionary, bat
 	dialog_content += "💰 逃跑：支付 " + str(escape_cost) + " 金币\n"
 	dialog_content += "⚔️ 对战：如果失败支付 " + str(battle_cost) + " 金币"
 	
-	# 设置对话框
-	accept_dialog.set_dialog_title("偷菜被发现！")
-	accept_dialog.set_dialog_content(dialog_content)
-	accept_dialog.set_ok_text("宠物对战")
-	accept_dialog.set_cancel_text("逃跑")
-	
-	# 清除之前的信号连接
-	if accept_dialog.confirmed.is_connected(_on_steal_battle_confirmed):
-		accept_dialog.confirmed.disconnect(_on_steal_battle_confirmed)
-	if accept_dialog.canceled.is_connected(_on_steal_escape_confirmed):
-		accept_dialog.canceled.disconnect(_on_steal_escape_confirmed)
-	
-	# 连接新的信号处理
-	accept_dialog.confirmed.connect(_on_steal_battle_confirmed.bind(patrol_pet_data, battle_pet_data, target_username))
-	accept_dialog.canceled.connect(_on_steal_escape_confirmed.bind(escape_cost))
-	
-	# 居中显示对话框
-	var screen_size = get_viewport().get_visible_rect().size
-	var dialog_pos = Vector2(
-		(screen_size.x - 500) / 2,  # 假设对话框宽度为500
-		(screen_size.y - 400) / 2   # 假设对话框高度为400
+	# 使用通用对话框显示函数
+	_show_battle_dialog(
+		"偷菜被发现！",
+		dialog_content,
+		"宠物对战",
+		"逃跑",
+		_on_steal_battle_confirmed.bind(patrol_pet_data, battle_pet_data, target_username),
+		_on_steal_escape_confirmed.bind(escape_cost)
 	)
-	accept_dialog.set_dialog_position(dialog_pos)
-	
-	# 显示对话框
-	accept_dialog.popup_centered()
 	print("显示偷菜被发现对话框")
 
 # 玩家选择宠物对战
@@ -3377,29 +3483,15 @@ func _show_battle_confirmation_dialog(target_patrol_pet: Dictionary, my_battle_p
 	
 	dialog_content += "\n⚠️ 注意：对战失败可能会有惩罚！"
 	
-	# 使用现有的accept_dialog
-	if not accept_dialog:
-		Toast.show("对话框不可用", Color.RED, 2.0)
-		return
-	
-	# 清除之前的信号连接
-	if accept_dialog.confirmed.is_connected(_on_direct_battle_confirmed):
-		accept_dialog.confirmed.disconnect(_on_direct_battle_confirmed)
-	if accept_dialog.canceled.is_connected(_on_direct_battle_canceled):
-		accept_dialog.canceled.disconnect(_on_direct_battle_canceled)
-	
-	# 设置对话框内容
-	accept_dialog.set_dialog_title("宠物对战确认")
-	accept_dialog.set_dialog_content(dialog_content)
-	accept_dialog.set_ok_text("发起对战")
-	accept_dialog.set_cancel_text("取消")
-	
-	# 连接信号
-	accept_dialog.confirmed.connect(_on_direct_battle_confirmed.bind(target_patrol_pet, my_battle_pet))
-	accept_dialog.canceled.connect(_on_direct_battle_canceled)
-	
-	# 显示对话框
-	accept_dialog.popup_centered()
+	# 使用通用对话框显示函数
+	_show_battle_dialog(
+		"宠物对战确认",
+		dialog_content,
+		"发起对战",
+		"取消",
+		_on_direct_battle_confirmed.bind(target_patrol_pet, my_battle_pet),
+		_on_direct_battle_canceled
+	)
 
 # 确认发起对战
 func _on_direct_battle_confirmed(target_patrol_pet: Dictionary, my_battle_pet: Dictionary) -> void:
@@ -3568,6 +3660,22 @@ func _handle_save_game_settings_response(data):
 # ======================================= 游戏设置系统 =========================================
 
 
+# ======================================= 今日占卜系统 =========================================
+# 处理占卜响应
+func _handle_divination_response(divination_data):
+	"""处理服务器返回的占卜数据，更新本地玩家数据"""
+	if divination_data.has("今日占卜对象"):
+		# 更新登录数据中的占卜信息
+		login_data["今日占卜对象"] = divination_data["今日占卜对象"]
+		print("占卜数据已更新到本地")
+
+# 获取玩家占卜数据
+func get_player_divination_data():
+	"""获取玩家的占卜数据"""
+	return login_data.get("今日占卜对象", {})
+# ======================================= 今日占卜系统 =========================================
+
+
 #打开小卖部面板
 func _on_my_store_button_pressed() -> void:
 	if is_visiting_mode:
@@ -3696,3 +3804,8 @@ func _on_pet_battle_ended(winner_team: String, battle_data: Dictionary):
 	else:
 		Toast.show("很遗憾，您在偷菜对战中失败了。", Color.RED)
 # ======================================= 宠物对战系统 =========================================
+
+
+func _on_today_divination_button_pressed() -> void:
+	today_divination_panel.show()
+	pass

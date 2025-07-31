@@ -57,6 +57,10 @@ func _ready():
 		"5小时": five_hours
 	}
 	
+	
+	# 连接可见性改变信号
+	visibility_changed.connect(_on_visibility_changed)
+	
 	# 连接按钮信号
 	for gift_name in button_mapping.keys():
 		var button = button_mapping[gift_name]
@@ -186,6 +190,18 @@ func handle_claim_online_gift_response(data: Dictionary):
 	else:
 		Toast.show(message, Color.RED)
 
+
+#================通用面板处理==================
 #关闭在线礼包面板
 func _on_quit_button_pressed() -> void:
 	self.hide() 
+
+# 面板显示时的处理
+func _on_visibility_changed():
+	if visible:
+		GlobalVariables.isZoomDisabled = true
+		pass
+	else:
+		GlobalVariables.isZoomDisabled = false
+		pass
+#================通用面板处理==================

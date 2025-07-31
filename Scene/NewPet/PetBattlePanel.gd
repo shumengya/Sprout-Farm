@@ -76,6 +76,11 @@ func _ready():
 	# 初始化UI
 	battle_end_panel.visible = false
 	return_farm_button.pressed.connect(_on_return_farm_pressed)
+	# 连接可见性改变信号
+	visibility_changed.connect(_on_visibility_changed)
+	# 连接确认弹窗信号
+	confirm_dialog.confirmed.connect(_on_assist_confirmed)
+	confirm_dialog.canceled.connect(_on_assist_canceled)
 	# 初始化宠物配置系统
 	pet_config = PetConfig.new()
 	# 等待一帧确保PetConfig的_ready函数执行完毕
@@ -83,9 +88,7 @@ func _ready():
 	# 初始化战斗日志
 	battle_details_text.text = "[color=green]战斗准备中...[/color]\n"
 	
-	# 连接确认弹窗信号
-	confirm_dialog.confirmed.connect(_on_assist_confirmed)
-	confirm_dialog.canceled.connect(_on_assist_canceled)
+
 	
 	# 美化确认弹窗
 	setup_confirm_dialog()
@@ -93,11 +96,13 @@ func _ready():
 	# 延迟一帧后设置演示数据，确保所有节点都已准备好
 	await get_tree().process_frame
 	#setup_farm_battle()
+	# 可以调用测试函数进行本地测试
+	#setup_test_battle()
 
 func _process(delta):
 	# 更新时间显示（无论什么状态都显示）
 	update_time_display()
-	
+#	
 	# 更新辅助功能冷却计时器
 	update_assist_cooldowns(delta)
 	
@@ -129,6 +134,72 @@ func _process(delta):
 		cleanup_dead_objects()
 		cleanup_timer = 0.0
 #========================基础函数======================
+
+
+#=====================本地测试函数===========================
+# 本地测试对战函数 - 方便调试各种宠物属性
+func setup_test_battle():
+	"""设置本地测试对战，可以快速测试各种宠物配置和属性"""
+	print("[测试] 开始设置本地测试对战")
+	
+	# 清理现有战斗
+	clear_all_pets()
+	
+	# 设置队伍名称
+	team_a_name = "测试队伍A"
+	team_b_name = "测试队伍B"
+	
+	# 创建测试队伍A的宠物数据（进攻方）
+	var team_a_data = [
+		{"config_key": "烈焰鸟"},  # 使用配置文件中的烈焰鸟
+	]
+	
+	# 创建测试队伍B的宠物数据（防守方）
+	var team_b_data = [
+		{"config_key": "小蓝虫"},  # 使用配置文件中的小蓝虫
+	]
+	
+	# 开始战斗
+	start_battle(team_a_data, team_b_data)
+	
+	# 等待宠物生成完成
+	await get_tree().process_frame
+	
+	# 获取生成的宠物进行属性调试
+	var redman_pet = null  # 烈焰鸟
+	var bluebug_pet = null # 大蓝虫
+	var smallbug_pet = null # 小蓝虫
+	var smallblue_pet = null # 小蓝
+	
+	# 查找特定宠物
+	for pet in team_a_pets:
+		if pet.pet_type == "烈焰鸟":
+			redman_pet = pet
+		elif pet.pet_type == "大蓝虫":
+			bluebug_pet = pet
+	
+	for pet in team_b_pets:
+		if pet.pet_type == "小蓝虫":
+			smallbug_pet = pet
+		elif pet.pet_type == "小蓝":
+			smallblue_pet = pet
+	
+	# =================== 在这里可以一行代码调试宠物属性 ===================
+	# 示例：开启烈焰鸟的反弹伤害技能
+	if redman_pet:
+		redman_pet.enable_damage_reflection_skill = true
+		redman_pet.damage_reflection_percentage = 0.8  # 反弹80%伤害
+		redman_pet.damage_reflection_cooldown = 5.0    # 5秒冷却
+		print("[测试] 烈焰鸟开启反弹伤害技能")
+	
+	
+	
+	print("[测试] 本地测试对战设置完成，可以观察宠物战斗效果")
+	
+	# 添加测试日志
+	add_battle_log("[color=cyan]本地测试对战开始！[/color]")
+	add_battle_log("[color=yellow]队伍A: 烈焰鸟(反弹伤害) + 大蓝虫(召唤增强)[/color]")
+	add_battle_log("[color=yellow]队伍B: 小蓝虫(狂暴模式) + 小蓝(自爆技能)[/color]")
 
 
 #=====================UI显示===========================
@@ -276,6 +347,14 @@ func _on_stop_battle_button_pressed() -> void:
 	for bullet in bullets:
 		bullet.queue_free()
 
+# 面板显示时的处理
+func _on_visibility_changed():
+	if visible:
+		GlobalVariables.isZoomDisabled = true
+		pass
+	else:
+		GlobalVariables.isZoomDisabled = false
+		pass
 #=====================UI显示===========================
 
 
@@ -394,7 +473,11 @@ func apply_server_pet_data(pet: NewPetBase, pet_data: Dictionary):
 	# 生命与防御
 	if pet_data.has("max_health"):
 		pet.max_health = pet_data["max_health"]
-		pet.current_health = pet.max_health
+		# 优先使用服务器返回的当前生命值，否则使用最大生命值
+		if pet_data.has("pet_current_health"):
+			pet.current_health = pet_data["pet_current_health"]
+		else:
+			pet.current_health = pet.max_health
 	if pet_data.has("enable_health_regen"):
 		pet.enable_health_regen = pet_data["enable_health_regen"]
 	if pet_data.has("health_regen"):
@@ -973,10 +1056,6 @@ func setup_steal_battle(attacker_pets: Array, defender_pets: Array, attacker_nam
 	# 设置队伍信息
 	team_a_name = attacker_name + "(攻击方)"
 	team_b_name = defender_name + "(防守方)"
-	
-	# 更新UI显示
-	#team_a_label.text = team_a_name
-	#team_b_label.text = team_b_name
 	
 	# 获取队伍位置点
 	var team_a_positions = get_team_positions(team_a_node)

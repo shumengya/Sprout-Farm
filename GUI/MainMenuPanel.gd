@@ -18,6 +18,7 @@ func SetGameVersionLabel(version :String):
 
 #开始游戏
 func _on_start_game_button_pressed() -> void:
+	await get_tree().process_frame
 	get_tree().change_scene_to_file('res://MainGame.tscn')
 	pass 
 

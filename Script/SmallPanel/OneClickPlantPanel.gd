@@ -62,9 +62,12 @@ var current_plant_index = 0
 var is_waiting_for_lot_selection = false
 var pending_plant_type = ""
 
+#==================基础函数=====================
 func _ready():
 	self.hide()
 	
+	# 连接可见性改变信号
+	visibility_changed.connect(_on_visibility_changed)
 	# 连接按钮信号
 	full_screen_plant_btn.pressed.connect(_on_full_screen_plant_pressed)
 	one_row_plant_btn.pressed.connect(_on_one_row_plant_pressed)
@@ -82,6 +85,7 @@ func _process(delta):
 		if plant_timer >= PLANT_INTERVAL:
 			plant_timer = 0.0
 			_process_plant_queue()
+#==================基础函数=====================
 
 
 #=================================一键种植模式=========================================
@@ -292,8 +296,6 @@ func _prepare_random_plant():
 
 
 #=================================一键种植模式=========================================
-
-
 
 # 开始地块选择模式
 func _start_lot_selection_mode(plant_type: String):
@@ -593,6 +595,8 @@ func stop_planting():
 		Toast.show("一键种植已停止", Color.YELLOW)
 		_finish_planting()
 
+
+#======================通用面板处理=====================
 #关闭一键种植面板
 func _on_quit_button_pressed() -> void:
 	# 如果正在种植，先停止种植
@@ -604,3 +608,13 @@ func _on_quit_button_pressed() -> void:
 		return   
 	self.hide()
 	pass 
+
+#面板显示切换处理
+func _on_visibility_changed():
+	if visible:
+		GlobalVariables.isZoomDisabled = true
+		pass
+	else:
+		GlobalVariables.isZoomDisabled = false
+		pass
+#======================通用面板处理=====================

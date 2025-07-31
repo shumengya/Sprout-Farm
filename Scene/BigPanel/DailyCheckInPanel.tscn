@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://smypui0vyso5"]
+[gd_scene load_steps=4 format=3 uid="uid://smypui0vyso5"]
 
 [ext_resource type="Script" uid="uid://c0jfbtkh0mj5b" path="res://Script/BigPanel/DailyCheckInPanel.gd" id="1_fj7a7"]
 
@@ -8,6 +8,8 @@ border_width_top = 15
 border_width_right = 15
 border_width_bottom = 15
 corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4gvib"]
 
 [node name="DailyCheckInPanel" type="Panel"]
 offset_left = 441.0
@@ -33,12 +35,19 @@ text = "📅每日签到📅"
 horizontal_alignment = 1
 
 [node name="Label" type="Label" parent="."]
-modulate = Color(0.642982, 0.510828, 1, 1)
 layout_mode = 0
-offset_top = 419.0
-offset_right = 600.0
-offset_bottom = 468.0
+offset_left = 23.0
+offset_top = 360.0
+offset_right = 585.0
+offset_bottom = 409.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 10
 theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_4gvib")
 text = "🎉签到奖励🎉"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -66,9 +75,10 @@ text = "签到"
 
 [node name="Scroll" type="ScrollContainer" parent="."]
 layout_mode = 0
+offset_left = 23.0
 offset_top = 77.0
-offset_right = 600.0
-offset_bottom = 419.0
+offset_right = 577.0
+offset_bottom = 360.0
 
 [node name="DailyCheckInHistory" type="RichTextLabel" parent="Scroll"]
 layout_mode = 2
@@ -79,13 +89,24 @@ threaded = true
 
 [node name="DailyCheckInReward" type="RichTextLabel" parent="."]
 layout_mode = 0
-offset_top = 481.0
-offset_right = 600.0
-offset_bottom = 649.0
+offset_left = 23.0
+offset_top = 409.0
+offset_right = 577.0
+offset_bottom = 630.0
 theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
 text = "+500 经验，+400 钱币，+5 普通-番茄种子，+1 传奇-火龙果种子 "
 horizontal_alignment = 1
+
+[node name="ConfirmDialog" type="ConfirmationDialog" parent="."]
+title = "标题"
+initial_position = 3
+size = Vector2i(450, 350)
+current_screen = 0
+ok_button_text = "✅ 确定"
+dialog_text = "弹窗内容"
+dialog_autowrap = true
+cancel_button_text = "❌ 取消"
 
 [connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="pressed" from="DailyCheckInButton" to="." method="_on_daily_check_in_button_pressed"]

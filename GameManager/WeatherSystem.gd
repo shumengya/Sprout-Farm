@@ -15,12 +15,12 @@ var weather_display_enabled: bool = true
 # 设置天气的统一方法
 func set_weather(weather_type: String):
 	# 检查全局设置和动态设置
-	if GlobalVariables.DisableWeatherDisplay or not weather_display_enabled:
+	if not weather_display_enabled:
 		hide_all_weather()
 		return
 
 	# 先隐藏所有天气效果
-	hide_all_weather()
+	#hide_all_weather()
 	
 	# 根据天气类型显示对应效果
 	match weather_type:

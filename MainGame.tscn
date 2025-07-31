@@ -1,4 +1,4 @@
-[gd_scene load_steps=105 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=107 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
@@ -30,7 +30,6 @@
 [ext_resource type="PackedScene" uid="uid://bseuwniienrqy" path="res://Scene/BigPanel/PlayerBagPanel.tscn" id="19_8kysg"]
 [ext_resource type="PackedScene" uid="uid://cehw5sx5pgmmc" path="res://Scene/BigPanel/ItemBagPanel.tscn" id="20_n03md"]
 [ext_resource type="PackedScene" uid="uid://j4ft87o7jk14" path="res://Scene/BigPanel/ItemStorePanel.tscn" id="21_uhubb"]
-[ext_resource type="PackedScene" uid="uid://cw8am7nnbgca5" path="res://Scene/Pet/PetFightPanel.tscn" id="23_n03md"]
 [ext_resource type="Script" uid="uid://bdhwvqsmakna2" path="res://Script/BigPanel/PetBagPanel.gd" id="23_uc6q1"]
 [ext_resource type="Script" uid="uid://bdavskipn547h" path="res://Script/BigPanel/PlayerStorePanel.gd" id="24_dygid"]
 [ext_resource type="PackedScene" uid="uid://cnjidcwuv4nn4" path="res://Scene/BigPanel/PetStorePanel.tscn" id="24_uc6q1"]
@@ -52,6 +51,8 @@
 [ext_resource type="Script" uid="uid://b185o1hjnlrv5" path="res://Script/SmallPanel/CropInformPanel.gd" id="41_iluto"]
 [ext_resource type="Texture2D" uid="uid://3ff2lnbc0op7" path="res://assets/稻草人图片/稻草人1.webp" id="43_6rkns"]
 [ext_resource type="Script" uid="uid://dsmmxivba06ab" path="res://Script/Dialog/BatchSellPopup.gd" id="44_av1bx"]
+[ext_resource type="Script" uid="uid://bkel88rscubov" path="res://Script/SmallPanel/TodayDivinationPanel.gd" id="44_mw3xw"]
+[ext_resource type="FontFile" uid="uid://b81msdfp2ym2g" path="res://assets/字体/MapleMono-NF-CN-BoldItalic.ttf" id="45_vexnj"]
 [ext_resource type="Texture2D" uid="uid://cbdm5e6s8bf6l" path="res://assets/智慧树图片/智慧树4.webp" id="45_xvovi"]
 [ext_resource type="Script" uid="uid://cha0uw4ra1trr" path="res://Script/Dialog/AddProduct2StorePopup.gd" id="46_8d602"]
 [ext_resource type="Texture2D" uid="uid://dilipbs0lncpd" path="res://assets/草地图片/草地10.webp" id="48_2i8fe"]
@@ -142,6 +143,13 @@ corner_detail = 20
 shadow_size = 30
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xyeuq"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bpbm8"]
 border_width_left = 15
 border_width_top = 15
 border_width_right = 15
@@ -651,6 +659,12 @@ offset_bottom = 408.0
 scale = Vector2(0.8, 0.8)
 alignment = 2
 
+[node name="TodayDivinationButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.917346, 0.737213, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "今日占卜"
+
 [node name="MyStoreButton" type="Button" parent="UI/GUI/OtherVBox"]
 visible = false
 modulate = Color(0.917346, 0.737213, 1, 1)
@@ -935,9 +949,6 @@ offset_right = 115.5
 offset_bottom = 79.25
 theme_override_font_sizes/font_size = 40
 text = "刷新"
-
-[node name="PetFightPanel" parent="UI/BigPanel" instance=ExtResource("23_n03md")]
-visible = false
 
 [node name="DailyCheckInPanel" parent="UI/BigPanel" instance=ExtResource("18_m6fch")]
 visible = false
@@ -1623,8 +1634,8 @@ offset_bottom = 482.0
 
 [node name="CropInformPanel" type="Panel" parent="UI/SmallPanel"]
 visible = false
-offset_left = 330.0
-offset_right = 958.0
+offset_left = 379.0
+offset_right = 1007.0
 offset_bottom = 723.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_xyeuq")
 script = ExtResource("41_iluto")
@@ -1715,6 +1726,69 @@ size_flags_horizontal = 3
 size_flags_vertical = 10
 theme_override_font_sizes/font_size = 30
 text = "放入小卖部"
+
+[node name="TodayDivinationPanel" type="PanelContainer" parent="UI/SmallPanel"]
+visible = false
+offset_left = 345.0
+offset_right = 1050.0
+offset_bottom = 713.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bpbm8")
+script = ExtResource("44_mw3xw")
+
+[node name="VBox" type="VBoxContainer" parent="UI/SmallPanel/TodayDivinationPanel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.807843, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 40
+text = "今日占卜"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Contents" type="RichTextLabel" parent="UI/SmallPanel/TodayDivinationPanel/VBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/normal_font = ExtResource("45_vexnj")
+theme_override_fonts/mono_font = ExtResource("45_vexnj")
+theme_override_fonts/italics_font = ExtResource("45_vexnj")
+theme_override_fonts/bold_italics_font = ExtResource("45_vexnj")
+theme_override_fonts/bold_font = ExtResource("45_vexnj")
+theme_override_font_sizes/bold_italics_font_size = 25
+theme_override_font_sizes/italics_font_size = 25
+theme_override_font_sizes/mono_font_size = 25
+theme_override_font_sizes/normal_font_size = 25
+theme_override_font_sizes/bold_font_size = 25
+bbcode_enabled = true
+text = "这是占卜内容"
+horizontal_alignment = 1
+threaded = true
+
+[node name="StartButton" type="Button" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 35
+text = "开始占卜"
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 35
+text = "结束占卜"
 
 [node name="DiaLog" type="CanvasLayer" parent="UI"]
 
@@ -1904,6 +1978,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
 text = "取消"
+
+[node name="EscapeDialog" type="ConfirmationDialog" parent="UI/DiaLog"]
+title = "弹窗标题"
+initial_position = 3
+size = Vector2i(600, 500)
+current_screen = 0
+content_scale_factor = 1.4
+ok_button_text = "确定"
+cancel_button_text = "取消"
 
 [node name="BackgroundUI" type="CanvasLayer" parent="."]
 layer = -1
@@ -3158,6 +3241,7 @@ scale = Vector2(1.2, 1.2)
 texture = ExtResource("63_ekowe")
 
 [node name="Name" type="RichTextLabel" parent="Decoration4/DailyCheckinGift"]
+z_index = 5
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3193,6 +3277,7 @@ scale = Vector2(1.2, 1.2)
 texture = ExtResource("64_crc4a")
 
 [node name="Name" type="RichTextLabel" parent="Decoration4/OnlineTimeGift"]
+z_index = 5
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3228,7 +3313,7 @@ scale = Vector2(1.2, 1.2)
 texture = ExtResource("50_sqnmr")
 
 [node name="Name" type="RichTextLabel" parent="Decoration4/Decoration2"]
-visible = false
+z_index = 5
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3240,7 +3325,6 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
-text = "稻草人"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -3264,7 +3348,7 @@ scale = Vector2(1.2, 1.2)
 texture = ExtResource("51_2i8fe")
 
 [node name="Name" type="RichTextLabel" parent="Decoration4/Decoration3"]
-visible = false
+z_index = 5
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3276,7 +3360,6 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
-text = "稻草人"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -3300,7 +3383,7 @@ scale = Vector2(1.2, 1.2)
 texture = ExtResource("50_sqnmr")
 
 [node name="Name" type="RichTextLabel" parent="Decoration4/Decoration4"]
-visible = false
+z_index = 5
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3312,7 +3395,6 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
-text = "稻草人"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -3336,7 +3418,7 @@ scale = Vector2(1.2, 1.2)
 texture = ExtResource("49_xjiif")
 
 [node name="Name" type="RichTextLabel" parent="Decoration4/Decoration5"]
-visible = false
+z_index = 5
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3348,7 +3430,6 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
-text = "稻草人"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -3372,7 +3453,7 @@ scale = Vector2(1.2, 1.2)
 texture = ExtResource("49_xjiif")
 
 [node name="Name" type="RichTextLabel" parent="Decoration4/Decoration6"]
-visible = false
+z_index = 5
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3384,7 +3465,6 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
-text = "稻草人"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -3408,6 +3488,7 @@ scale = Vector2(1.2, 1.2)
 texture = ExtResource("67_onvxb")
 
 [node name="Name" type="RichTextLabel" parent="Decoration4/PetBag"]
+z_index = 5
 layout_mode = 0
 offset_left = -65.0
 offset_top = -145.0
@@ -3444,6 +3525,7 @@ texture = ExtResource("68_bpbm8")
 
 [node name="Name" type="Label" parent="Decoration4/ItemBag"]
 self_modulate = Color(2, 2, 2, 1)
+z_index = 5
 layout_mode = 0
 offset_top = -145.0
 offset_right = 265.0
@@ -3608,6 +3690,7 @@ environment = SubResource("Environment_uyv6e")
 [connection signal="pressed" from="UI/GUI/VisitVBox/LikeButton" to="." method="_on_like_button_pressed"]
 [connection signal="pressed" from="UI/GUI/VisitVBox/BattleButton" to="." method="_on_battle_button_pressed"]
 [connection signal="pressed" from="UI/GUI/VisitVBox/ReturnMyFarmButton" to="." method="_on_return_my_farm_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/TodayDivinationButton" to="." method="_on_today_divination_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/MyStoreButton" to="." method="_on_my_store_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/AccountSettingButton" to="." method="_on_account_setting_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/OnlineGiftButton" to="." method="_on_online_gift_button_pressed"]

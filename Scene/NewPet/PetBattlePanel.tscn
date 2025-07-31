@@ -101,7 +101,7 @@ vertical_alignment = 1
 layout_mode = 0
 offset_top = 50.0
 offset_right = 257.0
-offset_bottom = 300.0
+offset_bottom = 578.0
 
 [node name="TeamAHeal" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
@@ -122,67 +122,67 @@ text = "团队护盾"
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="test2" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="test3" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="test4" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="test5" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="test6" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="test7" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="test8" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="test9" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="test10" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="test11" type="Button" parent="PlayerSkillPanel/TeamASkills"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 disabled = true
-text = "测试"
+text = "暂无"
 
 [node name="BattleControls" type="VBoxContainer" parent="PlayerSkillPanel"]
 layout_mode = 0

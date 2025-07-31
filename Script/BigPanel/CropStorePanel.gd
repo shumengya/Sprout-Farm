@@ -54,16 +54,7 @@ func _ready():
 	# 隐藏面板（初始默认隐藏）
 	self.hide()
 
-# 面板显示时的处理
-func _on_visibility_changed():
-	if visible:
-		# 面板显示时自动刷新数据
-		init_store()
-		GlobalVariables.isZoomDisabled = true
-		pass
-	else:
-		GlobalVariables.isZoomDisabled = false
-		pass
+
 
 # 连接所有按钮信号
 func _connect_buttons():
@@ -532,4 +523,15 @@ func _on_refresh_button_pressed() -> void:
 #关闭种子商店面板
 func _on_quit_button_pressed():
 	self.hide()
+
+# 面板显示时的处理
+func _on_visibility_changed():
+	if visible:
+		# 面板显示时自动刷新数据
+		init_store()
+		GlobalVariables.isZoomDisabled = true
+		pass
+	else:
+		GlobalVariables.isZoomDisabled = false
+		pass
 #=========================面板通用处理=========================

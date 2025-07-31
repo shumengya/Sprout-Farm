@@ -32,7 +32,6 @@ var current_pet_name: String = ""
 @onready var item_bag_panel: Panel = $'../../BigPanel/ItemBagPanel'
 @onready var pet_store_panel: Panel = $'../../BigPanel/PetStorePanel'
 @onready var pet_bag_panel: Panel = $'../../BigPanel/PetBagPanel'
-@onready var pet_fight_panel: Panel = $'../../BigPanel/PetFightPanel'
 
 
 
@@ -202,6 +201,8 @@ func _set_pet_detailed_info(pet_name: String, pet_data: Dictionary):
 		info_text += "召唤技能：[color=cyan]已激活[/color] (数量: " + str(pet_data.get("summon_count", 0)) + ", 缩放: " + str(pet_data.get("summon_scale", 1.0)) + ")\n"
 	if pet_data.get("enable_death_respawn_skill", false):
 		info_text += "死亡重生：[color=purple]已激活[/color] (生命: " + str(pet_data.get("respawn_health_percentage", 0) * 100) + "%)\n"
+	if pet_data.get("enable_damage_reflection_skill", false):
+		info_text += "伤害反弹：[color=yellow]已激活[/color] (荆棘护甲)\n"
 	info_text += "\n"
 	
 	# 设置文本

@@ -10,6 +10,9 @@ signal draw_failed(error_message: String)
 @onready var main_game = get_node("/root/main")
 @onready var tcp_network_manager_panel: Panel = $'../TCPNetworkManagerPanel'
 
+@onready var confirm_dialog: ConfirmationDialog = $ConfirmDialog #确认弹窗
+
+
 var reward_templates: Array[RichTextLabel] = []
 var current_rewards: Array = []
 var seed_rewards: Dictionary = {}
@@ -212,10 +215,8 @@ func _perform_network_draw(draw_type: String) -> void:
 func _show_waiting_animation() -> void:
 	_set_draw_buttons_enabled(false)
 	lucky_draw_reward.hide()
-	_play_anticipation_animation()
 
 func handle_lucky_draw_response(response: Dictionary) -> void:
-	_stop_anticipation_animation()
 	_set_draw_buttons_enabled(true)
 	
 	if response.get("success", false):
@@ -237,8 +238,7 @@ func _show_server_draw_results(rewards: Array, draw_type: String, cost: int) -> 
 	lucky_draw_reward.text = result_text
 	lucky_draw_reward.show()
 	
-	_play_result_animation()
-
+	
 func _format_server_draw_results(rewards: Array, draw_type: String, cost: int) -> String:
 	var type_names = {"single": "单抽", "five": "五连抽", "ten": "十连抽"}
 	
@@ -338,40 +338,11 @@ func _format_package_content(content: Dictionary) -> String:
 		"seed": return "[color=#90EE90]🌱%sx%d[/color]" % [content.get("name", "种子"), amount]
 		_: return ""
 
-func _play_anticipation_animation() -> void:
-	_stop_anticipation_animation()
-	
-	anticipation_tween = create_tween()
-	anticipation_tween.set_loops()
-	
-	for template in reward_templates:
-		if template.visible:
-			anticipation_tween.parallel().tween_method(
-				func(progress: float): _anticipation_flash(template, progress),
-				0.0, 1.0, 0.8
-			)
 
 func _anticipation_flash(template: RichTextLabel, progress: float) -> void:
 	var flash_intensity = 1.0 + sin(progress * PI * 2) * 0.2
 	template.modulate = Color(flash_intensity, flash_intensity, flash_intensity, 1.0)
 
-func _stop_anticipation_animation() -> void:
-	if anticipation_tween:
-		anticipation_tween.kill()
-		anticipation_tween = null
-	
-	for template in reward_templates:
-		template.modulate = Color.WHITE
-
-func _play_result_animation() -> void:
-	var tween = create_tween()
-	
-	lucky_draw_reward.modulate.a = 0.0
-	lucky_draw_reward.scale = Vector2(0.8, 0.8)
-	
-	tween.parallel().tween_property(lucky_draw_reward, "modulate:a", 1.0, 0.5)
-	tween.parallel().tween_property(lucky_draw_reward, "scale", Vector2(1.0, 1.0), 0.5)
-	tween.tween_callback(func(): lucky_draw_reward.modulate.a = 1.0)
 
 func _show_error_message(message: String) -> void:
 	lucky_draw_reward.text = "[center][color=#FF6B6B]❌ %s[/color][/center]" % message
@@ -396,13 +367,33 @@ func _on_quit_button_pressed() -> void:
 	self.hide()
 
 func _on_lucky_draw_button_pressed() -> void:
-	_perform_network_draw("single")
+	_show_draw_confirmation("single")
 
 func _on_five_lucky_draw_button_pressed() -> void:
-	_perform_network_draw("five")
+	_show_draw_confirmation("five")
 
 func _on_ten_lucky_draw_button_pressed() -> void:
-	_perform_network_draw("ten")
+	_show_draw_confirmation("ten")
+
+func _show_draw_confirmation(draw_type: String) -> void:
+	var cost = draw_costs.get(draw_type, 800)
+	var type_names = {"single": "单抽", "five": "五连抽", "ten": "十连抽"}
+	var type_name = type_names.get(draw_type, draw_type)
+	
+	confirm_dialog.title = "幸运抽奖确认"
+	confirm_dialog.dialog_text = "确定要进行%s吗？\n需要花费 %d 金币\n\n可能获得金币、经验、种子等奖励！" % [type_name, cost]
+	confirm_dialog.popup_centered()
+	
+	# 保存当前抽奖类型
+	confirm_dialog.set_meta("draw_type", draw_type)
+	
+	# 连接确认信号（如果还没连接的话）
+	if not confirm_dialog.confirmed.is_connected(_on_confirm_draw):
+		confirm_dialog.confirmed.connect(_on_confirm_draw)
+
+func _on_confirm_draw() -> void:
+	var draw_type = confirm_dialog.get_meta("draw_type", "single")
+	_perform_network_draw(draw_type)
 
 func _on_visibility_changed():
 	if visible:

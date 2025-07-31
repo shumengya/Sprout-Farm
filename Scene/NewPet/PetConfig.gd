@@ -72,6 +72,11 @@ var summon_scale: float = 0.1  # 召唤小弟属性缩放比例（10%）
 #技能-死亡重生
 var enable_death_respawn_skill: bool = false
 var respawn_health_percentage: float = 0.3  # 重生时恢复的血量百分比（30%）
+
+#技能-反弹伤害
+var enable_damage_reflection_skill: bool = false
+var damage_reflection_cooldown: float = 10.0  # 反弹伤害冷却时间（秒）
+var damage_reflection_percentage: float = 0.5  # 反弹伤害百分比（50%）
 #======================以后有新技能在这里添加==============================
 
 # 移动属性
@@ -121,6 +126,9 @@ var pet_configs: Dictionary = {
     "enable_summon_pet_skill": false,
     "enable_death_respawn_skill": true,
     "respawn_health_percentage": 0.4,
+    "enable_damage_reflection_skill": true,
+    "damage_reflection_cooldown": 8.0,
+    "damage_reflection_percentage": 0.6,
     "move_speed": 180,
     "dodge_rate": 0.08,
     "element_type": "FIRE",
@@ -160,6 +168,9 @@ var pet_configs: Dictionary = {
     "summon_count": 2,
     "summon_scale": 0.15,
     "enable_death_respawn_skill": false,
+    "enable_damage_reflection_skill": true,
+    "damage_reflection_cooldown": 12.0,
+    "damage_reflection_percentage": 0.4,
     "move_speed": 120,
     "dodge_rate": 0.12,
     "element_type": "WATER",
@@ -199,6 +210,9 @@ var pet_configs: Dictionary = {
     "summon_count": 2,
     "summon_scale": 0.15,
     "enable_death_respawn_skill": false,
+    "enable_damage_reflection_skill": false,
+    "damage_reflection_cooldown": 10.0,
+    "damage_reflection_percentage": 0.5,
     "move_speed": 120,
     "dodge_rate": 0.12,
     "element_type": "WATER",
@@ -238,6 +252,9 @@ var pet_configs: Dictionary = {
     "summon_count": 2,
     "summon_scale": 0.15,
     "enable_death_respawn_skill": false,
+    "enable_damage_reflection_skill": false,
+    "damage_reflection_cooldown": 10.0,
+    "damage_reflection_percentage": 0.5,
     "move_speed": 120,
     "dodge_rate": 0.12,
     "element_type": "WATER",
@@ -315,6 +332,9 @@ func get_default_config() -> Dictionary:
 		"summon_scale": summon_scale,
 		"enable_death_respawn_skill": enable_death_respawn_skill,
 		"respawn_health_percentage": respawn_health_percentage,
+		"enable_damage_reflection_skill": enable_damage_reflection_skill,
+		"damage_reflection_cooldown": damage_reflection_cooldown,
+		"damage_reflection_percentage": damage_reflection_percentage,
 		"move_speed": move_speed,
 		"dodge_rate": dodge_rate,
 		"element_type": element_type,
