@@ -9,7 +9,7 @@ extends Node
 @onready var show_money : Label =   $UI/GUI/GameInfoHBox1/money				# 显示当前剩余的钱
 @onready var show_experience : Label = $UI/GUI/GameInfoHBox1/experience  	# 显示当前玩家的经验
 @onready var show_level : Label =   $UI/GUI/GameInfoHBox1/level				# 显示当前玩家的等级
-@onready var show_tip : Label =  $UI/GUI/GameInfoHBox3/tip					# 显示小提示
+@onready var show_tip : RichTextLabel =  $UI/GUI/GameInfoHBox3/tip					# 显示小提示
 @onready var show_like: Label = $UI/GUI/GameInfoHBox1/like					# 显示别人给自己点赞的总赞数
 @onready var show_onlineplayer: Label = $UI/GUI/GameInfoHBox3/onlineplayer	# 显示服务器在线人数
 @onready var show_player_name : Label =  $UI/GUI/GameInfoHBox2/player_name	# 显示玩家昵称
@@ -17,7 +17,7 @@ extends Node
 @onready var show_status_label : Label = $UI/GUI/GameInfoHBox2/StatusLabel	# 显示与服务器连接状态
 @onready var show_fps: Label = $UI/GUI/GameInfoHBox2/FPS					# 显示游戏FPS	
 @onready var show_hunger_value :Label = $UI/GUI/GameInfoHBox1/hunger_value	# 显示玩家体力值
-@onready var global_server_broadcast: Label = $UI/GUI/GameInfoHBox3/GlobalServerBroadcast # 显示全服大喇叭的最新消息，走马灯式滚动显示
+@onready var global_server_broadcast: RichTextLabel = $UI/GUI/GameInfoHBox3/GlobalServerBroadcast # 显示全服大喇叭的最新消息，走马灯式滚动显示
 @onready var watch_broadcast_button: Button = $UI/GUI/GameInfoHBox3/WatchBroadcast # 查看大喇叭按钮
 
 @onready var network_status_label :Label = get_node("/root/main/UI/BigPanel/TCPNetworkManagerPanel/StatusLabel")
@@ -69,6 +69,8 @@ extends Node
 @onready var pet_inform_panel: Panel = $UI/SmallPanel/PetInformPanel #宠物信息面板
 @onready var player_store_panel: Panel = $UI/BigPanel/PlayerStorePanel #玩家小卖部面板
 @onready var game_setting_panel: Panel = $UI/BigPanel/GameSettingPanel #游戏设置面板
+@onready var play_game_panel: Panel = $UI/BigPanel/PlayGamePanel #玩玩小游戏面板
+@onready var special_farm_panel: Panel = $UI/BigPanel/SpecialFarmPanel #神秘农场面板
 
 
 
@@ -118,7 +120,7 @@ extends Node
 
 @onready var pet_battle_panel: PetBattlePanel = $UI/BigPanel/PetBattlePanel #新的宠物对战场景
 
-
+#宠物巡逻系统
 @onready var pet_patrol_points: Node = $PetPatrolPoints
 @onready var pos_1: Marker2D = $PetPatrolPoints/Pos1 #生成点1
 @onready var pos_2: Marker2D = $PetPatrolPoints/Pos2#生成点2
@@ -396,6 +398,21 @@ func _input(event):
 
 
 #==========================玩家排行榜+访问模式处理============================
+#打开玩家排行榜
+func _on_player_rank_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人玩家排行榜",Color.RED)
+		return
+	player_ranking_panel.show()
+	pass 
+
+#打开玩家排行榜面板
+func _on_player_ranking_button_pressed() -> void:
+	player_ranking_panel.show()
+	player_ranking_panel.request_player_rankings()
+	pass 
+
+
 # 处理玩家排行榜响应
 func _handle_player_rankings_response(data):
 	player_ranking_panel.handle_player_rankings_response(data)
@@ -645,9 +662,15 @@ func _on_item_selected(index):
 
 
 #========================================杂项未分类函数=======================================
-#随机游戏提示
+# 游戏小提示相关变量
+var game_tips_config = {}  # 服务端游戏小提示配置
+var current_tip_index = 0  # 当前小提示索引（用于顺序模式）
+#OS
+#DisplayServer
+#获取游戏提示
 func _random_small_game_tips() -> String:
-	const game_tips = [
+	# 默认游戏小提示（作为备用）
+	const default_game_tips = [
 		"按住wsad可以移动游戏画面",
 		"使用鼠标滚轮来缩放游戏画面",
 		"移动端双指缩放游戏画面",
@@ -663,8 +686,32 @@ func _random_small_game_tips() -> String:
 		"面板左上角有刷新按钮，可以刷新面板",
 		"小心偷菜被巡逻宠物发现"
 	]
-	var random_index = randi() % game_tips.size()
-	var selected_tip = game_tips[random_index]
+	
+	# 获取游戏小提示数组
+	var game_tips = default_game_tips
+	var switch_mode = "随机"  # 默认切换模式
+	
+	# 如果有服务端配置，使用服务端配置
+	if game_tips_config.has("游戏小提示") and game_tips_config["游戏小提示"].size() > 0:
+		game_tips = game_tips_config["游戏小提示"]
+		switch_mode = game_tips_config.get("切换模式", "随机")
+	
+	if game_tips.size() == 0:
+		return "欢迎来到萌芽农场！"
+	
+	# 根据切换模式选择小提示
+	var selected_tip = ""
+	match switch_mode:
+		"顺序":
+			selected_tip = game_tips[current_tip_index]
+			current_tip_index = (current_tip_index + 1) % game_tips.size()
+		"倒序":
+			selected_tip = game_tips[current_tip_index]
+			current_tip_index = (current_tip_index - 1 + game_tips.size()) % game_tips.size()
+		"随机", _:
+			var random_index = randi() % game_tips.size()
+			selected_tip = game_tips[random_index]
+	
 	return selected_tip
 
 
@@ -712,6 +759,13 @@ func handle_login_success(player_data: Dictionary):
 			print("登录成功后请求宠物配置数据")
 		else:
 			print("登录成功后请求宠物配置数据失败")
+	
+	# 登录成功后请求游戏小提示配置数据
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendGetGameTipsConfig"):
+		if tcp_network_manager_panel.sendGetGameTipsConfig():
+			print("登录成功后请求游戏小提示配置数据")
+		else:
+			print("登录成功后请求游戏小提示配置数据失败")
 	
 	# 其他登录成功后的初始化逻辑可以在这里添加
 	start_game = true
@@ -903,12 +957,6 @@ func _update_ui():
 	var my_likes = like_system.get("总点赞数", 0)
 	show_like.text = "点赞数：" + str(int(my_likes))
 
-#打开玩家排行榜面板
-func _on_player_ranking_button_pressed() -> void:
-	
-	player_ranking_panel.show()
-	player_ranking_panel.request_player_rankings()
-	pass 
 
 #打开设置面板
 func _on_setting_button_pressed() -> void:
@@ -1002,31 +1050,94 @@ func _on_open_store_button_pressed() -> void:
 	crop_store_panel.move_to_front() 
 	pass
 
+#打开种子商店面板
+func _on_seed_store_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人种子商店",Color.RED)
+		return
+	crop_store_panel.show()
+	pass 
+
+
 #打开种子仓库面板
 func _on_seed_warehouse_button_pressed() -> void:
 	player_bag_panel.show()
 
-#打开玩家道具背包面板
-func _on_item_bag_button_pressed() -> void:
-	item_bag_panel.show()
-	
-#打开道具商店面板
-func _on_item_store_button_pressed() -> void:
-	item_store_panel.show()
+#打开种子仓库面板
+func _on_seed_warehouse_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人种子仓库",Color.RED)
+		return	
+	crop_store_panel.show()
+	pass 
+
 
 #打开作物仓库面板
 func _on_crop_warehouse_button_pressed() -> void:
 	crop_warehouse_panel.show()
+
+#打开作物仓库面板
+func _on_crop_warehouse_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人作物仓库",Color.RED)
+		return
+	crop_warehouse_panel.show()
+	pass 
+
+
+#打开道具背包面板
+func _on_item_bag_button_pressed() -> void:
+	item_bag_panel.show()
+	
+#打开道具背包面板
+func _on_item_bag_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人道具背包",Color.RED)
+		return
+	item_bag_panel.show()
+	pass
+
+
+#打开道具商店面板
+func _on_item_store_button_pressed() -> void:
+	item_store_panel.show()
+
+#打开道具商店面板
+func _on_item_store_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人道具商店",Color.RED)
+		return
+	item_store_panel.show()
+	pass 
+
 
 #打开宠物背包面板
 func _on_pet_bag_button_pressed() -> void:
 	pet_bag_panel.show()
 	pass 
 
+#打开宠物背包面板
+func _on_pet_bag_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人宠物背包",Color.RED)
+		return
+	pet_bag_panel.show()
+	pass 
+
+
 #打开宠物商店面板
 func _on_pet_store_button_pressed() -> void:
 	pet_store_panel.show()
 	pass
+
+#打开宠物商店面板
+func _on_pet_store_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人宠物商店",Color.RED)
+		return
+	pet_store_panel.show()
+	pass
+
 
 #==========================打开基础面板================================
 
@@ -1055,6 +1166,10 @@ func _try_load_from_server():
 		# 从服务器请求最新道具配置数据
 		print("尝试从服务器获取最新道具配置数据...")
 		tcp_network_manager_panel.sendGetItemConfig()
+		
+		# 从服务器请求游戏小提示配置数据
+		print("尝试从服务器获取游戏小提示配置数据...")
+		tcp_network_manager_panel.sendGetGameTipsConfig()
 	else:
 		print("服务器未连接，使用当前本地数据")
 
@@ -1212,6 +1327,38 @@ func _handle_pet_config_response(response_data):
 		var message = response_data.get("message", "未知错误")
 		print("从服务器获取宠物配置数据失败：", message)
 		pet_config = {}
+
+# 处理服务器游戏小提示配置响应
+func _handle_game_tips_config_response(response_data):
+	var success = response_data.get("success", false)
+	
+	if success:
+		var config_data = response_data.get("game_tips_config", {})
+		if config_data:
+			# 更新游戏小提示配置
+			game_tips_config = config_data
+			print("游戏小提示配置已从服务器更新")
+			print("切换模式：", config_data.get("切换模式", "顺序"))
+			print("切换速度：", config_data.get("切换速度", 5))
+			print("小提示数量：", config_data.get("游戏小提示", []).size())
+			
+			# 更新小提示切换间隔时间
+			var switch_speed = config_data.get("切换速度", 5)
+			five_interval = float(switch_speed)
+			print("小提示切换间隔已更新为：", five_interval, "秒")
+			
+			# 如果游戏小提示面板存在，更新其配置
+			if has_node("GameTipsPanel"):
+				var tips_panel = get_node("GameTipsPanel")
+				if tips_panel.has_method("update_config"):
+					tips_panel.update_config(config_data)
+		else:
+			print("服务器返回的游戏小提示配置数据为空")
+			game_tips_config = {}
+	else:
+		var message = response_data.get("message", "未知错误")
+		print("从服务器获取游戏小提示配置数据失败：", message)
+		game_tips_config = {}
 
 #===============================================初始化数据处理===============================================
 
@@ -1640,8 +1787,6 @@ class CropTextureManager:
 					if texture:
 						texture_cache[crop_name][stage] = texture
 	
-
-
 # 全局作物图片管理器实例
 var crop_texture_manager: CropTextureManager
 
@@ -1848,6 +1993,16 @@ func _execute_buy_new_ground():
 
 
 #===============================================每日签到处理===============================================
+#打开每日签到
+func _on_daily_checkin_gift_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人每日签到礼包",Color.RED)
+		return
+	daily_check_in_panel.show()
+	# 刷新签到数据
+	daily_check_in_panel.refresh_check_in_data()
+	pass 
+
 #每日签到 奖励可以有钱币，经验，随机种子 连续签到奖励更多 连续签到只要不中断，奖励会随着签到的次数逐渐变得丰厚
 func _on_daily_check_in_button_pressed() -> void:
 	daily_check_in_panel.show()
@@ -2328,7 +2483,6 @@ func update_broadcast_display_from_panel():
 		else:
 			global_server_broadcast.text = "全服大喇叭"
 
-
 # 初始化大喇叭显示
 func _init_broadcast_display():
 	if global_server_broadcast and global_server_broadcast_panel:
@@ -2428,7 +2582,6 @@ func _on_one_click_screen_shot_pressed() -> void:
 	
 	# 恢复UI显示
 	_restore_ui_visibility_state(ui_state)
-	
 
 # 保存当前UI可见性状态
 func _save_ui_visibility_state() -> Dictionary:
@@ -2518,6 +2671,15 @@ func _restore_ui_visibility_state(state: Dictionary):
 
 
 #====================================在线礼包处理=========================================
+#打开在线礼包
+func _on_online_time_gift_pressed() -> void:
+	if is_visiting_mode:
+		Toast.show("您不能访问他人在线时长礼包",Color.RED)
+		return
+	# 每次打开面板时都请求最新的在线数据
+	online_gift_panel.show_panel_and_request_data()
+	pass 
+
 #在线礼包，在线时间越久，越丰富，默认 1分钟 10分钟 30分钟 1小时 3小时 5小时 每天刷新
 func _on_online_gift_button_pressed() -> void:
 	# 每次打开面板时都请求最新的在线数据
@@ -2850,7 +3012,6 @@ func init_scare_crow_config():
 		# 没有稻草人配置，隐藏稻草人
 		scare_crow.hide()
 
-
 #打开农场稻草人设置面板
 func _on_scare_crow_pressed() -> void:
 	if is_visiting_mode:
@@ -3181,10 +3342,6 @@ func init_patrol_pets():
 func check_battle_patrol_conflict(battle_pet_id: String, patrol_pet_id: String) -> bool:
 	return battle_pet_id == patrol_pet_id
 
-#===============================================巡逻宠物管理===============================================
-
-
-
 # 通用对话框显示函数
 func _show_battle_dialog(title: String, content: String, ok_text: String, cancel_text: String, ok_callback: Callable, cancel_callback: Callable):
 	# 使用专用的EscapeDialog创建对战选择弹窗
@@ -3288,6 +3445,9 @@ func _customize_escape_button(button: Button, normal_color: Color, hover_color: 
 	button.add_theme_color_override("font_color_hover", Color.WHITE)
 	button.add_theme_color_override("font_color_pressed", Color.WHITE)
 	button.add_theme_font_size_override("font_size", 18)
+#===============================================巡逻宠物管理===============================================
+
+
 
 #====================================偷菜被发现-宠物对战处理=========================================
 # 处理偷菜被发现响应
@@ -3413,6 +3573,7 @@ func _on_steal_escape_confirmed(escape_cost: int):
 #====================================偷菜被发现-宠物对战处理=========================================
 
 
+
 #========================访问模式直接向巡逻宠物发起战斗========================
 func _on_battle_button_pressed() -> void:
 	# 检查是否为访问模式
@@ -3533,6 +3694,40 @@ func _update_battle_button_visibility() -> void:
 		battle_button.hide()
 #========================访问模式直接向巡逻宠物发起战斗========================
 
+
+
+# ======================================= 宠物对战系统 =========================================
+# 处理宠物对战结束
+func _on_pet_battle_ended(winner_team: String, battle_data: Dictionary):
+	"""处理宠物对战结束后的逻辑"""
+	print("[宠物对战] 对战结束，获胜方: ", winner_team)
+	print("[宠物对战] 对战数据: ", battle_data)
+	
+	# 准备发送到服务器的对战结果数据
+	var battle_result = {
+		"winner_team": winner_team,
+		"attacker_name": user_name,  # 攻击方（玩家自己）
+		"defender_name": visited_player_data.get("玩家昵称", "未知玩家"),  # 防守方（被访问玩家）
+		"battle_type": "steal_battle",  # 对战类型：偷菜对战
+		"attacker_pets": battle_data.get("attacker_pets", []),  # 攻击方宠物数据
+		"defender_pets": battle_data.get("defender_pets", []),  # 防守方宠物数据
+		"battle_duration": battle_data.get("battle_duration", 0),  # 对战持续时间
+		"timestamp": Time.get_unix_time_from_system()  # 对战时间戳
+	}
+	
+	# 发送对战结果到服务器
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("send_pet_battle_result"):
+		tcp_network_manager_panel.send_pet_battle_result(battle_result)
+		print("[宠物对战] 对战结果已发送到服务器")
+	else:
+		print("[宠物对战] 无法发送对战结果到服务器")
+	
+	# 显示对战结果提示
+	if winner_team == "attacker":
+		Toast.show("恭喜！您在偷菜对战中获胜！", Color.GREEN)
+	else:
+		Toast.show("很遗憾，您在偷菜对战中失败了。", Color.RED)
+# ======================================= 宠物对战系统 =========================================
 
 
 
@@ -3661,6 +3856,19 @@ func _handle_save_game_settings_response(data):
 
 
 # ======================================= 今日占卜系统 =========================================
+#今日占卜
+func _on_today_divination_pressed() -> void:
+	if is_visiting_mode:
+		return
+	today_divination_panel.show()
+	pass
+
+#打开今日占卜面板
+func _on_today_divination_button_pressed() -> void:
+	today_divination_panel.show()
+	pass
+
+
 # 处理占卜响应
 func _handle_divination_response(divination_data):
 	"""处理服务器返回的占卜数据，更新本地玩家数据"""
@@ -3676,136 +3884,155 @@ func get_player_divination_data():
 # ======================================= 今日占卜系统 =========================================
 
 
+
+#========================================玩家小卖部===========================
 #打开小卖部面板
 func _on_my_store_button_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人小卖部",Color.RED)
-		return
 	player_store_panel.show()
 	pass
 
 #打开小卖部面板
 func _on_player_store_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人小卖部",Color.RED)
-		return
 	player_store_panel.show()
 	pass 
+#========================================玩家小卖部===========================
 
-#打开种子商店
-func _on_seed_store_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人种子商店",Color.RED)
-		return
-	crop_store_panel.show()
+#宠物星辰塔
+func _on_pet_ladder_match_pressed() -> void:
 	pass 
 
-#打开道具商店
-func _on_item_store_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人道具商店",Color.RED)
-		return
-	item_store_panel.show()
+#宠物小窝
+func _on_pet_nest_pressed() -> void:
 	pass 
 
-#打开宠物商店
-func _on_pet_store_pressed() -> void:
+#玩玩小游戏
+func _on_play_small_game_pressed() -> void:
 	if is_visiting_mode:
-		Toast.show("您不能访问他人宠物商店",Color.RED)
 		return
-	pet_store_panel.show()
+	play_game_panel.show()
+	pass 
+
+#神秘农场
+func _on_mystery_farmland_pressed() -> void:
+	if is_visiting_mode:
+		return
+	special_farm_panel.show()
 	pass
 
-#打开作物仓库
-func _on_crop_warehouse_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人作物仓库",Color.RED)
+#访问模式下送金币（已经设置了只能访问模式才会显示这个按钮）
+func _on_send_money_button_pressed() -> void:
+	if not is_visiting_mode:
+		Toast.show("只能在访问模式下送金币", Color.RED)
 		return
-	crop_warehouse_panel.show()
-	pass 
-
-#打开种子仓库
-func _on_seed_warehouse_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人种子仓库",Color.RED)
-		return	
-	crop_store_panel.show()
-	pass 
-
-#打开玩家排行榜
-func _on_player_rank_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人玩家排行榜",Color.RED)
-		return
-	player_ranking_panel.show()
-	pass 
-
-#打开每日签到
-func _on_daily_checkin_gift_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人每日签到礼包",Color.RED)
-		return
-	daily_check_in_panel.show()
-	pass 
-
-#打开在线礼包
-func _on_online_time_gift_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人在线时长礼包",Color.RED)
-		return
-	online_gift_panel.show()
-	pass 
-
-#打开宠物背包
-func _on_pet_bag_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人宠物背包",Color.RED)
-		return
-	pet_bag_panel.show()
-	pass 
-
-#打开道具背包
-func _on_item_bag_pressed() -> void:
-	if is_visiting_mode:
-		Toast.show("您不能访问他人道具背包",Color.RED)
-		return
-	item_bag_panel.show()
-	pass
-
-# ======================================= 宠物对战系统 =========================================
-# 处理宠物对战结束
-func _on_pet_battle_ended(winner_team: String, battle_data: Dictionary):
-	"""处理宠物对战结束后的逻辑"""
-	print("[宠物对战] 对战结束，获胜方: ", winner_team)
-	print("[宠物对战] 对战数据: ", battle_data)
 	
-	# 准备发送到服务器的对战结果数据
-	var battle_result = {
-		"winner_team": winner_team,
-		"attacker_name": user_name,  # 攻击方（玩家自己）
-		"defender_name": visited_player_data.get("玩家昵称", "未知玩家"),  # 防守方（被访问玩家）
-		"battle_type": "steal_battle",  # 对战类型：偷菜对战
-		"attacker_pets": battle_data.get("attacker_pets", []),  # 攻击方宠物数据
-		"defender_pets": battle_data.get("defender_pets", []),  # 防守方宠物数据
-		"battle_duration": battle_data.get("battle_duration", 0),  # 对战持续时间
-		"timestamp": Time.get_unix_time_from_system()  # 对战时间戳
-	}
+	# 获取自己的原始金币数（从保存的原始数据中获取）
+	var my_money = original_player_data.get("钱币", 0)
 	
-	# 发送对战结果到服务器
-	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("send_pet_battle_result"):
-		tcp_network_manager_panel.send_pet_battle_result(battle_result)
-		print("[宠物对战] 对战结果已发送到服务器")
+	# 检查自己的金币是否足够
+	if my_money < 500:
+		Toast.show("您的金币不足500，无法送金币", Color.RED)
+		return
+	
+	# 获取被访问玩家的昵称
+	var target_nickname = visited_player_data.get("玩家昵称", "未知玩家")
+	
+	# 显示确认弹窗
+	_show_send_money_confirmation(target_nickname, my_money)
+
+func _show_send_money_confirmation(target_nickname: String, my_money: int):
+	"""显示送金币确认弹窗"""
+	var confirmation_dialog = AcceptDialog.new()
+	confirmation_dialog.title = "送金币确认"
+	confirmation_dialog.dialog_text = "确定要送给 " + target_nickname + " 500金币吗？\n\n您当前拥有：" + str(my_money) + "金币"
+	confirmation_dialog.ok_button_text = "确定送出"
+	
+	# 添加取消按钮
+	confirmation_dialog.add_cancel_button("取消")
+	
+	# 连接确认信号
+	confirmation_dialog.confirmed.connect(_on_send_money_confirmed)
+	
+	# 添加到场景并显示
+	get_tree().current_scene.add_child(confirmation_dialog)
+	confirmation_dialog.popup_centered()
+
+func _on_send_money_confirmed():
+	"""确认送金币后的处理"""
+	if not is_visiting_mode:
+		return
+	
+	# 再次检查自己的金币是否足够（防止在弹窗期间金币发生变化）
+	var my_money = original_player_data.get("钱币", 0)
+	if my_money < 500:
+		Toast.show("金币不足，无法送出", Color.RED)
+		return
+	
+	# 获取被访问玩家的用户名
+	var target_username = visited_player_data.get("玩家账号", "")
+	if target_username == "":
+		Toast.show("无法获取目标玩家信息", Color.RED)
+		return
+	
+	# 发送送金币请求到服务器
+	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendGiveMoney"):
+		var success = tcp_network_manager_panel.sendGiveMoney(target_username, 500)
+		if success:
+			Toast.show("正在送出金币...", Color.CYAN)
+		else:
+			Toast.show("网络未连接，无法送金币", Color.RED)
 	else:
-		print("[宠物对战] 无法发送对战结果到服务器")
+		Toast.show("网络管理器不可用", Color.RED)
+
+func _handle_give_money_response(data):
+	"""处理送金币响应"""
+	var success = data.get("success", false)
+	var message = data.get("message", "")
+	var updated_data = data.get("updated_data", {})
+	var target_updated_data = data.get("target_updated_data", {})
 	
-	# 显示对战结果提示
-	if winner_team == "attacker":
-		Toast.show("恭喜！您在偷菜对战中获胜！", Color.GREEN)
+	if success:
+		# 更新自己原始数据中的金币
+		original_player_data["钱币"] = updated_data.get("钱币", original_player_data.get("钱币", 0))
+		
+		# 如果在访问模式下，更新被访问者的金币显示
+		if is_visiting_mode and target_updated_data.has("钱币"):
+			# 更新被访问者的数据
+			visited_player_data["钱币"] = target_updated_data.get("钱币", 0)
+			# 更新当前显示的金币数（显示被访问者的金币）
+			money = target_updated_data.get("钱币", 0)
+			_update_ui()
+		else:
+			# 非访问模式，正常更新自己的金币显示
+			money = updated_data.get("钱币", money)
+			_update_ui()
+		
+		Toast.show(message, Color.GREEN)
 	else:
-		Toast.show("很遗憾，您在偷菜对战中失败了。", Color.RED)
-# ======================================= 宠物对战系统 =========================================
+		Toast.show("送金币失败：" + message, Color.RED)
 
+func _handle_money_received_notification(data):
+	"""处理收到金币通知"""
+	var sender_nickname = data.get("sender_nickname", "未知玩家")
+	var amount = data.get("amount", 0)
+	var new_money = data.get("new_money", 0)
+	
+	# 更新自己的金币
+	money = new_money
+	_update_ui()
+	
+	# 显示收到金币的通知
+	Toast.show("收到来自 " + sender_nickname + " 的 " + str(amount) + " 金币！", Color.GOLD)
+	
+	# 可以添加音效或其他特效
+	print("收到金币通知：来自 ", sender_nickname, "，金额：", amount)
 
-func _on_today_divination_button_pressed() -> void:
-	today_divination_panel.show()
-	pass
+# 返回登录界面
+func return_to_login():
+	"""被踢出时返回登录界面"""
+	# 清理当前游戏状态
+	is_visiting_mode = false
+	visited_player_data = {}
+	original_player_data = {}
+	
+	# 切换到登录场景
+	get_tree().change_scene_to_file("res://LoginPanel.tscn")

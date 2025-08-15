@@ -487,6 +487,8 @@ func _on_quit_button_pressed():
 func _on_visibility_changed():
 	if visible:
 		GlobalVariables.isZoomDisabled = true
+		# 面板显示时请求同步最新的背包数据
+		tcp_network_manager_panel.send_sync_bag_data_request()
 		# 面板显示时自动刷新数据
 		update_player_bag_ui()
 		pass

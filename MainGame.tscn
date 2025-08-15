@@ -1,4 +1,4 @@
-[gd_scene load_steps=107 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=113 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://bso5fyjavdien" path="res://assets/游戏UI/玩家数图标.webp" id="10_vygm6"]
 [ext_resource type="PackedScene" uid="uid://cbhitturvihqj" path="res://Scene/BigPanel/LoginPanel.tscn" id="11_6jgly"]
 [ext_resource type="PackedScene" uid="uid://dckc8nrn7p425" path="res://Scene/SmallPanel/LandPanel.tscn" id="12_y1hsh"]
+[ext_resource type="Texture2D" uid="uid://dsds2gsvqxfak" path="res://assets/游戏UI/大喇叭.webp" id="13_5liyv"]
 [ext_resource type="PackedScene" uid="uid://dpiy0aim20n2h" path="res://Scene/SmallPanel/OnlineGiftPanel.tscn" id="14_5b81d"]
 [ext_resource type="PackedScene" uid="uid://4rwitowdt4h" path="res://Scene/SmallPanel/OneClickPlantPanel.tscn" id="15_8kysg"]
 [ext_resource type="PackedScene" uid="uid://btp1h6hic2sin" path="res://Scene/Dialog/AcceptDialog.tscn" id="16_0igvr"]
@@ -40,8 +41,10 @@
 [ext_resource type="Script" uid="uid://d4fvv2sjngajr" path="res://Script/Dialog/BatchBuyPopup.gd" id="29_5b81d"]
 [ext_resource type="PackedScene" uid="uid://diwbnwhnq026" path="res://Scene/NewPet/PetBattlePanel.tscn" id="29_mw3xw"]
 [ext_resource type="PackedScene" uid="uid://dos15dmc1b6bt" path="res://GUI/GameSettingPanel.tscn" id="30_game_setting"]
+[ext_resource type="PackedScene" uid="uid://jjlgdnoo8e52" path="res://Scene/BigPanel/PlayGamePanel.tscn" id="30_rawle"]
 [ext_resource type="Texture2D" uid="uid://2sdfbvf1isif" path="res://icon.svg" id="31_uc6q1"]
 [ext_resource type="Script" uid="uid://doo34ll0yb078" path="res://Script/SmallPanel/PetInformPanel.gd" id="31_vygm6"]
+[ext_resource type="PackedScene" uid="uid://byxhjyyaahs6q" path="res://Scene/BigPanel/SpecialFarmPanel.tscn" id="31_ww70k"]
 [ext_resource type="Script" uid="uid://bakeq8tm6r4j4" path="res://Script/SmallPanel/GlobalServerBroadcastPanel.gd" id="34_k1sw4"]
 [ext_resource type="Script" uid="uid://dobao5y5s2dij" path="res://Script/SmallPanel/ScareCrowPanel.gd" id="35_6ylhg"]
 [ext_resource type="Texture2D" uid="uid://d06uaoowmcvxj" path="res://assets/稻草人图片/稻草人2.webp" id="36_jyxgm"]
@@ -57,8 +60,6 @@
 [ext_resource type="Script" uid="uid://cha0uw4ra1trr" path="res://Script/Dialog/AddProduct2StorePopup.gd" id="46_8d602"]
 [ext_resource type="Texture2D" uid="uid://dilipbs0lncpd" path="res://assets/草地图片/草地10.webp" id="48_2i8fe"]
 [ext_resource type="Texture2D" uid="uid://du34yctd8bd8m" path="res://assets/灌木丛图片/灌木丛1.webp" id="49_xjiif"]
-[ext_resource type="Texture2D" uid="uid://dswjorjhf1i6f" path="res://assets/灌木丛图片/灌木丛2.webp" id="50_sqnmr"]
-[ext_resource type="Texture2D" uid="uid://go3n3qnpancf" path="res://assets/灌木丛图片/灌木丛3.webp" id="51_2i8fe"]
 [ext_resource type="Texture2D" uid="uid://dk4yl4ghmxaa2" path="res://assets/天气系统图片/雪花.webp" id="53_4ka7t"]
 [ext_resource type="Texture2D" uid="uid://chcgrmluhfxuk" path="res://assets/天气系统图片/樱花1.webp" id="53_tdq2s"]
 [ext_resource type="Texture2D" uid="uid://c1qqalp7owgy2" path="res://assets/天气系统图片/栀子花1.webp" id="53_xyeuq"]
@@ -80,7 +81,12 @@
 [ext_resource type="Texture2D" uid="uid://ic2nvi3xlwl4" path="res://assets/装饰物图片/在线时长礼包.webp" id="64_crc4a"]
 [ext_resource type="Texture2D" uid="uid://1xgmal8sw6il" path="res://assets/装饰物图片/宠物背包.webp" id="67_onvxb"]
 [ext_resource type="Texture2D" uid="uid://ywdg7xgq7hm8" path="res://assets/装饰物图片/道具背包.webp" id="68_bpbm8"]
+[ext_resource type="Texture2D" uid="uid://b8k7gknqsokt2" path="res://assets/装饰物图片/占卜台.webp" id="68_yceks"]
 [ext_resource type="Texture2D" uid="uid://bnv6wb0k443fv" path="res://assets/天气系统图片/柳叶2.webp" id="69_uyv6e"]
+[ext_resource type="Texture2D" uid="uid://c1lviq3nc00u5" path="res://assets/装饰物图片/宠物天梯赛.webp" id="69_yceks"]
+[ext_resource type="Texture2D" uid="uid://bwljgu2ltfc7j" path="res://assets/装饰物图片/宠物小窝.webp" id="70_yceks"]
+[ext_resource type="Texture2D" uid="uid://dcfb173iikas" path="res://assets/装饰物图片/玩玩小游戏.webp" id="71_w7q6d"]
+[ext_resource type="Texture2D" uid="uid://cpsfkh7khetfb" path="res://assets/装饰物图片/神秘农场.webp" id="72_7i23t"]
 [ext_resource type="Script" uid="uid://di8wjflimodb0" path="res://GameManager/DayNightSystem.gd" id="73_6fhdl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_adtqp"]
@@ -315,7 +321,7 @@ anchors_preset = 0
 
 [node name="GameInfoHBox1" type="HBoxContainer" parent="UI/GUI"]
 layout_mode = 0
-offset_right = 1339.0
+offset_right = 1401.0
 offset_bottom = 35.0
 
 [node name="experience_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
@@ -413,7 +419,7 @@ text = "点赞数：0"
 [node name="GameInfoHBox2" type="HBoxContainer" parent="UI/GUI"]
 layout_mode = 0
 offset_top = 35.0
-offset_right = 1336.0
+offset_right = 1396.0
 offset_bottom = 70.0
 
 [node name="player_name_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
@@ -490,7 +496,7 @@ text = "FPS：0"
 [node name="GameInfoHBox3" type="HBoxContainer" parent="UI/GUI"]
 layout_mode = 0
 offset_top = 70.0
-offset_right = 1335.0
+offset_right = 1398.0
 offset_bottom = 113.0
 
 [node name="tip_image" type="TextureRect" parent="UI/GUI/GameInfoHBox3"]
@@ -498,39 +504,50 @@ layout_mode = 2
 texture = ExtResource("5_5b81d")
 expand_mode = 2
 
-[node name="tip" type="Label" parent="UI/GUI/GameInfoHBox3"]
+[node name="tip" type="RichTextLabel" parent="UI/GUI/GameInfoHBox3"]
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.564706, 1, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+size_flags_horizontal = 3
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 3
-theme_override_constants/shadow_offset_y = 3
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_outline_size = 10
-theme_override_fonts/font = ExtResource("3_t4s8j")
-theme_override_font_sizes/font_size = 25
+theme_override_font_sizes/bold_italics_font_size = 25
+theme_override_font_sizes/italics_font_size = 25
+theme_override_font_sizes/mono_font_size = 25
+theme_override_font_sizes/normal_font_size = 25
+theme_override_font_sizes/bold_font_size = 25
+bbcode_enabled = true
 text = "游戏小提示"
+vertical_alignment = 1
+threaded = true
 
 [node name="GlobalServerBroadcast_image" type="TextureRect" parent="UI/GUI/GameInfoHBox3"]
 layout_mode = 2
-texture = ExtResource("5_5b81d")
+texture = ExtResource("13_5liyv")
 expand_mode = 2
 
-[node name="GlobalServerBroadcast" type="Label" parent="UI/GUI/GameInfoHBox3"]
+[node name="GlobalServerBroadcast" type="RichTextLabel" parent="UI/GUI/GameInfoHBox3"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.564706, 0.137255, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+size_flags_horizontal = 3
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 3
-theme_override_constants/shadow_offset_y = 3
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 10
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_outline_size = 10
-theme_override_fonts/font = ExtResource("3_t4s8j")
-theme_override_font_sizes/font_size = 25
+theme_override_font_sizes/bold_italics_font_size = 25
+theme_override_font_sizes/italics_font_size = 25
+theme_override_font_sizes/mono_font_size = 25
+theme_override_font_sizes/normal_font_size = 25
+theme_override_font_sizes/bold_font_size = 25
+bbcode_enabled = true
 text = "全服大喇叭"
 vertical_alignment = 1
-clip_text = true
+threaded = true
 
 [node name="WatchBroadcast" type="Button" parent="UI/GUI/GameInfoHBox3"]
 layout_mode = 2
@@ -547,6 +564,7 @@ expand_mode = 2
 
 [node name="onlineplayer" type="Label" parent="UI/GUI/GameInfoHBox3"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.423529, 1, 0.533333, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -644,6 +662,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "使用道具"
 
+[node name="SendMoneyButton" type="Button" parent="UI/GUI/VisitVBox"]
+modulate = Color(1, 1, 0, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "送金币"
+
 [node name="ReturnMyFarmButton" type="Button" parent="UI/GUI/VisitVBox"]
 modulate = Color(1, 1, 0.721569, 1)
 layout_mode = 2
@@ -694,7 +718,7 @@ text = "新手礼包"
 modulate = Color(0.407843, 0.796078, 0.996078, 1)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "一键截图"
+text = "截图模式"
 
 [node name="LuckyDrawButton" type="Button" parent="UI/GUI/OtherVBox"]
 modulate = Color(0.729412, 0.764706, 1, 1)
@@ -777,10 +801,14 @@ offset_right = 1473.0
 offset_bottom = 748.0
 
 [node name="ItemStorePanel" parent="UI/BigPanel" instance=ExtResource("21_uhubb")]
+visible = false
 offset_left = 80.0
 offset_top = 77.0
 offset_right = 1620.0
 offset_bottom = 797.0
+
+[node name="ItemBagPanel" parent="UI/BigPanel" instance=ExtResource("20_n03md")]
+visible = false
 
 [node name="CropWarehousePanel" parent="UI/BigPanel" instance=ExtResource("18_5b81d")]
 
@@ -788,9 +816,6 @@ offset_bottom = 797.0
 visible = false
 
 [node name="CropStorePanel" parent="UI/BigPanel" instance=ExtResource("17_ql8k3")]
-visible = false
-
-[node name="ItemBagPanel" parent="UI/BigPanel" instance=ExtResource("20_n03md")]
 visible = false
 
 [node name="PlayerStorePanel" type="Panel" parent="UI/BigPanel"]
@@ -957,11 +982,18 @@ visible = false
 visible = false
 
 [node name="LoginPanel" parent="UI/BigPanel" instance=ExtResource("11_6jgly")]
+visible = false
 
 [node name="GameSettingPanel" parent="UI/BigPanel" instance=ExtResource("30_game_setting")]
 visible = false
 
 [node name="PetBattlePanel" parent="UI/BigPanel" instance=ExtResource("29_mw3xw")]
+visible = false
+
+[node name="PlayGamePanel" parent="UI/BigPanel" instance=ExtResource("30_rawle")]
+visible = false
+
+[node name="SpecialFarmPanel" parent="UI/BigPanel" instance=ExtResource("31_ww70k")]
 visible = false
 
 [node name="SmallPanel" type="CanvasLayer" parent="UI"]
@@ -2111,7 +2143,7 @@ position_smoothing_enabled = true
 script = ExtResource("10_o8l48")
 max_zoom = 1.8
 bounds_enabled = true
-bounds_min = Vector2(-500, -400)
+bounds_min = Vector2(-500, -600)
 bounds_max = Vector2(500, 500)
 
 [node name="GameManager" type="Node" parent="."]
@@ -3293,7 +3325,7 @@ text = "在线时长礼包"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Decoration2" type="Button" parent="Decoration4"]
+[node name="TodayDivination" type="Button" parent="Decoration4"]
 self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_left = 244.0
@@ -3302,17 +3334,17 @@ offset_right = 508.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration2"]
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/TodayDivination"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("48_2i8fe")
 
-[node name="Image" type="Sprite2D" parent="Decoration4/Decoration2"]
+[node name="Image" type="Sprite2D" parent="Decoration4/TodayDivination"]
 position = Vector2(132, 48)
 scale = Vector2(1.2, 1.2)
-texture = ExtResource("50_sqnmr")
+texture = ExtResource("68_yceks")
 
-[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration2"]
+[node name="Name" type="RichTextLabel" parent="Decoration4/TodayDivination"]
 z_index = 5
 layout_mode = 0
 offset_left = -65.0
@@ -3325,10 +3357,11 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
+text = "今日占卜"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Decoration3" type="Button" parent="Decoration4"]
+[node name="PetLadderMatch" type="Button" parent="Decoration4"]
 self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_left = 366.0
@@ -3337,17 +3370,17 @@ offset_right = 630.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration3"]
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/PetLadderMatch"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("48_2i8fe")
 
-[node name="Image" type="Sprite2D" parent="Decoration4/Decoration3"]
+[node name="Image" type="Sprite2D" parent="Decoration4/PetLadderMatch"]
 position = Vector2(132, 48)
 scale = Vector2(1.2, 1.2)
-texture = ExtResource("51_2i8fe")
+texture = ExtResource("69_yceks")
 
-[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration3"]
+[node name="Name" type="RichTextLabel" parent="Decoration4/PetLadderMatch"]
 z_index = 5
 layout_mode = 0
 offset_left = -65.0
@@ -3360,10 +3393,11 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
+text = "宠物星辰塔"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Decoration4" type="Button" parent="Decoration4"]
+[node name="PetNest" type="Button" parent="Decoration4"]
 self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_left = 488.0
@@ -3372,17 +3406,17 @@ offset_right = 752.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration4"]
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/PetNest"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("48_2i8fe")
 
-[node name="Image" type="Sprite2D" parent="Decoration4/Decoration4"]
+[node name="Image" type="Sprite2D" parent="Decoration4/PetNest"]
 position = Vector2(132, 48)
 scale = Vector2(1.2, 1.2)
-texture = ExtResource("50_sqnmr")
+texture = ExtResource("70_yceks")
 
-[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration4"]
+[node name="Name" type="RichTextLabel" parent="Decoration4/PetNest"]
 z_index = 5
 layout_mode = 0
 offset_left = -65.0
@@ -3395,10 +3429,11 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
+text = "宠物小窝"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Decoration5" type="Button" parent="Decoration4"]
+[node name="PlaySmallGame" type="Button" parent="Decoration4"]
 self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_left = 610.0
@@ -3407,17 +3442,17 @@ offset_right = 874.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration5"]
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/PlaySmallGame"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("48_2i8fe")
 
-[node name="Image" type="Sprite2D" parent="Decoration4/Decoration5"]
+[node name="Image" type="Sprite2D" parent="Decoration4/PlaySmallGame"]
 position = Vector2(132, 48)
 scale = Vector2(1.2, 1.2)
-texture = ExtResource("49_xjiif")
+texture = ExtResource("71_w7q6d")
 
-[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration5"]
+[node name="Name" type="RichTextLabel" parent="Decoration4/PlaySmallGame"]
 z_index = 5
 layout_mode = 0
 offset_left = -65.0
@@ -3430,10 +3465,11 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
+text = "玩玩小游戏"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Decoration6" type="Button" parent="Decoration4"]
+[node name="MysteryFarmland" type="Button" parent="Decoration4"]
 self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(100, 100)
 offset_left = 732.0
@@ -3442,17 +3478,17 @@ offset_right = 996.0
 offset_bottom = 156.0
 scale = Vector2(0.4, 0.4)
 
-[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/Decoration6"]
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/MysteryFarmland"]
 position = Vector2(132, 134)
 scale = Vector2(1.4, 1.4)
 texture = ExtResource("48_2i8fe")
 
-[node name="Image" type="Sprite2D" parent="Decoration4/Decoration6"]
+[node name="Image" type="Sprite2D" parent="Decoration4/MysteryFarmland"]
 position = Vector2(132, 48)
 scale = Vector2(1.2, 1.2)
-texture = ExtResource("49_xjiif")
+texture = ExtResource("72_7i23t")
 
-[node name="Name" type="RichTextLabel" parent="Decoration4/Decoration6"]
+[node name="Name" type="RichTextLabel" parent="Decoration4/MysteryFarmland"]
 z_index = 5
 layout_mode = 0
 offset_left = -65.0
@@ -3465,6 +3501,7 @@ theme_override_font_sizes/mono_font_size = 40
 theme_override_font_sizes/normal_font_size = 40
 theme_override_font_sizes/bold_font_size = 40
 bbcode_enabled = true
+text = "神秘农场"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -3689,6 +3726,7 @@ environment = SubResource("Environment_uyv6e")
 [connection signal="pressed" from="UI/GUI/FarmVBox/AddNewGroundButton" to="." method="_on_add_new_ground_button_pressed"]
 [connection signal="pressed" from="UI/GUI/VisitVBox/LikeButton" to="." method="_on_like_button_pressed"]
 [connection signal="pressed" from="UI/GUI/VisitVBox/BattleButton" to="." method="_on_battle_button_pressed"]
+[connection signal="pressed" from="UI/GUI/VisitVBox/SendMoneyButton" to="." method="_on_send_money_button_pressed"]
 [connection signal="pressed" from="UI/GUI/VisitVBox/ReturnMyFarmButton" to="." method="_on_return_my_farm_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/TodayDivinationButton" to="." method="_on_today_divination_button_pressed"]
 [connection signal="pressed" from="UI/GUI/OtherVBox/MyStoreButton" to="." method="_on_my_store_button_pressed"]
@@ -3718,5 +3756,10 @@ environment = SubResource("Environment_uyv6e")
 [connection signal="pressed" from="Decoration/WisdomTree" to="." method="_on_wisdom_tree_pressed"]
 [connection signal="pressed" from="Decoration4/DailyCheckinGift" to="." method="_on_daily_checkin_gift_pressed"]
 [connection signal="pressed" from="Decoration4/OnlineTimeGift" to="." method="_on_online_time_gift_pressed"]
+[connection signal="pressed" from="Decoration4/TodayDivination" to="." method="_on_today_divination_pressed"]
+[connection signal="pressed" from="Decoration4/PetLadderMatch" to="." method="_on_pet_ladder_match_pressed"]
+[connection signal="pressed" from="Decoration4/PetNest" to="." method="_on_pet_nest_pressed"]
+[connection signal="pressed" from="Decoration4/PlaySmallGame" to="." method="_on_play_small_game_pressed"]
+[connection signal="pressed" from="Decoration4/MysteryFarmland" to="." method="_on_mystery_farmland_pressed"]
 [connection signal="pressed" from="Decoration4/PetBag" to="." method="_on_pet_bag_pressed"]
 [connection signal="pressed" from="Decoration4/ItemBag" to="." method="_on_item_bag_pressed"]

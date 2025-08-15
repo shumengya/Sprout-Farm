@@ -78,6 +78,12 @@ func _on_sell_num_changed(new_text: String):
 		if char.is_valid_int():
 			filtered_text += char
 	
+	# 检查是否超过最大值并自动修正
+	if not filtered_text.is_empty():
+		var quantity = filtered_text.to_int()
+		if quantity > current_max_count:
+			filtered_text = str(current_max_count)
+	
 	if filtered_text != new_text:
 		sell_num_edit.text = filtered_text
 		sell_num_edit.caret_column = filtered_text.length()
@@ -94,7 +100,7 @@ func _update_total_income():
 	var quantity_status = ""
 	if quantity > current_max_count:
 		quantity_status = " (超出库存！)"
-	
+		#quantity = current_max_count
 	var income_info = "\n出售数量: " + str(quantity) + " 个" + quantity_status + "\n总收入: " + str(total_income) + " 元"
 	
 	# 更新内容显示
@@ -115,7 +121,9 @@ func get_sell_quantity() -> int:
 		return 1
 	
 	var quantity = text.to_int()
-	return max(1, quantity) # 至少出售1个
+	quantity = max(1, quantity) # 至少出售1个
+	quantity = min(quantity, current_max_count) # 不超过最大值
+	return quantity
 
 # 确认出售按钮处理
 func _on_sure_button_pressed():
@@ -126,6 +134,7 @@ func _on_sure_button_pressed():
 		return
 	
 	if quantity > current_max_count:
+		#quantity = current_max_count
 		_show_error("出售数量不能超过库存数量(" + str(current_max_count) + ")")
 		return
 	
@@ -151,4 +160,4 @@ func _show_error(message: String):
 	if has_node("/root/Toast"):
 		get_node("/root/Toast").show(message, Color.RED, 2.0, 1.0)
 	else:
-		print("批量出售弹窗错误: " + message) 
+		print("批量出售弹窗错误: " + message)

@@ -219,6 +219,16 @@ func _on_data_received(data):
 		var player_data = data.get("player_data", {})
 		var remaining_likes = data.get("remaining_likes", 10)
 		
+		# 处理被禁止登录的情况
+		if status == "banned":
+			var ban_end_time = data.get("ban_end_time", "")
+			var ban_message = message
+			if ban_end_time != "":
+				ban_message += "\n禁止登录至: " + ban_end_time
+			Toast.show(ban_message, Color.RED)
+			login_panel._on_login_response_received(false, ban_message, {})
+			return
+		
 		# 在登录成功时显示剩余点赞次数并更新主游戏数据
 		if status == "success":
 			var likes_message = "今日剩余点赞次数：" + str(remaining_likes)
@@ -578,6 +588,8 @@ func _on_data_received(data):
 		main_game._handle_pet_config_response(data)
 		# 同时传递给宠物商店面板
 		pet_store_panel._on_pet_config_received(data)
+	elif message_type == "game_tips_config_response":
+		main_game._handle_game_tips_config_response(data)
 	elif message_type == "visit_player_response":
 		main_game._handle_visit_player_response(data)
 	elif message_type == "return_my_farm_response":
@@ -666,12 +678,50 @@ func _on_data_received(data):
 		var divination_panel = get_node_or_null("/root/main/UI/SmallPanel/TodayDivinationPanel")
 		if divination_panel and divination_panel.has_method("handle_divination_response"):
 			divination_panel.handle_divination_response(success, message, divination_data)
+	
+	# 送金币响应
+	elif message_type == "give_money_response":
+		main_game._handle_give_money_response(data)
+	
+	# 收到金币通知
+	elif message_type == "money_received_notification":
+		main_game._handle_money_received_notification(data)
+	
+	# 背包数据同步响应
+	elif message_type == "sync_bag_data_response":
+		var success = data.get("success", false)
+		var message = data.get("message", "")
+		var bag_data = data.get("bag_data", {})
+		
+		if success:
+			# 更新主游戏中的背包数据
+			main_game.item_bag = bag_data.get("道具背包", [])
+			main_game.pet_bag = bag_data.get("宠物背包", [])
+			main_game.player_bag = bag_data.get("种子仓库", [])
+			main_game.crop_warehouse = bag_data.get("作物仓库", [])
+			
+			# 更新所有背包面板的UI
+			main_game.item_bag_panel.update_item_bag_ui()
+			main_game.pet_bag_panel.update_pet_bag_ui()
+			main_game.player_bag_panel.update_player_bag_ui()
+			main_game.crop_warehouse_panel.update_crop_warehouse_ui()
+			
+			print("背包数据同步成功")
+		else:
+			print("背包数据同步失败: ", message)
+	
+	# 踢出通知
+	elif message_type == "kick_notification":
+		var reason = data.get("reason", "您已被管理员踢出服务器")
+		var duration = data.get("duration", 0)
+		
+		# 显示踢出原因
+		Toast.show(reason, Color.RED)
+		
+		# 断开连接并返回登录界面
+		client.disconnect_from_server()
+		main_game.return_to_login()
 # ============================= 客户端与服务端通信核心 =====================================
-
-
-
-
-
 
 
 #=====================================网络操作处理=========================================
@@ -742,6 +792,17 @@ func sendRegisterInfo(username, password, farmname, player_name="", verification
 		"verification_code": verification_code,
 		"client_version": main_game.client_version
 	})
+
+#发送背包数据同步请求
+func send_sync_bag_data_request():
+	if not client.is_client_connected():
+		print("网络未连接，无法同步背包数据")
+		return
+		
+	client.send_data({
+		"type": "sync_bag_data"
+	})
+	print("已发送背包数据同步请求")
 
 #发送收获作物信息
 func sendHarvestCrop(lot_index, target_username = ""):
@@ -1004,6 +1065,16 @@ func sendGetPetConfig():
 	})
 	return true
 
+#发送获取游戏小提示配置数据请求
+func sendGetGameTipsConfig():
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "request_game_tips_config"
+	})
+	return true
+
 #发送访问玩家请求
 func sendVisitPlayer(target_username):
 	if not client.is_client_connected():
@@ -1258,6 +1329,19 @@ func sendDivinationRequest():
 		
 	client.send_data({
 		"type": "today_divination",
+		"timestamp": Time.get_unix_time_from_system()
+	})
+	return true
+
+#发送送金币请求
+func sendGiveMoney(target_username: String, amount: int):
+	if not client.is_client_connected():
+		return false
+		
+	client.send_data({
+		"type": "give_money",
+		"target_username": target_username,
+		"amount": amount,
 		"timestamp": Time.get_unix_time_from_system()
 	})
 	return true

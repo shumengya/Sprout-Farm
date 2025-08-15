@@ -1,0 +1,2120 @@
+类：   DisplayServer
+继承：   Object
+
+用于低阶窗口管理的服务器接口。
+
+描述
+
+所有与窗口管理相关的内容都由 DisplayServer（显示服务器）处理。因为一个操作系统可能支持多个显示服务器，所以与 OS 是分开的。
+
+无头模式：如果使用 --headless 命令行参数  启动引擎，就会禁用所有渲染和窗口管理功能。此时 DisplayServer 的大多数函数都会返回虚设值。
+
+方法
+
+voidbeep() constStringclipboard_get() constImageclipboard_get_image() constStringclipboard_get_primary() constboolclipboard_has() constboolclipboard_has_image() constvoidclipboard_set(clipboard: String)voidclipboard_set_primary(clipboard_primary: String)intcreate_status_indicator(icon: Texture2D, tooltip: String, callback: Callable)CursorShapecursor_get_shape() constvoidcursor_set_custom_image(cursor: Resource, shape: CursorShape = 0, hotspot: Vector2 = Vector2(0, 0))voidcursor_set_shape(shape: CursorShape)voiddelete_status_indicator(id: int)Errordialog_input_text(title: String, description: String, existing_text: String, callback: Callable)Errordialog_show(title: String, description: String, buttons: PackedStringArray, callback: Callable)voidenable_for_stealing_focus(process_id: int)Errorfile_dialog_show(title: String, current_directory: String, filename: String, show_hidden: bool, mode: FileDialogMode, filters: PackedStringArray, callback: Callable)Errorfile_dialog_with_options_show(title: String, current_directory: String, root: String, filename: String, show_hidden: bool, mode: FileDialogMode, filters: PackedStringArray, options: Array[Dictionary], callback: Callable)voidforce_process_and_drop_events()Colorget_accent_color() constColorget_base_color() constArray[Rect2]get_display_cutouts() constRect2iget_display_safe_area() constintget_keyboard_focus_screen() constStringget_name() constintget_primary_screen() constintget_screen_count() constintget_screen_from_rect(rect: Rect2) constboolget_swap_cancel_ok()intget_window_at_screen_position(position: Vector2i) constPackedInt32Arrayget_window_list() constintglobal_menu_add_check_item(menu_root: String, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)   已弃用intglobal_menu_add_icon_check_item(menu_root: String, icon: Texture2D, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)   已弃用intglobal_menu_add_icon_item(menu_root: String, icon: Texture2D, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)   已弃用intglobal_menu_add_icon_radio_check_item(menu_root: String, icon: Texture2D, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)   已弃用intglobal_menu_add_item(menu_root: String, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)   已弃用intglobal_menu_add_multistate_item(menu_root: String, label: String, max_states: int, default_state: int, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)   已弃用intglobal_menu_add_radio_check_item(menu_root: String, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)   已弃用intglobal_menu_add_separator(menu_root: String, index: int = -1)   已弃用intglobal_menu_add_submenu_item(menu_root: String, label: String, submenu: String, index: int = -1)   已弃用voidglobal_menu_clear(menu_root: String)   已弃用Keyglobal_menu_get_item_accelerator(menu_root: String, idx: int) const   已弃用Callableglobal_menu_get_item_callback(menu_root: String, idx: int) const   已弃用intglobal_menu_get_item_count(menu_root: String) const   已弃用Texture2Dglobal_menu_get_item_icon(menu_root: String, idx: int) const   已弃用intglobal_menu_get_item_indentation_level(menu_root: String, idx: int) const   已弃用intglobal_menu_get_item_index_from_tag(menu_root: String, tag: Variant) const   已弃用intglobal_menu_get_item_index_from_text(menu_root: String, text: String) const   已弃用Callableglobal_menu_get_item_key_callback(menu_root: String, idx: int) const   已弃用intglobal_menu_get_item_max_states(menu_root: String, idx: int) const   已弃用intglobal_menu_get_item_state(menu_root: String, idx: int) const   已弃用Stringglobal_menu_get_item_submenu(menu_root: String, idx: int) const   已弃用Variantglobal_menu_get_item_tag(menu_root: String, idx: int) const   已弃用Stringglobal_menu_get_item_text(menu_root: String, idx: int) const   已弃用Stringglobal_menu_get_item_tooltip(menu_root: String, idx: int) const   已弃用Dictionaryglobal_menu_get_system_menu_roots() const   已弃用boolglobal_menu_is_item_checkable(menu_root: String, idx: int) const   已弃用boolglobal_menu_is_item_checked(menu_root: String, idx: int) const   已弃用boolglobal_menu_is_item_disabled(menu_root: String, idx: int) const   已弃用boolglobal_menu_is_item_hidden(menu_root: String, idx: int) const   已弃用boolglobal_menu_is_item_radio_checkable(menu_root: String, idx: int) const   已弃用voidglobal_menu_remove_item(menu_root: String, idx: int)   已弃用voidglobal_menu_set_item_accelerator(menu_root: String, idx: int, keycode: Key)   已弃用voidglobal_menu_set_item_callback(menu_root: String, idx: int, callback: Callable)   已弃用voidglobal_menu_set_item_checkable(menu_root: String, idx: int, checkable: bool)   已弃用voidglobal_menu_set_item_checked(menu_root: String, idx: int, checked: bool)   已弃用voidglobal_menu_set_item_disabled(menu_root: String, idx: int, disabled: bool)   已弃用voidglobal_menu_set_item_hidden(menu_root: String, idx: int, hidden: bool)   已弃用voidglobal_menu_set_item_hover_callbacks(menu_root: String, idx: int, callback: Callable)   已弃用voidglobal_menu_set_item_icon(menu_root: String, idx: int, icon: Texture2D)   已弃用voidglobal_menu_set_item_indentation_level(menu_root: String, idx: int, level: int)   已弃用voidglobal_menu_set_item_key_callback(menu_root: String, idx: int, key_callback: Callable)   已弃用voidglobal_menu_set_item_max_states(menu_root: String, idx: int, max_states: int)   已弃用voidglobal_menu_set_item_radio_checkable(menu_root: String, idx: int, checkable: bool)   已弃用voidglobal_menu_set_item_state(menu_root: String, idx: int, state: int)   已弃用voidglobal_menu_set_item_submenu(menu_root: String, idx: int, submenu: String)   已弃用voidglobal_menu_set_item_tag(menu_root: String, idx: int, tag: Variant)   已弃用voidglobal_menu_set_item_text(menu_root: String, idx: int, text: String)   已弃用voidglobal_menu_set_item_tooltip(menu_root: String, idx: int, tooltip: String)   已弃用voidglobal_menu_set_popup_callbacks(menu_root: String, open_callback: Callable, close_callback: Callable)   已弃用boolhas_additional_outputs() constboolhas_feature(feature: Feature) constboolhas_hardware_keyboard() constvoidhelp_set_search_callbacks(search_callback: Callable, action_callback: Callable)Vector2iime_get_selection() constStringime_get_text() constboolis_dark_mode() constboolis_dark_mode_supported() constboolis_touchscreen_available() constboolis_window_transparency_available() constintkeyboard_get_current_layout() constKeykeyboard_get_keycode_from_physical(keycode: Key) constKeykeyboard_get_label_from_physical(keycode: Key) constintkeyboard_get_layout_count() constStringkeyboard_get_layout_language(index: int) constStringkeyboard_get_layout_name(index: int) constvoidkeyboard_set_current_layout(index: int)BitField[MouseButtonMask]mouse_get_button_state() constMouseModemouse_get_mode() constVector2imouse_get_position() constvoidmouse_set_mode(mouse_mode: MouseMode)voidprocess_events()voidregister_additional_output(object: Object)intscreen_get_dpi(screen: int = -1) constImagescreen_get_image(screen: int = -1) constImagescreen_get_image_rect(rect: Rect2i) constfloatscreen_get_max_scale() constScreenOrientationscreen_get_orientation(screen: int = -1) constColorscreen_get_pixel(position: Vector2i) constVector2iscreen_get_position(screen: int = -1) constfloatscreen_get_refresh_rate(screen: int = -1) constfloatscreen_get_scale(screen: int = -1) constVector2iscreen_get_size(screen: int = -1) constRect2iscreen_get_usable_rect(screen: int = -1) constboolscreen_is_kept_on() constvoidscreen_set_keep_on(enable: bool)voidscreen_set_orientation(orientation: ScreenOrientation, screen: int = -1)voidset_icon(image: Image)voidset_native_icon(filename: String)voidset_system_theme_change_callback(callable: Callable)voidshow_emoji_and_symbol_picker() constRect2status_indicator_get_rect(id: int) constvoidstatus_indicator_set_callback(id: int, callback: Callable)voidstatus_indicator_set_icon(id: int, icon: Texture2D)voidstatus_indicator_set_menu(id: int, menu_rid: RID)voidstatus_indicator_set_tooltip(id: int, tooltip: String)Stringtablet_get_current_driver() constinttablet_get_driver_count() constStringtablet_get_driver_name(idx: int) constvoidtablet_set_current_driver(name: String)Array[Dictionary]tts_get_voices() constPackedStringArraytts_get_voices_for_language(language: String) constbooltts_is_paused() constbooltts_is_speaking() constvoidtts_pause()voidtts_resume()voidtts_set_utterance_callback(event: TTSUtteranceEvent, callable: Callable)voidtts_speak(text: String, voice: String, volume: int = 50, pitch: float = 1.0, rate: float = 1.0, utterance_id: int = 0, interrupt: bool = false)voidtts_stop()voidunregister_additional_output(object: Object)intvirtual_keyboard_get_height() constvoidvirtual_keyboard_hide()voidvirtual_keyboard_show(existing_text: String, position: Rect2 = Rect2(0, 0, 0, 0), type: VirtualKeyboardType = 0, max_length: int = -1, cursor_start: int = -1, cursor_end: int = -1)voidwarp_mouse(position: Vector2i)boolwindow_can_draw(window_id: int = 0) constintwindow_get_active_popup() constintwindow_get_attached_instance_id(window_id: int = 0) constintwindow_get_current_screen(window_id: int = 0) constboolwindow_get_flag(flag: WindowFlags, window_id: int = 0) constVector2iwindow_get_max_size(window_id: int = 0) constVector2iwindow_get_min_size(window_id: int = 0) constWindowModewindow_get_mode(window_id: int = 0) constintwindow_get_native_handle(handle_type: HandleType, window_id: int = 0) constRect2iwindow_get_popup_safe_rect(window: int) constVector2iwindow_get_position(window_id: int = 0) constVector2iwindow_get_position_with_decorations(window_id: int = 0) constVector3iwindow_get_safe_title_margins(window_id: int = 0) constVector2iwindow_get_size(window_id: int = 0) constVector2iwindow_get_size_with_decorations(window_id: int = 0) constVector2iwindow_get_title_size(title: String, window_id: int = 0) constVSyncModewindow_get_vsync_mode(window_id: int = 0) constboolwindow_is_focused(window_id: int = 0) constboolwindow_is_maximize_allowed(window_id: int = 0) constboolwindow_maximize_on_title_dbl_click() constboolwindow_minimize_on_title_dbl_click() constvoidwindow_move_to_foreground(window_id: int = 0)voidwindow_request_attention(window_id: int = 0)voidwindow_set_current_screen(screen: int, window_id: int = 0)voidwindow_set_drop_files_callback(callback: Callable, window_id: int = 0)voidwindow_set_exclusive(window_id: int, exclusive: bool)voidwindow_set_flag(flag: WindowFlags, enabled: bool, window_id: int = 0)voidwindow_set_ime_active(active: bool, window_id: int = 0)voidwindow_set_ime_position(position: Vector2i, window_id: int = 0)voidwindow_set_input_event_callback(callback: Callable, window_id: int = 0)voidwindow_set_input_text_callback(callback: Callable, window_id: int = 0)voidwindow_set_max_size(max_size: Vector2i, window_id: int = 0)voidwindow_set_min_size(min_size: Vector2i, window_id: int = 0)voidwindow_set_mode(mode: WindowMode, window_id: int = 0)voidwindow_set_mouse_passthrough(region: PackedVector2Array, window_id: int = 0)voidwindow_set_popup_safe_rect(window: int, rect: Rect2i)voidwindow_set_position(position: Vector2i, window_id: int = 0)voidwindow_set_rect_changed_callback(callback: Callable, window_id: int = 0)voidwindow_set_size(size: Vector2i, window_id: int = 0)voidwindow_set_title(title: String, window_id: int = 0)voidwindow_set_transient(window_id: int, parent_window_id: int)voidwindow_set_vsync_mode(vsync_mode: VSyncMode, window_id: int = 0)voidwindow_set_window_buttons_offset(offset: Vector2i, window_id: int = 0)voidwindow_set_window_event_callback(callback: Callable, window_id: int = 0)voidwindow_start_drag(window_id: int = 0)voidwindow_start_resize(edge: WindowResizeEdge, window_id: int = 0)
+
+枚举
+
+enum Feature:
+
+● FEATURE_GLOBAL_MENU = 0
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+显示服务器支持全局菜单。能够让应用程序在操作系统的顶部栏显示其菜单项。macOS
+● FEATURE_SUBWINDOWS = 1
+显示服务器支持多窗口，可以移动到主窗口之外。Windows、macOS、Linux（X11）
+● FEATURE_TOUCHSCREEN = 2
+显示服务器支持触屏输入。Windows、Linux（X11）、Android、iOS、Web
+● FEATURE_MOUSE = 3
+显示服务器支持鼠标输入。Windows、macOS、Linux（X11/Wayland）、Android、Web
+● FEATURE_MOUSE_WARP = 4
+显示服务器支持扭曲鼠标坐标以将鼠标光标限制在一个区域内，但在到达其中一个边缘时循环。Windows, macOS, Linux (X11/Wayland)
+● FEATURE_CLIPBOARD = 5
+显示服务器支持剪贴板数据的设置和获取。另见 FEATURE_CLIPBOARD_PRIMARY。Windows、macOS、Linux（X11/Wayland）、Android、iOS、Web
+● FEATURE_VIRTUAL_KEYBOARD = 6
+显示服务器支持在请求输入文本但没有物理键盘时弹出虚拟键盘。Android、iOS、Web
+● FEATURE_CURSOR_SHAPE = 7
+显示服务器支持将鼠标光标形状设置为与默认不同。Windows、macOS、Linux（X11/Wayland）、Android、Web
+● FEATURE_CUSTOM_CURSOR_SHAPE = 8
+显示服务器支持将鼠标光标形状设置为自定义图像。Windows、macOS、Linux（X11/Wayland）、Web
+● FEATURE_NATIVE_DIALOG = 9
+显示服务器支持使用操作系统的原生外观生成文本对话框。请参阅 dialog_show()。Windows、macOS
+● FEATURE_IME = 10
+显示服务器支持 输入法  ，它通常用于输入中文、日文和韩文文本。这由操作系统处理，而不是由 Godot 处理。Windows, macOS, Linux (X11)
+● FEATURE_WINDOW_TRANSPARENCY = 11
+显示服务器支持窗口可以使用逐像素透明，以使它们后面的窗口部分或完全可见。Windows、macOS、Linux（X11/Wayland）
+● FEATURE_HIDPI = 12
+显示服务器支持查询操作系统的显示缩放系数。这允许可靠地执行自动 hiDPI 显示器检测，而不是根据屏幕分辨率和报告的显示器 DPI 进行猜测（由于显示器 EDID 损坏，这可能不可靠）。Windows、Linux（Wayland）、macOS
+● FEATURE_ICON = 13
+显示服务器支持改变窗口图标（通常显示在左上角）。Windows、macOS、Linux（X11）
+● FEATURE_NATIVE_ICON = 14
+显示服务器支持改变窗口图标（通常显示在左上角）。Windows、macOS
+● FEATURE_ORIENTATION = 15
+显示服务器支持改变屏幕朝向。Android、iOS
+● FEATURE_SWAP_BUFFERS = 16
+显示服务器支持将垂直同步状态改为非默认状态（不支持此功能的平台强制启用垂直同步）。Windows、macOS、Linux（X11/Wayland）
+● FEATURE_CLIPBOARD_PRIMARY = 18
+显示服务器支持使用主剪贴板。主剪贴板和 FEATURE_CLIPBOARD 是不同的剪贴板。Linux（X11/Wayland）
+● FEATURE_TEXT_TO_SPEECH = 19
+显示服务器支持文字转语音。见 tts_* 方法。Windows、macOS、Linux（X11/Wayland）、Android、iOS、Web
+● FEATURE_EXTEND_TO_TITLE = 20
+显示服务器支持将窗口内容扩展到标题。见 WINDOW_FLAG_EXTEND_TO_TITLE。macOS
+● FEATURE_SCREEN_CAPTURE = 21
+显示服务器支持读取屏幕像素。见 screen_get_pixel()。
+● FEATURE_STATUS_INDICATOR = 22
+显示服务器支持应用程序状态指示器。
+● FEATURE_NATIVE_HELP = 23
+显示服务器支持本机帮助系统搜索回调。请参阅 help_set_search_callbacks()。
+● FEATURE_NATIVE_DIALOG_INPUT = 24
+显示服务器支持使用操作系统的原生外观生成文本输入对话框。请参阅 dialog_input_text()。Windows、macOS
+● FEATURE_NATIVE_DIALOG_FILE = 25
+显示服务器支持使用操作系统的原生外观和操作方式来生成选择文件或目录的对话框。见 file_dialog_show()。Windows、macOS、Linux（X11/Wayland）、Android
+● FEATURE_NATIVE_DIALOG_FILE_EXTRA = 26
+显示服务器支持 FEATURE_NATIVE_DIALOG_FILE 的所有功能，并增加了“选项”功能以及对 res:// 和 user:// 路径的原生对话框文件访问。见 file_dialog_show() 和 file_dialog_with_options_show()。Windows、macOS、Linux（X11/Wayland）
+● FEATURE_WINDOW_DRAG = 27
+显示服务器支持在需要时发起窗口拖拽和大小调整操作。见 window_start_drag() 和 window_start_resize()。
+● FEATURE_SCREEN_EXCLUDE_FROM_CAPTURE = 28
+显示服务器支持窗口标志 WINDOW_FLAG_EXCLUDE_FROM_CAPTURE。
+● FEATURE_WINDOW_EMBEDDING = 29
+显示服务器支持嵌入其他进程的窗口。Windows、Linux（X11）
+● FEATURE_NATIVE_DIALOG_FILE_MIME = 30
+原生文件选择对话框支持使用 MIME 类型作为过滤器。
+● FEATURE_EMOJI_AND_SYMBOL_PICKER = 31
+显示服务器支持系统 Emoji 和符号拾取器。Windows、macOS
+
+enum MouseMode:
+
+● MOUSE_MODE_VISIBLE = 0
+如果鼠标光标处于隐藏状态，则使其可见。
+● MOUSE_MODE_HIDDEN = 1
+如果鼠标光标是可见的，则使其隐藏。
+
+● MOUSE_MODE_CAPTURED = 2
+捕获鼠标。鼠标将被隐藏，其位置被锁定在窗口管理器窗口的中心。
+
+注意：如果你想在这种模式下处理鼠标的移动，则需要使用 InputEventMouseMotion.relative。
+
+● MOUSE_MODE_CONFINED = 3
+将鼠标光标限制在游戏窗口内，并使其可见。
+● MOUSE_MODE_CONFINED_HIDDEN = 4
+将鼠标光标限制在游戏窗口内，并使其隐藏。
+● MOUSE_MODE_MAX = 5
+MouseMode 的最大值。
+
+enum ScreenOrientation:
+
+● SCREEN_LANDSCAPE = 0
+默认横屏朝向。
+● SCREEN_PORTRAIT = 1
+默认竖屏朝向。
+● SCREEN_REVERSE_LANDSCAPE = 2
+倒横屏朝向（上下颠倒）。
+● SCREEN_REVERSE_PORTRAIT = 3
+倒竖屏朝向（上下颠倒）。
+● SCREEN_SENSOR_LANDSCAPE = 4
+自动横屏朝向（传感器决定默认或倒向）。
+● SCREEN_SENSOR_PORTRAIT = 5
+自动竖屏朝向（传感器决定默认或倒向）。
+● SCREEN_SENSOR = 6
+自动横屏或竖屏朝向（传感器决定默认或倒向）。
+
+enum VirtualKeyboardType:
+
+● KEYBOARD_TYPE_DEFAULT = 0
+默认文本虚拟键盘。
+● KEYBOARD_TYPE_MULTILINE = 1
+多行虚拟键盘。
+● KEYBOARD_TYPE_NUMBER = 2
+虚拟数字键盘，可用于 PIN 输入。
+● KEYBOARD_TYPE_NUMBER_DECIMAL = 3
+虚拟数字键盘，可用于输入小数。
+● KEYBOARD_TYPE_PHONE = 4
+虚拟手机号码键盘。
+● KEYBOARD_TYPE_EMAIL_ADDRESS = 5
+带有附加键的虚拟键盘，可帮助输入电子邮件地址。
+
+● KEYBOARD_TYPE_PASSWORD = 6
+用于输入密码的虚拟键盘。在大多数平台上，这应该会禁用自动完成和自动首字母大写功能。
+
+注意：Web 平台不支持。与 KEYBOARD_TYPE_DEFAULT 的行为相同。
+
+● KEYBOARD_TYPE_URL = 7
+带有附加键的虚拟键盘，可帮助输入 URL。
+
+enum CursorShape:
+
+● CURSOR_ARROW = 0
+箭头光标形状。这是默认形状，没有指向 LineEdit 和 TextEdit 等会覆盖鼠标指针的节点时显示。
+● CURSOR_IBEAM = 1
+工字光标形状。默认在悬停于 LineEdit 和 TextEdit 等接受文本输入的控件时显示。
+● CURSOR_POINTING_HAND = 2
+指点的手形光标形状。默认在悬停于 LinkButton 或 RichTextLabel 中的 URL 标签时使用。
+● CURSOR_CROSS = 3
+十字光标。应当在用户需要精确瞄准某个元素时显示，例如矩形选择工具和颜色拾取器。
+● CURSOR_WAIT = 4
+等待光标。大多数光标主题会在箭头旁边显示旋转图标。旨在用于非阻塞操作（此时用户可以做其他事情）。另见 CURSOR_BUSY。
+● CURSOR_BUSY = 5
+等待光标。大多数光标主题会把箭头替换为旋转图标。旨在用于阻塞操作（此时用户无法做其他事情）。另见 CURSOR_WAIT。
+● CURSOR_DRAG = 6
+拖动的手形光标。在拖放操作过程中显示。另见 CURSOR_CAN_DROP。
+● CURSOR_CAN_DROP = 7
+“能放下”光标。在拖放操作过程中，如果将鼠标悬停在可以接受拖放事件的 Control 上，就会显示这个光标。大多数光标主题会显示一只正在拖拽的手，旁边有一个箭头符号。另见 CURSOR_DRAG。
+● CURSOR_FORBIDDEN = 8
+禁止光标。在拖放操作过程中，如果将鼠标悬停在不可接受拖放事件的 Control 上，就会显示这个光标。
+● CURSOR_VSIZE = 9
+垂直尺寸调整光标。只在用于悬停的 Control 可以用鼠标调整垂直大小时显示。另见 CURSOR_VSPLIT。
+● CURSOR_HSIZE = 10
+水平尺寸调整光标。只在用于悬停的 Control 可以用鼠标调整水平大小时显示。另见 CURSOR_HSPLIT。
+● CURSOR_BDIAGSIZE = 11
+辅助对角线尺寸调整光标（右上/左下）。只在但悬停的 Control 可以使用鼠标同时在两个轴上调整大小时显示。
+● CURSOR_FDIAGSIZE = 12
+主对角线尺寸调整光标（左上/右下）。只在当悬停的 Control 可以使用鼠标同时在两个轴上调整大小时显示。
+● CURSOR_MOVE = 13
+移动光标。应在能够使用鼠标移动被悬停 Control 时显示。
+● CURSOR_VSPLIT = 14
+垂直分割光标。当光标悬停于 VSplitContainer 等能够使用鼠标调整拆分的垂直大小的 Control 时显示。部分光标主题中，该光标的外观和 CURSOR_VSIZE 一致。
+● CURSOR_HSPLIT = 15
+水平分割光标。当光标悬停于 HSplitContainer 等能够使用鼠标调整拆分的水平大小的 Control 时显示。部分光标主题中，该光标的外观和 CURSOR_HSIZE 一致。
+● CURSOR_HELP = 16
+帮助光标。在大多数光标主题中显示为问号图标，不显示为鼠标光标。应在用户请求对下一次点击的元素提供帮助信息时使用。
+● CURSOR_MAX = 17
+代表 CursorShape 枚举的大小。
+
+enum FileDialogMode:
+
+● FILE_DIALOG_MODE_OPEN_FILE = 0
+该原生对话框只允许选择一个文件。
+● FILE_DIALOG_MODE_OPEN_FILES = 1
+该原生对话框允许选择多个文件。
+● FILE_DIALOG_MODE_OPEN_DIR = 2
+该原生对话框只允许选择一个目录，不允许选择任何文件。
+● FILE_DIALOG_MODE_OPEN_ANY = 3
+该原生对话框允许选择一个文件或目录。
+● FILE_DIALOG_MODE_SAVE_FILE = 4
+当文件存在时，原生对话框会发出警告。
+
+enum WindowMode:
+
+● WINDOW_MODE_WINDOWED = 0
+窗口模式，即 Window 不占据整个屏幕（除非设置为屏幕的大小）。
+● WINDOW_MODE_MINIMIZED = 1
+最小化窗口模式，即 Window 在窗口管理器的窗口列表中既不可见也不可用。通常发生在按下最小化按钮时。
+● WINDOW_MODE_MAXIMIZED = 2
+最大化窗口模式，即 Window 会占据整个屏幕区域，任务栏除外，并且会显示边框。通常发生在按下最大化按钮时。
+
+● WINDOW_MODE_FULLSCREEN = 3
+具有完整多窗口支持的全屏模式。
+
+全屏窗口覆盖屏幕的整个显示区域，且没有任何装饰。显示的视频模式没有更改。
+
+在 Android 上：将启用沉浸模式。
+
+在 Windows 上：多窗口全屏模式具有 1px 宽的颜色为 渲染 > 环境 > 默认 > 默认清屏颜色 的边框。
+
+在 macOS 上：使用新桌面来显示正在运行的项目。
+
+注意：无论平台如何，启用全屏都会更改窗口大小以匹配显示器的大小。因此，请确保你的项目在启用全屏模式时支持多种分辨率  。
+
+● WINDOW_MODE_EXCLUSIVE_FULLSCREEN = 4
+单窗口全屏模式。这种模式开销较小，但一次只能在给定屏幕上打开一个窗口（打开子窗口或切换应用程序会触发全屏过渡）。
+
+全屏窗口会覆盖屏幕的整个显示区域，没有边框或装饰。显示视频模式没有改变。
+
+在 Android 上：将启用沉浸模式。
+
+在 Windows 上：取决于视频驱动程序，全屏过渡可能会导致屏幕暂时变黑。
+
+在 macOS 上：一个新的桌面用于显示正在运行的项目。当鼠标指针悬停在屏幕边缘时，独占全屏模式会阻止 Dock 和 Menu 出现。
+
+在 Linux（X11）上：独占全屏模式会绕过合成器。
+
+在 Linux（Wayland）上：等价于 WINDOW_MODE_FULLSCREEN。
+
+注意：无论平台如何，启用全屏都会更改窗口大小以匹配显示器的大小。因此，确保你的项目在启用全屏模式时支持多个分辨率  。
+
+enum WindowFlags:
+
+● WINDOW_FLAG_RESIZE_DISABLED = 0
+该窗口不能通过拖动其调整大小的手柄来调整大小。但仍然可以使用 window_set_size() 调整窗口大小。全屏窗口会忽略该标志。
+● WINDOW_FLAG_BORDERLESS = 1
+该窗口没有原生标题栏和其他装饰。全屏窗口会忽略该标志。
+● WINDOW_FLAG_ALWAYS_ON_TOP = 2
+该窗口悬浮在所有其他窗口之上。全屏窗口会忽略该标志。
+
+● WINDOW_FLAG_TRANSPARENT = 3
+该窗口背景可以是透明的。
+
+注意：如果 is_window_transparency_available() 返回 false，则该标志无效。
+
+注意：Linux （X11/Wayland）、macOS 和 Windows 上实现了透明支持，但可用性可能因 GPU 驱动程序、显示管理器和合成器功能而异。
+
+● WINDOW_FLAG_NO_FOCUS = 4
+该窗口无法获得焦点。无聚焦窗口会忽略除鼠标点击外的所有输入。
+● WINDOW_FLAG_POPUP = 5
+窗口是菜单或 OptionButton 下拉菜单的一部分。当窗口可见时，不能更改该标志。活动的弹出窗口会以独占的形式接收所有输入，但不会从其父窗口窃取焦点。当在其外部点击或切换应用程序时，弹出窗口将会自动关闭。 弹出窗口必须已经设置了临时父级（参见 window_set_transient()）。
+
+● WINDOW_FLAG_EXTEND_TO_TITLE = 6
+窗口内容扩展到窗口的全部大小。与无边框窗口不同，框架仍保持不变，可以调整窗口大小，标题栏是透明的，但具有最小化/最大化/关闭按钮。
+
+使用 window_set_window_buttons_offset() 调整最小化/最大化/关闭按钮的偏移量。
+
+使用 window_get_safe_title_margins() 确定标题栏下方未被装饰覆盖的区域。
+
+注意：该标志仅在 macOS 上实现。
+
+● WINDOW_FLAG_MOUSE_PASSTHROUGH = 7
+所有鼠标事件都被传递到同一应用程序的底层窗口。
+
+● WINDOW_FLAG_SHARP_CORNERS = 8
+覆盖了窗口样式，强制使用尖角。
+
+注意：该标志仅在 Windows（11）上实现。
+
+● WINDOW_FLAG_EXCLUDE_FROM_CAPTURE = 9
+在 screen_get_image()、screen_get_image_rect() 和 screen_get_pixel() 的截图中排除该窗口。
+
+注意：该标志在 macOS 和 Windows 上实现。
+
+注意：设置该标志不会阻止其他应用进行截图，不应用作安全措施。
+
+● WINDOW_FLAG_MAX = 10
+WindowFlags 的最大值。
+
+enum WindowEvent:
+
+● WINDOW_EVENT_MOUSE_ENTER = 0
+当鼠标指针进入该窗口时发送。
+● WINDOW_EVENT_MOUSE_EXIT = 1
+当鼠标指针退出该窗口时发送。
+● WINDOW_EVENT_FOCUS_IN = 2
+当窗口获得焦点时发送。
+● WINDOW_EVENT_FOCUS_OUT = 3
+当窗口失去焦点时发送。
+● WINDOW_EVENT_CLOSE_REQUEST = 4
+当用户试图关闭该窗口时发送（例如按下关闭按钮）。
+
+● WINDOW_EVENT_GO_BACK_REQUEST = 5
+当按下设备的“后退”按钮时发送。
+
+注意：该事件仅在 Android 上实现。
+
+● WINDOW_EVENT_DPI_CHANGE = 6
+当窗口被移动到具有不同 DPI 的显示器上，或者显示器的 DPI 更改时发送。
+
+注意：该标志仅在 macOS 上实现。
+
+● WINDOW_EVENT_TITLEBAR_CHANGE = 7
+当窗口标题栏的装饰改变时发送（例如 WINDOW_FLAG_EXTEND_TO_TITLE 被设置或窗口进入/退出全屏模式）。
+
+注意：该标志仅在 macOS 上实现。
+
+enum WindowResizeEdge:
+
+● WINDOW_EDGE_TOP_LEFT = 0
+窗口左上边缘。
+● WINDOW_EDGE_TOP = 1
+窗口上边缘。
+● WINDOW_EDGE_TOP_RIGHT = 2
+窗口右上边缘。
+● WINDOW_EDGE_LEFT = 3
+窗口左边缘。
+● WINDOW_EDGE_RIGHT = 4
+窗口右边缘。
+● WINDOW_EDGE_BOTTOM_LEFT = 5
+窗口左下边缘。
+● WINDOW_EDGE_BOTTOM = 6
+窗口下边缘。
+● WINDOW_EDGE_BOTTOM_RIGHT = 7
+窗口右下边缘。
+● WINDOW_EDGE_MAX = 8
+代表 WindowResizeEdge 枚举的大小。
+
+enum VSyncMode:
+
+● VSYNC_DISABLED = 0
+没有垂直同步，这意味着引擎将尽可能快地显示帧（可能会有可见的撕裂）。帧速率是未限制的（不考虑 Engine.max_fps）。
+● VSYNC_ENABLED = 1
+默认的垂直同步模式，图像只在垂直消隐间隔显示（没有可见的撕裂）。帧速率受显示器刷新率的限制（不考虑 Engine.max_fps）。
+● VSYNC_ADAPTIVE = 2
+当帧速率降至屏幕刷新率以下以减少卡顿（可能有可见的撕裂）时，行为类似于 VSYNC_DISABLED。否则，启用垂直同步以避免撕裂。帧速率受显示器刷新率的限制（不考虑 Engine.max_fps）。使用兼容渲染方法时表现得像 VSYNC_ENABLED。
+
+● VSYNC_MAILBOX = 3
+在垂直消隐间隔显示队列中的最新图像，同时对其他图像渲染（没有可见的撕裂）。帧速率是未限制的（不考虑 Engine.max_fps）。
+
+虽然不能保证，但可以尽可能快地渲染图像，这可能会减少输入滞后（也称为“快速”V-Sync 模式）。VSYNC_MAILBOX 在渲染的帧数至少是显示器刷新率的两倍时效果最佳。使用兼容渲染方法时表现得像 VSYNC_ENABLED。
+
+enum HandleType:
+
+● DISPLAY_HANDLE = 0
+显示器句柄：
+
+- Linux（X11）：显示器的 X11::Display*。
+
+- Linux（Wayland）：显示器的 wl_display。
+
+- Android：显示器的 EGLDisplay。
+
+● WINDOW_HANDLE = 1
+窗口句柄：
+
+- Windows：窗口的 HWND。
+
+- Linux（X11）：窗口的 X11::Window*。
+
+- Linux（Wayland）：窗口的 wl_surface。
+
+- macOS：窗口的 NSWindow*。
+
+- iOS：视图控制器的 UIViewController*。
+
+- Android：Activity 的 jObject。
+
+● WINDOW_VIEW = 2
+窗口视图：
+
+- Windows：窗口的 HDC（仅适用于 Compatibility 渲染器）。
+
+- macOS：窗口主视图的 NSView*。
+
+- iOS：窗口主视图的 UIView*。
+
+● OPENGL_CONTEXT = 3
+OpenGL 上下文（仅适用于 Compatibility 渲染器）：
+
+- Windows：窗口的 HGLRC（原生 GL）或窗口的 EGLContext（ANGLE）。
+
+- Linux（X11）：窗口的 GLXContext*。
+
+- Linux（Wayland）：窗口的 EGLContext。
+
+- macOS：窗口的 NSOpenGLContext*（原生 GL）或窗口的 EGLContext（ANGLE）。
+
+- Android：窗口的 EGLContext。
+
+● EGL_DISPLAY = 4
+- Windows：窗口的 EGLDisplay（ANGLE）。
+
+- macOS：窗口的 EGLDisplay（ANGLE）。
+
+- Linux（Wayland）：窗口的 EGLDisplay。
+
+● EGL_CONFIG = 5
+- Windows：窗口的 EGLConfig（ANGLE）。
+
+- macOS：窗口的 EGLConfig（ANGLE）。
+
+- Linux（Wayland）：窗口的 EGLConfig。
+
+enum TTSUtteranceEvent:
+
+● TTS_UTTERANCE_STARTED = 0
+发言开始。
+● TTS_UTTERANCE_ENDED = 1
+发言顺利结束。
+● TTS_UTTERANCE_CANCELED = 2
+发言取消，或者 TTS 服务无法处理。
+● TTS_UTTERANCE_BOUNDARY = 3
+发言到达单词或句子的边界。
+
+常量
+
+● SCREEN_WITH_MOUSE_FOCUS = -4
+表示包含鼠标指针的屏幕。
+
+注意：在 Linux（Wayland）上，该常量始终代表索引 0 处的屏幕。
+
+● SCREEN_WITH_KEYBOARD_FOCUS = -3
+表示包含具有键盘焦点的窗口的屏幕。
+
+注意：在 Linux（Wayland）上，该常量始终代表索引 0 处的屏幕。
+
+● SCREEN_PRIMARY = -2
+代表主屏幕。
+
+注意：在 Linux（Wayland）上，该常量始终代表索引 0 处的屏幕。
+
+● SCREEN_OF_MAIN_WINDOW = -1
+代表主窗口所在的屏幕。这通常是允许指定多个屏幕之一的函数中的默认值。
+
+注意：在 Linux（Wayland）上，该常量始终代表索引 0 处的屏幕。
+
+● MAIN_WINDOW_ID = 0
+主窗口的 ID，可以传给需要 window_id 的方法，该窗口由引擎生成。
+● INVALID_WINDOW_ID = -1
+指向一个不存在窗口的 ID。如果没有窗口与请求的结果相匹配，某些 DisplayServer 方法将返回这个 ID。
+● INVALID_INDICATOR_ID = -1
+引用不存在的应用程序状态指示器的 ID。
+
+
+方法说明
+
+
+● void beep() const
+
+播放操作系统的“哔”声，需要操作系统支持。因为发出声音的是操作系统，所以即便应用程序被静音也能听到“哔”声。这一功能可能被用户在操作系统层面禁用。
+
+注意：该方法在 macOS、Linux（X11/Wayland）和 Windows。
+
+
+● String clipboard_get() const
+
+如果可能，将用户的剪贴板作为字符串返回。
+
+
+● Image clipboard_get_image() const
+
+如果可能，将用户的剪贴板作为图像返回。
+
+注意：该方法使用复制的像素数据（例如来自图像编辑软件或 Web 浏览器的数据），而不是从文件资源管理器复制的图像文件。
+
+
+● String clipboard_get_primary() const
+
+如果可能的话，将用户的主  剪贴板作为字符串返回。这是当用户在任何应用程序中选择文本时设置的剪贴板，而不是在按下 Ctrl + C 时设置的。然后可以通过在支持主剪贴板机制的任何应用程序中，通过点击鼠标中键来粘贴该剪贴板数据。
+
+注意：这个方法只在 Linux（X11/Wayland）上实现。
+
+
+● bool clipboard_has() const
+
+如果用户的剪贴板中有文本内容，则返回 true。
+
+
+● bool clipboard_has_image() const
+
+如果用户的剪贴板中有图像内容，则返回 true。
+
+
+● void clipboard_set(clipboard: String)
+
+将用户的剪贴板内容设置为给定的字符串。
+
+
+● void clipboard_set_primary(clipboard_primary: String)
+
+将用户的主剪贴板  内容设置为给定的字符串。这是用户在应用程序中选中文本时设置的剪贴板，不是按 Ctrl + C 时设置的。设置后可以在任何支持主剪贴板机制的应用程序中通过点击鼠标中键粘贴剪贴板数据。
+
+注意：这个方法只在 Linux（X11/Wayland）上实现。
+
+
+● int create_status_indicator(icon: Texture2D, tooltip: String, callback: Callable)
+
+新建应用程序状态指示器，可以指定图标、工具提示以及激活回调。
+
+callback 应该接受两个参数：按下的鼠标按键（MouseButton 常量）以及点击位置（屏幕坐标 Vector2i）。
+
+
+● CursorShape cursor_get_shape() const
+
+返回默认鼠标光标形状，由 cursor_set_shape() 设置。
+
+
+● void cursor_set_custom_image(cursor: Resource, shape: CursorShape = 0, hotspot: Vector2 = Vector2(0, 0))
+
+为给定的形状 shape 设置自定义鼠标指针图像。这意味着用户的操作系统和鼠标光标主题不再影响鼠标光标的外观。
+
+cursor 可以是 Texture2D 或 Image，并且它不应大于 256×256 才能正确显示。还可以选择设置 hotspot 以偏移图像相对于点击点的位置。默认情况下，hotspot 被设置为图像的左上角。另见 cursor_set_shape()。
+
+
+● void cursor_set_shape(shape: CursorShape)
+
+设置默认的鼠标光标形状。光标的外观将根据用户的操作系统和鼠标光标主题而变化。另见 cursor_get_shape() 和 cursor_set_custom_image()。
+
+
+● void delete_status_indicator(id: int)
+
+移除应用程序状态指示器。
+
+
+● Error dialog_input_text(title: String, description: String, existing_text: String, callback: Callable)
+
+显示文本输入对话框，该对话框使用操作系统原生外观。callback 应接受包含文本字段内容的单个 String 参数。
+
+注意：如果显示服务器具有 FEATURE_NATIVE_DIALOG_INPUT 功能，则实现该方法。支持的平台包括 macOS、Windows 和 Android。
+
+
+● Error dialog_show(title: String, description: String, buttons: PackedStringArray, callback: Callable)
+
+显示文本对话框，该对话框使用操作系统原生外观。callback 应接受与按下按钮的索引相对应的单个 int 参数。
+
+注意：如果显示服务器具有 FEATURE_NATIVE_DIALOG 功能，则实现该方法。支持的平台包括 macOS、Windows 和 Android。
+
+
+● void enable_for_stealing_focus(process_id: int)
+
+让进程 PID process_id 窃取该窗口的焦点。换句话说，会禁用操作系统对指定 PID 的焦点窃取保护。
+
+注意：该方法仅在 Windows 上实现。
+
+
+● Error file_dialog_show(title: String, current_directory: String, filename: String, show_hidden: bool, mode: FileDialogMode, filters: PackedStringArray, callback: Callable)
+
+显示操作系统原生对话框，用于选择文件系统中的文件或目录。
+
+filters 数组中的每个过滤器字符串都应该使用类似 *.png,*.jpg,*.jpeg;图像文件;image/png,image/jpeg 的格式。过滤器的描述文本不是必填项，可以省略。建议同时设置文件扩展名和 MIME 类型。另见 FileDialog.filters。
+
+回调的参数如下：status: bool, selected_paths: PackedStringArray, selected_filter_index: int。在 Android 平台，回调参数 selected_filter_index 始终为 0。
+
+注意：如果显示服务器具有 FEATURE_NATIVE_DIALOG 功能，则该方法已被实现。支持的平台包括 Linux（X11/Wayland）、Windows、macOS 和 Android。
+
+注意：current_directory 可能会被忽略。
+
+注意：内嵌文件对话框和 Windows 文件对话框仅支持文件扩展名，而 Android、Linux 和 macOS 的文件对话框还支持 MIME 类型。
+
+注意：在 Android 和 Linux 上，show_hidden 会被忽略。
+
+注意：在 Android 和 macOS 上，原生文件对话框没有标题。
+
+注意：在 macOS 上，沙盒应用程序将保存安全范围的书签，以保留对多个会话中打开的文件夹的访问权限。请使用 OS.get_granted_permissions() 获取已保存书签的列表。
+
+
+● Error file_dialog_with_options_show(title: String, current_directory: String, root: String, filename: String, show_hidden: bool, mode: FileDialogMode, filters: PackedStringArray, options: Array[Dictionary], callback: Callable)
+
+显示操作系统原生对话框，用于使用其他用户可选选项，选择文件系统中的文件或目录。
+
+filters 数组中的每个过滤字符串都应该使用类似 png,*.jpg,*.jpeg;图像文件;image/png,image/jpeg 的格式。过滤器的描述文本不是必填项，可以省略。建议同时设置文件扩展名和 MIME 类型。另见 FileDialog.filters。
+
+options 是具有以下字段的 Dictionary 的数组：
+
+- "name" - 选项的名称 String。
+
+- "values" - 值的 PackedStringArray。如果为空，则使用布尔选项（复选框）。
+
+- "default" - 默认选择的选项索引（int）或默认布尔值（bool）。
+
+回调具有以下参数：status: bool, selected_paths: PackedStringArray, selected_filter_index: int, selected_option: Dictionary。
+
+注意：如果显示服务器具有 FEATURE_NATIVE_DIALOG 功能，则该方法已被实现。支持的平台包括 Linux（X11/Wayland）、Windows、macOS。
+
+注意：current_directory 可能会被忽略。
+
+注意：内嵌文件对话框和 Windows 文件对话框仅支持文件扩展名，而 Android、Linux 和 macOS 的文件对话框还支持 MIME 类型。
+
+注意：在 Linux（X11） 上，show_hidden 会被忽略。
+
+注意：在 macOS 上，原生文件对话框没有标题。
+
+注意：在 macOS 上，沙盒应用程序将保存安全范围的书签，以保留对多个会话中打开的文件夹的访问权限。请使用 OS.get_granted_permissions() 获取已保存书签的列表。
+
+
+● void force_process_and_drop_events()
+
+强制窗口管理器进行处理，会忽略所有 InputEvent。另见 process_events()。
+
+注意：这个方法在 Windows 和 macOS 上实现。
+
+
+● Color get_accent_color() const
+
+返回操作系统主题色。如果主题色未知，则返回 Color(0, 0, 0, 0)。
+
+注意：该方法在 macOS、Windows 和 Android 上实现。
+
+
+● Color get_base_color() const
+
+返回操作系统主题基色（默认控件背景）。如果基色未知，则返回 Color(0, 0, 0, 0)。
+
+注意：该方法在 macOS、Windows 和 Android 上实现。
+
+
+● Array[Rect2] get_display_cutouts() const
+
+返回 Rect2 的 Array，其中每个都是显示切口或凹口的边界矩形。这些是相机和传感器使用的无边框屏幕上的非功能区域。如果设备没有切口，则返回一个空数组。另见 get_display_safe_area()。
+
+注意：目前仅在 Android 上实现。其他平台将返回一个空数组，即使它们确实有显示切口或凹口。
+
+
+● Rect2i get_display_safe_area() const
+
+返回显示器上未被遮挡的区域，交互式空间应当在此区域中渲染。另见 get_display_cutouts()。
+
+注意：当前仅在 Android 和 iOS 上实现。其他平台上会使用 screen_get_usable_rect(SCREEN_OF_MAIN_WINDOW) 作为回退返回。另见 screen_get_usable_rect()。
+
+
+● int get_keyboard_focus_screen() const
+
+返回包含具有键盘焦点的窗口的屏幕索引，如果没有被聚焦的窗口，则返回主屏幕。
+
+
+● String get_name() const
+
+返回当前使用的 DisplayServer 的名称。大多数操作系统只有一种 DisplayServer，但 Linux 可以使用多种 DisplayServer（目前有 X11 和 Wayland 两种）。
+
+内置显示服务器的名称有 Windows、macOS、X11（Linux）、Wayland（Linux）、Android、iOS、web（HTML5）、headless（使用 --headless 命令行参数  启动）。
+
+
+● int get_primary_screen() const
+
+返回主屏幕的索引。
+
+
+● int get_screen_count() const
+
+返回可用的显示器数量。
+
+
+● int get_screen_from_rect(rect: Rect2) const
+
+返回与给定矩形重合最多的屏幕的索引。如果矩形没有与任何屏幕重合或面积为零，则返回 -1。
+
+
+● bool get_swap_cancel_ok()
+
+如果对话框中的确定和取消按钮进行了交换，则返回 true。在 Windows 上默认启用，从而遵循界面规范，可以使用 GUI > 通用 > 交换取消确定 开关。
+
+注意：由 DisplayServer.dialog_show() 等生成的原生对话框不受影响。
+
+
+● int get_window_at_screen_position(position: Vector2i) const
+
+返回位于指定屏幕位置 position 的窗口 ID（单位为像素）。使用多个监视器时，屏幕位置是相对于虚拟桌面区域的位置。如果多监视器中使用了不同的屏幕分辨率或朝向，原点有可能位于所有显示器之外，类似于：
+
+* (0, 0)        +-------+
+                |       |
++-------------+ |       |
+|             | |       |
+|             | |       |
++-------------+ +-------+ 
+
+
+● PackedInt32Array get_window_list() const
+
+返回属于该进程的 Godot 窗口 ID 列表。
+
+注意：这个列表中不含原生对话框。
+
+
+● int global_menu_add_check_item(menu_root: String, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+向 ID 为 menu_root 的全局菜单添加新的可勾选菜单项，显示的文本为 label。
+
+返回插入菜单项的索引，不保证与 index 的值相同。
+
+还可以定义键盘快捷键 accelerator，按下后即便该菜单按钮尚未打开，也会进行触发。accelerator 通常是将 KeyModifierMask 和 Key 用按位或操作进行的组合，例如 KEY_MASK_CTRL | KEY_A（Ctrl + A）。
+
+注意：callback 和 key_callback Callable 均只接受一个 Variant 参数，传入 Callable 的参数是传给 tag 的参数。
+
+注意：该方法仅在 macOS 上实现。
+
+支持的系统菜单 ID：
+
+"_main" - 主菜单（macOS）。
+"_dock" - 程序坞弹出菜单（macOS）。
+"_apple" - Apple 菜单（macOS，在“服务”之前添加的自定义项目）。
+"_window" - 窗口菜单（macOS，“将所有内容置于前面”之后添加的自定义项目）。
+"_help" - 帮助菜单 (macOS)。 
+
+
+● int global_menu_add_icon_check_item(menu_root: String, icon: Texture2D, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+向 ID 为 menu_root 的全局菜单添加新的可勾选菜单项，显示的文本为 label，图标为 icon。
+
+返回插入菜单项的索引，不保证与 index 的值相同。
+
+还可以定义键盘快捷键 accelerator，按下后即便该菜单按钮尚未打开，也会进行触发。accelerator 通常是将 KeyModifierMask 和 Key 用按位或操作进行的组合，例如 KEY_MASK_CTRL | KEY_A（Ctrl + A）。
+
+注意：callback 和 key_callback Callable 均只接受一个 Variant 参数，传入 Callable 的参数是传给 tag 的参数。
+
+注意：该方法仅在 macOS 上实现。
+
+支持的系统菜单 ID：
+
+"_main" - 主菜单（macOS）。
+"_dock" - 程序坞弹出菜单（macOS）。
+"_apple" - Apple 菜单（macOS，在“服务”之前添加的自定义项目）。
+"_window" - 窗口菜单（macOS，“将所有内容置于前面”之后添加的自定义项目）。
+"_help" - 帮助菜单 (macOS)。 
+
+
+● int global_menu_add_icon_item(menu_root: String, icon: Texture2D, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+向 ID 为 menu_root 的全局菜单添加新的菜单项，显示的文本为 label，图标为 icon。
+
+返回插入菜单项的索引，不保证与 index 的值相同。
+
+还可以定义键盘快捷键 accelerator，按下后即便该菜单按钮尚未打开，也会进行触发。accelerator 通常是将 KeyModifierMask 和 Key 用按位或操作进行的组合，例如 KEY_MASK_CTRL | KEY_A（Ctrl + A）。
+
+注意：callback 和 key_callback Callable 均只接受一个 Variant 参数，传入 Callable 的参数是传给 tag 的参数。
+
+注意：该方法仅在 macOS 上实现。
+
+支持的系统菜单 ID：
+
+"_main" - 主菜单（macOS）。
+"_dock" - 程序坞弹出菜单（macOS）。
+"_apple" - Apple 菜单（macOS，在“服务”之前添加的自定义项目）。
+"_window" - 窗口菜单（macOS，“将所有内容置于前面”之后添加的自定义项目）。
+"_help" - 帮助菜单 (macOS)。 
+
+
+● int global_menu_add_icon_radio_check_item(menu_root: String, icon: Texture2D, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+向 ID 为 menu_root 的全局菜单添加新的单选菜单项，显示的文本为 label，图标为 icon。
+
+返回插入菜单项的索引，不保证与 index 的值相同。
+
+还可以定义键盘快捷键 accelerator，按下后即便该菜单按钮尚未打开，也会进行触发。accelerator 通常是将 KeyModifierMask 和 Key 用按位或操作进行的组合，例如 KEY_MASK_CTRL | KEY_A（Ctrl + A）。
+
+注意：单选菜单项只负责显示选中标记，并没有任何内置检查行为，必须手动进行选中、取消选中的操作。关于如何进行控制的更多信息见 global_menu_set_item_checked()。
+
+注意：callback 和 key_callback Callable 均只接受一个 Variant 参数，传入 Callable 的参数是传给 tag 的参数。
+
+注意：该方法仅在 macOS 上实现。
+
+支持的系统菜单 ID：
+
+"_main" - 主菜单（macOS）。
+"_dock" - 程序坞弹出菜单（macOS）。
+"_apple" - Apple 菜单（macOS，在“服务”之前添加的自定义项目）。
+"_window" - 窗口菜单（macOS，“将所有内容置于前面”之后添加的自定义项目）。
+"_help" - 帮助菜单 (macOS)。 
+
+
+● int global_menu_add_item(menu_root: String, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+向 ID 为 menu_root 的全局菜单添加新的菜单项，显示的文本为 label。
+
+返回插入菜单项的索引，不保证与 index 的值相同。
+
+还可以定义键盘快捷键 accelerator，按下后即便该菜单按钮尚未打开，也会进行触发。accelerator 通常是将 KeyModifierMask 和 Key 用按位或操作进行的组合，例如 KEY_MASK_CTRL | KEY_A（Ctrl + A）。
+
+注意：callback 和 key_callback Callable 均只接受一个 Variant 参数，传入 Callable 的参数是传给 tag 的参数。
+
+注意：该方法仅在 macOS 上实现。
+
+支持的系统菜单 ID：
+
+"_main" - 主菜单（macOS）。
+"_dock" - 程序坞弹出菜单（macOS）。
+"_apple" - Apple 菜单（macOS，在“服务”之前添加的自定义项目）。
+"_window" - 窗口菜单（macOS，“将所有内容置于前面”之后添加的自定义项目）。
+"_help" - 帮助菜单 (macOS)。 
+
+
+● int global_menu_add_multistate_item(menu_root: String, label: String, max_states: int, default_state: int, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+向 ID 为 menu_root 的全局菜单添加新的菜单项，显示的文本为 label。
+
+与常规的二态菜单项不同，多状态菜单项的状态可以多于两个，由 max_states 定义。每点击或激活该菜单项一次，状态就会加一。默认值由 default_state 定义。
+
+返回插入菜单项的索引，不保证与 index 的值相同。
+
+还可以定义键盘快捷键 accelerator，按下后即便该菜单按钮尚未打开，也会进行触发。accelerator 通常是将 KeyModifierMask 和 Key 用按位或操作进行的组合，例如 KEY_MASK_CTRL | KEY_A（Ctrl + A）。
+
+注意：默认情况下不会展示当前菜单项的状态，应该手动更改。
+
+注意：callback 和 key_callback Callable 均只接受一个 Variant 参数，传入 Callable 的参数是传给 tag 的参数。
+
+注意：该方法仅在 macOS 上实现。
+
+支持的系统菜单 ID：
+
+"_main" - 主菜单（macOS）。
+"_dock" - 程序坞弹出菜单（macOS）。
+"_apple" - Apple 菜单（macOS，在“服务”之前添加的自定义项目）。
+"_window" - 窗口菜单（macOS，“将所有内容置于前面”之后添加的自定义项目）。
+"_help" - 帮助菜单 (macOS)。 
+
+
+● int global_menu_add_radio_check_item(menu_root: String, label: String, callback: Callable = Callable(), key_callback: Callable = Callable(), tag: Variant = null, accelerator: Key = 0, index: int = -1)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+向 ID 为 menu_root 的全局菜单添加新的单选菜单项，显示的文本为 label。
+
+返回插入菜单项的索引，不保证与 index 的值相同。
+
+还可以定义键盘快捷键 accelerator，按下后即便该菜单按钮尚未打开，也会进行触发。accelerator 通常是将 KeyModifierMask 和 Key 用按位或操作进行的组合，例如 KEY_MASK_CTRL | KEY_A（Ctrl + A）。
+
+注意：单选菜单项只负责显示选中标记，并没有任何内置检查行为，必须手动进行选中、取消选中的操作。关于如何进行控制的更多信息见 global_menu_set_item_checked()。
+
+注意：callback 和 key_callback Callable 均只接受一个 Variant 参数，传入 Callable 的参数是传给 tag 的参数。
+
+注意：该方法仅在 macOS 上实现。
+
+支持的系统菜单 ID：
+
+"_main" - 主菜单（macOS）。
+"_dock" - 程序坞弹出菜单（macOS）。
+"_apple" - Apple 菜单（macOS，在“服务”之前添加的自定义项目）。
+"_window" - 窗口菜单（macOS，“将所有内容置于前面”之后添加的自定义项目）。
+"_help" - 帮助菜单 (macOS)。 
+
+
+● int global_menu_add_separator(menu_root: String, index: int = -1)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+向 ID 为 menu_root 的全局菜单添加分隔符。分隔符也拥有索引。
+
+返回插入菜单项的索引，不保证与 index 的值相同。
+
+注意：该方法仅在 macOS 上实现。
+
+支持的系统菜单 ID：
+
+"_main" - 主菜单（macOS）。
+"_dock" - 程序坞弹出菜单（macOS）。
+"_apple" - Apple 菜单（macOS，在“服务”之前添加的自定义项目）。
+"_window" - 窗口菜单（macOS，“将所有内容置于前面”之后添加的自定义项目）。
+"_help" - 帮助菜单 (macOS)。 
+
+
+● int global_menu_add_submenu_item(menu_root: String, label: String, submenu: String, index: int = -1)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+向 ID 为 menu_root 的全局菜单添加作为子菜单的菜单项。submenu 参数为全局菜单根菜单项的 ID，会在点击该菜单项时显示
+
+返回插入菜单项的索引，不保证与 index 的值相同。
+
+注意：该方法仅在 macOS 上实现。
+
+支持的系统菜单 ID：
+
+"_main" - 主菜单（macOS）。
+"_dock" - 程序坞弹出菜单（macOS）。
+"_apple" - Apple 菜单（macOS，在“服务”之前添加的自定义项目）。
+"_window" - 窗口菜单（macOS，“将所有内容置于前面”之后添加的自定义项目）。
+"_help" - 帮助菜单 (macOS)。 
+
+
+● void global_menu_clear(menu_root: String)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+移除 ID 为 menu_root 的全局菜单中的所有菜单项。
+
+注意：该方法仅在 macOS 上实现。
+
+支持的系统菜单 ID：
+
+"_main" - 主菜单（macOS）。
+"_dock" - 程序坞弹出菜单（macOS）。
+"_apple" - Apple 菜单（macOS，在“服务”之前添加的自定义项目）。
+"_window" - 窗口菜单（macOS，“将所有内容置于前面”之后添加的自定义项目）。
+"_help" - 帮助菜单 (macOS)。 
+
+
+● Key global_menu_get_item_accelerator(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回索引为 idx 的菜单项的快捷键。快捷键是能够激活该菜单项的特殊按键组合，无论该控件是否有焦点。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● Callable global_menu_get_item_callback(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回索引为 idx 的菜单项的回调。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● int global_menu_get_item_count(menu_root: String) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回 ID 为 menu_root 的全局菜单中菜单项的数量。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● Texture2D global_menu_get_item_icon(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回索引为 idx 的菜单项的图标。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● int global_menu_get_item_indentation_level(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回索引为 idx 的菜单项的水平偏移量。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● int global_menu_get_item_index_from_tag(menu_root: String, tag: Variant) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回标签为指定的 tag 的菜单项的索引。引擎会自动为每个菜单项分配索引，无法手动设置。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● int global_menu_get_item_index_from_text(menu_root: String, text: String) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回文本为指定的 text 的菜单项的索引。引擎会自动为每个菜单项分配索引，无法手动设置。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● Callable global_menu_get_item_key_callback(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回索引为 idx 的菜单项的快捷键回调。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● int global_menu_get_item_max_states(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回多状态项的状态数。详见 global_menu_add_multistate_item()。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● int global_menu_get_item_state(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回多状态项的状态。详见 global_menu_add_multistate_item()。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● String global_menu_get_item_submenu(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回索引为 idx 的菜单项的子菜单 ID。关于如何添加子菜单的更多信息见 global_menu_add_submenu_item()。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● Variant global_menu_get_item_tag(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回指定菜单项的元数据，可能是任何类型。元数据可以使用 global_menu_set_item_tag() 设置，可以方法地为菜单项关联上下文数据。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● String global_menu_get_item_text(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回索引为 idx 的菜单项的文本。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● String global_menu_get_item_tooltip(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回索引为 idx 的菜单项所关联的工具提示。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● Dictionary global_menu_get_system_menu_roots() const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+返回受支持的系统菜单 ID 和名称的字典。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● bool global_menu_is_item_checkable(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+如果索引为 idx 的菜单项能够以某种方式选中，即有复选框或单选按钮，则返回 true。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● bool global_menu_is_item_checked(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+如果索引为 idx 的菜单项处于选中状态，则返回 true。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● bool global_menu_is_item_disabled(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+如果索引为 idx 的菜单项处于禁用状态，则返回 true。禁用状态下无法被选中，也无法激活动作。
+
+关于如何禁用菜单项的更多信息见 global_menu_set_item_disabled()。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● bool global_menu_is_item_hidden(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+如果索引为 idx 的菜单项被隐藏，则返回 true。
+
+关于如何隐藏菜单项的更多信息见 global_menu_set_item_hidden()。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● bool global_menu_is_item_radio_checkable(menu_root: String, idx: int) const
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+如果索引为 idx 的菜单项为单选按钮风格，则返回 true。
+
+注意：仅为装饰作用；必须自行为单选组添加选中、取消选中的逻辑。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_remove_item(menu_root: String, idx: int)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+从全局菜单 menu_root 移除索引为 idx 的菜单项。
+
+注意：位置在被移除菜单项之后的菜单项的索引号都会减一。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_accelerator(menu_root: String, idx: int, keycode: Key)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置索引为 idx 的菜单项的快捷键。keycode 可以是单一 Key，也可以是 KeyModifierMask 和 Key 用按位或操作进行的组合，例如 KEY_MASK_CTRL | KEY_A（Ctrl + A）。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_callback(menu_root: String, idx: int, callback: Callable)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置索引为 idx 的菜单项的回调。回调会在按下菜单项时发出。
+
+注意：callback Callable 只接受一个 Variant 参数，传入 Callable 的参数是创建菜单项时传给 tag 参数的值。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_checkable(menu_root: String, idx: int, checkable: bool)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置索引为 idx 的菜单项是否为复选框。如果为 false，则会将该菜单项的类型设置为纯文本。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_checked(menu_root: String, idx: int, checked: bool)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置索引为 idx 的菜单项的选中状态。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_disabled(menu_root: String, idx: int, disabled: bool)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+启用/禁用索引为 idx 的菜单项。禁用状态下无法被选中，也无法激活动作。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_hidden(menu_root: String, idx: int, hidden: bool)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+隐藏/显示索引为 idx 的菜单项。当它被隐藏时，项目不会出现在菜单中，并且无法调用其操作。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_hover_callbacks(menu_root: String, idx: int, callback: Callable)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置索引为 idx 的菜单项的回调。回调会在菜单项被悬停时发出。
+
+注意：callback Callable 需要接受一个 Variant 参数，传入 Callable 的参数是创建菜单项时传给 tag 参数的值。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_icon(menu_root: String, idx: int, icon: Texture2D)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+替换指定索引 idx 的 Texture2D 图标。
+
+注意：该方法仅在 macOS 上实现。
+
+注意：该方法不支持 macOS 的“_dock”菜单项。
+
+
+● void global_menu_set_item_indentation_level(menu_root: String, idx: int, level: int)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置索引为 idx 的菜单项的水平偏移量。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_key_callback(menu_root: String, idx: int, key_callback: Callable)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置索引为 idx 的菜单项的回调。回调会在激活快捷键时发出。
+
+注意：key_callback Callable 只接受一个 Variant 参数，传入 Callable 的参数是创建菜单项时传给 tag 参数的值。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_max_states(menu_root: String, idx: int, max_states: int)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置多状态项的状态数。详见 global_menu_add_multistate_item()。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_radio_checkable(menu_root: String, idx: int, checkable: bool)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+将索引为 idx 的菜单项设置为单选按钮风格。如果为 false，则会将该菜单项的类型设置为纯文本。
+
+注意：仅为装饰作用；必须自行为单选组添加选中、取消选中的逻辑。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_state(menu_root: String, idx: int, state: int)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置多状态项的状态。详见 global_menu_add_multistate_item()。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_submenu(menu_root: String, idx: int, submenu: String)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置索引为 idx 的菜单项的子菜单。子菜单是某个全局菜单根菜单项的 ID，点击该菜单项时会显示子菜单。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_tag(menu_root: String, idx: int, tag: Variant)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置指定菜单项的元数据，可以是任何类型。后续可以使用 global_menu_get_item_tag() 获取，可以方法地为菜单项关联上下文数据。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_text(menu_root: String, idx: int, text: String)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置索引为 idx 的菜单项的文本。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_item_tooltip(menu_root: String, idx: int, tooltip: String)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+设置索引为 idx 的菜单项的工具提示 String。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● void global_menu_set_popup_callbacks(menu_root: String, open_callback: Callable, close_callback: Callable)
+
+  已弃用： 改用 NativeMenu 或 PopupMenu。
+
+注册当菜单分别即将显示或关闭时发出的可调用对象。回调方法应该没有参数。
+
+
+● bool has_additional_outputs() const
+
+如果已通过 register_additional_output() 注册了任何额外输出，则返回 true。
+
+
+● bool has_feature(feature: Feature) const
+
+如果当前的 DisplayServer 支持指定的特性 feature，则返回 true，否则返回 false。
+
+
+● bool has_hardware_keyboard() const
+
+如果连接了物理键盘，则返回 true。
+
+注意：该方法在 Android 和 iOS 上实现，在其他平台上始终返回 true。
+
+
+● void help_set_search_callbacks(search_callback: Callable, action_callback: Callable)
+
+设置原生帮助系统搜索回调。
+
+search_callback 的参数是 String search_string, int result_limit，返回的是包含一对对“key、显示名称”的 Dictionary。用户在帮助菜单中输入搜索内容的时候就会调用这个回调。
+
+action_callback 的参数是 String key。用户在帮助菜单中选择某个搜索结果时就会调用这个回调。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● Vector2i ime_get_selection() const
+
+返回输入法编辑器  编组字符串中选中的文本，Vector2i 的 x 分量为光标的位置，y 则为所选项的长度。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● String ime_get_text() const
+
+返回输入法编辑器  窗口中的编组字符串。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● bool is_dark_mode() const
+
+如果操作系统正在使用暗黑模式，则返回 true。
+
+注意：该方法在 Android、iOS、macOS、Windows 和 Linux（X11/Wayland）上实现。
+
+
+● bool is_dark_mode_supported() const
+
+如果操作系统支持暗黑模式，则返回 true。
+
+注意：该方法在 Android、iOS、macOS、Windows 和 Linux（X11/Wayland）上实现。
+
+
+● bool is_touchscreen_available() const
+
+如果触摸事件可用（Android 或 iOS）、在 Web 平台上检测到该功能或如果 输入设备 > 指点 > 用鼠标模拟触摸 为 true 时，则返回 true。
+
+
+● bool is_window_transparency_available() const
+
+如果窗口背景可以设为透明，则返回 true。如果 显示 > 窗口 > 像素级透明 > 允许 被设置为 false，或者如果渲染器或 OS 合成器不支持透明，则该方法将返回 false。
+
+
+● int keyboard_get_current_layout() const
+
+返回激活的键盘布局的索引。
+
+注意：本方法在 Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+
+● Key keyboard_get_keycode_from_physical(keycode: Key) const
+
+将物理（美式 QWERTY）键码 keycode 转换为激活键盘布局中的键码。
+
+注意：本方法在 Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+
+● Key keyboard_get_label_from_physical(keycode: Key) const
+
+将物理（美式 QWERTY）键码 keycode 转换为活动键盘布局中的按键上印刷的本地化标签。
+
+注意：该方法在 Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+
+● int keyboard_get_layout_count() const
+
+返回键盘布局的数量。
+
+注意：本方法在 Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+
+● String keyboard_get_layout_language(index: int) const
+
+返回位于 index 位置的键盘布局的 ISO-639/BCP-47 语言代码。
+
+注意：本方法在 Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+
+● String keyboard_get_layout_name(index: int) const
+
+返回位于 index 位置的键盘布局的本地化名称。
+
+注意：本方法在 Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+
+● void keyboard_set_current_layout(index: int)
+
+设置激活的键盘布局。
+
+注意：本方法在 Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+
+● BitField[MouseButtonMask] mouse_get_button_state() const
+
+以位掩码的形式返回当前鼠标按键的状态（各个按钮是否处于按下状态）。如果同时按下了多个按键，则会同时设置多个比特位。等价于 Input.get_mouse_button_mask()。
+
+
+● MouseMode mouse_get_mode() const
+
+返回当前的鼠标模式。另见 mouse_set_mode()。
+
+
+● Vector2i mouse_get_position() const
+
+返回鼠标光标的当前位置，使用屏幕坐标。
+
+
+● void mouse_set_mode(mouse_mode: MouseMode)
+
+设置当前的鼠标模式。另见 mouse_get_mode()。
+
+
+● void process_events()
+
+执行窗口管理器处理，包括输入的清空。另见 force_process_and_drop_events()、Input.flush_buffered_events()、Input.use_accumulated_input。
+
+
+● void register_additional_output(object: Object)
+
+注册一个 Object，表示除了普通窗口之外还将渲染的额外输出。Object 仅用作标识符，稍后可将其传递给 unregister_additional_output()。
+
+这可用于防止 Godot 在没有可见普通窗口时跳过渲染。
+
+
+● int screen_get_dpi(screen: int = -1) const
+
+返回指定屏幕的每英寸点数密度。如果 screen 为 SCREEN_OF_MAIN_WINDOW（默认值），则将使用带有主窗口的屏幕。
+
+注意：在 macOS 上，如果使用小数显示缩放模式，则返回值不准确。
+
+注意：在 Android 设备上，实际屏幕密度分为六种通用密度：
+
+ldpi - 120 dpi
+   mdpi - 160 dpi
+   hdpi - 240 dpi
+  xhdpi - 320 dpi
+ xxhdpi - 480 dpi
+xxxhdpi - 640 dpi 
+注意：该方法在 Android、Linux（X11/Wayland）、macOS 和 Windows 上实现。在不受支持的平台上返回 72。
+
+
+● Image screen_get_image(screen: int = -1) const
+
+返回 screen 的屏幕截图。
+
+注意：该方法在 Linux（X11）、macOS 和 Windows 上实现。
+
+注意：在 macOS 上，该方法需要“屏幕录制”权限，如果未授予权限将返回桌面壁纸颜色。
+
+
+● Image screen_get_image_rect(rect: Rect2i) const
+
+返回屏幕上矩形框 rect 的截图。
+
+注意：该方法在 macOS 和 Windows 上实现。
+
+注意：在 macOS 上，该方法需要“屏幕录制”权限，如果未授予权限将返回桌面壁纸颜色。
+
+
+● float screen_get_max_scale() const
+
+返回所有屏幕的最大缩放系数。
+
+注意：在 macOS 上，如果系统中至少有一个 hiDPI（Retina）屏幕，则返回值为 2.0，在所有其他情况下返回值为 1.0 。
+
+注意：该方法仅在 macOS 上实现。
+
+
+● ScreenOrientation screen_get_orientation(screen: int = -1) const
+
+返回 screen 的当前朝向。另见 screen_set_orientation()。
+
+注意：该方法在 Android 和 iOS 上实现。
+
+
+● Color screen_get_pixel(position: Vector2i) const
+
+返回 position 处的显示像素的颜色。
+
+注意：该方法在 Linux（X11）、macOS 和 Windows 上实现。
+
+注意：在 macOS 上，该方法需要“屏幕录制”权限，如果未授予权限将返回桌面壁纸颜色。
+
+
+● Vector2i screen_get_position(screen: int = -1) const
+
+返回屏幕左上角的位置，单位为像素。使用多个监视器时，屏幕位置是相对于虚拟桌面区域的位置。如果多监视器中使用了不同的屏幕分辨率或朝向，原点有可能位于所有显示器之外，类似于：
+
+* (0, 0)        +-------+
+                |       |
++-------------+ |       |
+|             | |       |
+|             | |       |
++-------------+ +-------+ 
+另见 screen_get_size()。
+
+注意：在 Linux（Wayland）上，该方法始终返回 (0, 0)。
+
+
+● float screen_get_refresh_rate(screen: int = -1) const
+
+返回指定屏幕的当前刷新率。如果 screen 为 SCREEN_OF_MAIN_WINDOW（默认值），将使用带有主窗口的屏幕。
+
+注意：如果 DisplayServer 未能找到指定屏幕的刷新率，则返回 -1.0。在 Web 上，screen_get_refresh_rate() 将始终返回 -1.0，因为无法在该平台上检索到刷新率。
+
+要在该方法失败时回退至默认刷新率，请尝试：
+
+var refresh_rate = DisplayServer.screen_get_refresh_rate()
+if refresh_rate < 0:
+    refresh_rate = 60.0 
+
+
+● float screen_get_scale(screen: int = -1) const
+
+返回屏幕的缩放系数，屏幕使用索引号指定。
+
+注意：在 macOS 上，hiDPI（视网膜）屏幕返回 2.0，其它所有情况均返回 1.0。
+
+注意：在 Linux（Wayland）上，只有 screen 为 SCREEN_OF_MAIN_WINDOW 时返回值才是精确的。由于 API 的限制，如果屏幕缩放存在小数点，传入直接的索引号返回的是向上取整后的结果（即 1.25 会向上取整成 2.0）。
+
+注意：该方法在 Android、iOS、Web、macOS 和 Linux（Wayland）上实现。
+
+
+● Vector2i screen_get_size(screen: int = -1) const
+
+返回屏幕大小。单位：像素。另见 screen_get_position() 和 screen_get_usable_rect()。
+
+
+● Rect2i screen_get_usable_rect(screen: int = -1) const
+
+返回屏幕上没有被状态栏遮挡的部分，单位为像素。另见 screen_get_size()。
+
+
+● bool screen_is_kept_on() const
+
+如果操作系统的节电措施永远不会关闭屏幕，则返回 true。另见 screen_set_keep_on()。
+
+
+● void screen_set_keep_on(enable: bool)
+
+设置屏幕是否总是不会被操作系统的节能措施关闭。另见 screen_is_kept_on()。
+
+
+● void screen_set_orientation(orientation: ScreenOrientation, screen: int = -1)
+
+设置 screen 的 orientation。另见 screen_get_orientation()。
+
+注意：在 iOS 上，如果 显示 > 窗口 > 手持设备 > 朝向 未设置为 SCREEN_SENSOR，则该方法无效。
+
+
+● void set_icon(image: Image)
+
+使用 Image 设置窗口图标（通常显示在左上角）。要使用操作系统的原生格式设置图标，请改用 set_native_icon()。
+
+注意：需要支持 FEATURE_ICON。
+
+
+● void set_native_icon(filename: String)
+
+使用操作系统的原生格式设置窗口图标（通常显示在左上角）。位于 filename 的文件在 Windows 上必须为 .ico 格式，在 macOS 上必须为 .icns 格式。使用特制的 .ico 或 .icns 图标，就能够让 set_native_icon() 指定以不同尺寸显示图标时显示不同的图标。大小由操作系统和用户首选项决定（包括显示器缩放系数）。要使用其他格式的图标，请改用 set_icon()。
+
+注意：需要支持 FEATURE_NATIVE_ICON。
+
+
+● void set_system_theme_change_callback(callable: Callable)
+
+设置更改系统主题设置时应调用的 callable。回调方法应该有零个参数。
+
+注意：该方法在 Android、iOS、macOS、Windows 和 Linux（X11/Wayland）上实现。
+
+
+● void show_emoji_and_symbol_picker() const
+
+打开系统 Emoji 和符号拾取器。
+
+注意：该方法在 macOS 和 Windows 上实现。
+
+
+● Rect2 status_indicator_get_rect(id: int) const
+
+返回给定状态指示器 id 的矩形，使用屏幕坐标系。如果状态指示器不可见，则返回空的 Rect2。
+
+注意：该方法在 macOS 和 Windows 上实现。
+
+
+● void status_indicator_set_callback(id: int, callback: Callable)
+
+设置应用程序状态指示器激活回调。callback 应采用两个参数：int 鼠标按钮索引（MouseButton 值之一）和 Vector2i 屏幕坐标中的点击位置。
+
+注意：该方法在 macOS 和 Windows 上实现。
+
+
+● void status_indicator_set_icon(id: int, icon: Texture2D)
+
+设置应用程序状态指示器图标。
+
+注意：该方法在 macOS 和 Windows 上实现。
+
+
+● void status_indicator_set_menu(id: int, menu_rid: RID)
+
+设置应用程序状态指示器原生弹出菜单。
+
+注意：在 macOS 上，该菜单可通过任何鼠标按键激活。其激活回调未触发。
+
+注意：在 Windows 上，该菜单可通过鼠标右键激活，选择状态图标并按下 Shift + F10 或应用程序键。菜单的其他鼠标按键的激活回调仍会触发。
+
+注意：仅当 NativeMenu 支持 NativeMenu.FEATURE_POPUP_MENU 功能时，才支持原生弹出窗口。
+
+
+● void status_indicator_set_tooltip(id: int, tooltip: String)
+
+设置应用程序状态指示器工具提示。
+
+注意：该方法在 macOS 和 Windows 上实现。
+
+
+● String tablet_get_current_driver() const
+
+返回当前活动的数位板驱动程序的名称。
+
+注意：该方法仅在 Windows 上实现。
+
+
+● int tablet_get_driver_count() const
+
+返回可用的数位板驱动程序的总数。
+
+注意：该方法仅在 Windows 上实现。
+
+
+● String tablet_get_driver_name(idx: int) const
+
+返回给定索引的数位板驱动程序名称。
+
+注意：该方法仅在 Windows 上实现。
+
+
+● void tablet_set_current_driver(name: String)
+
+设置活动数位板驱动程序名称。
+
+支持的驱动程序：
+
+- winink：Windows Ink API，默认（需要 Windows 8.1+）。
+
+- wintab：Wacom Wintab API（需要兼容的设备驱动程序）。
+
+- dummy：虚设驱动程序，数位板输入被禁用。
+
+注意：该方法仅在 Windows 上实现。
+
+
+● Array[Dictionary] tts_get_voices() const
+
+返回语音信息字典的 Array。
+
+每个 Dictionary 包含两个 String 条目：
+
+- name 是语音名称。
+
+- id 是语音标识符。
+
+- language 是语言代码，格式为 lang_Variant 。lang 部分是小写的基于 ISO-639 标准的 2 或 3 字母代码。而 Variant 部分是一个依赖于引擎的字符串，描述国家、地区或/和方言。
+
+请注意，Godot 依赖于系统库来实现文本到语音的功能。这些库在 Windows 和 MacOS 上是默认安装的，但并非安装在所有 Linux 发行版上。如果它们不存在，此方法将返回一个空列表。这适用于 Linux 上的 Godot 用户，以及在 Linux 上运行使用文本到语音的 Godot 游戏的最终用户。
+
+注意：这个方法在 Android、iOS、Web、Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+注意：音频 > 常规 > 文本转语音 应当为 true 才能够使用文本到语音功能。
+
+
+● PackedStringArray tts_get_voices_for_language(language: String) const
+
+返回 language 的语音标识符的 PackedStringArray。
+
+注意：该方法在 Android、iOS、Web、Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+注意：音频 > 常规 > 文本转语音 应为 true 才能使用文本转语音。
+
+
+● bool tts_is_paused() const
+
+如果合成器处于暂停状态，则返回 true。
+
+注意：该方法在 Android、iOS、Web、Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+注意：音频 > 常规 > 文本转语音 应为 true 才能使用文本转语音。
+
+
+● bool tts_is_speaking() const
+
+如果合成器正在生成语音，或者有发言正在队列中等待，则返回 true。
+
+注意：该方法在 Android、iOS、Web、Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+注意：音频 > 常规 > 文本转语音 应为 true 才能使用文本转语音。
+
+
+● void tts_pause()
+
+让合成器进入暂停状态。
+
+注意：该方法在 Android、iOS、Web、Linux（X11/Wayland）、macOS 以及 Windows 上实现。
+
+注意：要使用文本转语音，音频 > 常规 > 文本转语音 应该为 true。
+
+
+● void tts_resume()
+
+让处于暂停状态的合成器继续执行。
+
+注意：该方法在 Android、iOS、Web、Linux（X11/Wayland）、macOS 以及 Windows 上实现。
+
+注意：要使用文本转语音，音频 > 常规 > 文本转语音 应该为 true。
+
+
+● void tts_set_utterance_callback(event: TTSUtteranceEvent, callable: Callable)
+
+添加回调，会在发言开始、结束、取消、到达文本边界时调用。
+
+- TTS_UTTERANCE_STARTED、TTS_UTTERANCE_ENDED、TTS_UTTERANCE_CANCELED 可调用体的方法应接受一个 int 参数，即发言 ID。
+
+- TTS_UTTERANCE_BOUNDARY 可调用体的方法应接受两个 int 参数：字符索引和发言 ID。
+
+注意：边界回调的颗粒度由引擎决定。
+
+注意：该方法在 Android、iOS、Web、Linux（X11/Wayland）、macOS 以及 Windows 上实现。
+
+注意：要使用文本转语音，音频 > 常规 > 文本转语音 应该为 true。
+
+
+● void tts_speak(text: String, voice: String, volume: int = 50, pitch: float = 1.0, rate: float = 1.0, utterance_id: int = 0, interrupt: bool = false)
+
+向队列中添加发言。如果 interrupt 为 true，则会先清空队列。
+
+- voice 语音标识符是 tts_get_voices() 所返回的 "id" 值，也可以是 tts_get_voices_for_language() 返回的值。
+
+- volume 音量从 0（最低）到 100（最高）。
+
+- pitch 音高从 0.0（最低）到 2.0（最高）, 1.0 为当前语音的默认音高。
+
+- rate 语速从 0.1（最低）到 10.0（最高）, 1.0 为普通语速。其他值为相对百分比。
+
+- utterance_id 话语 ID 会作为参数传递给回调函数。
+
+注意：在 Windows 和 Linux（X11/Wayland）上，发言的 text 可以使用 SSML 标记。对 SSML 支持取决于引擎和语音。如果引擎不支持 SSML，你应该在调用 tts_speak() 之前剥离所有 XML 标记。
+
+注意：音高、语速、音量的颗粒度由引擎和语音决定。设置的值可能被截断。
+
+注意：该方法在 Android、iOS、Web、Linux（X11/Wayland）、macOS 以及 Windows 上实现。
+
+注意：要使用文本转语音，音频 > 常规 > 文本转语音 应该为 true。
+
+
+● void tts_stop()
+
+停止执行中的合成器，移除队列中的所有发言。
+
+注意：该方法在 Android、iOS、Web、Linux（X11/Wayland）、macOS 以及 Windows 上实现。
+
+注意：要使用文本转语音，音频 > 常规 > 文本转语音 应该为 true。
+
+
+● void unregister_additional_output(object: Object)
+
+取消注册通过 register_additional_output() 注册的代表额外输出的 Object。
+
+
+● int virtual_keyboard_get_height() const
+
+返回键盘在屏幕上的高度，单位为像素。如果没有键盘或当前键盘被隐藏，则返回0。
+
+
+● void virtual_keyboard_hide()
+
+如果虚拟键盘为显示状态则隐藏虚拟键盘，否则不做任何操作。
+
+
+● void virtual_keyboard_show(existing_text: String, position: Rect2 = Rect2(0, 0, 0, 0), type: VirtualKeyboardType = 0, max_length: int = -1, cursor_start: int = -1, cursor_end: int = -1)
+
+如果该平台有虚拟键盘，则显示虚拟键盘。
+
+existing_text 参数对于实现你自己的 LineEdit 或 TextEdit 很有用，因为它告诉虚拟键盘已经输入了哪些文本（虚拟键盘使用它进行自动更正和预测）。
+
+position 参数为编辑文本的屏幕空间 Rect2。
+
+type 参数允许配置要显示的虚拟键盘类型。
+
+max_length 在当与 -1 不同时，限制可输入的字符数。
+
+如果未设置 cursor_end，则可选参数 cursor_start 可以定义当前文本光标位置。
+
+可选参数 cursor_start 和 cursor_end，可以定义当前文本选区。
+
+注意：该方法在 Android、iOS 和 Web 上实现。
+
+
+● void warp_mouse(position: Vector2i)
+
+将鼠标光标位置设置为相对于当前聚焦的游戏窗口管理器窗口左上角的原点的给定 position。
+
+注意：warp_mouse() 仅在 Windows、macOS 和 Linux（X11/Wayland）上受支持。它在 Android、iOS 和 Web 上无效。
+
+
+● bool window_can_draw(window_id: int = 0) const
+
+如果可以在 window_id 指定的窗口中绘制任何内容，则返回 true，否则返回 false。使用 --disable-render-loop 命令行参数或无头构建将返回 false。
+
+
+● int window_get_active_popup() const
+
+返回活动弹出窗口的 ID，如果没有则返回 INVALID_WINDOW_ID。
+
+
+● int window_get_attached_instance_id(window_id: int = 0) const
+
+返回 window_id 所附加的 Window 的 Object.get_instance_id()。
+
+
+● int window_get_current_screen(window_id: int = 0) const
+
+该函数返回窗口 window_id 所在的屏幕。如果屏幕跨越多个显示器，则返回窗口中心所在的屏幕。另见 window_set_current_screen() 。
+
+
+● bool window_get_flag(flag: WindowFlags, window_id: int = 0) const
+
+返回给定窗口当前的 flag 值。
+
+
+● Vector2i window_get_max_size(window_id: int = 0) const
+
+返回该窗口的最大尺寸，单位为像素。另见 window_set_max_size()。
+
+
+● Vector2i window_get_min_size(window_id: int = 0) const
+
+返回该窗口的最小尺寸，单位为像素。另见 window_set_min_size()。
+
+
+● WindowMode window_get_mode(window_id: int = 0) const
+
+返回给定窗口的模式。
+
+
+● int window_get_native_handle(handle_type: HandleType, window_id: int = 0) const
+
+该函数返回用于插件的内部结构指针。
+
+注意：该方法在 Android、Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+
+● Rect2i window_get_popup_safe_rect(window: int) const
+
+该函数返回控件或菜单项在屏幕坐标系统中的边界框，这个控件或菜单项被用来打开弹出窗口。
+
+
+● Vector2i window_get_position(window_id: int = 0) const
+
+返回屏幕上给定窗口的客户端区域位置。
+
+
+● Vector2i window_get_position_with_decorations(window_id: int = 0) const
+
+该函数返回给定窗口在屏幕上的位置，包括操作系统绘制的边框。另见 window_get_position()。
+
+
+● Vector3i window_get_safe_title_margins(window_id: int = 0) const
+
+当设置了 WINDOW_FLAG_EXTEND_TO_TITLE 标志时，该函数返回标题左边距 (x)、右边距 (y) 和高度 (z)，这些边距可以安全地使用（不包含任何按钮或其他元素）。
+
+
+● Vector2i window_get_size(window_id: int = 0) const
+
+返回窗口的大小（单位为像素），不包含操作系统绘制的边框，该窗口由 window_id 指定。这个区域也叫做“客户区域”。另见 window_get_size_with_decorations()、window_set_size()、window_get_position()。
+
+
+● Vector2i window_get_size_with_decorations(window_id: int = 0) const
+
+返回窗口的大小（单位为像素），包含操作系统绘制的边框，该窗口由 window_id 指定。另见 window_get_size()。
+
+
+● Vector2i window_get_title_size(title: String, window_id: int = 0) const
+
+返回由 window_id 指定的窗口的估计窗口标题栏大小（包括文本和窗口按钮）（单位：像素）。该方法不会更改窗口标题。
+
+注意：该方法在 macOS 和 Windows 上实现。
+
+
+● VSyncMode window_get_vsync_mode(window_id: int = 0) const
+
+返回给定窗口的垂直同步模式。
+
+
+● bool window_is_focused(window_id: int = 0) const
+
+如果 window_id 指定的窗口已获得焦点，则返回 true。
+
+
+● bool window_is_maximize_allowed(window_id: int = 0) const
+
+如果给定的窗口能够最大化（最大化按钮已启用），则返回 true。
+
+
+● bool window_maximize_on_title_dbl_click() const
+
+如果双击窗口标题应将其最大化，则返回 true。
+
+注意：这个方法仅在 macOS 上实现。
+
+
+● bool window_minimize_on_title_dbl_click() const
+
+如果双击窗口标题应将其最小化，则返回 true。
+
+注意：这个方法仅在 macOS 上实现。
+
+
+● void window_move_to_foreground(window_id: int = 0)
+
+将由 window_id 指定的窗口移动至前台，使其位于其他窗口之上。
+
+
+● void window_request_attention(window_id: int = 0)
+
+让由 window_id 指定的窗口请求注意，该窗口获得焦点之前会闪烁窗口标题和任务栏项目。如果该窗口目前持有焦点，则通常是没有可见效果的。实际的行为因操作系统而异。
+
+
+● void window_set_current_screen(screen: int, window_id: int = 0)
+
+将由 window_id 指定的窗口移动至指定的屏幕 screen。另见 window_get_current_screen()。
+
+
+● void window_set_drop_files_callback(callback: Callable, window_id: int = 0)
+
+设置当文件从操作系统的文件管理器拖放到 window_id 指定的窗口时应调用的 callback。callback 应采用一个 PackedStringArray 参数，即拖放的文件列表。
+
+警告：仅限高级用户！将这样的回调添加到 Window 节点将覆盖其默认实现，这可能会引入错误。
+
+注意：这个方法在 Windows、macOS、Linux（X11/Wayland）、Web 上实现。
+
+
+● void window_set_exclusive(window_id: int, exclusive: bool)
+
+如果设置为 true，该窗口将始终位于其父窗口之上，父窗口将在该窗口打开时忽略输入。
+
+注意：在 macOS 上，独占窗口被限制在与父窗口相同的空间（虚拟桌面或屏幕）中。
+
+注意：该方法在 macOS 和 Windows 上实现。
+
+
+● void window_set_flag(flag: WindowFlags, enabled: bool, window_id: int = 0)
+
+启用或禁用给定窗口的给定标志 flag。可能的值和相应的行为见 WindowFlags。
+
+
+● void window_set_ime_active(active: bool, window_id: int = 0)
+
+设置是否应该为窗口启用输入法编辑器  ，该窗口由 window_id 指定。另见 window_set_ime_position()。
+
+
+● void window_set_ime_position(position: Vector2i, window_id: int = 0)
+
+设置指定 window_id 的输入法编辑器  弹出框的位置。仅在指定 window_id 的 window_set_ime_active() 为 true 时有效。
+
+
+● void window_set_input_event_callback(callback: Callable, window_id: int = 0)
+
+设置回调 callback，向由 window_id 指定的窗口发送任何 InputEvent 时会进行回调。
+
+警告：仅限高级用户！将这样的回调添加到 Window 节点将覆盖其默认实现，这可能会引入错误。
+
+
+● void window_set_input_text_callback(callback: Callable, window_id: int = 0)
+
+设置回调 callback，使用虚拟键盘向由 window_id 指定的窗口输入文本时会进行回调。
+
+警告：仅限高级用户！将这样的回调添加到 Window 节点将覆盖其默认实现，这可能会引入错误。
+
+
+● void window_set_max_size(max_size: Vector2i, window_id: int = 0)
+
+设置由 window_id 指定的窗口的最大大小（单位为像素）。通常，用户将无法拖动窗口使其大于该指定大小。另见 window_get_max_size()。
+
+注意：建议改用 Window.max_size 更改此值。
+
+注意：使用第三方工具，用户可以禁用窗口几何限制，从而绕过此限制。
+
+
+● void window_set_min_size(min_size: Vector2i, window_id: int = 0)
+
+将给定窗口的最小大小设置为 min_size（单位为像素）。通常，用户将无法拖动窗口使其小于该指定大小。另见 window_get_min_size()。
+
+注意：建议改用 Window.min_size 来更改此值。
+
+注意：默认情况下，主窗口的最小大小为 Vector2i(64, 64)。这可以防止将窗口调整为接近零的大小时可能出现的问题。
+
+注意：使用第三方工具，用户可以禁用窗口几何限制，从而绕过此限制。
+
+
+● void window_set_mode(mode: WindowMode, window_id: int = 0)
+
+将给定窗口的窗口模式设置为 mode。可能的值以及各个模式的行为见 WindowMode。
+
+注意：在 Android 上，设为 WINDOW_MODE_FULLSCREEN 或 WINDOW_MODE_EXCLUSIVE_FULLSCREEN 会启用沉浸模式。
+
+注意：将窗口设置为全屏会强制将无边框标志设为 true，所以不再需要时请务必将其设回 false。
+
+
+● void window_set_mouse_passthrough(region: PackedVector2Array, window_id: int = 0)
+
+设置一个接受鼠标事件的窗口的多边形区域。该区域外的鼠标事件将被传递出去。
+
+传递一个空数组将禁用穿透支持（所有鼠标事件将被窗口拦截，这是默认行为）。
+
+# 设置区域，使用 Path2D 节点。
+DisplayServer.window_set_mouse_passthrough($Path2D.curve.get_baked_points())
+
+# 设置区域，使用 Polygon2D 节点。
+DisplayServer.window_set_mouse_passthrough($Polygon2D.polygon)
+
+# 重置区域为默认值。
+DisplayServer.window_set_mouse_passthrough([]) 
+注意：在 Windows 上，不会绘制位于区域之外的窗口部分，而在 Linux（X11）和 macOS 上则会绘制。
+
+注意：该方法在 Linux（X11）、macOS 和 Windows 上实现。
+
+
+● void window_set_popup_safe_rect(window: int, rect: Rect2i)
+
+设置用于打开弹出窗口的控件或菜单项的范围框，使用屏幕坐标系。在该区域中点击不会自动关闭该弹出框。
+
+
+● void window_set_position(position: Vector2i, window_id: int = 0)
+
+将给定窗口的位置设置为 position。使用多个监视器时，屏幕位置是相对于虚拟桌面区域的位置。如果多监视器中使用了不同的屏幕分辨率或朝向，原点有可能位于所有显示器之外，类似于：
+
+* (0, 0)        +-------+
+                |       |
++-------------+ |       |
+|             | |       |
+|             | |       |
++-------------+ +-------+ 
+另见 window_get_position() 和 window_set_size()。
+
+注意：建议改用 Window.position 更改此值。
+
+注意：在 Linux（Wayland）上：该方法是没有操作。
+
+
+● void window_set_rect_changed_callback(callback: Callable, window_id: int = 0)
+
+设置回调 callback，由 window_id 指定的窗口发生移动或调整大小时会进行回调。
+
+警告：仅限高级用户！将这样的回调添加到 Window 节点将覆盖其默认实现，这可能会引入错误。
+
+
+● void window_set_size(size: Vector2i, window_id: int = 0)
+
+将给定窗口的大小设置为 size（单位为像素）。另见 window_get_size() 和 window_get_position()。
+
+注意：建议改用 Window.size 更改此值。
+
+
+● void window_set_title(title: String, window_id: int = 0)
+
+将给定窗口的标题设置为 title。
+
+注意：建议改用 Window.title 更改此值。
+
+注意：避免每一帧都更改窗口标题，因为这会导致某些窗口管理器出现性能问题。尝试每秒最多更改几次窗口标题。
+
+
+● void window_set_transient(window_id: int, parent_window_id: int)
+
+设置窗口瞬态父级。瞬态窗口将与其瞬态父级一起销毁，并在关闭时将焦点返回到父级。瞬态窗口显示在非排他性全屏父窗口的顶部。瞬态窗口无法进入全屏模式。
+
+注意：建议改用 Window.transient 更改此值。
+
+注意：行为可能因平台而异。
+
+
+● void window_set_vsync_mode(vsync_mode: VSyncMode, window_id: int = 0)
+
+设置给定窗口的垂直同步模式。另见 显示 > 窗口 > 垂直同步 > 垂直同步模式。
+
+参阅 DisplayServer.VSyncMode 了解可能的值，以及它们如何影响应用程序的行为。
+
+根据平台和使用的渲染器，如果不支持所需的模式，引擎将回退到 VSYNC_ENABLED。
+
+注意：除 VSYNC_ENABLED 以外的垂直同步模式，仅支持 Forward+ 和 Mobile 渲染方式，不支持 Compatibility。
+
+
+● void window_set_window_buttons_offset(offset: Vector2i, window_id: int = 0)
+
+设置了 WINDOW_FLAG_EXTEND_TO_TITLE 标志时，会设置第一个标题栏按钮中心的偏移量。
+
+注意：这个标志仅在 macOS 上实现。
+
+
+● void window_set_window_event_callback(callback: Callable, window_id: int = 0)
+
+设置回调 callback，由 window_id 指定的窗口发生事件时会进行回调。
+
+警告：仅限高级用户！将这样的回调添加到 Window 节点将覆盖其默认实现，这可能会引入错误。
+
+
+● void window_start_drag(window_id: int = 0)
+
+在窗口编号为 window_id 的窗口上启动交互式拖动操作，使用当前鼠标位置。处理鼠标按钮按下事件时调用该方法可以模拟在窗口标题栏上按下的事件。使用该方法可以使窗口参与空间切换、平铺等系统功能。
+
+注意：该方法在 Linux（X11/Wayland）、macOS 和 Windows 上实现。
+
+
+● void window_start_resize(edge: WindowResizeEdge, window_id: int = 0)
+
+在窗口编号为 window_id 的窗口上启动交互式调整大小操作，使用当前鼠标位置。处理鼠标按钮按下事件时调用该方法可以模拟在窗口边缘上按下的事件。
+
+注意：该方法在 Linux（X11/Wayland）、macOS 和 Windows 上实现。
+

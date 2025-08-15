@@ -1,0 +1,85 @@
+2025-08-15 13:15:48,010 [INFO] 服务器监控器启动
+2025-08-15 13:15:48,010 [INFO] 正在启动服务器...
+2025-08-15 13:15:48,406 [INFO] [SERVER] ============================================================
+2025-08-15 13:15:48,420 [INFO] [SERVER] Traceback (most recent call last):
+2025-08-15 13:15:48,420 [ERROR] 检测到严重错误: Traceback (most recent call last):
+2025-08-15 13:15:48,422 [INFO] [SERVER] File "E:\Godot\Godot项目\比较完成的作品\萌芽农场\Server\TCPGameServer.py", line 10395, in <module>
+2025-08-15 13:15:48,423 [INFO] [SERVER] print(f"\U0001f331 萌芽农场游戏服务器 v{server_version} \U0001f331")
+2025-08-15 13:15:48,423 [INFO] [SERVER] ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-08-15 13:15:48,423 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 47, in write
+2025-08-15 13:15:48,423 [INFO] [SERVER] self.__convertor.write(text)
+2025-08-15 13:15:48,423 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+2025-08-15 13:15:48,423 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 177, in write
+2025-08-15 13:15:48,423 [INFO] [SERVER] self.write_and_convert(text)
+2025-08-15 13:15:48,423 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+2025-08-15 13:15:48,424 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 205, in write_and_convert
+2025-08-15 13:15:48,424 [INFO] [SERVER] self.write_plain_text(text, cursor, len(text))
+2025-08-15 13:15:48,424 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-08-15 13:15:48,424 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 210, in write_plain_text
+2025-08-15 13:15:48,424 [INFO] [SERVER] self.wrapped.write(text[start:end])
+2025-08-15 13:15:48,424 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+2025-08-15 13:15:48,424 [INFO] [SERVER] UnicodeEncodeError: 'gbk' codec can't encode character '\U0001f331' in position 0: illegal multibyte sequence
+2025-08-15 13:15:48,424 [INFO] [SERVER] During handling of the above exception, another exception occurred:
+2025-08-15 13:15:48,424 [INFO] [SERVER] Traceback (most recent call last):
+2025-08-15 13:15:48,424 [ERROR] 检测到严重错误: Traceback (most recent call last):
+2025-08-15 13:15:48,424 [INFO] [SERVER] File "E:\Godot\Godot项目\比较完成的作品\萌芽农场\Server\TCPGameServer.py", line 10447, in <module>
+2025-08-15 13:15:48,424 [INFO] [SERVER] print(f"\n\u274c 服务器启动失败: {str(e)}")
+2025-08-15 13:15:48,424 [INFO] [SERVER] ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-08-15 13:15:48,425 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 47, in write
+2025-08-15 13:15:48,425 [INFO] [SERVER] self.__convertor.write(text)
+2025-08-15 13:15:48,425 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+2025-08-15 13:15:48,425 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 177, in write
+2025-08-15 13:15:48,425 [INFO] [SERVER] self.write_and_convert(text)
+2025-08-15 13:15:48,425 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+2025-08-15 13:15:48,425 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 205, in write_and_convert
+2025-08-15 13:15:48,425 [INFO] [SERVER] self.write_plain_text(text, cursor, len(text))
+2025-08-15 13:15:48,425 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-08-15 13:15:48,425 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 210, in write_plain_text
+2025-08-15 13:15:48,425 [INFO] [SERVER] self.wrapped.write(text[start:end])
+2025-08-15 13:15:48,425 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+2025-08-15 13:15:48,425 [INFO] [SERVER] UnicodeEncodeError: 'gbk' codec can't encode character '\u274c' in position 2: illegal multibyte sequence
+2025-08-15 13:15:53,015 [ERROR] 服务器启动失败
+2025-08-15 13:15:53,015 [ERROR] 初始启动失败，退出监控
+2025-08-15 13:17:34,183 [INFO] 服务器监控器启动
+2025-08-15 13:17:34,183 [INFO] 正在启动服务器...
+2025-08-15 13:17:34,623 [INFO] [SERVER] ============================================================
+2025-08-15 13:17:34,623 [INFO] [SERVER] [ERROR] 服务器启动失败: 'gbk' codec can't encode character '\U0001f331' in position 0: illegal multibyte sequence
+2025-08-15 13:17:34,628 [INFO] [SERVER] Traceback (most recent call last):
+2025-08-15 13:17:34,628 [ERROR] 检测到严重错误: Traceback (most recent call last):
+2025-08-15 13:17:34,628 [INFO] [SERVER] File "E:\Godot\Godot项目\比较完成的作品\萌芽农场\Server\TCPGameServer.py", line 10395, in <module>
+2025-08-15 13:17:34,628 [INFO] [SERVER] print(f"\U0001f331 萌芽农场游戏服务器 v{server_version} \U0001f331")
+2025-08-15 13:17:34,629 [INFO] [SERVER] ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-08-15 13:17:34,629 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 47, in write
+2025-08-15 13:17:34,629 [INFO] [SERVER] self.__convertor.write(text)
+2025-08-15 13:17:34,629 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+2025-08-15 13:17:34,629 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 177, in write
+2025-08-15 13:17:34,629 [INFO] [SERVER] self.write_and_convert(text)
+2025-08-15 13:17:34,629 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+2025-08-15 13:17:34,630 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 205, in write_and_convert
+2025-08-15 13:17:34,630 [INFO] [SERVER] self.write_plain_text(text, cursor, len(text))
+2025-08-15 13:17:34,630 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-08-15 13:17:34,630 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 210, in write_plain_text
+2025-08-15 13:17:34,630 [INFO] [SERVER] self.wrapped.write(text[start:end])
+2025-08-15 13:17:34,630 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+2025-08-15 13:17:34,630 [INFO] [SERVER] UnicodeEncodeError: 'gbk' codec can't encode character '\U0001f331' in position 0: illegal multibyte sequence
+2025-08-15 13:17:34,630 [INFO] [SERVER] During handling of the above exception, another exception occurred:
+2025-08-15 13:17:34,630 [INFO] [SERVER] Traceback (most recent call last):
+2025-08-15 13:17:34,631 [ERROR] 检测到严重错误: Traceback (most recent call last):
+2025-08-15 13:17:34,631 [INFO] [SERVER] File "E:\Godot\Godot项目\比较完成的作品\萌芽农场\Server\TCPGameServer.py", line 10448, in <module>
+2025-08-15 13:17:34,631 [INFO] [SERVER] print("\U0001f527 请检查配置并重试")
+2025-08-15 13:17:34,631 [INFO] [SERVER] ~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+2025-08-15 13:17:34,631 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 47, in write
+2025-08-15 13:17:34,631 [INFO] [SERVER] self.__convertor.write(text)
+2025-08-15 13:17:34,632 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+2025-08-15 13:17:34,632 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 177, in write
+2025-08-15 13:17:34,632 [INFO] [SERVER] self.write_and_convert(text)
+2025-08-15 13:17:34,632 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+2025-08-15 13:17:34,632 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 205, in write_and_convert
+2025-08-15 13:17:34,632 [INFO] [SERVER] self.write_plain_text(text, cursor, len(text))
+2025-08-15 13:17:34,632 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-08-15 13:17:34,632 [INFO] [SERVER] File "E:\ProgramLanguage\Python\python313\Lib\site-packages\colorama\ansitowin32.py", line 210, in write_plain_text
+2025-08-15 13:17:34,633 [INFO] [SERVER] self.wrapped.write(text[start:end])
+2025-08-15 13:17:34,633 [INFO] [SERVER] ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+2025-08-15 13:17:34,633 [INFO] [SERVER] UnicodeEncodeError: 'gbk' codec can't encode character '\U0001f527' in position 0: illegal multibyte sequence
+2025-08-15 13:17:39,187 [ERROR] 服务器启动失败
+2025-08-15 13:17:39,187 [ERROR] 初始启动失败，退出监控

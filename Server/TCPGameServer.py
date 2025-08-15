@@ -12,6 +12,8 @@ import random
 from SMYMongoDBAPI import SMYMongoDBAPI #导入MongoDB数据库模块
 from QQEmailSendAPI import EmailVerification#导入QQ邮箱发送模块
 from ConsoleCommandsAPI import ConsoleCommandsAPI #导入控制台命令API模块
+from SpecialFarm import SpecialFarmManager #导入特殊农场管理系统
+from WSRemoteCmdApi import WSRemoteCmdApi #导入WebSocket远程命令API
 
 """
 萌芽农场TCP游戏服务器
@@ -24,7 +26,7 @@ from ConsoleCommandsAPI import ConsoleCommandsAPI #导入控制台命令API模�
 server_host: str = "0.0.0.0"
 server_port: int = 7070
 buffer_size: int = 4096
-server_version: str = "2.0.1"
+server_version: str = "2.2.0"
 
 class TCPGameServer(TCPServer):
 
@@ -64,6 +66,15 @@ class TCPGameServer(TCPServer):
         self.steal_immunity_counters = {}
         
         self.log('INFO', f"萌芽农场TCP游戏服务器初始化完成 - 版本: {server_version}", 'SERVER')
+        
+        # 清理配置缓存，确保使用最新的配置数据
+        self._clear_config_cache()
+        
+        # 初始化特殊农场管理系统
+        self._init_special_farm_manager()
+        
+        # 初始化WebSocket远程命令API
+        self._init_websocket_remote_api()
         
         # 启动定时器
         self.start_crop_growth_timer()
@@ -110,6 +121,47 @@ class TCPGameServer(TCPServer):
         self.max_weeds_per_check = 3  # 每次检查时最多长多少个杂草
         self.weed_growth_probability = 0.3  # 每个空地长杂草的概率（30%）
         self.last_weed_check_time = time.time()  # 上次检查杂草的时间
+    
+    #初始化特殊农场管理系统
+    def _init_special_farm_manager(self):
+        """初始化特殊农场管理系统"""
+        try:
+            # 使用自动环境检测，确保与游戏服务器环境一致
+            self.special_farm_manager = SpecialFarmManager()
+            
+            # 启动特殊农场定时任务
+            self.special_farm_manager.start_scheduler()
+            
+            self.log('INFO', f"特殊农场管理系统初始化完成 - 环境: {self.special_farm_manager.environment}", 'SERVER')
+            
+        except Exception as e:
+            self.log('ERROR', f"特殊农场管理系统初始化失败: {str(e)}", 'SERVER')
+            self.special_farm_manager = None
+    
+    #初始化WebSocket远程命令API
+    def _init_websocket_remote_api(self):
+        """初始化WebSocket远程命令API服务器"""
+        try:
+            # 创建WebSocket远程命令API实例
+            ws_host = "0.0.0.0"
+            ws_port = 7071
+            auth_key = "mengya2024"  # 可以从配置文件读取
+            
+            self.ws_remote_api = WSRemoteCmdApi(
+                game_server=self,
+                host=ws_host,
+                port=ws_port,
+                auth_key=auth_key
+            )
+            
+            # 启动WebSocket服务器
+            self.ws_remote_api.start_server()
+            
+            self.log('INFO', f"WebSocket远程命令API初始化完成 - ws://{ws_host}:{ws_port}", 'SERVER')
+            
+        except Exception as e:
+            self.log('ERROR', f"WebSocket远程命令API初始化失败: {str(e)}", 'SERVER')
+            self.ws_remote_api = None
     
     #设置游戏服务器日志配置
     def _setup_game_server_logging(self):
@@ -230,6 +282,28 @@ class TCPGameServer(TCPServer):
             self.offline_crop_timer = None
             self.log('INFO', "离线作物更新定时器已停止", 'SERVER')
         
+        # 停止特殊农场管理系统
+        if hasattr(self, 'special_farm_manager') and self.special_farm_manager:
+            try:
+                # 停止特殊农场定时任务
+                self.special_farm_manager.stop_scheduler()
+                
+                # 清理特殊农场管理器引用
+                self.special_farm_manager = None
+                
+                self.log('INFO', "特殊农场管理系统已停止", 'SERVER')
+            except Exception as e:
+                self.log('ERROR', f"停止特殊农场管理系统时出错: {str(e)}", 'SERVER')
+        
+        # 停止WebSocket远程命令API服务器
+        if hasattr(self, 'ws_remote_api') and self.ws_remote_api:
+            try:
+                self.ws_remote_api.stop_server()
+                self.ws_remote_api = None
+                self.log('INFO', "WebSocket远程命令API服务器已停止", 'SERVER')
+            except Exception as e:
+                self.log('ERROR', f"停止WebSocket远程命令API服务器时出错: {str(e)}", 'SERVER')
+        
         # 显示服务器统计信息
         stats = self.get_server_stats()
         self.log('INFO', f"服务器统计 - 在线玩家: {stats['online_players']}, 总连接: {stats['total_connections']}", 'SERVER')
@@ -252,14 +326,6 @@ class TCPGameServer(TCPServer):
                 self._update_player_logout_time(client_id, username)
                 self.log('INFO', f"用户 {username} 登出", 'SERVER')
             
-            # 广播用户离开消息
-            self.broadcast({
-                "type": "user_left",
-                "user_id": client_id,
-                "timestamp": time.time(),
-                "remaining_users": len(self.clients) - 1
-            }, exclude=[client_id])
-            
             # 清理用户数据
             if client_id in self.user_data:
                 # 清理偷菜免被发现计数器
@@ -267,8 +333,20 @@ class TCPGameServer(TCPServer):
                 del self.user_data[client_id]
                 
             self.log('INFO', f"用户 {username} 已离开游戏", 'SERVER')
-        
-        super()._remove_client(client_id)
+            
+            # 先调用父类方法移除客户端，避免递归调用
+            super()._remove_client(client_id)
+            
+            # 在客户端已移除后再广播用户离开消息，避免向已断开的客户端发送消息
+            self.broadcast({
+                "type": "user_left",
+                "user_id": client_id,
+                "timestamp": time.time(),
+                "remaining_users": len(self.clients)
+            })
+        else:
+            # 如果客户端不在列表中，直接调用父类方法
+            super()._remove_client(client_id)
 #==========================客户端连接管理==========================
 
 
@@ -364,6 +442,12 @@ class TCPGameServer(TCPServer):
         return player_data, username, None
     
     #加载作物配置数据（优化版本）
+    def _clear_config_cache(self):
+        """清理配置缓存，强制重新加载"""
+        self.crop_data_cache = None
+        self.crop_data_cache_time = 0
+        self.log('INFO', "配置缓存已清理", 'SERVER')
+    
     def _load_crop_data(self):
         """加载作物配置数据（从MongoDB，带缓存优化）"""
         current_time = time.time()
@@ -468,20 +552,34 @@ class TCPGameServer(TCPServer):
                 self.log('WARNING', 'MongoDB未配置或不可用，无法更新离线玩家作物', 'SERVER')
                 return
             
-            # 获取当前在线玩家列表
-            online_players = []
+            # 获取需要排除的玩家列表（在线玩家 + 被访问的玩家）
+            exclude_players = []
+            
+            # 添加在线玩家
             for client_id, user_info in self.user_data.items():
                 if user_info.get("logged_in", False) and user_info.get("username"):
-                    online_players.append(user_info["username"])
+                    exclude_players.append(user_info["username"])
             
-            # 直接调用优化后的批量更新方法，传入在线玩家列表进行排除
+            # 添加被访问的玩家（避免访问模式下的重复更新）
+            visited_players = set()
+            for client_id, user_info in self.user_data.items():
+                if (user_info.get("logged_in", False) and 
+                    user_info.get("visiting_mode", False) and 
+                    user_info.get("visiting_target")):
+                    visited_players.add(user_info["visiting_target"])
+            
+            # 将被访问的玩家也加入排除列表
+            exclude_players.extend(list(visited_players))
+            
+            # 直接调用优化后的批量更新方法，传入排除玩家列表
+            # 离线更新间隔为60秒，所以每次更新应该增长60秒
             updated_count = self.mongo_api.batch_update_offline_players_crops(
-                growth_multiplier=1.0, 
-                exclude_online_players=online_players
+                growth_multiplier=60.0, 
+                exclude_online_players=exclude_players
             )
             
             if updated_count > 0:
-                self.log('INFO', f"成功更新了 {updated_count} 个离线玩家的作物生长", 'SERVER')
+                self.log('INFO', f"成功更新了 {updated_count} 个离线玩家的作物生长（排除了 {len(exclude_players)} 个在线/被访问玩家）", 'SERVER')
             else:
                 self.log('DEBUG', "没有离线玩家的作物需要更新", 'SERVER')
                 
@@ -496,26 +594,37 @@ class TCPGameServer(TCPServer):
     #作物生长更新系统
     def update_crops_growth(self):
         """更新所有玩家的作物生长"""
-        # 更新在线玩家的作物
+        # 收集所有需要更新的玩家（在线玩家 + 被访问的玩家）
+        players_to_update = set()
+        
+        # 添加在线玩家
         for client_id, user_info in self.user_data.items():
-            if not user_info.get("logged_in", False):
-                continue
-                
-            username = user_info.get("username")
-            if not username:
-                continue
-            
+            if user_info.get("logged_in", False) and user_info.get("username"):
+                players_to_update.add(user_info.get("username"))
+        
+        # 添加被访问的玩家（即使他们不在线）
+        for client_id, user_info in self.user_data.items():
+            if user_info.get("logged_in", False) and user_info.get("visiting_mode", False):
+                visiting_target = user_info.get("visiting_target", "")
+                if visiting_target:
+                    players_to_update.add(visiting_target)
+        
+        # 更新所有需要更新的玩家的作物
+        for username in players_to_update:
             try:
                 player_data = self.load_player_data(username)
                 if not player_data:
                     continue
                 
                 if self.update_player_crops(player_data, username):
-                    self.save_player_data(username, player_data)
-                    self._push_crop_update_to_player(username, player_data)
+                    # 确保数据保存成功后才推送更新
+                    if self.save_player_data(username, player_data):
+                        self._push_crop_update_to_player(username, player_data)
+                    else:
+                        self.log('ERROR', f"保存玩家 {username} 数据失败，跳过推送更新", 'SERVER')
                     
             except Exception as e:
-                self.log('ERROR', f"更新在线玩家 {username} 作物时出错: {str(e)}", 'SERVER')
+                self.log('ERROR', f"更新玩家 {username} 作物时出错: {str(e)}", 'SERVER')
     
     #更新单个玩家的作物
     def update_player_crops(self, player_data, account_id):
@@ -593,6 +702,9 @@ class TCPGameServer(TCPServer):
                 self._send_visiting_update(client_id, visiting_target)
             else:
                 self._send_normal_update(client_id, player_data)
+        
+        # 检查是否有其他玩家正在访问这个玩家的农场
+        self._push_update_to_visitors(account_id, player_data)
     
     #根据用户名查找客户端ID
     def _find_client_by_username(self, username):
@@ -629,6 +741,31 @@ class TCPGameServer(TCPServer):
             "is_visiting": False
         }
         self.send_data(client_id, update_message)
+    
+    #向正在访问某个玩家农场的其他玩家推送更新
+    def _push_update_to_visitors(self, target_username, target_player_data):
+        """向正在访问某个玩家农场的其他玩家推送更新"""
+        for visitor_client_id, visitor_info in self.user_data.items():
+            if not visitor_info.get("logged_in", False):
+                continue
+                
+            visiting_mode = visitor_info.get("visiting_mode", False)
+            visiting_target = visitor_info.get("visiting_target", "")
+            
+            # 如果这个玩家正在访问目标玩家的农场，发送更新
+            if visiting_mode and visiting_target == target_username:
+                target_client_id = self._find_client_by_username(target_username)
+                
+                update_message = {
+                    "type": "crop_update",
+                    "农场土地": target_player_data.get("农场土地", []),
+                    "timestamp": time.time(),
+                    "is_visiting": True,
+                    "visited_player": target_username,
+                    "target_online": target_client_id is not None
+                }
+                self.send_data(visitor_client_id, update_message)
+                self.log('DEBUG', f"向访问者 {visitor_info.get('username', 'unknown')} 推送 {target_username} 的农场更新", 'SERVER')
 #================================作物系统管理=========================================
 
 
@@ -709,6 +846,8 @@ class TCPGameServer(TCPServer):
             return self._handle_item_config_request(client_id)
         elif message_type == "request_pet_config":#请求宠物配置数据
             return self._handle_pet_config_request(client_id)
+        elif message_type == "request_game_tips_config":#请求游戏小提示配置数据
+            return self._handle_game_tips_config_request(client_id)
         elif message_type == "visit_player":#拜访其他玩家农场
             return self._handle_visit_player_request(client_id, message)
         elif message_type == "return_my_farm":#返回我的农场
@@ -769,7 +908,15 @@ class TCPGameServer(TCPServer):
             return self._handle_pet_battle_result(client_id, message)
         elif message_type == "today_divination":#今日占卜
             return self._handle_today_divination(client_id, message)
+        elif message_type == "give_money":#送金币
+            return self._handle_give_money_request(client_id, message)
+        elif message_type == "sync_bag_data":#同步背包数据
+            return self._handle_sync_bag_data(client_id, message)
         #---------------------------------------------------------------------------
+        
+        # 管理员操作相关
+        elif message_type == "kick_player":#踢出玩家
+            return self._handle_kick_player(client_id, message)
 
         elif message_type == "message":#处理聊天消息（暂未实现）
             return self._handle_chat_message(client_id, message)
@@ -833,6 +980,60 @@ class TCPGameServer(TCPServer):
         player_data = self.load_player_data(username)
         
         if player_data and player_data.get("玩家密码") == password:
+            # 检查禁用系统
+            ban_system = player_data.get("禁用系统", {})
+            is_banned = ban_system.get("是否被禁止登录", False)
+            
+            if is_banned:
+                # 检查禁止登录是否已过期
+                ban_end_time = ban_system.get("禁止登录截止", "")
+                if ban_end_time:
+                    try:
+                        end_datetime = datetime.datetime.strptime(ban_end_time, "%Y-%m-%d %H:%M:%S")
+                        current_datetime = datetime.datetime.now()
+                        
+                        if current_datetime >= end_datetime:
+                            # 禁止登录已过期，解除禁止
+                            player_data["禁用系统"] = {
+                                "是否被禁止登录": False,
+                                "禁止登录原因": "",
+                                "禁止登录开始": "",
+                                "禁止登录截止": ""
+                            }
+                            self.save_player_data(username, player_data)
+                            self.log('INFO', f"用户 {username} 禁止登录已过期，自动解除", 'SERVER')
+                        else:
+                            # 仍在禁止期内
+                            ban_reason = ban_system.get("禁止登录原因", "您已被管理员禁止登录")
+                            self.log('WARNING', f"用户 {username} 登录失败: 账号被禁止登录", 'SERVER')
+                            response = {
+                                "type": "login_response",
+                                "status": "banned",
+                                "message": ban_reason,
+                                "ban_end_time": ban_end_time
+                            }
+                            return self.send_data(client_id, response)
+                    except Exception as e:
+                        self.log('ERROR', f"解析禁止登录时间出错: {e}", 'SERVER')
+                        # 如果解析出错，仍然禁止登录
+                        ban_reason = ban_system.get("禁止登录原因", "您已被管理员禁止登录")
+                        response = {
+                            "type": "login_response",
+                            "status": "banned",
+                            "message": ban_reason
+                        }
+                        return self.send_data(client_id, response)
+                else:
+                    # 永久禁止或没有截止时间
+                    ban_reason = ban_system.get("禁止登录原因", "您已被管理员禁止登录")
+                    self.log('WARNING', f"用户 {username} 登录失败: 账号被永久禁止登录", 'SERVER')
+                    response = {
+                        "type": "login_response",
+                        "status": "banned",
+                        "message": ban_reason
+                    }
+                    return self.send_data(client_id, response)
+            
             # 登录成功
             self.log('INFO', f"用户 {username} 登录成功", 'SERVER')
             
@@ -2439,6 +2640,25 @@ class TCPGameServer(TCPServer):
                 
         except Exception as e:
             self.log('ERROR', f"从MongoDB加载宠物配置失败: {str(e)}", 'SERVER')
+            return {}
+    
+    def _load_game_tips_config(self):
+        """从MongoDB加载游戏小提示配置数据"""
+        try:
+            if not hasattr(self, 'mongo_api') or not self.mongo_api:
+                self.log('ERROR', 'MongoDB未配置或不可用，无法加载游戏小提示配置数据', 'SERVER')
+                return {}
+                
+            config = self.mongo_api.get_game_tips_config()
+            if config:
+                self.log('INFO', "成功从MongoDB加载游戏小提示配置", 'SERVER')
+                return config
+            else:
+                self.log('ERROR', "MongoDB中未找到游戏小提示配置", 'SERVER')
+                return {}
+                
+        except Exception as e:
+            self.log('ERROR', f"从MongoDB加载游戏小提示配置失败: {str(e)}", 'SERVER')
             return {}
     
     # 将巡逻宠物ID转换为完整宠物数据
@@ -5228,8 +5448,27 @@ class TCPGameServer(TCPServer):
                 "success": False,
                 "message": "无法读取宠物配置数据"
             })
+    
 #==========================道具配置数据处理==========================
 
+    #处理客户端请求游戏小提示配置数据
+    def _handle_game_tips_config_request(self, client_id):
+        """处理客户端请求游戏小提示配置数据"""
+        game_tips_config = self._load_game_tips_config()
+        
+        if game_tips_config:
+            self.log('INFO', f"向客户端 {client_id} 发送游戏小提示配置数据", 'SERVER')
+            return self.send_data(client_id, {
+                "type": "game_tips_config_response",
+                "success": True,
+                "game_tips_config": game_tips_config
+            })
+        else:
+            return self.send_data(client_id, {
+                "type": "game_tips_config_response",
+                "success": False,
+                "message": "无法读取游戏小提示配置数据"
+            })
 
 
 #==========================升级土地处理==========================
@@ -6325,10 +6564,19 @@ class TCPGameServer(TCPServer):
             "点赞数": target_player_data.get("点赞系统", {}).get("总点赞数", 0),  # 添加点赞数
             "最后登录时间": target_player_data.get("最后登录时间", "未知"),
             "总游玩时间": target_player_data.get("总游玩时间", "0时0分0秒"),
-            "total_likes": target_player_data.get("total_likes", 0)
+            "total_likes": target_player_data.get("total_likes", 0),
+            "访问系统": target_player_data.get("访问系统", {
+                "总访问人数": 0,
+                "今日访问人数": 0,
+                "访问记录": {}
+            })  # 添加访问系统数据
         }
         
         current_username = self.user_data[client_id]["username"]
+        
+        # 更新被访问玩家的访问系统数据
+        self._update_visit_system(target_username, current_username)
+        
         self.log('INFO', f"玩家 {current_username} 访问了玩家 {target_username} 的农场", 'SERVER')
         
         # 记录玩家的访问状态
@@ -6343,6 +6591,229 @@ class TCPGameServer(TCPServer):
             "is_visiting": True
         })
 #==========================访问其他玩家农场处理==========================
+
+    #==========================访问系统处理==========================
+    def _update_visit_system(self, target_username, visitor_username):
+        """更新被访问玩家的访问系统数据"""
+        try:
+            # 加载被访问玩家的数据
+            target_player_data = self.load_player_data(target_username)
+            if not target_player_data:
+                self.log('ERROR', f"无法加载被访问玩家 {target_username} 的数据", 'SERVER')
+                return
+            
+            # 获取访问者的昵称
+            visitor_player_data = self.load_player_data(visitor_username)
+            visitor_nickname = visitor_player_data.get("玩家昵称", visitor_username) if visitor_player_data else visitor_username
+            
+            # 初始化访问系统（如果不存在）
+            if "访问系统" not in target_player_data:
+                target_player_data["访问系统"] = {
+                    "总访问人数": 0,
+                    "今日访问人数": 0,
+                    "访问记录": {}
+                }
+            
+            visit_system = target_player_data["访问系统"]
+            
+            # 获取今日日期
+            from datetime import datetime
+            today = datetime.now().strftime("%Y-%m-%d")
+            
+            # 更新总访问人数
+            visit_system["总访问人数"] = visit_system.get("总访问人数", 0) + 1
+            
+            # 检查是否需要重置今日访问人数（新的一天）
+            last_visit_date = visit_system.get("最后访问日期", "")
+            if last_visit_date != today:
+                visit_system["今日访问人数"] = 0
+                visit_system["最后访问日期"] = today
+            
+            # 更新今日访问人数
+            visit_system["今日访问人数"] = visit_system.get("今日访问人数", 0) + 1
+            
+            # 更新访问记录
+            if "访问记录" not in visit_system:
+                visit_system["访问记录"] = {}
+            
+            if today not in visit_system["访问记录"]:
+                visit_system["访问记录"][today] = []
+            
+            # 添加访问者昵称到今日访问记录（避免重复）
+            if visitor_nickname not in visit_system["访问记录"][today]:
+                visit_system["访问记录"][today].append(visitor_nickname)
+            
+            # 保存更新后的数据
+            if self.save_player_data(target_username, target_player_data):
+                self.log('INFO', f"成功更新玩家 {target_username} 的访问系统数据，访问者: {visitor_nickname}", 'SERVER')
+            else:
+                self.log('ERROR', f"保存玩家 {target_username} 的访问系统数据失败", 'SERVER')
+                
+        except Exception as e:
+            self.log('ERROR', f"更新访问系统数据时出错: {e}", 'SERVER')
+    
+    def _reset_daily_visit_count(self):
+        """重置所有玩家的今日访问人数（凌晨调用）"""
+        try:
+            # 获取所有玩家的基本信息
+            if hasattr(self, 'mongo_api') and self.mongo_api:
+                players_info = self.mongo_api.get_all_players_basic_info()
+                
+                from datetime import datetime
+                today = datetime.now().strftime("%Y-%m-%d")
+                
+                reset_count = 0
+                for player_info in players_info:
+                    username = player_info.get("玩家账号")
+                    if username:
+                        player_data = self.load_player_data(username)
+                        if player_data and "访问系统" in player_data:
+                            visit_system = player_data["访问系统"]
+                            last_visit_date = visit_system.get("最后访问日期", "")
+                            
+                            # 如果不是今天，重置今日访问人数
+                            if last_visit_date != today:
+                                visit_system["今日访问人数"] = 0
+                                visit_system["最后访问日期"] = today
+                                
+                                if self.save_player_data(username, player_data):
+                                    reset_count += 1
+                
+                self.log('INFO', f"成功重置了 {reset_count} 个玩家的今日访问人数", 'SERVER')
+            
+        except Exception as e:
+            self.log('ERROR', f"重置今日访问人数时出错: {e}", 'SERVER')
+    
+    def _handle_give_money_request(self, client_id, message):
+        """处理送金币请求"""
+        try:
+            # 获取发送者信息
+            sender_info = self.user_data.get(client_id)
+            if not sender_info or not sender_info.get("logged_in", False):
+                self.send_data(client_id, {
+                    "type": "give_money_response",
+                    "success": False,
+                    "message": "请先登录"
+                })
+                return
+            
+            sender_username = sender_info.get("username")
+            target_username = message.get("target_username", "")
+            amount = message.get("amount", 0)
+            
+            # 验证参数
+            if not target_username:
+                self.send_data(client_id, {
+                    "type": "give_money_response",
+                    "success": False,
+                    "message": "目标玩家用户名不能为空"
+                })
+                return
+            
+            if amount != 500:
+                self.send_data(client_id, {
+                    "type": "give_money_response",
+                    "success": False,
+                    "message": "每次只能送500金币"
+                })
+                return
+            
+            if sender_username == target_username:
+                self.send_data(client_id, {
+                    "type": "give_money_response",
+                    "success": False,
+                    "message": "不能给自己送金币"
+                })
+                return
+            
+            # 加载发送者数据
+            sender_data = self.load_player_data(sender_username)
+            if not sender_data:
+                self.send_data(client_id, {
+                    "type": "give_money_response",
+                    "success": False,
+                    "message": "无法加载发送者数据"
+                })
+                return
+            
+            # 检查发送者金币是否足够
+            sender_money = sender_data.get("钱币", 0)
+            if sender_money < amount:
+                self.send_data(client_id, {
+                    "type": "give_money_response",
+                    "success": False,
+                    "message": f"您的金币不足，当前拥有{sender_money}金币"
+                })
+                return
+            
+            # 加载接收者数据
+            target_data = self.load_player_data(target_username)
+            if not target_data:
+                self.send_data(client_id, {
+                    "type": "give_money_response",
+                    "success": False,
+                    "message": "目标玩家不存在"
+                })
+                return
+            
+            # 执行金币转移
+            sender_data["钱币"] = sender_money - amount
+            target_data["钱币"] = target_data.get("钱币", 0) + amount
+            
+            # 记录送金币日志
+            from datetime import datetime
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            log_message = f"[{current_time}] {sender_username} 送给 {target_username} {amount}金币"
+            self.log('INFO', log_message, 'GIVE_MONEY')
+            
+            # 保存数据
+            if self.save_player_data(sender_username, sender_data) and self.save_player_data(target_username, target_data):
+                # 获取目标玩家昵称
+                target_nickname = target_data.get("玩家昵称", target_username)
+                
+                # 发送成功响应
+                self.send_data(client_id, {
+                    "type": "give_money_response",
+                    "success": True,
+                    "message": f"成功送给 {target_nickname} {amount}金币！",
+                    "updated_data": {
+                        "钱币": sender_data["钱币"]
+                    },
+                    "target_updated_data": {
+                        "钱币": target_data["钱币"]
+                    }
+                })
+                
+                # 如果目标玩家在线，通知他们收到金币
+                target_client_id = None
+                for cid, user_info in self.user_data.items():
+                    if user_info.get("username") == target_username and user_info.get("logged_in", False):
+                        target_client_id = cid
+                        break
+                
+                if target_client_id:
+                    sender_nickname = sender_data.get("玩家昵称", sender_username)
+                    self.send_data(target_client_id, {
+                        "type": "money_received_notification",
+                        "sender_nickname": sender_nickname,
+                        "amount": amount,
+                        "new_money": target_data["钱币"]
+                    })
+            else:
+                self.send_data(client_id, {
+                    "type": "give_money_response",
+                    "success": False,
+                    "message": "数据保存失败，请重试"
+                })
+                
+        except Exception as e:
+            self.log('ERROR', f"处理送金币请求失败: {str(e)}", 'GIVE_MONEY')
+            self.send_data(client_id, {
+                "type": "give_money_response",
+                "success": False,
+                "message": "服务器内部错误"
+            })
+    #==========================访问系统处理==========================
 
 
 
@@ -8232,6 +8703,63 @@ class TCPGameServer(TCPServer):
             "success": False,
             "message": message
         })
+
+    #处理背包数据同步消息
+    def _handle_sync_bag_data(self, client_id, message):
+        """处理背包数据同步请求"""
+        username = self.user_data.get(client_id, {}).get("username")
+        
+        if not username:
+            return self.send_data(client_id, {
+                "type": "sync_bag_data_response",
+                "success": False,
+                "message": "用户未登录"
+            })
+        
+        # 从数据库加载最新的玩家数据
+        player_data = self.load_player_data(username)
+        if not player_data:
+            return self.send_data(client_id, {
+                "type": "sync_bag_data_response",
+                "success": False,
+                "message": "玩家数据加载失败"
+            })
+        
+        # 提取所有背包数据
+        bag_data = {
+            "道具背包": player_data.get("道具背包", []),
+            "宠物背包": player_data.get("宠物背包", []),
+            "种子仓库": player_data.get("种子仓库", []),
+            "作物仓库": player_data.get("作物仓库", [])
+        }
+        
+        self.log('INFO', f"用户 {username} 请求同步背包数据", 'SERVER')
+        
+        return self.send_data(client_id, {
+            "type": "sync_bag_data_response",
+            "success": True,
+            "message": "背包数据同步成功",
+            "bag_data": bag_data
+        })
+    
+    def _handle_kick_player(self, client_id, message):
+        """处理踢出玩家消息（服务器内部使用）"""
+        # 这个函数主要用于接收来自控制台命令的踢出消息
+        # 实际的踢出逻辑在 ConsoleCommandsAPI 中处理
+        reason = message.get("reason", "您已被管理员踢出服务器")
+        duration = message.get("duration", 0)
+        
+        # 发送踢出通知给客户端
+        response = {
+            "type": "kick_notification",
+            "reason": reason,
+            "duration": duration,
+            "message": reason
+        }
+        
+        self.log('INFO', f"向客户端 {client_id} 发送踢出通知: {reason}", 'SERVER')
+        return self.send_data(client_id, response)
+
 # ================================账户设置处理方法================================
 
 
@@ -9914,6 +10442,7 @@ if __name__ == "__main__":
         print("👋 感谢使用萌芽农场服务器！")
         print("=" * 60)
         sys.exit(0)
+    
     except Exception as e:
         print(f"\n❌ 服务器启动失败: {str(e)}")
         print("🔧 请检查配置并重试")

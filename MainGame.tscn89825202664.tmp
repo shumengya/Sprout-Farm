@@ -1,0 +1,3764 @@
+[gd_scene load_steps=113 format=3 uid="uid://dgh61dttaas5a"]
+
+[ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
+[ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
+[ext_resource type="PackedScene" uid="uid://bkivlkirrx6u8" path="res://CopyItems/crop_item.tscn" id="3_isiom"]
+[ext_resource type="FontFile" uid="uid://dl31rnmd4lia" path="res://assets/字体/MapleMono-NF-CN-Bold.ttf" id="3_t4s8j"]
+[ext_resource type="Texture2D" uid="uid://ftv231igtdoq" path="res://assets/游戏UI/等级.webp" id="3_y1hsh"]
+[ext_resource type="Texture2D" uid="uid://bqib5y8uwg6hx" path="res://assets/游戏UI/钱币.webp" id="4_ql8k3"]
+[ext_resource type="Texture2D" uid="uid://waqbwo2r33j3" path="res://assets/游戏UI/小提示.webp" id="5_5b81d"]
+[ext_resource type="Texture2D" uid="uid://bnhyqsw8yjekh" path="res://assets/游戏UI/体力值图标.webp" id="5_n03md"]
+[ext_resource type="Texture2D" uid="uid://cj0qac0wmm0q8" path="res://assets/游戏UI/点赞图标.webp" id="6_8kysg"]
+[ext_resource type="PackedScene" uid="uid://cpxiaqh0y6a5d" path="res://Network/TCPNetworkManager.tscn" id="7_401ut"]
+[ext_resource type="Texture2D" uid="uid://d3pev0nbt8sjd" path="res://assets/游戏UI/玩家昵称.webp" id="7_n03md"]
+[ext_resource type="Texture2D" uid="uid://cxm72d5t4dn0q" path="res://assets/游戏UI/农场名称.webp" id="8_uhubb"]
+[ext_resource type="Texture2D" uid="uid://b665dc0ye72lg" path="res://assets/游戏UI/服务器连接状态.webp" id="9_uc6q1"]
+[ext_resource type="Script" uid="uid://c7bxje0wvvgo4" path="res://game_camera.gd" id="10_o8l48"]
+[ext_resource type="Texture2D" uid="uid://dsuaw8kcdtrst" path="res://assets/游戏UI/FPS图标.webp" id="10_uhubb"]
+[ext_resource type="Texture2D" uid="uid://bso5fyjavdien" path="res://assets/游戏UI/玩家数图标.webp" id="10_vygm6"]
+[ext_resource type="PackedScene" uid="uid://cbhitturvihqj" path="res://Scene/BigPanel/LoginPanel.tscn" id="11_6jgly"]
+[ext_resource type="PackedScene" uid="uid://dckc8nrn7p425" path="res://Scene/SmallPanel/LandPanel.tscn" id="12_y1hsh"]
+[ext_resource type="Texture2D" uid="uid://dsds2gsvqxfak" path="res://assets/游戏UI/大喇叭.webp" id="13_5liyv"]
+[ext_resource type="PackedScene" uid="uid://dpiy0aim20n2h" path="res://Scene/SmallPanel/OnlineGiftPanel.tscn" id="14_5b81d"]
+[ext_resource type="PackedScene" uid="uid://4rwitowdt4h" path="res://Scene/SmallPanel/OneClickPlantPanel.tscn" id="15_8kysg"]
+[ext_resource type="PackedScene" uid="uid://btp1h6hic2sin" path="res://Scene/Dialog/AcceptDialog.tscn" id="16_0igvr"]
+[ext_resource type="PackedScene" uid="uid://dbfqu87627yg6" path="res://Scene/BigPanel/PlayerRankingPanel.tscn" id="16_n03md"]
+[ext_resource type="Script" uid="uid://dckw8dskfbnkp" path="res://background.gd" id="17_0igvr"]
+[ext_resource type="PackedScene" uid="uid://bndf1e4sgdjr6" path="res://Scene/BigPanel/LuckyDrawPanel.tscn" id="17_f21le"]
+[ext_resource type="PackedScene" uid="uid://hesp70n3ondo" path="res://Scene/BigPanel/CropStorePanel.tscn" id="17_ql8k3"]
+[ext_resource type="PackedScene" uid="uid://drw18a6mcr2of" path="res://Scene/BigPanel/CropWarehousePanel.tscn" id="18_5b81d"]
+[ext_resource type="PackedScene" uid="uid://smypui0vyso5" path="res://Scene/BigPanel/DailyCheckInPanel.tscn" id="18_m6fch"]
+[ext_resource type="PackedScene" uid="uid://bseuwniienrqy" path="res://Scene/BigPanel/PlayerBagPanel.tscn" id="19_8kysg"]
+[ext_resource type="PackedScene" uid="uid://cehw5sx5pgmmc" path="res://Scene/BigPanel/ItemBagPanel.tscn" id="20_n03md"]
+[ext_resource type="PackedScene" uid="uid://j4ft87o7jk14" path="res://Scene/BigPanel/ItemStorePanel.tscn" id="21_uhubb"]
+[ext_resource type="Script" uid="uid://bdhwvqsmakna2" path="res://Script/BigPanel/PetBagPanel.gd" id="23_uc6q1"]
+[ext_resource type="Script" uid="uid://bdavskipn547h" path="res://Script/BigPanel/PlayerStorePanel.gd" id="24_dygid"]
+[ext_resource type="PackedScene" uid="uid://cnjidcwuv4nn4" path="res://Scene/BigPanel/PetStorePanel.tscn" id="24_uc6q1"]
+[ext_resource type="PackedScene" uid="uid://d3i0l6ysrde6o" path="res://Scene/SmallPanel/AccountSettingPanel.tscn" id="26_uc6q1"]
+[ext_resource type="PackedScene" uid="uid://d1lu2yg4xl382" path="res://Scene/SmallPanel/LoadProgressPanel.tscn" id="27_vygm6"]
+[ext_resource type="Script" uid="uid://bvhupqlw2h1j8" path="res://Script/SmallPanel/DebugPanel.gd" id="28_8kysg"]
+[ext_resource type="Script" uid="uid://ca2chgx5w3g1y" path="res://Components/GameBGMPlayer.gd" id="28_m6fch"]
+[ext_resource type="Script" uid="uid://d4fvv2sjngajr" path="res://Script/Dialog/BatchBuyPopup.gd" id="29_5b81d"]
+[ext_resource type="PackedScene" uid="uid://diwbnwhnq026" path="res://Scene/NewPet/PetBattlePanel.tscn" id="29_mw3xw"]
+[ext_resource type="PackedScene" uid="uid://dos15dmc1b6bt" path="res://GUI/GameSettingPanel.tscn" id="30_game_setting"]
+[ext_resource type="PackedScene" uid="uid://jjlgdnoo8e52" path="res://Scene/BigPanel/PlayGamePanel.tscn" id="30_rawle"]
+[ext_resource type="Texture2D" uid="uid://2sdfbvf1isif" path="res://icon.svg" id="31_uc6q1"]
+[ext_resource type="Script" uid="uid://doo34ll0yb078" path="res://Script/SmallPanel/PetInformPanel.gd" id="31_vygm6"]
+[ext_resource type="PackedScene" uid="uid://byxhjyyaahs6q" path="res://Scene/BigPanel/SpecialFarmPanel.tscn" id="31_ww70k"]
+[ext_resource type="Script" uid="uid://bakeq8tm6r4j4" path="res://Script/SmallPanel/GlobalServerBroadcastPanel.gd" id="34_k1sw4"]
+[ext_resource type="Script" uid="uid://dobao5y5s2dij" path="res://Script/SmallPanel/ScareCrowPanel.gd" id="35_6ylhg"]
+[ext_resource type="Texture2D" uid="uid://d06uaoowmcvxj" path="res://assets/稻草人图片/稻草人2.webp" id="36_jyxgm"]
+[ext_resource type="Texture2D" uid="uid://cbe0f8ex17csy" path="res://assets/稻草人图片/稻草人3.webp" id="37_6ylhg"]
+[ext_resource type="PackedScene" uid="uid://ibl5wbbw3pwc" path="res://CopyItems/item_button.tscn" id="39_cdkxt"]
+[ext_resource type="Script" uid="uid://dwf28j01ckg3y" path="res://Script/SmallPanel/WisdomTreePanel.gd" id="39_np7ck"]
+[ext_resource type="Script" uid="uid://b185o1hjnlrv5" path="res://Script/SmallPanel/CropInformPanel.gd" id="41_iluto"]
+[ext_resource type="Texture2D" uid="uid://3ff2lnbc0op7" path="res://assets/稻草人图片/稻草人1.webp" id="43_6rkns"]
+[ext_resource type="Script" uid="uid://dsmmxivba06ab" path="res://Script/Dialog/BatchSellPopup.gd" id="44_av1bx"]
+[ext_resource type="Script" uid="uid://bkel88rscubov" path="res://Script/SmallPanel/TodayDivinationPanel.gd" id="44_mw3xw"]
+[ext_resource type="FontFile" uid="uid://b81msdfp2ym2g" path="res://assets/字体/MapleMono-NF-CN-BoldItalic.ttf" id="45_vexnj"]
+[ext_resource type="Texture2D" uid="uid://cbdm5e6s8bf6l" path="res://assets/智慧树图片/智慧树4.webp" id="45_xvovi"]
+[ext_resource type="Script" uid="uid://cha0uw4ra1trr" path="res://Script/Dialog/AddProduct2StorePopup.gd" id="46_8d602"]
+[ext_resource type="Texture2D" uid="uid://dilipbs0lncpd" path="res://assets/草地图片/草地10.webp" id="48_2i8fe"]
+[ext_resource type="Texture2D" uid="uid://du34yctd8bd8m" path="res://assets/灌木丛图片/灌木丛1.webp" id="49_xjiif"]
+[ext_resource type="Texture2D" uid="uid://dk4yl4ghmxaa2" path="res://assets/天气系统图片/雪花.webp" id="53_4ka7t"]
+[ext_resource type="Texture2D" uid="uid://chcgrmluhfxuk" path="res://assets/天气系统图片/樱花1.webp" id="53_tdq2s"]
+[ext_resource type="Texture2D" uid="uid://c1qqalp7owgy2" path="res://assets/天气系统图片/栀子花1.webp" id="53_xyeuq"]
+[ext_resource type="Texture2D" uid="uid://b7g5ut03rm53n" path="res://assets/装饰物图片/小卖部.webp" id="54_06tja"]
+[ext_resource type="Texture2D" uid="uid://dfkgmj7e0555q" path="res://assets/天气系统图片/樱花2.webp" id="54_dygjy"]
+[ext_resource type="Texture2D" uid="uid://bfducebx4c4il" path="res://assets/天气系统图片/柳叶3.webp" id="54_jiccn"]
+[ext_resource type="Texture2D" uid="uid://cd7x78uyi2csh" path="res://assets/天气系统图片/栀子花2.webp" id="54_t4s8j"]
+[ext_resource type="Texture2D" uid="uid://dl58ie2lneq77" path="res://assets/天气系统图片/柳叶1.webp" id="55_e8wx8"]
+[ext_resource type="Texture2D" uid="uid://q0difb6wjkgm" path="res://assets/天气系统图片/樱花3.webp" id="55_edvcq"]
+[ext_resource type="Texture2D" uid="uid://j3h0ocagxf8" path="res://assets/装饰物图片/种子商店.webp" id="55_g4i0f"]
+[ext_resource type="Texture2D" uid="uid://cqqyc3ddwtvpn" path="res://assets/天气系统图片/栀子花3.webp" id="55_iluto"]
+[ext_resource type="Texture2D" uid="uid://d4e54gh5iccul" path="res://assets/装饰物图片/道具商店.webp" id="56_rlmnt"]
+[ext_resource type="Texture2D" uid="uid://deow5dqdm412v" path="res://assets/装饰物图片/宠物商店.webp" id="57_rlmnt"]
+[ext_resource type="Texture2D" uid="uid://dfeqilibb6ecs" path="res://assets/装饰物图片/作物仓库.webp" id="58_mjfri"]
+[ext_resource type="Texture2D" uid="uid://b738esrtjlho7" path="res://assets/装饰物图片/种子仓库.webp" id="59_612dn"]
+[ext_resource type="Texture2D" uid="uid://cbj1s6ctp0utb" path="res://assets/装饰物图片/玩家排行榜.webp" id="60_2fqxv"]
+[ext_resource type="Script" uid="uid://o4mcuqoivqri" path="res://GameManager/WeatherSystem.gd" id="62_uyv6e"]
+[ext_resource type="Texture2D" uid="uid://deh0dnprkw155" path="res://assets/装饰物图片/每日签到礼包.webp" id="63_ekowe"]
+[ext_resource type="Texture2D" uid="uid://ic2nvi3xlwl4" path="res://assets/装饰物图片/在线时长礼包.webp" id="64_crc4a"]
+[ext_resource type="Texture2D" uid="uid://1xgmal8sw6il" path="res://assets/装饰物图片/宠物背包.webp" id="67_onvxb"]
+[ext_resource type="Texture2D" uid="uid://ywdg7xgq7hm8" path="res://assets/装饰物图片/道具背包.webp" id="68_bpbm8"]
+[ext_resource type="Texture2D" uid="uid://b8k7gknqsokt2" path="res://assets/装饰物图片/占卜台.webp" id="68_yceks"]
+[ext_resource type="Texture2D" uid="uid://bnv6wb0k443fv" path="res://assets/天气系统图片/柳叶2.webp" id="69_uyv6e"]
+[ext_resource type="Texture2D" uid="uid://c1lviq3nc00u5" path="res://assets/装饰物图片/宠物天梯赛.webp" id="69_yceks"]
+[ext_resource type="Texture2D" uid="uid://bwljgu2ltfc7j" path="res://assets/装饰物图片/宠物小窝.webp" id="70_yceks"]
+[ext_resource type="Texture2D" uid="uid://dcfb173iikas" path="res://assets/装饰物图片/玩玩小游戏.webp" id="71_w7q6d"]
+[ext_resource type="Texture2D" uid="uid://cpsfkh7khetfb" path="res://assets/装饰物图片/神秘农场.webp" id="72_7i23t"]
+[ext_resource type="Script" uid="uid://di8wjflimodb0" path="res://GameManager/DayNightSystem.gd" id="73_6fhdl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_adtqp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n03md"]
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8d602"]
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5b81d"]
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2i8fe"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k1sw4"]
+bg_color = Color(0.6, 0.6, 0.6, 0.984314)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+corner_detail = 20
+shadow_size = 20
+shadow_offset = Vector2(5, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jyxgm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_np7ck"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xyeuq"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bpbm8"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t4s8j"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6ylhg"]
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+corner_detail = 20
+shadow_size = 20
+shadow_offset = Vector2(3, 3)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tdq2s"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+gravity = Vector3(-30, 80, 0)
+scale_min = 0.2
+scale_max = 0.3
+turbulence_enabled = true
+turbulence_noise_speed = Vector3(10, 0, 0)
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.07
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dygjy"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+gravity = Vector3(-30, 80, 0)
+scale_min = 0.2
+scale_max = 0.3
+turbulence_enabled = true
+turbulence_noise_speed = Vector3(10, 0, 0)
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.07
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6fhdl"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+gravity = Vector3(-30, 80, 0)
+scale_min = 0.4
+scale_max = 0.5
+turbulence_enabled = true
+turbulence_noise_speed = Vector3(10, 0, 0)
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.07
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e8wx8"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+gravity = Vector3(-30, 80, 0)
+scale_min = 0.4
+scale_max = 0.5
+turbulence_enabled = true
+turbulence_noise_speed = Vector3(10, 0, 0)
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.07
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_4ka7t"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+gravity = Vector3(-45, 80, 0)
+scale_min = 0.4
+scale_max = 0.5
+turbulence_enabled = true
+turbulence_noise_speed = Vector3(10, 0, 0)
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.07
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jiccn"]
+lifetime_randomness = 0.6
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 100.0
+initial_velocity_max = 400.0
+gravity = Vector3(0, 98, 0)
+scale_min = 4.0
+scale_max = 6.0
+color = Color(0, 0.380392, 1, 1)
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.08
+
+[sub_resource type="Curve" id="Curve_5dq3w"]
+_data = [Vector2(0, 0.987952), 0.0, 0.0, 0, 0, Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(0.0153846, 1), 0.0, 0.0, 0, 0, Vector2(0.838462, 0.253012), -2.16867, -2.16867, 0, 0, Vector2(0.976923, 0), 0.0, 0.0, 0, 0, Vector2(0.99999, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 7
+
+[sub_resource type="CurveTexture" id="CurveTexture_jiccn"]
+curve = SubResource("Curve_5dq3w")
+
+[sub_resource type="Gradient" id="Gradient_e8wx8"]
+offsets = PackedFloat32Array(0.372727, 0.718182)
+colors = PackedColorArray(0.886, 0.886, 0.886, 0.313, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_tdq2s"]
+gradient = SubResource("Gradient_e8wx8")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_nf3jg"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(1000, 1, 1)
+gravity = Vector3(45, 98, 0)
+scale_min = 0.4
+scale_max = 0.5
+color_initial_ramp = SubResource("GradientTexture1D_tdq2s")
+alpha_curve = SubResource("CurveTexture_jiccn")
+turbulence_enabled = true
+turbulence_noise_speed = Vector3(10, 0, 0)
+turbulence_influence_min = 0.02
+turbulence_influence_max = 0.07
+
+[sub_resource type="Environment" id="Environment_uyv6e"]
+background_mode = 3
+glow_enabled = true
+glow_intensity = 1.0
+glow_strength = 0.75
+glow_bloom = 1.0
+glow_blend_mode = 1
+fog_mode = 1
+fog_sun_scatter = 1.0
+fog_density = 1.0
+
+[node name="main" type="Node"]
+script = ExtResource("1_v3yaj")
+
+[node name="PetPatrolPoints" type="Node" parent="."]
+
+[node name="Pos1" type="Marker2D" parent="PetPatrolPoints"]
+position = Vector2(-276, -151)
+
+[node name="Pos2" type="Marker2D" parent="PetPatrolPoints"]
+position = Vector2(-276, 1052)
+
+[node name="Pos3" type="Marker2D" parent="PetPatrolPoints"]
+position = Vector2(1391, 1052)
+
+[node name="Pos4" type="Marker2D" parent="PetPatrolPoints"]
+position = Vector2(1391, -184)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="GUI" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="GameInfoHBox1" type="HBoxContainer" parent="UI/GUI"]
+layout_mode = 0
+offset_right = 1401.0
+offset_bottom = 35.0
+
+[node name="experience_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
+self_modulate = Color(0.498039, 1, 0, 1)
+layout_mode = 2
+texture = ExtResource("2_6jgly")
+expand_mode = 2
+
+[node name="experience" type="Label" parent="UI/GUI/GameInfoHBox1"]
+modulate = Color(0, 1, 0, 1)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "经验：999"
+vertical_alignment = 1
+
+[node name="level_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
+layout_mode = 2
+texture = ExtResource("3_y1hsh")
+expand_mode = 2
+
+[node name="level" type="Label" parent="UI/GUI/GameInfoHBox1"]
+modulate = Color(0, 1, 1, 1)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0.372549, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "等级：100"
+
+[node name="money_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
+layout_mode = 2
+texture = ExtResource("4_ql8k3")
+expand_mode = 2
+
+[node name="money" type="Label" parent="UI/GUI/GameInfoHBox1"]
+modulate = Color(1, 1, 0, 1)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0.372549, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "钱币：999"
+
+[node name="hungervalue_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
+layout_mode = 2
+texture = ExtResource("5_n03md")
+expand_mode = 2
+
+[node name="hunger_value" type="Label" parent="UI/GUI/GameInfoHBox1"]
+modulate = Color(0.88617, 0.748355, 0.764238, 1)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0.372549, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "体力值：20"
+
+[node name="like_image" type="TextureRect" parent="UI/GUI/GameInfoHBox1"]
+layout_mode = 2
+texture = ExtResource("6_8kysg")
+expand_mode = 2
+
+[node name="like" type="Label" parent="UI/GUI/GameInfoHBox1"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.992157, 0.482353, 0.482353, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0.372549, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "点赞数：0"
+
+[node name="GameInfoHBox2" type="HBoxContainer" parent="UI/GUI"]
+layout_mode = 0
+offset_top = 35.0
+offset_right = 1396.0
+offset_bottom = 70.0
+
+[node name="player_name_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+texture = ExtResource("7_n03md")
+expand_mode = 2
+
+[node name="player_name" type="Label" parent="UI/GUI/GameInfoHBox2"]
+modulate = Color(1, 0.670588, 0.490196, 1)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "玩家昵称:树萌芽"
+
+[node name="farm_name_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+texture = ExtResource("8_uhubb")
+expand_mode = 3
+
+[node name="farm_name" type="Label" parent="UI/GUI/GameInfoHBox2"]
+modulate = Color(1, 0.858824, 0.623529, 1)
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "农场名称：树萌芽的农场"
+
+[node name="status_label_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+texture = ExtResource("9_uc6q1")
+expand_mode = 2
+
+[node name="StatusLabel" type="Label" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "服务器状态：正在检测中"
+
+[node name="FPS_image" type="TextureRect" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+texture = ExtResource("10_uhubb")
+expand_mode = 2
+
+[node name="FPS" type="Label" parent="UI/GUI/GameInfoHBox2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68755, 0.948041, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "FPS：0"
+
+[node name="GameInfoHBox3" type="HBoxContainer" parent="UI/GUI"]
+layout_mode = 0
+offset_top = 70.0
+offset_right = 1398.0
+offset_bottom = 113.0
+
+[node name="tip_image" type="TextureRect" parent="UI/GUI/GameInfoHBox3"]
+layout_mode = 2
+texture = ExtResource("5_5b81d")
+expand_mode = 2
+
+[node name="tip" type="RichTextLabel" parent="UI/GUI/GameInfoHBox3"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/bold_italics_font_size = 25
+theme_override_font_sizes/italics_font_size = 25
+theme_override_font_sizes/mono_font_size = 25
+theme_override_font_sizes/normal_font_size = 25
+theme_override_font_sizes/bold_font_size = 25
+bbcode_enabled = true
+text = "游戏小提示"
+vertical_alignment = 1
+threaded = true
+
+[node name="GlobalServerBroadcast_image" type="TextureRect" parent="UI/GUI/GameInfoHBox3"]
+layout_mode = 2
+texture = ExtResource("13_5liyv")
+expand_mode = 2
+
+[node name="GlobalServerBroadcast" type="RichTextLabel" parent="UI/GUI/GameInfoHBox3"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_outline_size = 10
+theme_override_font_sizes/bold_italics_font_size = 25
+theme_override_font_sizes/italics_font_size = 25
+theme_override_font_sizes/mono_font_size = 25
+theme_override_font_sizes/normal_font_size = 25
+theme_override_font_sizes/bold_font_size = 25
+bbcode_enabled = true
+text = "全服大喇叭"
+vertical_alignment = 1
+threaded = true
+
+[node name="WatchBroadcast" type="Button" parent="UI/GUI/GameInfoHBox3"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0.513233, 0.513233, 0.513233, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 25
+text = "查看"
+
+[node name="onlineplayer_image" type="TextureRect" parent="UI/GUI/GameInfoHBox3"]
+layout_mode = 2
+texture = ExtResource("10_vygm6")
+expand_mode = 2
+
+[node name="onlineplayer" type="Label" parent="UI/GUI/GameInfoHBox3"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.423529, 1, 0.533333, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 10
+theme_override_fonts/font = ExtResource("3_t4s8j")
+theme_override_font_sizes/font_size = 25
+text = "检测中..."
+
+[node name="FarmVBox" type="VBoxContainer" parent="UI/GUI"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 263.0
+offset_right = 252.0
+offset_bottom = 795.0
+scale = Vector2(0.8, 0.8)
+alignment = 2
+
+[node name="SeedStoreButton" type="Button" parent="UI/GUI/FarmVBox"]
+visible = false
+modulate = Color(1, 0.564706, 0.647059, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "种子商店"
+
+[node name="SeedWarehouseButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(1, 0.772549, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "种子仓库"
+
+[node name="CropWarehouseButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(1, 0.772549, 0.219608, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "作物仓库"
+
+[node name="ItemStoreButton" type="Button" parent="UI/GUI/FarmVBox"]
+visible = false
+modulate = Color(0.231373, 0.772549, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "道具商店"
+
+[node name="ItemBagButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(0.639216, 0.984314, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "道具背包"
+
+[node name="OneClickHarvestButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(0.841258, 0.700703, 0.325362, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "一键收获"
+
+[node name="OneClickPlantButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(0.513945, 0.818793, 3.85046e-07, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "一键种植"
+
+[node name="AddNewGroundButton" type="Button" parent="UI/GUI/FarmVBox"]
+modulate = Color(1, 0.803922, 0.729412, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "添加新土地"
+
+[node name="VisitVBox" type="VBoxContainer" parent="UI/GUI"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 115.0
+offset_right = 252.0
+offset_bottom = 245.0
+scale = Vector2(0.8, 0.8)
+alignment = 2
+
+[node name="LikeButton" type="Button" parent="UI/GUI/VisitVBox"]
+modulate = Color(0.992157, 0.482353, 0.482353, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "点赞"
+
+[node name="BattleButton" type="Button" parent="UI/GUI/VisitVBox"]
+modulate = Color(0, 0.784782, 0.487639, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "发起对战"
+
+[node name="UseItemButton" type="Button" parent="UI/GUI/VisitVBox"]
+modulate = Color(0.37232, 0.679193, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "使用道具"
+
+[node name="SendMoneyButton" type="Button" parent="UI/GUI/VisitVBox"]
+modulate = Color(1, 1, 0, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "送金币"
+
+[node name="ReturnMyFarmButton" type="Button" parent="UI/GUI/VisitVBox"]
+modulate = Color(1, 1, 0.721569, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "返回我的农场"
+
+[node name="OtherVBox" type="VBoxContainer" parent="UI/GUI"]
+layout_mode = 0
+offset_left = 1198.0
+offset_top = 77.0
+offset_right = 1446.0
+offset_bottom = 408.0
+scale = Vector2(0.8, 0.8)
+alignment = 2
+
+[node name="TodayDivinationButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.917346, 0.737213, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "今日占卜"
+
+[node name="MyStoreButton" type="Button" parent="UI/GUI/OtherVBox"]
+visible = false
+modulate = Color(0.917346, 0.737213, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "我的小卖部"
+
+[node name="AccountSettingButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.843137, 0.772549, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "账户设置"
+
+[node name="OnlineGiftButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(1, 0.615686, 0.447059, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "在线礼包"
+
+[node name="NewPlayerGiftButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(1, 1, 0.447059, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "新手礼包"
+
+[node name="OneClickScreenShot" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.407843, 0.796078, 0.996078, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "截图模式"
+
+[node name="LuckyDrawButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.729412, 0.764706, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "幸运抽奖"
+
+[node name="PlayerRankingButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.717647, 1, 0.576471, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "玩家排行榜"
+
+[node name="DailyCheckInButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.807843, 1, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "每日签到"
+
+[node name="ReturnMainMenuButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.639216, 0.482353, 0.870588, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "返回主菜单"
+
+[node name="SmallGameButton" type="Button" parent="UI/GUI/OtherVBox"]
+visible = false
+modulate = Color(0.513726, 0.615686, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "游玩小游戏"
+
+[node name="SettingButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.345098, 0.764706, 1, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "设置"
+
+[node name="WisdomTreeButton" type="Button" parent="UI/GUI/OtherVBox"]
+visible = false
+modulate = Color(0.345098, 0.764706, 0.611765, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "智慧树"
+
+[node name="PetBagButton" type="Button" parent="UI/GUI/OtherVBox"]
+modulate = Color(0.992157, 0.482353, 0.870588, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "宠物背包"
+
+[node name="PetStoreButton" type="Button" parent="UI/GUI/OtherVBox"]
+visible = false
+modulate = Color(0.992157, 0.482353, 0.870588, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "宠物商店"
+
+[node name="ScareCrowButton" type="Button" parent="UI/GUI/OtherVBox"]
+visible = false
+modulate = Color(0.937381, 0.612088, 0.36654, 1)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "稻草人"
+
+[node name="BigPanel" type="CanvasLayer" parent="UI"]
+
+[node name="TCPNetworkManagerPanel" parent="UI/BigPanel" instance=ExtResource("7_401ut")]
+visible = false
+offset_top = 97.0
+offset_bottom = 97.0
+scale = Vector2(0.7, 0.7)
+theme_override_styles/panel = SubResource("StyleBoxFlat_adtqp")
+
+[node name="PlayerRankingPanel" parent="UI/BigPanel" instance=ExtResource("16_n03md")]
+visible = false
+offset_left = 73.0
+offset_top = 28.0
+offset_right = 1473.0
+offset_bottom = 748.0
+
+[node name="ItemStorePanel" parent="UI/BigPanel" instance=ExtResource("21_uhubb")]
+visible = false
+offset_left = 80.0
+offset_top = 77.0
+offset_right = 1620.0
+offset_bottom = 797.0
+
+[node name="ItemBagPanel" parent="UI/BigPanel" instance=ExtResource("20_n03md")]
+visible = false
+
+[node name="CropWarehousePanel" parent="UI/BigPanel" instance=ExtResource("18_5b81d")]
+
+[node name="PlayerBagPanel" parent="UI/BigPanel" instance=ExtResource("19_8kysg")]
+visible = false
+
+[node name="CropStorePanel" parent="UI/BigPanel" instance=ExtResource("17_ql8k3")]
+visible = false
+
+[node name="PlayerStorePanel" type="Panel" parent="UI/BigPanel"]
+visible = false
+offset_left = 69.0
+offset_top = 56.0
+offset_right = 1635.0
+offset_bottom = 836.0
+scale = Vector2(0.8, 0.8)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
+script = ExtResource("24_dygid")
+
+[node name="TMBackGround" type="ColorRect" parent="UI/BigPanel/PlayerStorePanel"]
+layout_mode = 0
+offset_left = -90.0
+offset_top = -71.0
+offset_right = 1672.0
+offset_bottom = 831.0
+color = Color(1, 1, 1, 0)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/BigPanel/PlayerStorePanel"]
+layout_mode = 2
+offset_left = 28.0
+offset_top = 95.0
+offset_right = 3805.0
+offset_bottom = 1723.0
+scale = Vector2(0.4, 0.4)
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Store_Grid" type="GridContainer" parent="UI/BigPanel/PlayerStorePanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+columns = 8
+
+[node name="Title" type="Label" parent="UI/BigPanel/PlayerStorePanel"]
+layout_mode = 2
+offset_right = 1566.0
+offset_bottom = 69.0
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 0.807843, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 50
+text = "玩家小卖部"
+horizontal_alignment = 1
+
+[node name="QuitButton" type="Button" parent="UI/BigPanel/PlayerStorePanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 1478.75
+offset_top = 20.0
+offset_right = 1538.75
+offset_bottom = 83.0
+theme_override_font_sizes/font_size = 40
+text = "X"
+
+[node name="RefreshButton" type="Button" parent="UI/BigPanel/PlayerStorePanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 27.5
+offset_top = 16.25
+offset_right = 115.5
+offset_bottom = 79.25
+theme_override_font_sizes/font_size = 40
+text = "刷新"
+
+[node name="BuyProductBoothButton" type="Button" parent="UI/BigPanel/PlayerStorePanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 207.5
+offset_top = 17.5
+offset_right = 535.5
+offset_bottom = 80.5
+theme_override_font_sizes/font_size = 40
+text = "购买商品摊位"
+
+[node name="PetStorePanel" parent="UI/BigPanel" instance=ExtResource("24_uc6q1")]
+visible = false
+
+[node name="PetBagPanel" type="Panel" parent="UI/BigPanel"]
+visible = false
+offset_left = 69.0
+offset_top = 56.0
+offset_right = 1635.0
+offset_bottom = 836.0
+scale = Vector2(0.8, 0.8)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_8d602")
+script = ExtResource("23_uc6q1")
+
+[node name="TMBackGround" type="ColorRect" parent="UI/BigPanel/PetBagPanel"]
+layout_mode = 0
+offset_left = -90.0
+offset_top = -71.0
+offset_right = 1672.0
+offset_bottom = 831.0
+color = Color(1, 1, 1, 0)
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/BigPanel/PetBagPanel"]
+layout_mode = 2
+offset_left = 28.0
+offset_top = 95.0
+offset_right = 3805.0
+offset_bottom = 1723.0
+scale = Vector2(0.4, 0.4)
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Bag_Grid" type="GridContainer" parent="UI/BigPanel/PetBagPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 3
+columns = 8
+
+[node name="Title" type="Label" parent="UI/BigPanel/PetBagPanel"]
+layout_mode = 2
+offset_right = 1566.0
+offset_bottom = 69.0
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 0.807843, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 50
+text = "宠物背包"
+horizontal_alignment = 1
+
+[node name="QuitButton" type="Button" parent="UI/BigPanel/PetBagPanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 1478.75
+offset_top = 20.0
+offset_right = 1538.75
+offset_bottom = 83.0
+theme_override_font_sizes/font_size = 40
+text = "X"
+
+[node name="RefreshButton" type="Button" parent="UI/BigPanel/PetBagPanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+offset_left = 27.5
+offset_top = 16.25
+offset_right = 115.5
+offset_bottom = 79.25
+theme_override_font_sizes/font_size = 40
+text = "刷新"
+
+[node name="DailyCheckInPanel" parent="UI/BigPanel" instance=ExtResource("18_m6fch")]
+visible = false
+
+[node name="LuckyDrawPanel" parent="UI/BigPanel" instance=ExtResource("17_f21le")]
+visible = false
+
+[node name="LoginPanel" parent="UI/BigPanel" instance=ExtResource("11_6jgly")]
+visible = false
+
+[node name="GameSettingPanel" parent="UI/BigPanel" instance=ExtResource("30_game_setting")]
+visible = false
+
+[node name="PetBattlePanel" parent="UI/BigPanel" instance=ExtResource("29_mw3xw")]
+visible = false
+
+[node name="PlayGamePanel" parent="UI/BigPanel" instance=ExtResource("30_rawle")]
+visible = false
+
+[node name="SpecialFarmPanel" parent="UI/BigPanel" instance=ExtResource("31_ww70k")]
+
+[node name="SmallPanel" type="CanvasLayer" parent="UI"]
+
+[node name="LoadProgressPanel" parent="UI/SmallPanel" instance=ExtResource("27_vygm6")]
+
+[node name="AccountSettingPanel" parent="UI/SmallPanel" instance=ExtResource("26_uc6q1")]
+offset_left = 219.0
+offset_top = 45.0
+offset_right = 1130.0
+offset_bottom = 692.0
+
+[node name="DebugPanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_left = 1000.0
+offset_top = -3.0
+offset_right = 1402.0
+offset_bottom = 716.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_5b81d")
+script = ExtResource("28_8kysg")
+
+[node name="Title" type="Label" parent="UI/SmallPanel/DebugPanel"]
+layout_mode = 0
+offset_right = 402.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 40
+text = "调试面板"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DebugRichText" type="RichTextLabel" parent="UI/SmallPanel/DebugPanel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 63.0
+offset_right = 391.0
+offset_bottom = 709.0
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/DebugPanel"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 0
+offset_left = 322.0
+offset_top = 11.0
+offset_right = 392.0
+offset_bottom = 81.0
+theme_override_font_sizes/font_size = 40
+text = "X"
+
+[node name="PetInformPanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_left = 342.0
+offset_right = 1022.0
+offset_bottom = 723.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_2i8fe")
+script = ExtResource("31_vygm6")
+
+[node name="Title" type="Label" parent="UI/SmallPanel/PetInformPanel"]
+layout_mode = 0
+offset_right = 680.0
+offset_bottom = 49.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 35
+text = "宠物信息"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PetImage" type="TextureRect" parent="UI/SmallPanel/PetInformPanel"]
+layout_mode = 0
+offset_left = 289.0
+offset_top = 56.0
+offset_right = 422.0
+offset_bottom = 184.0
+scale = Vector2(0.8, 0.8)
+texture = ExtResource("31_uc6q1")
+
+[node name="InformScroll" type="ScrollContainer" parent="UI/SmallPanel/PetInformPanel"]
+layout_mode = 0
+offset_top = 159.0
+offset_right = 683.0
+offset_bottom = 647.0
+
+[node name="VBox" type="VBoxContainer" parent="UI/SmallPanel/PetInformPanel/InformScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="PetNameHBox" type="HBoxContainer" parent="UI/SmallPanel/PetInformPanel/InformScroll/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PetName" type="Label" parent="UI/SmallPanel/PetInformPanel/InformScroll/VBox/PetNameHBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "宠物名字"
+horizontal_alignment = 1
+
+[node name="PetNameEdit" type="LineEdit" parent="UI/SmallPanel/PetInformPanel/InformScroll/VBox/PetNameHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+placeholder_text = "请输入宠物名字"
+
+[node name="PetInform" type="RichTextLabel" parent="UI/SmallPanel/PetInformPanel/InformScroll/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/bold_italics_font_size = 25
+theme_override_font_sizes/italics_font_size = 25
+theme_override_font_sizes/mono_font_size = 25
+theme_override_font_sizes/normal_font_size = 25
+theme_override_font_sizes/bold_font_size = 30
+bbcode_enabled = true
+threaded = true
+
+[node name="ButtonHBox" type="HBoxContainer" parent="UI/SmallPanel/PetInformPanel"]
+layout_mode = 0
+offset_top = 646.0
+offset_right = 680.0
+offset_bottom = 719.0
+
+[node name="EditInformButton" type="Button" parent="UI/SmallPanel/PetInformPanel/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "修改信息"
+
+[node name="FeedButton" type="Button" parent="UI/SmallPanel/PetInformPanel/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "喂养"
+
+[node name="UseItemButton" type="Button" parent="UI/SmallPanel/PetInformPanel/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "使用道具"
+
+[node name="BattleButton" type="Button" parent="UI/SmallPanel/PetInformPanel/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+text = "出战"
+
+[node name="PatroButton" type="Button" parent="UI/SmallPanel/PetInformPanel/ButtonHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 25
+toggle_mode = true
+text = "巡逻"
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/PetInformPanel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 626.0
+offset_right = 676.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="RefreshButton" type="Button" parent="UI/SmallPanel/PetInformPanel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+theme_override_font_sizes/font_size = 30
+text = "刷新"
+
+[node name="GlobalServerBroadcastPanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_left = 322.0
+offset_right = 985.0
+offset_bottom = 721.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_k1sw4")
+script = ExtResource("34_k1sw4")
+
+[node name="Title" type="Label" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 12.0
+offset_right = 653.0
+offset_bottom = 63.0
+theme_override_colors/font_color = Color(0.821789, 0.821789, 0.821789, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "全服大喇叭"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MessageContents" type="RichTextLabel" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 72.0
+offset_right = 653.0
+offset_bottom = 642.0
+theme_override_font_sizes/bold_italics_font_size = 15
+theme_override_font_sizes/italics_font_size = 15
+theme_override_font_sizes/mono_font_size = 15
+theme_override_font_sizes/normal_font_size = 15
+theme_override_font_sizes/bold_font_size = 15
+bbcode_enabled = true
+
+[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 649.0
+offset_right = 653.0
+offset_bottom = 709.0
+
+[node name="InputMessage" type="LineEdit" parent="UI/SmallPanel/GlobalServerBroadcastPanel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SendMessageButton" type="Button" parent="UI/SmallPanel/GlobalServerBroadcastPanel/HBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = " 发送 "
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 601.0
+offset_top = 12.0
+offset_right = 651.0
+offset_bottom = 62.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="WatchMoreButton" type="Button" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 13.0
+offset_top = 12.0
+offset_right = 141.0
+offset_bottom = 62.0
+theme_override_font_sizes/font_size = 30
+text = "查看更多"
+
+[node name="ScareCrowPanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_left = 122.0
+offset_top = 68.0
+offset_right = 1524.0
+offset_bottom = 791.0
+scale = Vector2(0.8, 0.8)
+theme_override_styles/panel = SubResource("StyleBoxFlat_jyxgm")
+script = ExtResource("35_6ylhg")
+
+[node name="Background" type="ColorRect" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_left = -150.0
+offset_top = -80.0
+offset_right = 1597.0
+offset_bottom = 810.0
+color = Color(1, 1, 1, 0)
+
+[node name="Title" type="Label" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_top = -3.0
+offset_right = 1403.0
+offset_bottom = 63.0
+theme_override_colors/font_color = Color(0.89059, 0.89059, 0.89059, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 40
+text = "农场稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BuyScareCrowHbox" type="HBoxContainer" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_top = 69.0
+offset_right = 2337.0
+offset_bottom = 333.0
+scale = Vector2(0.6, 0.6)
+alignment = 1
+
+[node name="ScareCrow1" type="Button" parent="UI/SmallPanel/ScareCrowPanel/BuyScareCrowHbox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "花费：999元"
+icon = ExtResource("43_6rkns")
+icon_alignment = 1
+
+[node name="ScareCrow2" type="Button" parent="UI/SmallPanel/ScareCrowPanel/BuyScareCrowHbox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "花费888元"
+icon = ExtResource("36_jyxgm")
+icon_alignment = 1
+
+[node name="ScareCrow3" type="Button" parent="UI/SmallPanel/ScareCrowPanel/BuyScareCrowHbox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "花费1000元"
+icon = ExtResource("37_6ylhg")
+icon_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_top = 227.0
+offset_right = 1403.0
+offset_bottom = 284.0
+
+[node name="ScareCrowName" type="Label" parent="UI/SmallPanel/ScareCrowPanel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "稻草人名字"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScareCrowInput" type="LineEdit" parent="UI/SmallPanel/ScareCrowPanel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "请输入稻草人名字"
+
+[node name="ScareCrowNameColor" type="Label" parent="UI/SmallPanel/ScareCrowPanel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "稻草人名字颜色"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScareCrowNameColorInput" type="ColorPickerButton" parent="UI/SmallPanel/ScareCrowPanel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.733005, 0.733005, 0.733005, 1)
+
+[node name="ScareCrowTalksGrid" type="GridContainer" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_top = 283.0
+offset_right = 1402.0
+offset_bottom = 387.0
+columns = 2
+
+[node name="Talk1" type="LineEdit" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入稻草人说的第一句话"
+
+[node name="Talk2" type="LineEdit" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入稻草人说的第二句话"
+
+[node name="Talk3" type="LineEdit" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入稻草人说的第三句话"
+
+[node name="Talk4" type="LineEdit" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+placeholder_text = "请输入稻草人说的第四句话"
+
+[node name="ScareCrowTalksColorGrid" type="GridContainer" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_left = -2.0
+offset_top = 399.0
+offset_right = 1400.0
+offset_bottom = 503.0
+columns = 4
+
+[node name="TalkColor1" type="Label" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "第一句话颜色 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorPickerButton1" type="ColorPickerButton" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TalkColor2" type="Label" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "第二句话颜色 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorPickerButton2" type="ColorPickerButton" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TalkColor3" type="Label" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "第三句话颜色 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorPickerButton3" type="ColorPickerButton" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TalkColor4" type="Label" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+text = "第四句话颜色 "
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ColorPickerButton4" type="ColorPickerButton" parent="UI/SmallPanel/ScareCrowPanel/ScareCrowTalksColorGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/ScareCrowPanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_left = 1334.0
+offset_top = 6.0
+offset_right = 1394.0
+offset_bottom = 66.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="Label" type="Label" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_top = 516.0
+offset_right = 1096.0
+offset_bottom = 571.0
+theme_override_font_sizes/font_size = 40
+text = "这个可爱的稻草人可以在别人访问你农场时向他/她展示几句话"
+
+[node name="HBox2" type="HBoxContainer" parent="UI/SmallPanel/ScareCrowPanel"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 656.0
+offset_right = 1402.0
+offset_bottom = 719.0
+alignment = 1
+
+[node name="SureButton" type="Button" parent="UI/SmallPanel/ScareCrowPanel/HBox2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "确认修改"
+
+[node name="WisdomTreePanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_left = 129.0
+offset_top = 63.0
+offset_right = 1529.0
+offset_bottom = 783.0
+scale = Vector2(0.8, 0.8)
+theme_override_styles/panel = SubResource("StyleBoxFlat_np7ck")
+script = ExtResource("39_np7ck")
+
+[node name="Background" type="ColorRect" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = -156.0
+offset_top = -76.0
+offset_right = 1589.0
+offset_bottom = 821.0
+color = Color(1, 1, 1, 0)
+
+[node name="Title" type="Label" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 19.0
+offset_right = 1382.0
+offset_bottom = 74.0
+theme_override_colors/font_color = Color(0.954954, 0.709181, 7.70092e-07, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 50
+text = "智慧树"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Description" type="Label" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 62.0
+offset_right = 1322.0
+offset_bottom = 280.0
+theme_override_colors/font_color = Color(0.654902, 1, 1, 1)
+theme_override_font_sizes/font_size = 30
+text = "只需花费一点点钱币，就可以匿名发送一句话，由于智慧树强大的链接性，
+其他玩家在浇水施肥时就有概率收到这句话。向他人发送一句祝福吧(,,・ω・,,) ，
+只要你不断的给智慧树浇水施肥，它就会长得越来越高"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 431.0
+offset_right = 1382.0
+offset_bottom = 531.0
+alignment = 1
+
+[node name="WaterButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "浇水"
+
+[node name="FertilizeButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "施肥"
+
+[node name="PlayMusicButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "放音乐"
+
+[node name="KillBugButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "杀虫"
+
+[node name="KillGrassButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "除草"
+
+[node name="ReviveButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/HBox"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "复活"
+
+[node name="VBox" type="VBoxContainer" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 531.0
+offset_right = 1383.0
+offset_bottom = 706.0
+
+[node name="Explanation" type="Label" parent="UI/SmallPanel/WisdomTreePanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "请在下方输入您想发送给别人的一句话"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/WisdomTreePanel/VBox"]
+layout_mode = 2
+
+[node name="TalkInput" type="LineEdit" parent="UI/SmallPanel/WisdomTreePanel/VBox/HBox"]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 35
+placeholder_text = "在这里输入(*´∀ ˋ*)"
+alignment = 1
+
+[node name="SendButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel/VBox/HBox"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 35
+text = "发送"
+
+[node name="Grid" type="GridContainer" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 303.0
+offset_right = 1383.0
+offset_bottom = 431.0
+columns = 2
+
+[node name="Level" type="Label" parent="UI/SmallPanel/WisdomTreePanel/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "等级：999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Health" type="Label" parent="UI/SmallPanel/WisdomTreePanel/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "生命值：999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Experience" type="Label" parent="UI/SmallPanel/WisdomTreePanel/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "经验值：999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Height" type="Label" parent="UI/SmallPanel/WisdomTreePanel/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "高度：999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="UI/SmallPanel/WisdomTreePanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 235.0
+offset_right = 1383.0
+offset_bottom = 290.0
+theme_override_font_sizes/font_size = 40
+text = "智慧树状态"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/WisdomTreePanel"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_left = 1317.0
+offset_top = 22.0
+offset_right = 1377.0
+offset_bottom = 85.0
+theme_override_font_sizes/font_size = 40
+text = "X"
+
+[node name="LandPanel" parent="UI/SmallPanel" instance=ExtResource("12_y1hsh")]
+visible = false
+
+[node name="OnlineGiftPanel" parent="UI/SmallPanel" instance=ExtResource("14_5b81d")]
+visible = false
+
+[node name="OneClickPlantPanel" parent="UI/SmallPanel" instance=ExtResource("15_8kysg")]
+visible = false
+offset_left = 371.0
+offset_top = 166.0
+offset_right = 979.0
+offset_bottom = 482.0
+
+[node name="CropInformPanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_left = 379.0
+offset_right = 1007.0
+offset_bottom = 723.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_xyeuq")
+script = ExtResource("41_iluto")
+
+[node name="Title" type="Label" parent="UI/SmallPanel/CropInformPanel"]
+layout_mode = 0
+offset_top = 17.0
+offset_right = 628.0
+offset_bottom = 74.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 35
+text = "作物信息"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/CropInformPanel"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 561.0
+offset_top = 17.0
+offset_right = 611.0
+offset_bottom = 67.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="VBox" type="VBoxContainer" parent="UI/SmallPanel/CropInformPanel"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 74.0
+offset_right = 615.0
+offset_bottom = 708.0
+
+[node name="CropImage" type="TextureRect" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+texture = ExtResource("31_uc6q1")
+stretch_mode = 3
+
+[node name="CropName" type="Label" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "名称："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CropDescription" type="Label" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "描述："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CropPrice" type="Label" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "收购价："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CropQuality" type="Label" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "品质："
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/CropInformPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 10
+alignment = 1
+
+[node name="SaleProduct" type="Button" parent="UI/SmallPanel/CropInformPanel/VBox/HBox"]
+custom_minimum_size = Vector2(120, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+theme_override_font_sizes/font_size = 30
+text = "直接出售"
+
+[node name="AddToStore" type="Button" parent="UI/SmallPanel/CropInformPanel/VBox/HBox"]
+custom_minimum_size = Vector2(120, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+theme_override_font_sizes/font_size = 30
+text = "放入小卖部"
+
+[node name="TodayDivinationPanel" type="PanelContainer" parent="UI/SmallPanel"]
+visible = false
+offset_left = 345.0
+offset_right = 1050.0
+offset_bottom = 713.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bpbm8")
+script = ExtResource("44_mw3xw")
+
+[node name="VBox" type="VBoxContainer" parent="UI/SmallPanel/TodayDivinationPanel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.807843, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 40
+text = "今日占卜"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Contents" type="RichTextLabel" parent="UI/SmallPanel/TodayDivinationPanel/VBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/normal_font = ExtResource("45_vexnj")
+theme_override_fonts/mono_font = ExtResource("45_vexnj")
+theme_override_fonts/italics_font = ExtResource("45_vexnj")
+theme_override_fonts/bold_italics_font = ExtResource("45_vexnj")
+theme_override_fonts/bold_font = ExtResource("45_vexnj")
+theme_override_font_sizes/bold_italics_font_size = 25
+theme_override_font_sizes/italics_font_size = 25
+theme_override_font_sizes/mono_font_size = 25
+theme_override_font_sizes/normal_font_size = 25
+theme_override_font_sizes/bold_font_size = 25
+bbcode_enabled = true
+text = "这是占卜内容"
+horizontal_alignment = 1
+threaded = true
+
+[node name="StartButton" type="Button" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 35
+text = "开始占卜"
+
+[node name="QuitButton" type="Button" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 35
+text = "结束占卜"
+
+[node name="DiaLog" type="CanvasLayer" parent="UI"]
+
+[node name="AcceptDialog" parent="UI/DiaLog" instance=ExtResource("16_0igvr")]
+visible = false
+
+[node name="BatchBuyPopup" type="PanelContainer" parent="UI/DiaLog"]
+visible = false
+offset_left = 426.0
+offset_top = 90.0
+offset_right = 928.0
+offset_bottom = 556.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_t4s8j")
+script = ExtResource("29_5b81d")
+
+[node name="VBox" type="VBoxContainer" parent="UI/DiaLog/BatchBuyPopup"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/DiaLog/BatchBuyPopup/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "是否购买"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Contents" type="Label" parent="UI/DiaLog/BatchBuyPopup/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 20
+text = "这是说明内容"
+horizontal_alignment = 1
+
+[node name="BuyNumEdit" type="LineEdit" parent="UI/DiaLog/BatchBuyPopup/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+
+[node name="HBox" type="HBoxContainer" parent="UI/DiaLog/BatchBuyPopup/VBox"]
+layout_mode = 2
+
+[node name="SureButton" type="Button" parent="UI/DiaLog/BatchBuyPopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "确定"
+
+[node name="CancelButton" type="Button" parent="UI/DiaLog/BatchBuyPopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "取消"
+
+[node name="BatchSellPopup" type="PanelContainer" parent="UI/DiaLog"]
+visible = false
+offset_left = 391.0
+offset_top = 95.0
+offset_right = 893.0
+offset_bottom = 561.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_t4s8j")
+script = ExtResource("44_av1bx")
+
+[node name="VBox" type="VBoxContainer" parent="UI/DiaLog/BatchSellPopup"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/DiaLog/BatchSellPopup/VBox"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 40
+text = "请选择出售数量"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Contents" type="Label" parent="UI/DiaLog/BatchSellPopup/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 20
+text = "这是说明内容"
+horizontal_alignment = 1
+
+[node name="SellNumEdit" type="LineEdit" parent="UI/DiaLog/BatchSellPopup/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+
+[node name="HBox" type="HBoxContainer" parent="UI/DiaLog/BatchSellPopup/VBox"]
+layout_mode = 2
+
+[node name="SureButton" type="Button" parent="UI/DiaLog/BatchSellPopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "确定"
+
+[node name="CancelButton" type="Button" parent="UI/DiaLog/BatchSellPopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "取消"
+
+[node name="AddProductToStorePopup" type="PanelContainer" parent="UI/DiaLog"]
+visible = false
+offset_left = 426.0
+offset_top = 59.0
+offset_right = 1026.0
+offset_bottom = 559.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_t4s8j")
+script = ExtResource("46_8d602")
+
+[node name="VBox" type="VBoxContainer" parent="UI/DiaLog/AddProductToStorePopup"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 40
+text = "弹窗标题"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Contents" type="Label" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.762404, 0.762404, 0.762404, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 24
+text = "弹窗内容"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SellNum" type="Label" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 24
+text = "请选择售卖的数量"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SellNumInput" type="LineEdit" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+
+[node name="SellPrice" type="Label" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 24
+text = "请选择售卖的价格"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SellPriceInput" type="LineEdit" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+
+[node name="HBox" type="HBoxContainer" parent="UI/DiaLog/AddProductToStorePopup/VBox"]
+layout_mode = 2
+
+[node name="SureButton" type="Button" parent="UI/DiaLog/AddProductToStorePopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "确定"
+
+[node name="CancelButton" type="Button" parent="UI/DiaLog/AddProductToStorePopup/VBox/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "取消"
+
+[node name="EscapeDialog" type="ConfirmationDialog" parent="UI/DiaLog"]
+title = "弹窗标题"
+initial_position = 3
+size = Vector2i(600, 500)
+current_screen = 0
+content_scale_factor = 1.4
+ok_button_text = "确定"
+cancel_button_text = "取消"
+
+[node name="BackgroundUI" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="BackgroundSwitcher" type="Sprite2D" parent="BackgroundUI"]
+show_behind_parent = true
+z_index = -100
+z_as_relative = false
+position = Vector2(703, 360)
+scale = Vector2(0.92, 0.92)
+script = ExtResource("17_0igvr")
+
+[node name="Background2" type="Sprite2D" parent="BackgroundUI/BackgroundSwitcher"]
+
+[node name="Timer" type="Timer" parent="BackgroundUI/BackgroundSwitcher"]
+
+[node name="GridContainer" type="GridContainer" parent="."]
+z_as_relative = false
+custom_minimum_size = Vector2(100, 100)
+offset_left = -2.0
+offset_top = 2.0
+offset_right = 1398.0
+offset_bottom = 722.0
+columns = 10
+
+[node name="Button" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button2" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button3" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button4" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button5" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button6" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button7" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button8" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button9" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button10" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button11" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button12" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button13" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button14" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button15" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button16" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button17" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button18" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button19" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="Button20" type="Button" parent="GridContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="CopyNodes" type="Node2D" parent="."]
+position = Vector2(-1000, 0)
+
+[node name="CropItem" parent="CopyNodes" instance=ExtResource("3_isiom")]
+z_index = 2
+z_as_relative = false
+offset_left = -1433.0
+offset_top = -161.0
+offset_right = -1333.0
+offset_bottom = -61.0
+
+[node name="item_button" parent="CopyNodes" instance=ExtResource("39_cdkxt")]
+
+[node name="GameCamera" type="Camera2D" parent="."]
+anchor_mode = 0
+position_smoothing_enabled = true
+script = ExtResource("10_o8l48")
+max_zoom = 1.8
+bounds_enabled = true
+bounds_min = Vector2(-500, -600)
+bounds_max = Vector2(500, 500)
+
+[node name="GameManager" type="Node" parent="."]
+
+[node name="GameBGMPlayer" type="Node" parent="."]
+script = ExtResource("28_m6fch")
+play_mode = 1
+music_files_list = Array[String](["res://assets/音乐/Anibli&RelaxingPianoMusic-StrollThroughtheSky.ogg", "res://assets/音乐/BanAM-Futatabi.ogg", "res://assets/音乐/MCMZebra-AlwaysandManyTimes.ogg", "res://assets/音乐/MicMusicbox-Ashitakasekki.ogg", "res://assets/音乐/Nemuネム-PromiseoftheWorld.ogg", "res://assets/音乐/α-WaveRelaxationHealingMusicLab-いつも何度でも[「千と千尋の神隠し」より][ピアノ].ogg", "res://assets/音乐/久石让-ふたたび.ogg", "res://assets/音乐/广桥真纪子-いのちの名前(生命之名).ogg", "res://assets/音乐/日本群星-PromiseoftheWorld.ogg"])
+
+[node name="Decoration" type="Node2D" parent="."]
+
+[node name="ScareCrow" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_top = -108.0
+offset_right = 264.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/ScareCrow"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="ScareCrowImage" type="Sprite2D" parent="Decoration/ScareCrow"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("43_6rkns")
+
+[node name="ScareCrowName" type="RichTextLabel" parent="Decoration/ScareCrow"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackgroundPanel" type="Panel" parent="Decoration/ScareCrow"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -265.0
+offset_right = 339.0
+offset_bottom = -145.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_6ylhg")
+
+[node name="ScareCrowtalks" type="RichTextLabel" parent="Decoration/ScareCrow/BackgroundPanel"]
+layout_mode = 0
+offset_left = 13.0
+offset_right = 390.0
+offset_bottom = 113.0
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/bold_italics_font_size = 35
+theme_override_font_sizes/italics_font_size = 35
+theme_override_font_sizes/mono_font_size = 35
+theme_override_font_sizes/normal_font_size = 35
+theme_override_font_sizes/bold_font_size = 35
+bbcode_enabled = true
+text = "臭小子不要偷我的菜，被我逮到你就完蛋了！"
+autowrap_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerStore" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 122.0
+offset_top = -108.0
+offset_right = 386.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/PlayerStore"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/PlayerStore"]
+position = Vector2(140, 57.5)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("54_06tja")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/PlayerStore"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "小卖部"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SeedStore" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 244.0
+offset_top = -108.0
+offset_right = 508.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/SeedStore"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/SeedStore"]
+position = Vector2(132, 48)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("55_g4i0f")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/SeedStore"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "种子商店"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ItemStore" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 366.0
+offset_top = -108.0
+offset_right = 630.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/ItemStore"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/ItemStore"]
+position = Vector2(132, 48)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("56_rlmnt")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/ItemStore"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "道具商店"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PetStore" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 488.0
+offset_top = -108.0
+offset_right = 752.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/PetStore"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/PetStore"]
+position = Vector2(132, 48)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("57_rlmnt")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/PetStore"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "宠物商店"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CropWarehouse" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 610.0
+offset_top = -108.0
+offset_right = 874.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/CropWarehouse"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/CropWarehouse"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("58_mjfri")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/CropWarehouse"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "作物仓库"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SeedWarehouse" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 732.0
+offset_top = -108.0
+offset_right = 996.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/SeedWarehouse"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/SeedWarehouse"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("59_612dn")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/SeedWarehouse"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "种子仓库"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerRank" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 854.0
+offset_top = -108.0
+offset_right = 1118.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/PlayerRank"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration/PlayerRank"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("60_2fqxv")
+
+[node name="Name" type="RichTextLabel" parent="Decoration/PlayerRank"]
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "[rainbow]玩家排行榜[/rainbow]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WisdomTree" type="Button" parent="Decoration"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 976.0
+offset_top = -108.0
+offset_right = 1240.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration/WisdomTree"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="WisdomTreeImage" type="Sprite2D" parent="Decoration/WisdomTree"]
+position = Vector2(135, -107.5)
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("45_xvovi")
+
+[node name="TreeName" type="Label" parent="Decoration/WisdomTree"]
+self_modulate = Color(2, 2, 2, 1)
+layout_mode = 0
+offset_left = 37.0
+offset_top = -450.0
+offset_right = 302.0
+offset_bottom = -401.0
+theme_override_font_sizes/font_size = 35
+text = "智慧树"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TreeStatus" type="Label" parent="Decoration/WisdomTree"]
+self_modulate = Color(2, 2, 2, 1)
+layout_mode = 0
+offset_left = -85.0
+offset_top = -495.0
+offset_right = 407.0
+offset_bottom = -446.0
+theme_override_font_sizes/font_size = 35
+text = "等级lv：99  高度：99m"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackgroundPanel" type="Panel" parent="Decoration/WisdomTree"]
+layout_mode = 0
+offset_left = -175.0
+offset_top = -655.0
+offset_right = 528.0
+offset_bottom = -500.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_6ylhg")
+
+[node name="AnonymousTalk" type="RichTextLabel" parent="Decoration/WisdomTree/BackgroundPanel"]
+layout_mode = 0
+offset_left = 13.0
+offset_right = 695.0
+offset_bottom = 155.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 15
+theme_override_font_sizes/bold_italics_font_size = 35
+theme_override_font_sizes/italics_font_size = 35
+theme_override_font_sizes/mono_font_size = 35
+theme_override_font_sizes/normal_font_size = 35
+theme_override_font_sizes/bold_font_size = 35
+bbcode_enabled = true
+text = "给未来的某个陌生人说一句话吧"
+autowrap_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration2" type="Node2D" parent="."]
+
+[node name="Decoration1" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = -108.0
+offset_right = 142.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration1"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration1"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration1"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration2" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_right = 142.0
+offset_bottom = 264.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration2"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration2"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration2"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration3" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 108.0
+offset_right = 142.0
+offset_bottom = 372.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration3"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration3"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration3"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration4" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 216.0
+offset_right = 142.0
+offset_bottom = 480.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration4"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration4"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration4"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration5" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 324.0
+offset_right = 142.0
+offset_bottom = 588.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration5"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration5"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration5"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration6" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 432.0
+offset_right = 142.0
+offset_bottom = 696.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration6"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration6"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration6"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration7" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 540.0
+offset_right = 142.0
+offset_bottom = 804.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration7"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration7"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration7"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration8" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 648.0
+offset_right = 142.0
+offset_bottom = 912.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration8"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration8"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration8"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration9" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 756.0
+offset_right = 142.0
+offset_bottom = 1020.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration9"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration9"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration9"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration10" type="Button" parent="Decoration2"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 864.0
+offset_right = 142.0
+offset_bottom = 1128.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration2/Decoration10"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration2/Decoration10"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration2/Decoration10"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration3" type="Node2D" parent="."]
+position = Vector2(1220, 0)
+
+[node name="Decoration1" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = -108.0
+offset_right = 142.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration1"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration1"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration1"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration2" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_right = 142.0
+offset_bottom = 264.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration2"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration2"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration2"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration3" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 108.0
+offset_right = 142.0
+offset_bottom = 372.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration3"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration3"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration3"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration4" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 216.0
+offset_right = 142.0
+offset_bottom = 480.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration4"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration4"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration4"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration5" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 324.0
+offset_right = 142.0
+offset_bottom = 588.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration5"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration5"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration5"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration6" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 432.0
+offset_right = 142.0
+offset_bottom = 696.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration6"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration6"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration6"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration7" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 540.0
+offset_right = 142.0
+offset_bottom = 804.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration7"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration7"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration7"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration8" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 648.0
+offset_right = 142.0
+offset_bottom = 912.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration8"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration8"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration8"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration9" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 756.0
+offset_right = 142.0
+offset_bottom = 1020.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration9"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration9"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration9"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration10" type="Button" parent="Decoration3"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = -122.0
+offset_top = 864.0
+offset_right = 142.0
+offset_bottom = 1128.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration3/Decoration10"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration3/Decoration10"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("49_xjiif")
+
+[node name="Name" type="RichTextLabel" parent="Decoration3/Decoration10"]
+visible = false
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "稻草人"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Decoration4" type="Node2D" parent="."]
+position = Vector2(0, 976)
+
+[node name="DailyCheckinGift" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_top = -108.0
+offset_right = 264.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/DailyCheckinGift"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/DailyCheckinGift"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("63_ekowe")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/DailyCheckinGift"]
+z_index = 5
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "每日签到礼包"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OnlineTimeGift" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 122.0
+offset_top = -108.0
+offset_right = 386.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/OnlineTimeGift"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/OnlineTimeGift"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("64_crc4a")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/OnlineTimeGift"]
+z_index = 5
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "在线时长礼包"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TodayDivination" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 244.0
+offset_top = -108.0
+offset_right = 508.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/TodayDivination"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/TodayDivination"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("68_yceks")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/TodayDivination"]
+z_index = 5
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "今日占卜"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PetLadderMatch" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 366.0
+offset_top = -108.0
+offset_right = 630.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/PetLadderMatch"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/PetLadderMatch"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("69_yceks")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/PetLadderMatch"]
+z_index = 5
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "宠物星辰塔"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PetNest" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 488.0
+offset_top = -108.0
+offset_right = 752.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/PetNest"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/PetNest"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("70_yceks")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/PetNest"]
+z_index = 5
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "宠物小窝"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlaySmallGame" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 610.0
+offset_top = -108.0
+offset_right = 874.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/PlaySmallGame"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/PlaySmallGame"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("71_w7q6d")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/PlaySmallGame"]
+z_index = 5
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "玩玩小游戏"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MysteryFarmland" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 732.0
+offset_top = -108.0
+offset_right = 996.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/MysteryFarmland"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/MysteryFarmland"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("72_7i23t")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/MysteryFarmland"]
+z_index = 5
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "神秘农场"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PetBag" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 854.0
+offset_top = -108.0
+offset_right = 1118.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/PetBag"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/PetBag"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("67_onvxb")
+
+[node name="Name" type="RichTextLabel" parent="Decoration4/PetBag"]
+z_index = 5
+layout_mode = 0
+offset_left = -65.0
+offset_top = -145.0
+offset_right = 339.0
+offset_bottom = -90.0
+theme_override_font_sizes/bold_italics_font_size = 40
+theme_override_font_sizes/italics_font_size = 40
+theme_override_font_sizes/mono_font_size = 40
+theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/bold_font_size = 40
+bbcode_enabled = true
+text = "宠物背包"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ItemBag" type="Button" parent="Decoration4"]
+self_modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(100, 100)
+offset_left = 976.0
+offset_top = -108.0
+offset_right = 1240.0
+offset_bottom = 156.0
+scale = Vector2(0.4, 0.4)
+
+[node name="GrassGroundImage" type="Sprite2D" parent="Decoration4/ItemBag"]
+position = Vector2(132, 134)
+scale = Vector2(1.4, 1.4)
+texture = ExtResource("48_2i8fe")
+
+[node name="Image" type="Sprite2D" parent="Decoration4/ItemBag"]
+position = Vector2(132, 48)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("68_bpbm8")
+
+[node name="Name" type="Label" parent="Decoration4/ItemBag"]
+self_modulate = Color(2, 2, 2, 1)
+z_index = 5
+layout_mode = 0
+offset_top = -145.0
+offset_right = 265.0
+offset_bottom = -96.0
+theme_override_font_sizes/font_size = 35
+text = "道具背包"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WeatherSystem" type="Node2D" parent="."]
+script = ExtResource("62_uyv6e")
+
+[node name="CherryBlossomRain" type="Node2D" parent="WeatherSystem"]
+visible = false
+z_index = 10
+position = Vector2(934, -469)
+
+[node name="CherryBlossomRain1" type="GPUParticles2D" parent="WeatherSystem/CherryBlossomRain"]
+self_modulate = Color(0.7, 0.7, 0.7, 1)
+z_index = 10
+position = Vector2(-143, 11)
+amount = 50
+texture = ExtResource("53_xyeuq")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_tdq2s")
+
+[node name="CherryBlossomRain2" type="GPUParticles2D" parent="WeatherSystem/CherryBlossomRain"]
+self_modulate = Color(0.7, 0.7, 0.7, 1)
+z_index = 10
+position = Vector2(-143, 11)
+amount = 50
+texture = ExtResource("54_t4s8j")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_tdq2s")
+
+[node name="CherryBlossomRain3" type="GPUParticles2D" parent="WeatherSystem/CherryBlossomRain"]
+self_modulate = Color(0.7, 0.7, 0.7, 1)
+z_index = 10
+position = Vector2(-143, 11)
+amount = 50
+texture = ExtResource("55_iluto")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_tdq2s")
+
+[node name="GardeniaRain" type="Node2D" parent="WeatherSystem"]
+visible = false
+z_index = 10
+position = Vector2(759, -370)
+
+[node name="WillowLeafRain1" type="GPUParticles2D" parent="WeatherSystem/GardeniaRain"]
+self_modulate = Color(0.9, 0.9, 0.9, 1)
+z_index = 10
+amount = 50
+texture = ExtResource("53_tdq2s")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_dygjy")
+
+[node name="WillowLeafRain2" type="GPUParticles2D" parent="WeatherSystem/GardeniaRain"]
+self_modulate = Color(0.9, 0.9, 0.9, 1)
+z_index = 10
+amount = 50
+texture = ExtResource("54_dygjy")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_dygjy")
+
+[node name="WillowLeafRain3" type="GPUParticles2D" parent="WeatherSystem/GardeniaRain"]
+self_modulate = Color(0.9, 0.9, 0.9, 1)
+z_index = 10
+amount = 50
+texture = ExtResource("55_edvcq")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_dygjy")
+
+[node name="WillowLeafRain" type="Node2D" parent="WeatherSystem"]
+visible = false
+z_index = 10
+position = Vector2(882, -469)
+
+[node name="WillowLeafRain1" type="GPUParticles2D" parent="WeatherSystem/WillowLeafRain"]
+self_modulate = Color(0.7, 0.7, 0.7, 1)
+z_index = 10
+amount = 50
+texture = ExtResource("69_uyv6e")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_6fhdl")
+
+[node name="WillowLeafRain2" type="GPUParticles2D" parent="WeatherSystem/WillowLeafRain"]
+self_modulate = Color(0.7, 0.7, 0.7, 1)
+z_index = 10
+amount = 50
+texture = ExtResource("55_e8wx8")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_e8wx8")
+
+[node name="WillowLeafRain3" type="GPUParticles2D" parent="WeatherSystem/WillowLeafRain"]
+self_modulate = Color(0.7, 0.7, 0.7, 1)
+z_index = 10
+amount = 50
+texture = ExtResource("54_jiccn")
+lifetime = 20.0
+preprocess = 10.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_4ka7t")
+
+[node name="Rain" type="GPUParticles2D" parent="WeatherSystem"]
+visible = false
+z_index = 10
+position = Vector2(246, -482)
+amount = 450
+lifetime = 10.0
+preprocess = 20.0
+speed_scale = 1.5
+visibility_rect = Rect2(-900, 0, 2000, 2000)
+trail_lifetime = 0.01
+process_material = SubResource("ParticleProcessMaterial_jiccn")
+
+[node name="Snow" type="GPUParticles2D" parent="WeatherSystem"]
+visible = false
+z_index = 10
+position = Vector2(16, -520)
+amount = 300
+texture = ExtResource("53_4ka7t")
+lifetime = 18.0
+preprocess = 30.0
+visibility_rect = Rect2(-900, 0, 2300, 2000)
+process_material = SubResource("ParticleProcessMaterial_nf3jg")
+
+[node name="DayNightSystem" type="Node2D" parent="."]
+script = ExtResource("73_6fhdl")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="DayNightSystem"]
+visible = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_uyv6e")
+
+[connection signal="pressed" from="UI/GUI/GameInfoHBox3/WatchBroadcast" to="." method="_on_watch_broadcast_button_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/SeedStoreButton" to="." method="_on_open_store_button_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/SeedWarehouseButton" to="." method="_on_seed_warehouse_button_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/CropWarehouseButton" to="." method="_on_crop_warehouse_button_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/ItemStoreButton" to="." method="_on_item_store_button_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/ItemBagButton" to="." method="_on_item_bag_button_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/OneClickHarvestButton" to="." method="_on_one_click_harvestbutton_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/OneClickPlantButton" to="." method="_on_one_click_plant_button_pressed"]
+[connection signal="pressed" from="UI/GUI/FarmVBox/AddNewGroundButton" to="." method="_on_add_new_ground_button_pressed"]
+[connection signal="pressed" from="UI/GUI/VisitVBox/LikeButton" to="." method="_on_like_button_pressed"]
+[connection signal="pressed" from="UI/GUI/VisitVBox/BattleButton" to="." method="_on_battle_button_pressed"]
+[connection signal="pressed" from="UI/GUI/VisitVBox/SendMoneyButton" to="." method="_on_send_money_button_pressed"]
+[connection signal="pressed" from="UI/GUI/VisitVBox/ReturnMyFarmButton" to="." method="_on_return_my_farm_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/TodayDivinationButton" to="." method="_on_today_divination_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/MyStoreButton" to="." method="_on_my_store_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/AccountSettingButton" to="." method="_on_account_setting_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/OnlineGiftButton" to="." method="_on_online_gift_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/NewPlayerGiftButton" to="." method="_on_new_player_gift_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/OneClickScreenShot" to="." method="_on_one_click_screen_shot_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/LuckyDrawButton" to="." method="_on_lucky_draw_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/PlayerRankingButton" to="." method="_on_player_ranking_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/DailyCheckInButton" to="." method="_on_daily_check_in_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/ReturnMainMenuButton" to="." method="_on_return_main_menu_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/SmallGameButton" to="." method="_on_online_gift_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/SettingButton" to="." method="_on_setting_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/WisdomTreeButton" to="." method="_on_setting_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/PetBagButton" to="." method="_on_pet_bag_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/PetStoreButton" to="." method="_on_pet_store_button_pressed"]
+[connection signal="pressed" from="UI/GUI/OtherVBox/ScareCrowButton" to="." method="_on_my_pet_button_pressed"]
+[connection signal="pressed" from="UI/SmallPanel/DebugPanel/QuitButton" to="UI/SmallPanel/DebugPanel" method="_on_quit_button_pressed"]
+[connection signal="pressed" from="Decoration/ScareCrow" to="." method="_on_scare_crow_pressed"]
+[connection signal="pressed" from="Decoration/PlayerStore" to="." method="_on_player_store_pressed"]
+[connection signal="pressed" from="Decoration/SeedStore" to="." method="_on_seed_store_pressed"]
+[connection signal="pressed" from="Decoration/ItemStore" to="." method="_on_item_store_pressed"]
+[connection signal="pressed" from="Decoration/PetStore" to="." method="_on_pet_store_pressed"]
+[connection signal="pressed" from="Decoration/CropWarehouse" to="." method="_on_crop_warehouse_pressed"]
+[connection signal="pressed" from="Decoration/SeedWarehouse" to="." method="_on_seed_warehouse_pressed"]
+[connection signal="pressed" from="Decoration/PlayerRank" to="." method="_on_player_rank_pressed"]
+[connection signal="pressed" from="Decoration/WisdomTree" to="." method="_on_wisdom_tree_pressed"]
+[connection signal="pressed" from="Decoration4/DailyCheckinGift" to="." method="_on_daily_checkin_gift_pressed"]
+[connection signal="pressed" from="Decoration4/OnlineTimeGift" to="." method="_on_online_time_gift_pressed"]
+[connection signal="pressed" from="Decoration4/TodayDivination" to="." method="_on_today_divination_pressed"]
+[connection signal="pressed" from="Decoration4/PetLadderMatch" to="." method="_on_pet_ladder_match_pressed"]
+[connection signal="pressed" from="Decoration4/PetNest" to="." method="_on_pet_nest_pressed"]
+[connection signal="pressed" from="Decoration4/PlaySmallGame" to="." method="_on_play_small_game_pressed"]
+[connection signal="pressed" from="Decoration4/MysteryFarmland" to="." method="_on_mystery_farmland_pressed"]
+[connection signal="pressed" from="Decoration4/PetBag" to="." method="_on_pet_bag_pressed"]
+[connection signal="pressed" from="Decoration4/ItemBag" to="." method="_on_item_bag_pressed"]

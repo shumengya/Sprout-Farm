@@ -1,0 +1,120 @@
+[gd_scene load_steps=2 format=3 uid="uid://c3nuuwu5te3bu"]
+
+[ext_resource type="Script" uid="uid://yhljjw1pbovq" path="res://Scene/SmallGame/Tetris.gd" id="1_s1q1g"]
+
+[node name="Tetris" type="Panel"]
+offset_right = 1403.0
+offset_bottom = 721.0
+script = ExtResource("1_s1q1g")
+
+[node name="GameArea" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 50.0
+offset_top = -300.0
+offset_right = 350.0
+offset_bottom = 300.0
+grow_vertical = 2
+
+[node name="NextPieceArea" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 50.0
+offset_right = -50.0
+offset_bottom = 200.0
+grow_horizontal = 0
+
+[node name="NextPieceLabel" type="Label" parent="NextPieceArea"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -50.0
+offset_top = 10.0
+offset_right = 50.0
+offset_bottom = 40.0
+grow_horizontal = 2
+text = "下一个"
+horizontal_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 220.0
+offset_right = -50.0
+offset_bottom = 250.0
+grow_horizontal = 0
+text = "分数: 0"
+horizontal_alignment = 1
+
+[node name="LevelLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 260.0
+offset_right = -50.0
+offset_bottom = 290.0
+grow_horizontal = 0
+text = "等级: 1"
+horizontal_alignment = 1
+
+[node name="LinesLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 300.0
+offset_right = -50.0
+offset_bottom = 330.0
+grow_horizontal = 0
+text = "消除行数: 0"
+horizontal_alignment = 1
+
+[node name="GameOverLabel" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -50.0
+offset_right = 100.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "游戏结束
+按空格重新开始"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DropTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="ControlsLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -200.0
+offset_top = 400.0
+offset_right = -50.0
+offset_bottom = 500.0
+grow_horizontal = 0
+text = "操作说明:
+A/D - 左右移动
+S - 快速下降
+W - 旋转
+空格 - 瞬间下降"

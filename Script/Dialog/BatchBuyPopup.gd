@@ -11,6 +11,7 @@ var current_item_name: String = ""
 var current_item_cost: int = 0
 var current_item_desc: String = ""
 var current_buy_type: String = "" # "seed" 或 "item"
+var max_stock: int = 999999999  # 最大库存限制，默认无限制
 
 # 回调函数，用于处理确认购买
 var confirm_callback: Callable
@@ -41,13 +42,14 @@ func _on_visibility_changed():
 		pass
 
 # 显示批量购买弹窗
-func show_buy_popup(item_name: String, item_cost: int, item_desc: String, buy_type: String, on_confirm: Callable, on_cancel: Callable = Callable()):
+func show_buy_popup(item_name: String, item_cost: int, item_desc: String, buy_type: String, on_confirm: Callable, on_cancel: Callable = Callable(), stock_limit: int = 999999999):
 	current_item_name = item_name
 	current_item_cost = item_cost
 	current_item_desc = item_desc
 	current_buy_type = buy_type
 	confirm_callback = on_confirm
 	cancel_callback = on_cancel
+	max_stock = stock_limit
 	
 	# 设置弹窗内容
 	if buy_type == "seed":
@@ -55,10 +57,15 @@ func show_buy_popup(item_name: String, item_cost: int, item_desc: String, buy_ty
 	else:
 		title.text = "批量购买道具"
 	
+	# 添加库存信息到内容中
+	var stock_info = ""
+	if stock_limit < 999999999:
+		stock_info = "\n当前库存: " + str(stock_limit) + " 个"
+	
 	contents.text = str(
 		"商品名称: " + item_name + "\n" +
 		"单价: " + str(item_cost) + " 元\n" +
-		"描述: " + item_desc + "\n\n" +
+		"描述: " + item_desc + stock_info + "\n\n" +
 		"请输入购买数量:"
 	)
 	
@@ -76,6 +83,14 @@ func _on_buy_num_changed(new_text: String):
 	for char in new_text:
 		if char.is_valid_int():
 			filtered_text += char
+	
+	# 检查是否超过库存限制并自动修正
+	if not filtered_text.is_empty():
+		var quantity = filtered_text.to_int()
+		if quantity > max_stock:
+			filtered_text = str(max_stock)
+		elif quantity > 999999999:
+			filtered_text = "999999999"
 	
 	if filtered_text != new_text:
 		buy_num_edit.text = filtered_text
@@ -116,6 +131,11 @@ func _on_sure_button_pressed():
 	
 	if quantity <= 0:
 		_show_error("购买数量必须大于0")
+		return
+	
+	# 检查是否超过库存限制
+	if quantity > max_stock:
+		_show_error("购买数量超过库存限制！最大可购买: " + str(max_stock))
 		return
 	
 	# 调用确认回调函数

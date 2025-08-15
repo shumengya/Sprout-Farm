@@ -31,6 +31,7 @@ class QQMailAPI:
         self.smtp_server = 'smtp.qq.com'
         self.smtp_port = 465  # SSL端口
     
+    # 发送纯文本邮件
     def send_text_email(self, receiver_email, subject, content, cc_emails=None):
         """
         发送纯文本邮件
@@ -65,6 +66,7 @@ class QQMailAPI:
             print(f"邮件发送失败：{str(e)}")
             return False
     
+    # 发送HTML格式邮件，可带附件
     def send_html_email(self, receiver_email, subject, html_content, cc_emails=None, attachments=None):
         """
         发送HTML格式邮件，可带附件
@@ -115,6 +117,8 @@ class QQMailAPI:
             return False
 
 class EmailVerification:
+
+    #生成指定长度的随机验证码
     @staticmethod
     def generate_verification_code(length=6):
         """
@@ -130,6 +134,7 @@ class EmailVerification:
         chars = string.ascii_uppercase + string.digits
         return ''.join(random.choice(chars) for _ in range(length))
     
+    #发送验证码邮件到QQ邮箱
     @staticmethod
     def send_verification_email(qq_number, verification_code, email_type="register"):
         """
@@ -192,6 +197,7 @@ class EmailVerification:
         except Exception as e:
             return False, f"发送验证码失败: {str(e)}"
     
+    #保存验证码到MongoDB（优先）或缓存文件（备用）
     @staticmethod
     def save_verification_code(qq_number, verification_code, expiry_time=300, code_type="register"):
         """
@@ -266,6 +272,7 @@ class EmailVerification:
             print(f"保存验证码失败: {str(e)}")
             return False
     
+    #验证用户输入的验证码（优先使用MongoDB）
     @staticmethod
     def verify_code(qq_number, input_code, code_type="register"):
         """
@@ -366,6 +373,7 @@ class EmailVerification:
             print(f"[验证码系统-JSON] QQ {qq_number} 验证失败: 验证码不匹配")
             return False, "验证码错误"
     
+    #清理过期的验证码和已使用的验证码（优先使用MongoDB）
     @staticmethod
     def clean_expired_codes():
         """
@@ -435,6 +443,7 @@ class EmailVerification:
         except Exception as e:
             print(f"清理验证码失败: {str(e)}")
     
+    #获取验证码状态（优先使用MongoDB）
     @staticmethod
     def get_verification_status(qq_number):
         """

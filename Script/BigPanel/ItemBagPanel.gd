@@ -73,6 +73,8 @@ func init_item_bag():
 	for child in bag_grid.get_children():
 		child.queue_free()
 	
+	# 重置筛选状态为显示全部
+	current_filter_type = "全部"
 	# 显示背包中的道具
 	update_item_bag_ui()
 
@@ -84,6 +86,9 @@ func update_item_bag_ui():
 	
 	# 获取过滤后的道具列表
 	var filtered_items = _get_filtered_items()
+	
+	# 输出筛选统计信息
+	print("道具背包筛选结果: ", current_filter_type, " - 共 ", filtered_items.size(), " 个道具")
 	
 	# 为背包中的每个道具创建按钮
 	for item_data in filtered_items:
@@ -177,8 +182,9 @@ func _get_filtered_items() -> Array:
 			if _is_pet_item(item_name):
 				filtered_items.append(item_data)
 		else:
-			# 正常模式显示所有道具
-			filtered_items.append(item_data)
+			# 正常模式下，应用筛选条件
+			if _is_item_match_filter(item_name):
+				filtered_items.append(item_data)
 	
 	return filtered_items
 
@@ -501,6 +507,8 @@ func _on_refresh_button_pressed() -> void:
 func _on_visibility_changed():
 	if visible:
 		GlobalVariables.isZoomDisabled = true
+		# 面板显示时请求同步最新的背包数据
+		tcp_network_manager_panel.send_sync_bag_data_request()
 		update_item_bag_ui()
 		pass
 	else:
@@ -515,3 +523,49 @@ func get_selected_item_name() -> String:
 # 检查是否有道具被选择
 func is_item_currently_selected() -> bool:
 	return is_item_selected
+
+
+#========================筛选功能============================
+# 当前筛选类型
+var current_filter_type: String = "全部"
+
+#显示全部，既全部显示（默认）
+func _on_all_filter_pressed() -> void:
+	current_filter_type = "全部"
+	update_item_bag_ui()
+	Toast.show("显示全部道具", Color.GREEN, 2.0, 1.0)
+
+#筛选宠物类型道具
+func _on_pet_filter_pressed() -> void:
+	current_filter_type = "宠物道具"
+	update_item_bag_ui()
+	Toast.show("筛选宠物道具", Color.GREEN, 2.0, 1.0)
+
+#筛选作物类型道具
+func _on_crop_filter_pressed() -> void:
+	current_filter_type = "作物道具"
+	update_item_bag_ui()
+	Toast.show("筛选作物道具", Color.GREEN, 2.0, 1.0)
+
+#筛选农场类型道具
+func _on_farm_filter_pressed() -> void:
+	current_filter_type = "农场道具"
+	update_item_bag_ui()
+	Toast.show("筛选农场道具", Color.GREEN, 2.0, 1.0)
+
+# 检查道具是否符合当前筛选条件
+func _is_item_match_filter(item_name: String) -> bool:
+	# 如果是显示全部，直接返回true
+	if current_filter_type == "全部":
+		return true
+	
+	# 检查道具配置中的类型
+	var item_config = _load_item_config()
+	if item_config and item_config.has(item_name):
+		var item_info = item_config[item_name]
+		var item_type = item_info.get("类型", "")
+		return item_type == current_filter_type
+	
+	# 如果没有配置信息，默认不显示
+	return false
+#========================筛选功能============================

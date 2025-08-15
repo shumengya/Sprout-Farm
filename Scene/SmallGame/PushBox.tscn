@@ -1,0 +1,85 @@
+[gd_scene load_steps=2 format=3 uid="uid://cq14axh7bovu6"]
+
+[ext_resource type="Script" uid="uid://b1t5fxyg0jjx5" path="res://Scene/SmallGame/PushBox.gd" id="1_qdfdf"]
+
+[node name="PushBox" type="Panel"]
+offset_right = 1402.0
+offset_bottom = 720.0
+script = ExtResource("1_qdfdf")
+
+[node name="GameArea" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -250.0
+offset_right = 300.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LevelLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = -100.0
+offset_right = 200.0
+offset_bottom = -70.0
+grow_vertical = 0
+text = "关卡: 1"
+
+[node name="MovesLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = -70.0
+offset_right = 200.0
+offset_bottom = -40.0
+grow_vertical = 0
+text = "步数: 0"
+
+[node name="WinLabel" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -50.0
+offset_right = 150.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "恭喜过关！
+按N进入下一关
+按R重新开始"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ControlsLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -150.0
+offset_right = -50.0
+offset_bottom = -50.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "操作说明:
+WASD或方向键 - 移动
+R - 重新开始当前关卡
+N - 下一关(过关后)
+P - 上一关"

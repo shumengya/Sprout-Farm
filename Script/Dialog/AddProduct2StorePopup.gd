@@ -82,6 +82,12 @@ func _on_sell_num_changed(new_text: String):
 		if char.is_valid_int():
 			filtered_text += char
 	
+	# 检查是否超过最大值并自动修正
+	if not filtered_text.is_empty():
+		var quantity = filtered_text.to_int()
+		if quantity > current_max_count:
+			filtered_text = str(current_max_count)
+	
 	if filtered_text != new_text:
 		sell_num_input.text = filtered_text
 		sell_num_input.caret_column = filtered_text.length()
@@ -96,6 +102,12 @@ func _on_sell_price_changed(new_text: String):
 	for char in new_text:
 		if char.is_valid_int():
 			filtered_text += char
+	
+	# 检查是否超过最大值并自动修正
+	if not filtered_text.is_empty():
+		var price = filtered_text.to_int()
+		if price > 999999999:
+			filtered_text = "999999999"
 	
 	if filtered_text != new_text:
 		sell_price_input.text = filtered_text
@@ -144,7 +156,9 @@ func get_sell_quantity() -> int:
 		return 1
 	
 	var quantity = text.to_int()
-	return max(1, quantity) # 至少出售1个
+	quantity = max(1, quantity) # 至少出售1个
+	quantity = min(quantity, current_max_count) # 不超过最大值
+	return quantity
 
 # 获取出售价格
 func get_sell_price() -> int:
@@ -153,7 +167,9 @@ func get_sell_price() -> int:
 		return current_suggested_price
 	
 	var price = text.to_int()
-	return max(1, price) # 至少1元
+	price = max(1, price) # 至少1元
+	price = min(price, 999999999) # 不超过最大值
+	return price
 
 # 确认添加按钮处理
 func _on_sure_button_pressed():

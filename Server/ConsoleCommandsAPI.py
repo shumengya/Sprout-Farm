@@ -32,6 +32,10 @@ class ConsoleCommandsAPI:
             "lsplayer": self.cmd_list_players, # 列出所有玩家
             "playerinfo": self.cmd_player_info, # 查看玩家信息
             "resetland": self.cmd_reset_land, # 重置玩家土地
+            "repasswd": self.cmd_reset_password, # 重置玩家密码
+            "rename": self.cmd_rename_player, # 重命名玩家昵称
+            "refarmname": self.cmd_rename_farm, # 重命名农场名称
+            "ban": self.cmd_ban_player, # 踢出玩家
             "weather": self.cmd_weather, # 设置天气
             "help": self.cmd_help, # 显示帮助信息
             "stop": self.cmd_stop, # 停止服务器
@@ -392,6 +396,175 @@ class ConsoleCommandsAPI:
         else:
             print("   当前无在线客户端")
     
+    def cmd_reset_password(self, args: List[str]):
+        """重置玩家密码命令: /repasswd QQ号"""
+        if len(args) != 1:
+            print("❌ 用法: /repasswd <QQ号>")
+            return
+            
+        qq_number = args[0]
+        
+        # 加载玩家数据
+        player_data = self.server.load_player_data(qq_number)
+        if not player_data:
+            print(f"❌ 玩家 {qq_number} 不存在")
+            return
+            
+        # 重置密码为123456
+        old_password = player_data.get("玩家密码", "未设置")
+        player_data["玩家密码"] = "123456"
+        
+        # 保存数据
+        success = self.server.save_player_data(qq_number, player_data)
+        if success:
+            print(f"✅ 已重置玩家 {qq_number} 的密码")
+            print(f"   新密码: 123456")
+        else:
+            print(f"❌ 重置玩家 {qq_number} 密码失败")
+    
+    def cmd_rename_player(self, args: List[str]):
+        """重命名玩家昵称命令: /rename QQ号 新昵称"""
+        if len(args) != 2:
+            print("❌ 用法: /rename <QQ号> <新昵称>")
+            return
+            
+        qq_number, new_nickname = args
+        
+        # 加载玩家数据
+        player_data = self.server.load_player_data(qq_number)
+        if not player_data:
+            print(f"❌ 玩家 {qq_number} 不存在")
+            return
+            
+        # 修改玩家昵称
+        old_nickname = player_data.get("玩家昵称", "未设置")
+        player_data["玩家昵称"] = new_nickname
+        
+        # 保存数据
+        success = self.server.save_player_data(qq_number, player_data)
+        if success:
+            print(f"✅ 已重命名玩家 {qq_number} 的昵称")
+            print(f"   原昵称: {old_nickname} → 新昵称: {new_nickname}")
+        else:
+            print(f"❌ 重命名玩家 {qq_number} 昵称失败")
+    
+    def cmd_rename_farm(self, args: List[str]):
+        """重命名农场名称命令: /refarmname QQ号 新农场名称"""
+        if len(args) != 2:
+            print("❌ 用法: /refarmname <QQ号> <新农场名称>")
+            return
+            
+        qq_number, new_farm_name = args
+        
+        # 加载玩家数据
+        player_data = self.server.load_player_data(qq_number)
+        if not player_data:
+            print(f"❌ 玩家 {qq_number} 不存在")
+            return
+            
+        # 修改农场名称
+        old_farm_name = player_data.get("农场名称", "未设置")
+        player_data["农场名称"] = new_farm_name
+        
+        # 保存数据
+        success = self.server.save_player_data(qq_number, player_data)
+        if success:
+            print(f"✅ 已重命名玩家 {qq_number} 的农场名称")
+            print(f"   原农场名: {old_farm_name} → 新农场名: {new_farm_name}")
+        else:
+            print(f"❌ 重命名玩家 {qq_number} 农场名称失败")
+    
+    def cmd_ban_player(self, args: List[str]):
+        """踢出玩家命令: /ban QQ号 [时长] [原因]"""
+        if len(args) < 1 or len(args) > 3:
+            print("❌ 用法: /ban <QQ号> [时长(秒)] [原因]")
+            print("   时长默认为0秒(立即可重新登录)，原因默认为'您已被管理员踢出服务器'")
+            return
+            
+        qq_number = args[0]
+        ban_duration = 0  # 默认0秒
+        ban_reason = "您已被管理员踢出服务器"  # 默认原因
+        
+        # 解析时长参数
+        if len(args) >= 2:
+            try:
+                ban_duration = int(args[1])
+                if ban_duration < 0:
+                    print("❌ 踢出时长不能为负数")
+                    return
+            except ValueError:
+                print("❌ 踢出时长必须是整数(秒)")
+                return
+        
+        # 解析原因参数
+        if len(args) >= 3:
+            ban_reason = args[2]
+        
+        # 加载玩家数据
+        player_data = self.server.load_player_data(qq_number)
+        if not player_data:
+            print(f"❌ 玩家 {qq_number} 不存在")
+            return
+        
+        # 计算禁止登录时间
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        ban_end_time = ""
+        if ban_duration > 0:
+            from datetime import timedelta
+            end_datetime = datetime.now() + timedelta(seconds=ban_duration)
+            ban_end_time = end_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        
+        # 设置禁用系统
+        if "禁用系统" not in player_data:
+            player_data["禁用系统"] = {}
+        
+        player_data["禁用系统"] = {
+            "是否被禁止登录": ban_duration > 0,
+            "禁止登录原因": ban_reason,
+            "禁止登录开始": current_time,
+            "禁止登录截止": ban_end_time
+        }
+        
+        # 保存数据
+        success = self.server.save_player_data(qq_number, player_data)
+        if not success:
+            print(f"❌ 保存玩家 {qq_number} 数据失败")
+            return
+        
+        # 如果玩家在线，强制下线
+        kicked_online = False
+        if hasattr(self.server, 'user_data'):
+            for client_id, user_info in self.server.user_data.items():
+                if user_info.get("username") == qq_number and user_info.get("logged_in", False):
+                    # 发送踢出消息
+                    kick_message = {
+                        "type": "kick_notification",
+                        "reason": ban_reason,
+                        "duration": ban_duration
+                    }
+                    self.server.send_data(client_id, kick_message)
+                    
+                    # 断开连接
+                    if hasattr(self.server, 'disconnect_client'):
+                        self.server.disconnect_client(client_id)
+                    
+                    kicked_online = True
+                    break
+        
+        # 输出结果
+        if ban_duration > 0:
+            print(f"✅ 已踢出玩家 {qq_number}，禁止登录 {ban_duration} 秒")
+            print(f"   踢出原因: {ban_reason}")
+            print(f"   禁止登录至: {ban_end_time}")
+        else:
+            print(f"✅ 已踢出玩家 {qq_number}，可立即重新登录")
+            print(f"   踢出原因: {ban_reason}")
+        
+        if kicked_online:
+            print(f"   玩家已在线，已强制下线")
+        else:
+            print(f"   玩家当前不在线")
+    
     def cmd_help(self, args: List[str]):
         """显示帮助信息"""
         print("🌱 萌芽农场服务器控制台命令帮助")
@@ -404,6 +577,10 @@ class ConsoleCommandsAPI:
         print("  /lsplayer                   - 列出所有已注册玩家")
         print("  /playerinfo <QQ号>          - 查看玩家详细信息")
         print("  /resetland <QQ号>           - 重置玩家土地状态")
+        print("  /repasswd <QQ号>            - 重置玩家密码为123456")
+        print("  /rename <QQ号> <新昵称>     - 重命名玩家昵称")
+        print("  /refarmname <QQ号> <新农场名> - 重命名农场名称")
+        print("  /ban <QQ号> [时长] [原因]   - 踢出玩家(时长秒,原因可选)")
         print("")
         print("游戏控制命令:")
         print("  /weather <类型>             - 控制全服天气")

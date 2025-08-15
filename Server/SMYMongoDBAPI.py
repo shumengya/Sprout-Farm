@@ -14,6 +14,30 @@ from datetime import datetime, timedelta
 from bson import ObjectId
 
 class SMYMongoDBAPI:
+
+    # ===================== 配置系统常量 =====================
+    #游戏配置JSON文档id
+    CONFIG_IDS = {
+        "daily_checkin": "687cce278e77ba00a7414ba2",#每日签到配置
+        "lucky_draw": "687cd52e8e77ba00a7414ba3",#幸运抽奖配置
+        "new_player": "687cdbd78e77ba00a7414ba4",#新玩家配置
+        "wisdom_tree": "687cdfbe8e77ba00a7414ba5",#智慧树配置
+        "online_gift": "687ce7678e77ba00a7414ba6",#在线礼包配置
+        "scare_crow": "687cea258e77ba00a7414ba8",# 稻草人系统配置
+        "item": "687cf17c8e77ba00a7414baa",# 道具系统配置
+        "pet": "687cf59b8e77ba00a7414bab",# 宠物系统配置
+        "stamina": "687cefba8e77ba00a7414ba9",# 体力值系统配置
+        "crop_data": "687cfb3d8e77ba00a7414bac",# 作物系统配置
+        "initial_player_data": "687e2f3f8e77ba00a7414bb0",# 初始玩家数据配置
+        "verification_codes": "687e35078e77ba00a7414bb1",# 验证码配置
+        "game_tips": "687e40008e77ba00a7414bb2",# 游戏小提示配置
+    }
+    # ===================== 配置系统常量 =====================
+
+
+
+
+    #初始化MongoDB API
     def __init__(self, environment: str = "test"):
         """
         初始化MongoDB API
@@ -51,6 +75,7 @@ class SMYMongoDBAPI:
         # 连接数据库
         self.connect()
     
+    # 连接到MongoDB数据库
     def connect(self) -> bool:
         """
         连接到MongoDB数据库
@@ -93,6 +118,7 @@ class SMYMongoDBAPI:
             self.connected = False
             return False
     
+    # 断开数据库连接
     def disconnect(self):
         """断开数据库连接"""
         if self.client:
@@ -100,10 +126,12 @@ class SMYMongoDBAPI:
             self.connected = False
             self.logger.info("已断开MongoDB连接")
     
+    # 检查数据库连接状态
     def is_connected(self) -> bool:
         """检查是否已连接到数据库"""
         return self.connected and self.client is not None
     
+    # 获取集合对象
     def get_collection(self, collection_name: str):
         """
         获取集合对象
@@ -120,6 +148,7 @@ class SMYMongoDBAPI:
     
     # ========================= 游戏配置管理 =========================
     
+    # 获取游戏配置（通过ObjectId）
     def _get_config_by_id(self, object_id: str, config_name: str) -> Optional[Dict[str, Any]]:
         """
         通用方法：根据ObjectId获取配置
@@ -139,11 +168,13 @@ class SMYMongoDBAPI:
             result = collection.find_one({"_id": oid})
             
             if result:
-                # 移除MongoDB的_id字段和updated_at字段
+                # 移除MongoDB的_id字段、updated_at字段和config_type字段
                 if "_id" in result:
                     del result["_id"]
                 if "updated_at" in result:
                     del result["updated_at"]
+                if "config_type" in result:
+                    del result["config_type"]
                     
                 self.logger.info(f"成功获取{config_name}")
                 return result
@@ -155,6 +186,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"获取{config_name}失败: {e}")
             return None
     
+    # 更新游戏配置（通过ObjectId）
     def _update_config_by_id(self, object_id: str, config_data: Dict[str, Any], config_name: str) -> bool:
         """
         通用方法：根据ObjectId更新配置
@@ -179,10 +211,14 @@ class SMYMongoDBAPI:
                 **config_data
             }
             
-            result = collection.replace_one({"_id": oid}, update_data)
+            # 使用upsert=True来创建或更新文档
+            result = collection.replace_one({"_id": oid}, update_data, upsert=True)
             
-            if result.acknowledged and result.matched_count > 0:
-                self.logger.info(f"成功更新{config_name}")
+            if result.acknowledged:
+                if result.matched_count > 0:
+                    self.logger.info(f"成功更新{config_name}")
+                elif result.upserted_id:
+                    self.logger.info(f"成功创建{config_name}")
                 return True
             else:
                 self.logger.error(f"更新{config_name}失败")
@@ -192,6 +228,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"更新{config_name}异常: {e}")
             return False
     
+    # 获取游戏配置（通过config_type）
     def get_game_config(self, config_type: str) -> Optional[Dict[str, Any]]:
         """
         获取游戏配置（通过config_type）
@@ -225,6 +262,8 @@ class SMYMongoDBAPI:
         except Exception as e:
             self.logger.error(f"获取游戏配置失败 [{config_type}]: {e}")
             return None
+    
+    # 更新游戏配置（通过config_type）
     def set_game_config(self, config_type: str, config_data: Dict[str, Any]) -> bool:
         """
         设置游戏配置
@@ -260,23 +299,10 @@ class SMYMongoDBAPI:
         except Exception as e:
             self.logger.error(f"设置游戏配置异常 [{config_type}]: {e}")
             return False
+    # ========================= 游戏配置管理 =========================
 
 
-    # ===================== 配置系统常量 =====================
-    CONFIG_IDS = {
-        "daily_checkin": "687cce278e77ba00a7414ba2",
-        "lucky_draw": "687cd52e8e77ba00a7414ba3", 
-        "new_player": "687cdbd78e77ba00a7414ba4",
-        "wisdom_tree": "687cdfbe8e77ba00a7414ba5",
-        "online_gift": "687ce7678e77ba00a7414ba6",
-        "scare_crow": "687cea258e77ba00a7414ba8",
-        "item": "687cf17c8e77ba00a7414baa",
-        "pet": "687cf59b8e77ba00a7414bab",
-        "stamina": "687cefba8e77ba00a7414ba9",
-        "crop_data": "687cfb3d8e77ba00a7414bac",
-        "initial_player_data": "687e2f3f8e77ba00a7414bb0",
-        "verification_codes": "687e35078e77ba00a7414bb1"
-    }
+
     
     #=====================每日签到系统======================
     def get_daily_checkin_config(self) -> Optional[Dict[str, Any]]:
@@ -399,6 +425,18 @@ class SMYMongoDBAPI:
     #=====================初始玩家数据模板系统======================
 
 
+    #=====================游戏小提示系统======================
+    def get_game_tips_config(self) -> Optional[Dict[str, Any]]:
+        """获取游戏小提示配置"""
+        return self._get_config_by_id(self.CONFIG_IDS["game_tips"], "游戏小提示配置")
+    
+    def update_game_tips_config(self, config_data: Dict[str, Any]) -> bool:
+        """更新游戏小提示配置"""
+        return self._update_config_by_id(self.CONFIG_IDS["game_tips"], config_data, "游戏小提示配置")
+    #=====================游戏小提示系统======================
+
+
+    #批量更新离线玩家的作物生长（优化版本，支持完整的加速效果计算）
     def batch_update_offline_players_crops(self, growth_multiplier: float = 1.0, exclude_online_players: List[str] = None) -> int:
         """
         批量更新离线玩家的作物生长（优化版本，支持完整的加速效果计算）
@@ -531,6 +569,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"批量更新离线玩家作物失败: {e}")
             return 0
     
+    #检查玩家是否在新玩家奖励期内（注册后3天内享受10倍生长速度）
     def _is_new_player_bonus_active(self, register_time_str: str) -> bool:
         """
         检查玩家是否在新玩家奖励期内（注册后3天内享受10倍生长速度）
@@ -562,13 +601,10 @@ class SMYMongoDBAPI:
         except ValueError as e:
             self.logger.warning(f"解析注册时间格式错误: {register_time_str}, 错误: {str(e)}")
             return False
-    
-    # 注意：get_offline_players_with_crops 方法已被移除
-    # 现在使用优化的 batch_update_offline_players_crops 方法直接在 MongoDB 中处理查询和更新
-    #=====================玩家数据管理======================
+
 
     # ========================= 验证码系统 =========================
-    
+    # 保存验证码到MongoDB
     def save_verification_code(self, qq_number: str, verification_code: str, 
                               expiry_time: int = 300, code_type: str = "register") -> bool:
         """
@@ -617,8 +653,8 @@ class SMYMongoDBAPI:
             self.logger.error(f"保存验证码异常 [QQ {qq_number}]: {e}")
             return False
     
-    def verify_verification_code(self, qq_number: str, input_code: str, 
-                                code_type: str = "register") -> tuple[bool, str]:
+    #验证用户输入的验证码
+    def verify_verification_code(self, qq_number: str, input_code: str, code_type: str = "register") -> tuple[bool, str]:
         """
         验证用户输入的验证码
         
@@ -671,6 +707,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"验证验证码异常 [QQ {qq_number}]: {e}")
             return False, "验证码验证失败"
     
+    #清理过期的验证码和已使用的验证码
     def clean_expired_verification_codes(self) -> int:
         """
         清理过期的验证码和已使用的验证码
@@ -708,10 +745,12 @@ class SMYMongoDBAPI:
             self.logger.error(f"清理验证码异常: {e}")
             return 0
     
-    #=====================验证码系统======================
+    # ========================= 验证码系统 =========================
 
-    # ========================= 通用数据库操作 =========================
-    
+
+
+    #========================玩家数据管理==========================
+    #获取玩家数据
     def get_player_data(self, account_id: str) -> Optional[Dict[str, Any]]:
         """获取玩家数据
         
@@ -746,6 +785,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"获取玩家数据失败 [{account_id}]: {e}")
             return None
     
+    #保存玩家数据
     def save_player_data(self, account_id: str, player_data: Dict[str, Any]) -> bool:
         """保存玩家数据
         
@@ -780,6 +820,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"保存玩家数据异常 [{account_id}]: {e}")
             return False
     
+    #删除玩家数据
     def delete_player_data(self, account_id: str) -> bool:
         """删除玩家数据
         
@@ -806,6 +847,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"删除玩家数据异常 [{account_id}]: {e}")
             return False
     
+    #获取所有玩家的基本信息
     def get_all_players_basic_info(self, projection: Dict[str, int] = None) -> List[Dict[str, Any]]:
         """获取所有玩家的基本信息（优化版本，用于排行榜等）
         
@@ -848,6 +890,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"获取玩家基本信息失败: {e}")
             return []
     
+    #根据条件获取玩家数据
     def get_players_by_condition(self, condition: Dict[str, Any], 
                                 projection: Dict[str, int] = None,
                                 limit: int = 0) -> List[Dict[str, Any]]:
@@ -886,6 +929,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"根据条件获取玩家数据失败: {e}")
             return []
     
+    #获取长时间离线的玩家
     def get_offline_players(self, offline_days: int = 3) -> List[Dict[str, Any]]:
         """获取长时间离线的玩家（用于杂草生长等）
         
@@ -931,6 +975,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"获取离线玩家失败: {e}")
             return []
     
+    #检查玩家是否离线超过指定天数
     def _is_player_offline_by_time(self, last_login_str: str, offline_days: int) -> bool:
         """检查玩家是否离线超过指定天数"""
         try:
@@ -949,6 +994,7 @@ class SMYMongoDBAPI:
         except Exception:
             return False
     
+    #递归转换数据中的datetime对象为字符串
     def _convert_datetime_to_string(self, data: Any) -> Any:
         """
         递归转换数据中的datetime对象为字符串
@@ -970,6 +1016,7 @@ class SMYMongoDBAPI:
         else:
             return data
     
+    #统计玩家总数
     def count_total_players(self) -> int:
         """统计玩家总数
         
@@ -987,6 +1034,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"统计玩家总数失败: {e}")
             return 0
     
+    #更新玩家的特定字段
     def update_player_field(self, account_id: str, field_updates: Dict[str, Any]) -> bool:
         """更新玩家的特定字段
         
@@ -1019,153 +1067,11 @@ class SMYMongoDBAPI:
         except Exception as e:
             self.logger.error(f"更新玩家字段异常 [{account_id}]: {e}")
             return False
-    #=====================玩家数据管理======================
+    #========================玩家数据管理==========================
 
-    # ========================= 验证码系统 =========================
-    
-    def save_verification_code(self, qq_number: str, verification_code: str, 
-                              expiry_time: int = 300, code_type: str = "register") -> bool:
-        """
-        保存验证码到MongoDB
-        
-        Args:
-            qq_number: QQ号
-            verification_code: 验证码
-            expiry_time: 过期时间（秒），默认5分钟
-            code_type: 验证码类型，"register" 或 "reset_password"
-            
-        Returns:
-            bool: 保存成功返回True，否则返回False
-        """
-        try:
-            import time
-            from datetime import datetime, timedelta
-            
-            collection = self.get_collection("verification_codes")
-            
-            # 计算过期时间
-            expire_at = datetime.now() + timedelta(seconds=expiry_time)
-            
-            # 验证码文档
-            verification_doc = {
-                "qq_number": qq_number,
-                "code": verification_code,
-                "code_type": code_type,
-                "created_at": datetime.now(),
-                "expire_at": expire_at,
-                "used": False
-            }
-            
-            # 使用upsert更新或插入（覆盖同一QQ号的旧验证码）
-            query = {"qq_number": qq_number, "code_type": code_type}
-            result = collection.replace_one(query, verification_doc, upsert=True)
-            
-            if result.acknowledged:
-                self.logger.info(f"成功保存验证码: QQ {qq_number}, 类型 {code_type}")
-                return True
-            else:
-                self.logger.error(f"保存验证码失败: QQ {qq_number}")
-                return False
-                
-        except Exception as e:
-            self.logger.error(f"保存验证码异常 [QQ {qq_number}]: {e}")
-            return False
-    
-    def verify_verification_code(self, qq_number: str, input_code: str, 
-                                code_type: str = "register") -> tuple:
-        """
-        验证用户输入的验证码
-        
-        Args:
-            qq_number: QQ号
-            input_code: 用户输入的验证码
-            code_type: 验证码类型，"register" 或 "reset_password"
-            
-        Returns:
-            tuple: (验证成功, 消息)
-        """
-        try:
-            from datetime import datetime
-            
-            collection = self.get_collection("verification_codes")
-            
-            # 查找验证码
-            query = {"qq_number": qq_number, "code_type": code_type}
-            code_doc = collection.find_one(query)
-            
-            if not code_doc:
-                return False, "验证码不存在，请重新获取"
-            
-            # 检查是否已使用
-            if code_doc.get("used", False):
-                return False, "验证码已使用，请重新获取"
-            
-            # 检查是否过期
-            if datetime.now() > code_doc.get("expire_at", datetime.now()):
-                return False, "验证码已过期，请重新获取"
-            
-            # 验证码码
-            if input_code.upper() != code_doc.get("code", "").upper():
-                return False, "验证码错误，请重新输入"
-            
-            # 标记为已使用
-            update_result = collection.update_one(
-                query, 
-                {"$set": {"used": True, "used_at": datetime.now()}}
-            )
-            
-            if update_result.acknowledged:
-                self.logger.info(f"验证码验证成功: QQ {qq_number}, 类型 {code_type}")
-                return True, "验证码验证成功"
-            else:
-                self.logger.error(f"标记验证码已使用失败: QQ {qq_number}")
-                return False, "验证码验证失败"
-                
-        except Exception as e:
-            self.logger.error(f"验证验证码异常 [QQ {qq_number}]: {e}")
-            return False, "验证码验证失败"
-    
-    def clean_expired_verification_codes(self) -> int:
-        """
-        清理过期的验证码和已使用的验证码
-        
-        Returns:
-            int: 清理的验证码数量
-        """
-        try:
-            from datetime import datetime, timedelta
-            
-            collection = self.get_collection("verification_codes")
-            
-            current_time = datetime.now()
-            one_hour_ago = current_time - timedelta(hours=1)
-            
-            # 删除条件：过期的验证码 或 已使用超过1小时的验证码
-            delete_query = {
-                "$or": [
-                    {"expire_at": {"$lt": current_time}},  # 过期的
-                    {"used": True, "used_at": {"$lt": one_hour_ago}}  # 已使用超过1小时的
-                ]
-            }
-            
-            result = collection.delete_many(delete_query)
-            
-            if result.acknowledged:
-                deleted_count = result.deleted_count
-                self.logger.info(f"清理验证码完成: 删除了 {deleted_count} 个验证码")
-                return deleted_count
-            else:
-                self.logger.error("清理验证码失败")
-                return 0
-                
-        except Exception as e:
-            self.logger.error(f"清理验证码异常: {e}")
-            return 0
-    
-    #=====================验证码系统======================
 
     # ========================= 通用数据库操作 =========================
-    
+    #插入文档
     def insert_document(self, collection_name: str, document: Dict[str, Any]) -> Optional[str]:
         """
         插入文档
@@ -1191,6 +1097,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"插入文档失败 [{collection_name}]: {e}")
             return None
     
+    #查找文档
     def find_documents(self, collection_name: str, query: Dict[str, Any] = None, 
                       limit: int = 0) -> List[Dict[str, Any]]:
         """
@@ -1220,6 +1127,9 @@ class SMYMongoDBAPI:
             for doc in documents:
                 if "_id" in doc:
                     doc["_id"] = str(doc["_id"])
+                # 如果是gameconfig集合，移除config_type字段以防止客户端报错
+                if collection_name == "gameconfig" and "config_type" in doc:
+                    del doc["config_type"]
             
             # 转换datetime对象为字符串
             documents = [self._convert_datetime_to_string(doc) for doc in documents]
@@ -1230,6 +1140,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"查找文档失败 [{collection_name}]: {e}")
             return []
     
+    #更新文档
     def update_document(self, collection_name: str, query: Dict[str, Any], 
                        update: Dict[str, Any]) -> bool:
         """
@@ -1253,6 +1164,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"更新文档失败 [{collection_name}]: {e}")
             return False
     
+    #删除文档
     def delete_document(self, collection_name: str, query: Dict[str, Any]) -> bool:
         """
         删除文档
@@ -1273,9 +1185,12 @@ class SMYMongoDBAPI:
         except Exception as e:
             self.logger.error(f"删除文档失败 [{collection_name}]: {e}")
             return False
-    
+    # ========================= 通用数据库操作 =========================
+
+
+
     # ========================= 聊天消息管理 =========================
-    
+    #保存聊天消息到MongoDB（按天存储）
     def save_chat_message(self, username: str, player_name: str, content: str) -> bool:
         """
         保存聊天消息到MongoDB（按天存储）
@@ -1341,6 +1256,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"保存聊天消息异常: {e}")
             return False
     
+    #获取聊天历史消息（从按天存储的chat集合）
     def get_chat_history(self, days: int = 3, limit: int = 500) -> List[Dict[str, Any]]:
         """
         获取聊天历史消息（从按天存储的chat集合）
@@ -1399,6 +1315,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"获取聊天历史失败: {e}")
             return []
     
+    #获取最新的聊天消息（从按天存储的chat集合）
     def get_latest_chat_message(self) -> Optional[Dict[str, Any]]:
         """
         获取最新的聊天消息（从按天存储的chat集合）
@@ -1439,6 +1356,7 @@ class SMYMongoDBAPI:
             self.logger.error(f"获取最新聊天消息失败: {e}")
             return None
     
+    #删除旧的聊天消息（从按天存储的chat集合）
     def clean_old_chat_messages(self, keep_days: int = 30) -> int:
         """
         清理旧的聊天消息（从按天存储的chat集合）

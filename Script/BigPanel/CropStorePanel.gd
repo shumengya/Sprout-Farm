@@ -43,6 +43,11 @@ var current_filter_quality = ""
 var current_sort_key = ""
 var current_sort_ascending = true
 
+# 库存系统
+var crop_stock_data : Dictionary = {}  # 存储每个作物的库存数量
+var stock_file_path : String = ""  # 库存数据文件路径（根据用户名动态设置）
+var last_refresh_date : String = ""  # 上次刷新库存的日期
+
 # 准备函数
 func _ready():
 	# 连接按钮信号
@@ -50,6 +55,9 @@ func _ready():
 	
 	# 连接可见性改变信号
 	visibility_changed.connect(_on_visibility_changed)
+	
+	# 初始化库存系统
+	_init_stock_system()
 	
 	# 隐藏面板（初始默认隐藏）
 	self.hide()
@@ -60,6 +68,8 @@ func _ready():
 func _connect_buttons():
 	# 关闭按钮
 	quit_button.pressed.connect(self._on_quit_button_pressed)
+	# 刷新按钮
+	refresh_button.pressed.connect(self._on_refresh_button_pressed)
 	
 	# 过滤按钮
 	sort_all_button.pressed.connect(func(): _filter_by_quality(""))
@@ -78,11 +88,22 @@ func _connect_buttons():
 # 初始化商店
 func init_store():
 	
+	# 重新初始化库存系统（确保用户名正确）
+	_init_stock_system()
+	
 	# 清空已有的作物按钮
 	for child in crop_grid_container.get_children():
 		child.queue_free()
 	
-	# 遍历可种植的作物数据并添加到商店
+	# 检查并刷新库存（如果需要）
+	_check_daily_refresh()
+	
+	# 获取玩家当前等级，确定可解锁的格子数量
+	var player_level = main_game.level
+	var max_unlocked_slots = player_level  # 玩家等级 = 可解锁的格子数量
+	
+	# 收集符合条件的作物
+	var available_crops = []
 	for crop_name in main_game.can_planted_crop:
 		var crop = main_game.can_planted_crop[crop_name]
 		
@@ -92,13 +113,33 @@ func init_store():
 		
 		# 只显示当前等级可以种植的作物
 		if crop["等级"] <= main_game.level:
-			var store_btn = _create_store_button(crop_name, crop["品质"])
-			crop_grid_container.add_child(store_btn)
+			available_crops.append({"name": crop_name, "data": crop})
 	
-	print("商店初始化完成，共添加按钮: " + str(crop_grid_container.get_child_count()) + "个")
+	# 根据等级限制显示的格子数量
+	var slots_to_show = min(available_crops.size(), max_unlocked_slots)
+	
+	# 添加可显示的作物按钮
+	for i in range(slots_to_show):
+		var crop_info = available_crops[i]
+		var store_btn = _create_store_button(crop_info["name"], crop_info["data"]["品质"])
+		crop_grid_container.add_child(store_btn)
+	
+	# 添加锁定的格子（如果有剩余的可用作物但等级不够解锁）
+	var remaining_crops = available_crops.size() - slots_to_show
+	if remaining_crops > 0:
+		# 创建锁定格子提示
+		var locked_slots = min(remaining_crops, 5)  # 最多显示5个锁定格子作为提示
+		for i in range(locked_slots):
+			var locked_btn = _create_locked_slot_button(player_level + 1)
+			crop_grid_container.add_child(locked_btn)
+	
+	print("商店初始化完成，玩家等级: ", player_level, ", 解锁格子: ", slots_to_show, ", 可用作物: ", available_crops.size())
 	
 	# 更新金钱显示
 	_update_money_display()
+	
+	# 显示等级限制提示
+	_show_level_restriction_info(player_level, available_crops.size(), slots_to_show)
 
 # 创建商店按钮
 func _create_store_button(crop_name: String, crop_quality: String) -> Button:
@@ -107,14 +148,26 @@ func _create_store_button(crop_name: String, crop_quality: String) -> Button:
 
 	var crop = main_game.can_planted_crop[crop_name]
 	
-	# 确保按钮可见并可点击
+	# 获取当前库存
+	var current_stock = _get_crop_stock(crop_name)
+	var is_sold_out = current_stock <= 0
+	
+	# 设置按钮状态
 	button.visible = true
-	button.disabled = false
+	button.disabled = is_sold_out
 	button.focus_mode = Control.FOCUS_ALL
 	
-	# 设置按钮文本，显示价格
+	# 设置按钮文本，显示价格和库存
 	var display_name = crop.get("作物名称", crop_name)
-	button.text = str(crop_quality + "-" + display_name + "\n价格: ¥" + str(crop["花费"]))
+	var stock_text = "库存: " + str(current_stock) if not is_sold_out else "已售罄"
+	var price_text = "价格: ¥" + str(crop["花费"])
+	
+	if is_sold_out:
+		button.text = str(crop_quality + "-" + display_name + "\n" + price_text + "\n" + stock_text)
+		button.modulate = Color(0.6, 0.6, 0.6, 0.8)  # 灰色半透明效果
+	else:
+		button.text = str(crop_quality + "-" + display_name + "\n" + price_text + "\n" + stock_text)
+		button.modulate = Color.WHITE  # 正常颜色
 		
 	# 将成熟时间从秒转换为天时分秒格式
 	var total_seconds = int(crop["生长时间"])
@@ -145,6 +198,9 @@ func _create_store_button(crop_name: String, crop_quality: String) -> Button:
 	if seconds > 0:
 		time_str += str(seconds) + "秒"
 		
+	# 添加库存信息到tooltip
+	var stock_tooltip = "\n库存: " + str(current_stock) + " 个" if not is_sold_out else "\n状态: 已售罄"
+	
 	button.tooltip_text = str(
 		"作物: " + display_name + "\n" +
 		"品质: " + crop_quality + "\n" +
@@ -153,7 +209,7 @@ func _create_store_button(crop_name: String, crop_quality: String) -> Button:
 		"收获收益: " + str(crop["收益"]) + "元\n" +
 		"需求等级: " + str(crop["等级"]) + "\n" +
 		"耐候性: " + str(crop["耐候性"]) + "\n" +
-		"经验: " + str(crop["经验"]) + "点\n" +
+		"经验: " + str(crop["经验"]) + "点" + stock_tooltip + "\n" +
 		"描述: " + str(crop["描述"])
 	)
 	
@@ -183,6 +239,11 @@ func _create_store_button(crop_name: String, crop_quality: String) -> Button:
 func _on_store_buy_pressed(crop_name: String):
 	var crop = main_game.can_planted_crop[crop_name]
 	
+	# 检查库存
+	if not _is_crop_in_stock(crop_name):
+		Toast.show("该种子已售罄，请等待明日刷新", Color.RED)
+		return
+	
 	# 检查等级要求
 	if main_game.level < crop["等级"]:
 		Toast.show("等级不足，无法购买此种子", Color.RED)
@@ -196,13 +257,15 @@ func _on_store_buy_pressed(crop_name: String):
 	# 显示批量购买弹窗
 	if batch_buy_popup:
 		var crop_desc = crop.get("描述", "暂无描述")
+		var max_stock = _get_crop_stock(crop_name)
 		batch_buy_popup.show_buy_popup(
 			crop_name, 
 			crop["花费"], 
 			crop_desc, 
 			"seed", 
 			_on_confirm_buy_seed,
-			_on_cancel_buy_seed
+			_on_cancel_buy_seed,
+			max_stock  # 传递最大库存限制
 		)
 	else:
 		print("批量购买弹窗未找到")
@@ -210,6 +273,12 @@ func _on_store_buy_pressed(crop_name: String):
 # 确认购买种子回调
 func _on_confirm_buy_seed(crop_name: String, unit_cost: int, quantity: int, buy_type: String):
 	var total_cost = unit_cost * quantity
+	
+	# 再次检查库存是否足够
+	var current_stock = _get_crop_stock(crop_name)
+	if current_stock < quantity:
+		Toast.show("库存不足！当前库存: " + str(current_stock) + "，需要: " + str(quantity), Color.RED, 3.0, 1.0)
+		return
 	
 	# 再次检查金钱是否足够
 	if main_game.money < total_cost:
@@ -229,6 +298,15 @@ func _send_batch_buy_seed_request(crop_name: String, quantity: int):
 	if tcp_network_manager_panel and tcp_network_manager_panel.sendBuySeed(crop_name, quantity):
 		# 服务器会处理批量购买逻辑，客户端等待响应
 		print("已发送批量购买种子请求：", crop_name, " 数量：", quantity)
+		
+		# 购买成功后扣减库存
+		if _reduce_crop_stock(crop_name, quantity):
+			print("库存扣减成功：", crop_name, " 扣减数量：", quantity)
+			# 刷新商店显示
+			_apply_filter_and_sort()
+			Toast.show("购买成功！剩余库存: " + str(_get_crop_stock(crop_name)), Color.GREEN, 2.0, 1.0)
+		else:
+			Toast.show("库存扣减失败", Color.RED, 2.0, 1.0)
 	else:
 		Toast.show("购买请求发送失败", Color.RED, 2.0, 1.0)
 
@@ -254,6 +332,10 @@ func _apply_filter_and_sort():
 	# 清空现有按钮
 	for child in crop_grid_container.get_children():
 		child.queue_free()
+	
+	# 获取玩家当前等级，确定可解锁的格子数量
+	var player_level = main_game.level
+	var max_unlocked_slots = player_level
 	
 	# 收集符合条件的作物
 	var filtered_crops = []
@@ -281,13 +363,29 @@ func _apply_filter_and_sort():
 	if current_sort_key != "":
 		filtered_crops.sort_custom(Callable(self, "_sort_crop_items"))
 	
-	# 添加所有过滤和排序后的作物
-	for crop in filtered_crops:
+	# 根据等级限制显示的格子数量
+	var slots_to_show = min(filtered_crops.size(), max_unlocked_slots)
+	
+	# 添加可显示的作物按钮
+	for i in range(slots_to_show):
+		var crop = filtered_crops[i]
 		var store_btn = _create_store_button(crop["name"], crop["data"]["品质"])
 		crop_grid_container.add_child(store_btn)
+	
+	# 添加锁定的格子（如果有剩余的可用作物但等级不够解锁）
+	var remaining_crops = filtered_crops.size() - slots_to_show
+	if remaining_crops > 0:
+		# 创建锁定格子提示
+		var locked_slots = min(remaining_crops, 5)  # 最多显示5个锁定格子作为提示
+		for i in range(locked_slots):
+			var locked_btn = _create_locked_slot_button(player_level + 1)
+			crop_grid_container.add_child(locked_btn)
 		
 	# 更新金钱显示
 	_update_money_display()
+	
+	# 显示等级限制提示
+	_show_level_restriction_info(player_level, filtered_crops.size(), slots_to_show)
 
 # 自定义排序函数
 func _sort_crop_items(a, b):
@@ -511,6 +609,211 @@ func _update_button_crop_image(button: Button, crop_name: String):
 # 兼容MainGame.gd中的调用，转发到_on_store_buy_pressed
 func _on_crop_selected(crop_name: String):
 	_on_store_buy_pressed(crop_name)
+
+#=========================库存系统=========================
+
+# 初始化库存系统
+func _init_stock_system():
+	# 根据用户名设置库存文件路径，实现账号隔离
+	var user_name = main_game.user_name if main_game.user_name != "" else "default_user"
+	stock_file_path = "user://crop_stock_" + user_name + ".json"
+	print("库存系统初始化，用户：", user_name, "，文件路径：", stock_file_path)
+	
+	_load_stock_data()
+	_check_daily_refresh()
+
+# 加载库存数据
+func _load_stock_data():
+	print("尝试加载库存数据，文件路径：", stock_file_path)
+	
+	if FileAccess.file_exists(stock_file_path):
+		var file = FileAccess.open(stock_file_path, FileAccess.READ)
+		if file:
+			var json_string = file.get_as_text()
+			file.close()
+			print("读取到的JSON数据：", json_string)
+			
+			var json = JSON.new()
+			var parse_result = json.parse(json_string)
+			if parse_result == OK:
+				var data = json.data
+				crop_stock_data = data.get("stock", {})
+				last_refresh_date = data.get("last_refresh_date", "")
+				print("库存数据加载成功，库存条目数：", crop_stock_data.size())
+				print("加载的库存数据：", crop_stock_data)
+				print("上次刷新日期：", last_refresh_date)
+				
+				# 如果库存数据为空，重新生成
+				if crop_stock_data.is_empty():
+					print("库存数据为空，重新生成")
+					_generate_initial_stock()
+			else:
+				print("库存数据解析失败，错误：", parse_result, "，重新生成")
+				_generate_initial_stock()
+		else:
+			print("无法打开库存文件，重新生成")
+			_generate_initial_stock()
+	else:
+		print("库存文件不存在，生成初始库存")
+		_generate_initial_stock()
+
+# 保存库存数据
+func _save_stock_data():
+	var data = {
+		"stock": crop_stock_data,
+		"last_refresh_date": last_refresh_date
+	}
+	
+	print("准备保存库存数据到：", stock_file_path)
+	print("保存的数据：", data)
+	
+	var file = FileAccess.open(stock_file_path, FileAccess.WRITE)
+	if file:
+		var json_string = JSON.stringify(data)
+		file.store_string(json_string)
+		file.close()
+		print("库存数据保存成功，JSON字符串：", json_string)
+	else:
+		print("无法保存库存数据，文件打开失败")
+
+# 生成初始库存
+func _generate_initial_stock():
+	crop_stock_data.clear()
+	
+	# 确保main_game和can_planted_crop存在
+	if not main_game or not main_game.can_planted_crop:
+		print("错误：无法访问主游戏数据，无法生成库存")
+		return
+	
+	var generated_count = 0
+	for crop_name in main_game.can_planted_crop:
+		var crop = main_game.can_planted_crop[crop_name]
+		
+		# 检查是否可以购买
+		if not crop.get("能否购买", true):
+			continue
+		
+		# 根据品质设置库存范围
+		var stock_amount = _get_stock_amount_by_quality(crop["品质"])
+		crop_stock_data[crop_name] = stock_amount
+		generated_count += 1
+		print("生成库存：", crop_name, " - ", crop["品质"], " - ", stock_amount, "个")
+	
+	# 设置当前日期为刷新日期
+	last_refresh_date = _get_current_date()
+	_save_stock_data()
+	print("初始库存生成完成，共生成", generated_count, "种作物的库存")
+	print("当前库存数据：", crop_stock_data)
+
+# 根据品质获取库存数量
+func _get_stock_amount_by_quality(quality: String) -> int:
+	var min_stock: int
+	var max_stock: int
+	
+	match quality:
+		"传奇":
+			min_stock = 10
+			max_stock = 30
+		"史诗":
+			min_stock = 20
+			max_stock = 50
+		"稀有":
+			min_stock = 40
+			max_stock = 80
+		"优良":
+			min_stock = 80
+			max_stock = 150
+		"普通":
+			min_stock = 150
+			max_stock = 300
+		_:
+			min_stock = 100
+			max_stock = 200
+	
+	return randi_range(min_stock, max_stock)
+
+# 获取当前日期字符串
+func _get_current_date() -> String:
+	var datetime = Time.get_datetime_dict_from_system()
+	return str(datetime.year) + "-" + str(datetime.month).pad_zeros(2) + "-" + str(datetime.day).pad_zeros(2)
+
+# 检查是否需要每日刷新
+func _check_daily_refresh():
+	var current_date = _get_current_date()
+	if last_refresh_date != current_date:
+		print("检测到新的一天，刷新库存")
+		_refresh_daily_stock()
+
+# 每日刷新库存
+func _refresh_daily_stock():
+	_generate_initial_stock()
+	Toast.show("种子商店库存已刷新！", Color.GREEN, 3.0, 1.0)
+
+# 获取作物当前库存
+func _get_crop_stock(crop_name: String) -> int:
+	return crop_stock_data.get(crop_name, 0)
+
+# 减少作物库存
+func _reduce_crop_stock(crop_name: String, amount: int) -> bool:
+	var current_stock = _get_crop_stock(crop_name)
+	if current_stock >= amount:
+		crop_stock_data[crop_name] = current_stock - amount
+		_save_stock_data()
+		return true
+	return false
+
+# 检查作物是否有库存
+func _is_crop_in_stock(crop_name: String) -> bool:
+	return _get_crop_stock(crop_name) > 0
+
+
+# 创建锁定格子按钮
+func _create_locked_slot_button(required_level: int) -> Button:
+	var button = main_game.item_button.duplicate()
+	
+	# 设置按钮为禁用状态
+	button.disabled = true
+	button.modulate = Color(0.5, 0.5, 0.5, 0.8)  # 灰色半透明效果
+	
+	# 设置按钮文本
+	button.text = "🔒 锁定\n需要等级: " + str(required_level)
+	button.tooltip_text = "此格子已锁定，需要达到等级 " + str(required_level) + " 才能解锁"
+	
+	# 隐藏作物图片
+	var crop_image = button.get_node_or_null("CropImage")
+	if crop_image:
+		crop_image.visible = false
+	
+	# 设置标题颜色为灰色
+	if button.has_node("Title"):
+		button.get_node("Title").modulate = Color.GRAY
+	
+	return button
+
+# 显示等级限制信息
+func _show_level_restriction_info(player_level: int, total_crops: int, unlocked_slots: int):
+	# 查找或创建信息标签
+	var info_label = get_node_or_null("LevelInfoLabel")
+	if info_label == null:
+		info_label = Label.new()
+		info_label.name = "LevelInfoLabel"
+		info_label.position = Vector2(10, 55)
+		info_label.size = Vector2(300, 30)
+		
+		# 设置标签样式
+		info_label.add_theme_color_override("font_color", Color(0.8, 0.8, 1.0, 1.0))  # 淡蓝色
+		info_label.add_theme_font_size_override("font_size", 18)
+		
+		add_child(info_label)
+	
+	# 更新信息显示
+	var locked_crops = total_crops - unlocked_slots
+	if locked_crops > 0:
+		info_label.text = "等级 " + str(player_level) + " | 已解锁: " + str(unlocked_slots) + "/" + str(total_crops) + " 个格子"
+		info_label.modulate = Color.YELLOW
+	else:
+		info_label.text = "等级 " + str(player_level) + " | 所有格子已解锁 (" + str(unlocked_slots) + "/" + str(total_crops) + ")"
+		info_label.modulate = Color.GREEN
 
 
 #=========================面板通用处理=========================

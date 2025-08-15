@@ -1,0 +1,223 @@
+[gd_scene load_steps=4 format=3 uid="uid://byxhjyyaahs6q"]
+
+[ext_resource type="Texture2D" uid="uid://ywdg7xgq7hm8" path="res://assets/装饰物图片/道具背包.webp" id="1_mv0g4"]
+[ext_resource type="Script" uid="uid://btm2je8pg7rgk" path="res://Script/BigPanel/SpecialFarmPanel.gd" id="1_n2mxy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7i23t"]
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+corner_detail = 20
+shadow_size = 20
+
+[node name="SpecialFarmPanel" type="Panel"]
+offset_right = 1399.0
+offset_bottom = 720.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_7i23t")
+script = ExtResource("1_n2mxy")
+
+[node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 0
+offset_left = 1303.0
+offset_top = 17.0
+offset_right = 1383.0
+offset_bottom = 97.0
+theme_override_font_sizes/font_size = 50
+text = "X"
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_top = 17.0
+offset_right = 1401.0
+offset_bottom = 86.0
+theme_override_colors/font_color = Color(0.560784, 1, 0, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 50
+text = "神秘农场"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 88.0
+offset_right = 1384.0
+offset_bottom = 707.0
+horizontal_scroll_mode = 0
+
+[node name="Grid" type="GridContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 5
+
+[node name="FlowerFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/FlowerFarm"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "花卉农场"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/FlowerFarm"]
+layout_mode = 2
+texture = ExtResource("1_mv0g4")
+
+[node name="FlowerFarmButton" type="Button" parent="ScrollContainer/Grid/FlowerFarm"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击访问"
+
+[node name="FruitFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/FruitFarm"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "瓜果飘香"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/FruitFarm"]
+layout_mode = 2
+texture = ExtResource("1_mv0g4")
+
+[node name="FruitFarmButton" type="Button" parent="ScrollContainer/Grid/FruitFarm"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击访问"
+
+[node name="HybridFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/HybridFarm"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "杂交基地"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/HybridFarm"]
+layout_mode = 2
+texture = ExtResource("1_mv0g4")
+
+[node name="HybridFarmButton" type="Button" parent="ScrollContainer/Grid/HybridFarm"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击访问"
+
+[node name="LuckyFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/LuckyFarm"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "幸运农场"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/LuckyFarm"]
+layout_mode = 2
+texture = ExtResource("1_mv0g4")
+
+[node name="LuckyFarmButton" type="Button" parent="ScrollContainer/Grid/LuckyFarm"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击访问"
+
+[node name="RiceFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/RiceFarm"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "稻香"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/RiceFarm"]
+layout_mode = 2
+texture = ExtResource("1_mv0g4")
+
+[node name="RiceFarmButton" type="Button" parent="ScrollContainer/Grid/RiceFarm"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击访问"
+
+[node name="WheatFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/WheatFarm"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "小麦谷"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/WheatFarm"]
+layout_mode = 2
+texture = ExtResource("1_mv0g4")
+
+[node name="WheatFarmButton" type="Button" parent="ScrollContainer/Grid/WheatFarm"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击访问"
+
+[connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/Grid/FlowerFarm/FlowerFarmButton" to="." method="_on_flower_farm_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/Grid/FruitFarm/FruitFarmButton" to="." method="_on_fruit_farm_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/Grid/HybridFarm/HybridFarmButton" to="." method="_on_hybrid_farm_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/Grid/LuckyFarm/LuckyFarmButton" to="." method="_on_lucky_farm_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/Grid/RiceFarm/RiceFarmButton" to="." method="_on_rice_farm_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/Grid/WheatFarm/WheatFarmButton" to="." method="_on_wheat_farm_button_pressed"]

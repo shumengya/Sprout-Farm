@@ -1,5 +1,7 @@
 # Game Server Dependencies
 colorama>=0.4.6    # For colored terminal output
 pymongo>=4.6.0     # MongoDB driver for Python
+schedule>=1.2.0    # Task scheduling for special farm management
+websockets>=11.0.3 # WebSocket server for remote console API
 # Email Requirements
 # Standard library dependencies are not listed (socket, threading, json, etc.)

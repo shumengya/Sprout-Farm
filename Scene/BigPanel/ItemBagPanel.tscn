@@ -85,5 +85,45 @@ offset_bottom = 79.25
 theme_override_font_sizes/font_size = 40
 text = "刷新"
 
+[node name="All_Filter" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+offset_left = 217.5
+offset_top = 12.5
+offset_right = 305.5
+offset_bottom = 75.5
+theme_override_font_sizes/font_size = 40
+text = "全部"
+
+[node name="Pet_Filter" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+offset_left = 310.0
+offset_top = 13.75
+offset_right = 398.0
+offset_bottom = 76.75
+theme_override_font_sizes/font_size = 40
+text = "宠物"
+
+[node name="Crop_Filter" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+offset_left = 397.5
+offset_top = 13.75
+offset_right = 485.5
+offset_bottom = 76.75
+theme_override_font_sizes/font_size = 40
+text = "作物"
+
+[node name="Farm_Filter" type="Button" parent="."]
+custom_minimum_size = Vector2(60, 60)
+offset_left = 485.0
+offset_top = 13.75
+offset_right = 573.0
+offset_bottom = 76.75
+theme_override_font_sizes/font_size = 40
+text = "农场"
+
 [connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="pressed" from="RefreshButton" to="." method="_on_refresh_button_pressed"]
+[connection signal="pressed" from="All_Filter" to="." method="_on_all_filter_pressed"]
+[connection signal="pressed" from="Pet_Filter" to="." method="_on_pet_filter_pressed"]
+[connection signal="pressed" from="Crop_Filter" to="." method="_on_crop_filter_pressed"]
+[connection signal="pressed" from="Farm_Filter" to="." method="_on_farm_filter_pressed"]
