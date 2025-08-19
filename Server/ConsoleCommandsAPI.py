@@ -25,23 +25,33 @@ class ConsoleCommandsAPI:
         """
         self.server = server
         self.commands = {
+            #添加命令
             "addmoney": self.cmd_add_money, # 给玩家添加金币
             "addxp": self.cmd_add_experience, # 给玩家添加经验值
             "addlevel": self.cmd_add_level, # 给玩家添加等级
             "addseed": self.cmd_add_seed, # 给玩家添加种子
+            #杂项命令
             "lsplayer": self.cmd_list_players, # 列出所有玩家
             "playerinfo": self.cmd_player_info, # 查看玩家信息
+            "ban": self.cmd_ban_player, # 踢出玩家
+            "weather": self.cmd_weather, # 设置天气
+            "help": self.cmd_help, # 显示帮助信息
+            #重置命令
             "resetland": self.cmd_reset_land, # 重置玩家土地
             "repasswd": self.cmd_reset_password, # 重置玩家密码
             "rename": self.cmd_rename_player, # 重命名玩家昵称
             "refarmname": self.cmd_rename_farm, # 重命名农场名称
-            "ban": self.cmd_ban_player, # 踢出玩家
-            "weather": self.cmd_weather, # 设置天气
-            "help": self.cmd_help, # 显示帮助信息
+
+            #服务器管理命令
             "stop": self.cmd_stop, # 停止服务器
+            #重启服务器
+            #查看服务器状态
+
+            #玩家配置数据库命令（未测试）
             "save": self.cmd_save_all, # 保存所有玩家数据
             "reload": self.cmd_reload_config, # 重新加载配置文件
-            # MongoDB管理命令
+
+            # MongoDB管理命令（未测试）
             "dbtest": self.cmd_db_test, # 测试MongoDB连接
             "dbconfig": self.cmd_db_config, # 配置MongoDB连接
             "dbchat": self.cmd_db_chat, # 管理聊天数据
