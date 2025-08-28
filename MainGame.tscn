@@ -801,7 +801,6 @@ offset_right = 1473.0
 offset_bottom = 748.0
 
 [node name="ItemStorePanel" parent="UI/BigPanel" instance=ExtResource("21_uhubb")]
-visible = false
 offset_left = 80.0
 offset_top = 77.0
 offset_right = 1620.0

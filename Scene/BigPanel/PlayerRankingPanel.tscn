@@ -1,19 +1,80 @@
-[gd_scene load_steps=4 format=3 uid="uid://dbfqu87627yg6"]
+[gd_scene load_steps=9 format=3 uid="uid://dbfqu87627yg6"]
 
 [ext_resource type="Script" uid="uid://fk4q3x6uqydd" path="res://Script/BigPanel/PlayerRankingPanel.gd" id="1_efhd6"]
 [ext_resource type="PackedScene" uid="uid://crd28qnymob7" path="res://GUI/PlayerRankingItem.tscn" id="1_xwp76"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_efhd6"]
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
+bg_color = Color(0.12, 0.15, 0.25, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.8, 0.6, 0.2, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
 corner_detail = 20
+shadow_color = Color(0.8, 0.6, 0.2, 0.4)
 shadow_size = 20
+shadow_offset = Vector2(5, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Button"]
+bg_color = Color(0.2, 0.25, 0.4, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.45, 0.15, 0.8)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0.8, 0.6, 0.2, 0.3)
+shadow_size = 8
+shadow_offset = Vector2(3, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ButtonHover"]
+bg_color = Color(0.3, 0.35, 0.55, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.7, 0.3, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0.9, 0.7, 0.3, 0.5)
+shadow_size = 12
+shadow_offset = Vector2(4, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ButtonPressed"]
+bg_color = Color(0.15, 0.2, 0.35, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.7, 0.5, 0.1, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0.7, 0.5, 0.1, 0.3)
+shadow_size = 6
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ScrollBar"]
+bg_color = Color(0.18, 0.22, 0.35, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.6, 0.45, 0.15, 0.6)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="PlayerRankingPanel" type="Panel"]
 offset_left = 59.0
@@ -30,17 +91,20 @@ offset_left = -171.0
 offset_top = -109.0
 offset_right = 1582.0
 offset_bottom = 792.0
-color = Color(1, 1, 1, 0)
+color = Color(0.05, 0.08, 0.15, 0.4)
 
 [node name="RegisterPlayerNum" type="Label" parent="."]
-self_modulate = Color(1, 0.701961, 1, 1)
+self_modulate = Color(0.9, 0.7, 0.3, 1)
 layout_mode = 0
 offset_left = 841.25
 offset_top = 18.75
 offset_right = 991.25
 offset_bottom = 60.75
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 15
+theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0.8, 0.6, 0.2, 0.6)
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 30
 text = "注册人数："
 
@@ -51,13 +115,14 @@ offset_top = 18.75
 offset_right = 1400.5
 offset_bottom = 74.75
 size_flags_vertical = 3
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/default_color = Color(1, 0.85, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0.8, 0.6, 0.2, 0.8)
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_outline_size = 10
-theme_override_font_sizes/normal_font_size = 40
+theme_override_font_sizes/normal_font_size = 44
 bbcode_enabled = true
 text = "玩家排行榜"
 horizontal_alignment = 1
@@ -68,7 +133,11 @@ offset_left = 95.0
 offset_top = 21.25
 offset_right = 378.0
 offset_bottom = 78.25
-theme_override_font_sizes/font_size = 35
+theme_override_colors/font_color = Color(0.9, 0.8, 0.5, 1)
+theme_override_colors/font_placeholder_color = Color(0.6, 0.5, 0.3, 0.8)
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/focus = SubResource("StyleBoxFlat_ButtonHover")
 placeholder_text = "输入要搜索的人"
 
 [node name="RefreshButton" type="Button" parent="."]
@@ -78,7 +147,14 @@ offset_left = 16.25
 offset_top = 21.25
 offset_right = 94.25
 offset_bottom = 78.25
-theme_override_font_sizes/font_size = 35
+theme_override_colors/font_color = Color(0.95, 0.8, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
 text = "刷新"
 
 [node name="SearchButton" type="Button" parent="."]
@@ -88,7 +164,14 @@ offset_left = 377.5
 offset_top = 21.25
 offset_right = 455.5
 offset_bottom = 78.25
-theme_override_font_sizes/font_size = 35
+theme_override_colors/font_color = Color(0.95, 0.8, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
 text = "搜索"
 
 [node name="QuitButton" type="Button" parent="."]
@@ -98,7 +181,14 @@ offset_left = 1326.25
 offset_top = 16.25
 offset_right = 1383.25
 offset_bottom = 73.25
+theme_override_colors/font_color = Color(1, 0.7, 0.3, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
 text = "X"
 
 [node name="FiterAndSortHBox" type="HBoxContainer" parent="."]
@@ -111,58 +201,111 @@ offset_bottom = 162.0
 [node name="SortLabel" type="Label" parent="FiterAndSortHBox"]
 layout_mode = 2
 size_flags_vertical = 1
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 30
 text = "排序："
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="MoneySortBtn" type="Button" parent="FiterAndSortHBox"]
-self_modulate = Color(1, 1, 0.321569, 1)
+self_modulate = Color(1, 0.9, 0.3, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.2, 0.15, 0.05, 1)
+theme_override_colors/font_shadow_color = Color(1, 0.8, 0.2, 0.6)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
 text = "钱币"
 
 [node name="SeedSortBtn" type="Button" parent="FiterAndSortHBox"]
-self_modulate = Color(0.329412, 1, 0.345098, 1)
+self_modulate = Color(0.4, 0.8, 0.5, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
 text = "种子数"
 
 [node name="LevelSortBtn" type="Button" parent="FiterAndSortHBox"]
-self_modulate = Color(0, 1, 1, 1)
+self_modulate = Color(0.3, 0.7, 0.9, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
 text = "等级"
 
 [node name="OnlineTimeSortBtn" type="Button" parent="FiterAndSortHBox"]
-self_modulate = Color(0.784314, 0.733333, 0.521569, 1)
+self_modulate = Color(0.8, 0.5, 0.3, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
 text = "在线时长"
 
 [node name="LoginTimeSortBtn" type="Button" parent="FiterAndSortHBox"]
-self_modulate = Color(0.811765, 1, 0.811765, 1)
+self_modulate = Color(0.5, 0.8, 0.4, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
 text = "登录时间"
 
 [node name="LikeNumSortBtn" type="Button" parent="FiterAndSortHBox"]
-self_modulate = Color(1, 0.513726, 1, 1)
+self_modulate = Color(0.9, 0.4, 0.7, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
 text = "点赞数"
 
 [node name="IsOnlineSortBtn" type="Button" parent="FiterAndSortHBox"]
-self_modulate = Color(0.691357, 0.691357, 0.691357, 1)
+self_modulate = Color(0.6, 0.6, 0.6, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
+theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 26
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
 text = "在线情况"
 
 [node name="Scroll" type="ScrollContainer" parent="."]
@@ -172,6 +315,7 @@ offset_top = 171.0
 offset_right = 1389.0
 offset_bottom = 707.0
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ScrollBar")
 
 [node name="PlayerList" type="VBoxContainer" parent="Scroll"]
 layout_mode = 2
