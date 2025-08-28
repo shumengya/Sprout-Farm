@@ -87,6 +87,15 @@ offset_bottom = 718.0
 theme_override_font_sizes/font_size = 30
 text = "版本号：v1.0.1"
 
+[node name="GameVersionLabel2" type="Label" parent="GUI"]
+layout_mode = 0
+offset_left = 575.0
+offset_top = 676.0
+offset_right = 875.0
+offset_bottom = 718.0
+theme_override_font_sizes/font_size = 30
+text = "学习项目，偏休闲娱乐"
+
 [node name="Developer" type="RichTextLabel" parent="GUI"]
 layout_mode = 0
 offset_left = 1194.0

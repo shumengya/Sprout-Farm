@@ -165,11 +165,23 @@ func _sort_seed_items(a, b):
 		print("警告: 排序键 ", current_sort_key, " 在某些种子数据中不存在")
 		return false
 	
-	# 执行排序
+	# 安全地获取排序值，并进行类型转换
+	var value_a = a["data"].get(current_sort_key, 0)
+	var value_b = b["data"].get(current_sort_key, 0)
+	
+	# 如果是数值类型的字段，确保转换为数值进行比较
+	if current_sort_key in ["花费", "生长时间", "收益", "等级", "经验", "耐候性"]:
+		# 转换为数值，如果转换失败则使用0
+		if typeof(value_a) == TYPE_STRING:
+			value_a = int(value_a) if value_a.is_valid_int() else 0
+		if typeof(value_b) == TYPE_STRING:
+			value_b = int(value_b) if value_b.is_valid_int() else 0
+	
+	# 执行排序比较
 	if current_sort_ascending:
-		return a["data"][current_sort_key] < b["data"][current_sort_key]
+		return value_a < value_b
 	else:
-		return a["data"][current_sort_key] > b["data"][current_sort_key]
+		return value_a > value_b
 
 # 按品质过滤种子
 func _filter_by_quality(quality: String):

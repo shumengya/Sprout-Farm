@@ -505,7 +505,7 @@ texture = ExtResource("5_5b81d")
 expand_mode = 2
 
 [node name="tip" type="RichTextLabel" parent="UI/GUI/GameInfoHBox3"]
-custom_minimum_size = Vector2(300, 0)
+custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)

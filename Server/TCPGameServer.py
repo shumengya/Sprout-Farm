@@ -2425,11 +2425,7 @@ class TCPGameServer(TCPServer):
             return self.send_data(client_id, response)
         
         crop_name = message.get("crop_name", "")
-        quantity = message.get("quantity", 1)  # 获取购买数量，默认为1
-        
-        # 确保购买数量为正整数
-        if not isinstance(quantity, int) or quantity <= 0:
-            quantity = 1
+        quantity = max(1, int(message.get("quantity", 1)))  # 确保购买数量为正整数
         
         # 加载作物配置
         crop_data = self._load_crop_data()
@@ -2447,7 +2443,9 @@ class TCPGameServer(TCPServer):
     def _process_seed_purchase(self, client_id, player_data, username, crop_name, crop, quantity=1):
         """处理种子购买逻辑"""
         # 检查玩家等级
-        if player_data["等级"] < crop.get("等级", 1):
+        player_level = int(player_data.get("等级", 1))
+        required_level = int(crop.get("等级", 1))
+        if player_level < required_level:
             return self._send_action_error(client_id, "buy_seed", "等级不足，无法购买此种子")
         
         # 计算总花费
@@ -2456,7 +2454,7 @@ class TCPGameServer(TCPServer):
         
         # 检查玩家金钱
         if player_data["钱币"] < total_cost:
-            return self._send_action_error(client_id, "buy_seed", f"金钱不足，无法购买此种子。需要{total_cost}元，当前只有{player_data['money']}元")
+            return self._send_action_error(client_id, "buy_seed", f"金钱不足，无法购买此种子。需要{total_cost}元，当前只有{player_data['钱币']}元")
         
         # 扣除金钱
         player_data["钱币"] -= total_cost

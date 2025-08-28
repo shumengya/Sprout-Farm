@@ -48,11 +48,11 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 columns = 5
 
-[node name="VBox" type="VBoxContainer" parent="ScrollContainer/Grid"]
+[node name="2048Game" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
 alignment = 1
 
-[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox"]
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/2048Game"]
 layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -61,24 +61,24 @@ theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "贪吃蛇"
+text = "2048"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/VBox"]
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/2048Game"]
 layout_mode = 2
 texture = ExtResource("2_wlugc")
 
-[node name="Button" type="Button" parent="ScrollContainer/Grid/VBox"]
+[node name="2048GameButton" type="Button" parent="ScrollContainer/Grid/2048Game"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "点击游玩"
 
-[node name="VBox2" type="VBoxContainer" parent="ScrollContainer/Grid"]
+[node name="PushBox" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
 alignment = 1
 
-[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox2"]
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/PushBox"]
 layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -87,24 +87,24 @@ theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "贪吃蛇"
+text = "推箱子"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/VBox2"]
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/PushBox"]
 layout_mode = 2
 texture = ExtResource("2_wlugc")
 
-[node name="Button" type="Button" parent="ScrollContainer/Grid/VBox2"]
+[node name="PushBoxButton" type="Button" parent="ScrollContainer/Grid/PushBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "点击游玩"
 
-[node name="VBox3" type="VBoxContainer" parent="ScrollContainer/Grid"]
+[node name="SnakeGame" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
 alignment = 1
 
-[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox3"]
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/SnakeGame"]
 layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -117,20 +117,20 @@ text = "贪吃蛇"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/VBox3"]
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/SnakeGame"]
 layout_mode = 2
 texture = ExtResource("2_wlugc")
 
-[node name="Button" type="Button" parent="ScrollContainer/Grid/VBox3"]
+[node name="SnakeGameButton" type="Button" parent="ScrollContainer/Grid/SnakeGame"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "点击游玩"
 
-[node name="VBox4" type="VBoxContainer" parent="ScrollContainer/Grid"]
+[node name="Tetris" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
 alignment = 1
 
-[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox4"]
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/Tetris"]
 layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
@@ -139,15 +139,15 @@ theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "贪吃蛇"
+text = "俄罗斯方块"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/VBox4"]
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/Tetris"]
 layout_mode = 2
 texture = ExtResource("2_wlugc")
 
-[node name="Button" type="Button" parent="ScrollContainer/Grid/VBox4"]
+[node name="TetrisButton" type="Button" parent="ScrollContainer/Grid/Tetris"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "点击游玩"
@@ -165,7 +165,7 @@ theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "贪吃蛇"
+text = "敬请期待"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -177,3 +177,138 @@ texture = ExtResource("2_wlugc")
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "点击游玩"
+
+[node name="VBox6" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox6"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "敬请期待"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/VBox6"]
+layout_mode = 2
+texture = ExtResource("2_wlugc")
+
+[node name="Button" type="Button" parent="ScrollContainer/Grid/VBox6"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击游玩"
+
+[node name="VBox7" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox7"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "敬请期待"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/VBox7"]
+layout_mode = 2
+texture = ExtResource("2_wlugc")
+
+[node name="Button" type="Button" parent="ScrollContainer/Grid/VBox7"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击游玩"
+
+[node name="VBox8" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox8"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "敬请期待"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/VBox8"]
+layout_mode = 2
+texture = ExtResource("2_wlugc")
+
+[node name="Button" type="Button" parent="ScrollContainer/Grid/VBox8"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击游玩"
+
+[node name="VBox9" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox9"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "敬请期待"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/VBox9"]
+layout_mode = 2
+texture = ExtResource("2_wlugc")
+
+[node name="Button" type="Button" parent="ScrollContainer/Grid/VBox9"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击游玩"
+
+[node name="VBox10" type="VBoxContainer" parent="ScrollContainer/Grid"]
+layout_mode = 2
+alignment = 1
+
+[node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox10"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "敬请期待"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ScrollContainer/Grid/VBox10"]
+layout_mode = 2
+texture = ExtResource("2_wlugc")
+
+[node name="Button" type="Button" parent="ScrollContainer/Grid/VBox10"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "点击游玩"
+
+[connection signal="pressed" from="ScrollContainer/Grid/2048Game/2048GameButton" to="." method="_on_game_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/Grid/PushBox/PushBoxButton" to="." method="_on_push_box_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/Grid/SnakeGame/SnakeGameButton" to="." method="_on_snake_game_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/Grid/Tetris/TetrisButton" to="." method="_on_tetris_button_pressed"]

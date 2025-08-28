@@ -1,0 +1,32 @@
+{
+    "2048": {
+        "best_score": 0,
+        "current_score": 0,
+        "games_played": 0,
+        "highest_tile": 0,
+        "total_moves": 0,
+        "achievements": [],
+        "settings": {
+            "sound_enabled": true,
+            "animations_enabled": true
+        }
+    },
+    "pushbox": {
+        "current_level": 1,
+        "max_level_reached": 1,
+        "total_moves": 0,
+        "levels_completed": 0,
+        "best_moves_per_level": {},
+        "achievements": [],
+        "settings": {
+            "sound_enabled": true,
+            "show_hints": true
+        }
+    },
+    "global": {
+        "total_play_time": 0,
+        "last_played": "",
+        "player_name": "Player",
+        "version": "1.0"
+    }
+}

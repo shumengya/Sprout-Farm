@@ -14,10 +14,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -200.0
-offset_right = 200.0
-offset_bottom = 200.0
+offset_left = -217.0
+offset_top = -250.0
+offset_right = 183.0
+offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -90,13 +90,64 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -300.0
-offset_top = -150.0
+offset_left = -350.0
+offset_top = -180.0
 offset_right = -50.0
 offset_bottom = -50.0
 grow_horizontal = 0
 grow_vertical = 0
 text = "操作说明:
 WASD或方向键 - 移动
+滑动屏幕 - 移动(手机)
 R - 重新开始
-C - 继续游戏(达到2048后)"
+C - 继续游戏(达到2048后)
+
+目标: 合并数字达到2048或更高!"
+
+[node name="StatsLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = -40.0
+offset_right = 300.0
+offset_bottom = -10.0
+grow_vertical = 0
+text = "游戏次数: 0 | 总步数: 0"
+
+[node name="ReastButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 19.0
+offset_top = 19.0
+offset_right = 97.0
+offset_bottom = 76.0
+theme_override_font_sizes/font_size = 35
+text = "重置"
+
+[node name="ContinueButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 97.0
+offset_top = 19.0
+offset_right = 175.0
+offset_bottom = 76.0
+theme_override_font_sizes/font_size = 35
+text = "继续"
+
+[node name="QuitButton" type="Button" parent="."]
+self_modulate = Color(1, 0.247059, 0, 1)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -129.0
+offset_right = -46.0
+offset_bottom = 57.0
+grow_horizontal = 0
+scale = Vector2(1.54345, 1.50915)
+theme_override_font_sizes/font_size = 25
+text = "关闭"
+
+[connection signal="pressed" from="ReastButton" to="." method="_on_reast_button_pressed"]
+[connection signal="pressed" from="ContinueButton" to="." method="_on_continue_button_pressed"]
+[connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]

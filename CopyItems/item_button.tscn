@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://ibl5wbbw3pwc"]
+[gd_scene load_steps=2 format=3 uid="uid://ibl5wbbw3pwc"]
 
 [ext_resource type="Script" uid="uid://c6ylh1o2kgqth" path="res://CopyItems/item_crop.gd" id="1_e25nh"]
-[ext_resource type="Texture2D" uid="uid://bl48i2h22htyd" path="res://assets/作物/人参/收获物.webp" id="2_abhds"]
 
 [node name="item_button" type="Button"]
 custom_minimum_size = Vector2(400, 400)
@@ -14,7 +13,6 @@ script = ExtResource("1_e25nh")
 [node name="CropImage" type="Sprite2D" parent="."]
 position = Vector2(200, 200)
 scale = Vector2(1.5625, 1.5625)
-texture = ExtResource("2_abhds")
 
 [node name="Title" type="Label" parent="."]
 layout_mode = 0
