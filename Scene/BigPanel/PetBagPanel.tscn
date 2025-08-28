@@ -1,47 +1,102 @@
-[gd_scene load_steps=3 format=3 uid="uid://bnf1u6re1r1if"]
+[gd_scene load_steps=7 format=3 uid="uid://bnf1u6re1r1if"]
 
 [ext_resource type="Script" uid="uid://bdhwvqsmakna2" path="res://Script/BigPanel/PetBagPanel.gd" id="1_m60ti"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n03md"]
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8kysg"]
+bg_color = Color(0.9, 0.85, 0.75, 0.95)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0.5, 0.3, 0.1, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0.3, 0.2, 0.1, 0.4)
+shadow_size = 15
+shadow_offset = Vector2(3, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uc6q1"]
+bg_color = Color(0.95, 0.92, 0.85, 0.9)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.6, 0.4, 0.2, 0.8)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
 corner_detail = 20
-shadow_size = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+bg_color = Color(0.85, 0.7, 0.5, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.4, 0.2, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+bg_color = Color(0.65, 0.5, 0.3, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.2, 0.05, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
+bg_color = Color(0.75, 0.6, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.3, 0.1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [node name="PetBagPanel" type="Panel"]
-offset_left = 69.0
-offset_top = 56.0
-offset_right = 1635.0
-offset_bottom = 836.0
+offset_left = 58.0
+offset_top = 77.0
+offset_right = 1624.0
+offset_bottom = 797.0
 scale = Vector2(0.8, 0.8)
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
+theme_override_styles/panel = SubResource("StyleBoxFlat_8kysg")
 script = ExtResource("1_m60ti")
 
 [node name="TMBackGround" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = -90.0
-offset_top = -71.0
-offset_right = 1672.0
-offset_bottom = 831.0
-color = Color(1, 1, 1, 0)
+offset_left = -72.0
+offset_top = -95.0
+offset_right = 1678.0
+offset_bottom = 804.0
+color = Color(0.9, 0.8, 0.6, 0.3)
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 2
-offset_left = 28.0
-offset_top = 95.0
-offset_right = 3805.0
-offset_bottom = 1723.0
+offset_left = 40.0
+offset_top = 100.0
+offset_right = 3753.0
+offset_bottom = 1532.0
 scale = Vector2(0.4, 0.4)
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_uc6q1")
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+scroll_deadzone = -10
 
 [node name="Bag_Grid" type="GridContainer" parent="ScrollContainer"]
 layout_mode = 2
@@ -51,36 +106,45 @@ columns = 8
 
 [node name="Title" type="Label" parent="."]
 layout_mode = 2
+offset_top = 13.0
 offset_right = 1566.0
-offset_bottom = 69.0
+offset_bottom = 98.0
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 0.807843, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 4
-theme_override_constants/shadow_offset_y = 4
-theme_override_constants/outline_size = 15
-theme_override_constants/shadow_outline_size = 15
-theme_override_font_sizes/font_size = 50
-text = "宠物背包"
+theme_override_colors/font_color = Color(0.4, 0.2, 0.1, 1)
+theme_override_colors/font_shadow_color = Color(1, 0.9, 0.7, 0.8)
+theme_override_colors/font_outline_color = Color(0.7, 0.5, 0.3, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 3
+theme_override_constants/shadow_outline_size = 8
+theme_override_font_sizes/font_size = 45
+text = "🐾 宠物背包 🐾"
 horizontal_alignment = 1
 
 [node name="QuitButton" type="Button" parent="."]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
-offset_left = 1478.75
-offset_top = 20.0
-offset_right = 1538.75
-offset_bottom = 83.0
-theme_override_font_sizes/font_size = 40
-text = "X"
+offset_left = 1482.5
+offset_top = 27.5
+offset_right = 1542.5
+offset_bottom = 90.5
+theme_override_colors/font_color = Color(0.8, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 35
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "❌"
 
 [node name="RefreshButton" type="Button" parent="."]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
-offset_left = 27.5
-offset_top = 16.25
-offset_right = 115.5
-offset_bottom = 79.25
-theme_override_font_sizes/font_size = 40
-text = "刷新"
+offset_left = 13.0
+offset_top = 13.0
+offset_right = 117.0
+offset_bottom = 76.0
+theme_override_colors/font_color = Color(0.3, 0.2, 0.1, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "🔄刷新"

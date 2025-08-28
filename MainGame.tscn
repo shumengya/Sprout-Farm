@@ -1,4 +1,4 @@
-[gd_scene load_steps=113 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=114 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
@@ -31,7 +31,6 @@
 [ext_resource type="PackedScene" uid="uid://bseuwniienrqy" path="res://Scene/BigPanel/PlayerBagPanel.tscn" id="19_8kysg"]
 [ext_resource type="PackedScene" uid="uid://cehw5sx5pgmmc" path="res://Scene/BigPanel/ItemBagPanel.tscn" id="20_n03md"]
 [ext_resource type="PackedScene" uid="uid://j4ft87o7jk14" path="res://Scene/BigPanel/ItemStorePanel.tscn" id="21_uhubb"]
-[ext_resource type="Script" uid="uid://bdhwvqsmakna2" path="res://Script/BigPanel/PetBagPanel.gd" id="23_uc6q1"]
 [ext_resource type="Script" uid="uid://bdavskipn547h" path="res://Script/BigPanel/PlayerStorePanel.gd" id="24_dygid"]
 [ext_resource type="PackedScene" uid="uid://cnjidcwuv4nn4" path="res://Scene/BigPanel/PetStorePanel.tscn" id="24_uc6q1"]
 [ext_resource type="PackedScene" uid="uid://d3i0l6ysrde6o" path="res://Scene/SmallPanel/AccountSettingPanel.tscn" id="26_uc6q1"]
@@ -42,6 +41,7 @@
 [ext_resource type="PackedScene" uid="uid://diwbnwhnq026" path="res://Scene/NewPet/PetBattlePanel.tscn" id="29_mw3xw"]
 [ext_resource type="PackedScene" uid="uid://dos15dmc1b6bt" path="res://GUI/GameSettingPanel.tscn" id="30_game_setting"]
 [ext_resource type="PackedScene" uid="uid://jjlgdnoo8e52" path="res://Scene/BigPanel/PlayGamePanel.tscn" id="30_rawle"]
+[ext_resource type="PackedScene" uid="uid://bnf1u6re1r1if" path="res://Scene/BigPanel/PetBagPanel.tscn" id="31_dfxu8"]
 [ext_resource type="Texture2D" uid="uid://2sdfbvf1isif" path="res://icon.svg" id="31_uc6q1"]
 [ext_resource type="Script" uid="uid://doo34ll0yb078" path="res://Script/SmallPanel/PetInformPanel.gd" id="31_vygm6"]
 [ext_resource type="PackedScene" uid="uid://byxhjyyaahs6q" path="res://Scene/BigPanel/SpecialFarmPanel.tscn" id="31_ww70k"]
@@ -92,6 +92,22 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_adtqp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n03md"]
+bg_color = Color(0.85, 0.95, 0.88, 0.85)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.8, 0.65, 0.9)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+corner_detail = 20
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 12
+shadow_offset = Vector2(3, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dfxu8"]
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
@@ -103,7 +119,7 @@ corner_radius_bottom_left = 20
 corner_detail = 20
 shadow_size = 20
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8d602"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ww70k"]
 border_width_left = 5
 border_width_top = 5
 border_width_right = 5
@@ -801,15 +817,19 @@ offset_right = 1473.0
 offset_bottom = 748.0
 
 [node name="ItemStorePanel" parent="UI/BigPanel" instance=ExtResource("21_uhubb")]
+visible = false
 offset_left = 80.0
 offset_top = 77.0
 offset_right = 1620.0
 offset_bottom = 797.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
 
 [node name="ItemBagPanel" parent="UI/BigPanel" instance=ExtResource("20_n03md")]
 visible = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_dfxu8")
 
 [node name="CropWarehousePanel" parent="UI/BigPanel" instance=ExtResource("18_5b81d")]
+visible = false
 
 [node name="PlayerBagPanel" parent="UI/BigPanel" instance=ExtResource("19_8kysg")]
 visible = false
@@ -826,7 +846,7 @@ offset_bottom = 836.0
 scale = Vector2(0.8, 0.8)
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
+theme_override_styles/panel = SubResource("StyleBoxFlat_ww70k")
 script = ExtResource("24_dygid")
 
 [node name="TMBackGround" type="ColorRect" parent="UI/BigPanel/PlayerStorePanel"]
@@ -899,80 +919,10 @@ offset_bottom = 80.5
 theme_override_font_sizes/font_size = 40
 text = "购买商品摊位"
 
+[node name="PetBagPanel" parent="UI/BigPanel" instance=ExtResource("31_dfxu8")]
+visible = false
+
 [node name="PetStorePanel" parent="UI/BigPanel" instance=ExtResource("24_uc6q1")]
-visible = false
-
-[node name="PetBagPanel" type="Panel" parent="UI/BigPanel"]
-visible = false
-offset_left = 69.0
-offset_top = 56.0
-offset_right = 1635.0
-offset_bottom = 836.0
-scale = Vector2(0.8, 0.8)
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_8d602")
-script = ExtResource("23_uc6q1")
-
-[node name="TMBackGround" type="ColorRect" parent="UI/BigPanel/PetBagPanel"]
-layout_mode = 0
-offset_left = -90.0
-offset_top = -71.0
-offset_right = 1672.0
-offset_bottom = 831.0
-color = Color(1, 1, 1, 0)
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/BigPanel/PetBagPanel"]
-layout_mode = 2
-offset_left = 28.0
-offset_top = 95.0
-offset_right = 3805.0
-offset_bottom = 1723.0
-scale = Vector2(0.4, 0.4)
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="Bag_Grid" type="GridContainer" parent="UI/BigPanel/PetBagPanel/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 6
-size_flags_vertical = 3
-columns = 8
-
-[node name="Title" type="Label" parent="UI/BigPanel/PetBagPanel"]
-layout_mode = 2
-offset_right = 1566.0
-offset_bottom = 69.0
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 0.807843, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 4
-theme_override_constants/shadow_offset_y = 4
-theme_override_constants/outline_size = 15
-theme_override_constants/shadow_outline_size = 15
-theme_override_font_sizes/font_size = 50
-text = "宠物背包"
-horizontal_alignment = 1
-
-[node name="QuitButton" type="Button" parent="UI/BigPanel/PetBagPanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 1478.75
-offset_top = 20.0
-offset_right = 1538.75
-offset_bottom = 83.0
-theme_override_font_sizes/font_size = 40
-text = "X"
-
-[node name="RefreshButton" type="Button" parent="UI/BigPanel/PetBagPanel"]
-custom_minimum_size = Vector2(60, 60)
-layout_mode = 2
-offset_left = 27.5
-offset_top = 16.25
-offset_right = 115.5
-offset_bottom = 79.25
-theme_override_font_sizes/font_size = 40
-text = "刷新"
 
 [node name="DailyCheckInPanel" parent="UI/BigPanel" instance=ExtResource("18_m6fch")]
 visible = false

@@ -308,6 +308,11 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "点击游玩"
 
+[node name="QuitButton" type="Button" parent="."]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
 [connection signal="pressed" from="ScrollContainer/Grid/2048Game/2048GameButton" to="." method="_on_game_button_pressed"]
 [connection signal="pressed" from="ScrollContainer/Grid/PushBox/PushBoxButton" to="." method="_on_push_box_button_pressed"]
 [connection signal="pressed" from="ScrollContainer/Grid/SnakeGame/SnakeGameButton" to="." method="_on_snake_game_button_pressed"]

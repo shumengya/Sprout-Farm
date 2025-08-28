@@ -1,30 +1,75 @@
-[gd_scene load_steps=4 format=3 uid="uid://hesp70n3ondo"]
+[gd_scene load_steps=7 format=3 uid="uid://hesp70n3ondo"]
 
 [ext_resource type="Script" uid="uid://mtfp0ct42nrx" path="res://Script/BigPanel/CropStorePanel.gd" id="1_ehof8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8kysg"]
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-corner_detail = 5
-shadow_size = 20
+bg_color = Color(0.9, 0.85, 0.75, 0.95)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0.5, 0.3, 0.1, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
+shadow_color = Color(0.3, 0.2, 0.1, 0.4)
+shadow_size = 15
+shadow_offset = Vector2(3, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+bg_color = Color(0.85, 0.7, 0.5, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.4, 0.2, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+bg_color = Color(0.65, 0.5, 0.3, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.2, 0.05, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
+bg_color = Color(0.75, 0.6, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.3, 0.1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uc6q1"]
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+bg_color = Color(0.95, 0.92, 0.85, 0.9)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.6, 0.4, 0.2, 0.8)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
 corner_detail = 20
 
 [node name="CropStorePanel" type="Panel"]
-offset_left = 79.0
+offset_left = 81.0
 offset_top = 70.0
-offset_right = 1598.0
+offset_right = 1640.0
 offset_bottom = 790.0
 scale = Vector2(0.8, 0.8)
 size_flags_horizontal = 3
@@ -38,99 +83,146 @@ offset_left = -101.0
 offset_top = -87.0
 offset_right = 1655.0
 offset_bottom = 811.0
-color = Color(1, 1, 1, 0)
+color = Color(0.901961, 0.8, 0.6, 0.262745)
 
 [node name="Title" type="Label" parent="."]
 layout_mode = 2
 offset_right = 1519.0
 offset_bottom = 69.0
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 0.964706, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 5
-theme_override_constants/shadow_offset_y = 5
-theme_override_constants/outline_size = 15
-theme_override_constants/shadow_outline_size = 15
+theme_override_colors/font_color = Color(0.4, 0.2, 0.1, 1)
+theme_override_colors/font_shadow_color = Color(1, 0.9, 0.7, 0.8)
+theme_override_colors/font_outline_color = Color(0.7, 0.5, 0.3, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 3
+theme_override_constants/shadow_outline_size = 8
 theme_override_font_sizes/font_size = 50
-text = "种子商店"
+text = "🌱 种子商店 🌱"
 horizontal_alignment = 1
 
 [node name="SortContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
+offset_left = 13.0
 offset_top = 78.0
-offset_right = 1519.0
+offset_right = 1540.0
 offset_bottom = 141.0
 alignment = 1
 
 [node name="FilterLabel" type="Label" parent="SortContainer"]
-self_modulate = Color(0.607843, 0.647059, 1, 1)
+modulate = Color(0.439216, 0.560784, 1, 1)
 layout_mode = 2
+theme_override_colors/font_shadow_color = Color(1, 0.9, 0.7, 0.6)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
 theme_override_font_sizes/font_size = 30
-text = "筛选："
+text = "🔍 筛选："
 
 [node name="Sort_All" type="Button" parent="SortContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "全部"
+theme_override_colors/font_color = Color(0.3, 0.2, 0.1, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "🌾 全部"
 
 [node name="Sort_Common" type="Button" parent="SortContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "普通"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "⚪ 普通"
 
 [node name="Sort_Superior" type="Button" parent="SortContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "优良"
+theme_override_colors/font_color = Color(0, 0.823529, 0.415686, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "🟢 优良"
 
 [node name="Sort_Rare" type="Button" parent="SortContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "稀有"
+theme_override_colors/font_color = Color(0, 0.454902, 0.729412, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "🔵 稀有"
 
 [node name="Sort_Epic" type="Button" parent="SortContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "史诗"
+theme_override_colors/font_color = Color(0.552941, 0.396078, 0.772549, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "🟣 史诗"
 
 [node name="Sort_Legendary" type="Button" parent="SortContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "传奇"
+theme_override_colors/font_color = Color(0.988235, 0.835294, 0.247059, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "🟡 传奇"
 
 [node name="SortLabel" type="Label" parent="SortContainer"]
-self_modulate = Color(0.607843, 0.647059, 1, 1)
+modulate = Color(0.439216, 0.560784, 1, 1)
 layout_mode = 2
+theme_override_colors/font_shadow_color = Color(1, 0.9, 0.7, 0.6)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
 theme_override_font_sizes/font_size = 30
-text = "排序："
+text = "📊 排序："
 
 [node name="Sort_Price" type="Button" parent="SortContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按价格"
+theme_override_colors/font_color = Color(0.2, 0.4, 0.1, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "💰 按价格"
 
 [node name="Sort_GrowTime" type="Button" parent="SortContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按生长时间"
+theme_override_colors/font_color = Color(0.2, 0.4, 0.1, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "⏰ 按生长时间"
 
 [node name="Sort_Profit" type="Button" parent="SortContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按收益"
+theme_override_colors/font_color = Color(0.2, 0.4, 0.1, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "📈 按收益"
 
 [node name="Sort_Level" type="Button" parent="SortContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = "按等级"
+theme_override_colors/font_color = Color(0.2, 0.4, 0.1, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "⭐ 按等级"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 2
-offset_left = 13.0
-offset_top = 144.0
-offset_right = 3727.0
-offset_bottom = 1551.0
+offset_left = 19.0
+offset_top = 151.0
+offset_right = 3810.0
+offset_bottom = 1540.0
 scale = Vector2(0.4, 0.4)
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_uc6q1")
@@ -147,21 +239,29 @@ columns = 8
 [node name="QuitButton" type="Button" parent="."]
 custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
-offset_left = 1438.75
-offset_top = 11.25
-offset_right = 1498.75
-offset_bottom = 74.25
-theme_override_font_sizes/font_size = 40
-text = "X"
+offset_left = 1478.75
+offset_top = 15.0
+offset_right = 1538.75
+offset_bottom = 78.0
+theme_override_colors/font_color = Color(0.8, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 35
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "❌"
 
 [node name="RefreshButton" type="Button" parent="."]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(88, 60)
 layout_mode = 2
 offset_left = 13.0
 offset_top = 11.0
 offset_right = 101.0
 offset_bottom = 74.0
-theme_override_font_sizes/font_size = 40
-text = "刷新"
+theme_override_colors/font_color = Color(0.3, 0.2, 0.1, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_button")
+text = "🔄 刷新"
 
 [connection signal="pressed" from="RefreshButton" to="." method="_on_refresh_button_pressed"]
