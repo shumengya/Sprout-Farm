@@ -79,10 +79,10 @@ script = ExtResource("1_vx1qn")
 
 [node name="TMBackGround" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = -184.0
-offset_top = -100.0
-offset_right = 1571.0
-offset_bottom = 804.0
+offset_left = -85.0
+offset_top = -129.0
+offset_right = 1690.0
+offset_bottom = 820.0
 color = Color(0.9, 0.8, 0.6, 0.3)
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]

@@ -1,15 +1,80 @@
-[gd_scene load_steps=4 format=3 uid="uid://byxhjyyaahs6q"]
+[gd_scene load_steps=9 format=3 uid="uid://byxhjyyaahs6q"]
 
 [ext_resource type="Texture2D" uid="uid://ywdg7xgq7hm8" path="res://assets/装饰物图片/道具背包.webp" id="1_mv0g4"]
 [ext_resource type="Script" uid="uid://btm2je8pg7rgk" path="res://Script/BigPanel/SpecialFarmPanel.gd" id="1_n2mxy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7i23t"]
-border_width_left = 15
-border_width_top = 15
-border_width_right = 15
-border_width_bottom = 15
+bg_color = Color(0.752836, 0.587098, 0.400951, 0.9)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0.364706, 0.254902, 0.156863, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
 corner_detail = 20
-shadow_size = 20
+shadow_color = Color(0.2, 0.15, 0.1, 0.5)
+shadow_size = 25
+shadow_offset = Vector2(5, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_CloseButton"]
+bg_color = Color(0.8, 0.2, 0.2, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.15, 0.15, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n2mxy"]
+bg_color = Color(0.945056, 0.846293, 0.608526, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 20
+shadow_color = Color(0.0823529, 0.0823529, 0.0823529, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Button_Hover"]
+bg_color = Color(0.8, 0.65098, 0.470588, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.45098, 0.364706, 0.254902, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Button_Pressed"]
+bg_color = Color(0.564706, 0.45098, 0.317647, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.364706, 0.294118, 0.203922, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Button_Normal"]
+bg_color = Color(0.678431, 0.54902, 0.392157, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.45098, 0.364706, 0.254902, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
 
 [node name="SpecialFarmPanel" type="Panel"]
 offset_right = 1399.0
@@ -17,39 +82,44 @@ offset_bottom = 720.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_7i23t")
 script = ExtResource("1_n2mxy")
 
-[node name="QuitButton" type="Button" parent="."]
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 0
-offset_left = 1303.0
-offset_top = 17.0
-offset_right = 1383.0
-offset_bottom = 97.0
-theme_override_font_sizes/font_size = 50
-text = "X"
-
 [node name="Title" type="Label" parent="."]
 layout_mode = 0
 offset_top = 17.0
 offset_right = 1401.0
 offset_bottom = 86.0
-theme_override_colors/font_color = Color(0.560784, 1, 0, 1)
+theme_override_colors/font_color = Color(1, 0.901961, 0.498039, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 20
 theme_override_font_sizes/font_size = 50
-text = "神秘农场"
+text = "🌾 神秘农场探索 🏞️"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 0
+offset_left = 1297.0
+offset_top = 20.0
+offset_right = 1377.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 50
+theme_override_styles/hover = SubResource("StyleBoxFlat_CloseButton")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_CloseButton")
+theme_override_styles/normal = SubResource("StyleBoxFlat_CloseButton")
+text = "X"
+
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 0
-offset_left = 15.0
-offset_top = 88.0
-offset_right = 1384.0
-offset_bottom = 707.0
+offset_left = 48.0
+offset_top = 116.0
+offset_right = 1352.0
+offset_bottom = 674.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_n2mxy")
 horizontal_scroll_mode = 0
 
 [node name="Grid" type="GridContainer" parent="ScrollContainer"]
@@ -64,14 +134,15 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/FlowerFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "花卉农场"
+text = "🌸 花卉农场 🌺"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -81,8 +152,12 @@ texture = ExtResource("1_mv0g4")
 
 [node name="FlowerFarmButton" type="Button" parent="ScrollContainer/Grid/FlowerFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击访问"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🌻欣赏花园"
 
 [node name="FruitFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
@@ -90,14 +165,15 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/FruitFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "瓜果飘香"
+text = "🍎 瓜果飘香 🍓"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -107,8 +183,12 @@ texture = ExtResource("1_mv0g4")
 
 [node name="FruitFarmButton" type="Button" parent="ScrollContainer/Grid/FruitFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击访问"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🥕采摘果实"
 
 [node name="HybridFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
@@ -116,14 +196,15 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/HybridFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "杂交基地"
+text = "🧬 杂交基地 🌱"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -133,8 +214,12 @@ texture = ExtResource("1_mv0g4")
 
 [node name="HybridFarmButton" type="Button" parent="ScrollContainer/Grid/HybridFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击访问"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🔬研究培育"
 
 [node name="LuckyFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
@@ -142,14 +227,15 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/LuckyFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "幸运农场"
+text = "🍀 幸运农场 ✨"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -159,8 +245,12 @@ texture = ExtResource("1_mv0g4")
 
 [node name="LuckyFarmButton" type="Button" parent="ScrollContainer/Grid/LuckyFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击访问"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🎲试试运气"
 
 [node name="RiceFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
@@ -168,14 +258,15 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/RiceFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "稻香"
+text = "🌾 稻香田园 🍚"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -185,8 +276,12 @@ texture = ExtResource("1_mv0g4")
 
 [node name="RiceFarmButton" type="Button" parent="ScrollContainer/Grid/RiceFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击访问"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🌾收割稻谷"
 
 [node name="WheatFarm" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
@@ -194,14 +289,15 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/WheatFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "小麦谷"
+text = "🌾 小麦谷 🥖"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -211,8 +307,12 @@ texture = ExtResource("1_mv0g4")
 
 [node name="WheatFarmButton" type="Button" parent="ScrollContainer/Grid/WheatFarm"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击访问"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🌾收割麦子"
 
 [connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="pressed" from="ScrollContainer/Grid/FlowerFarm/FlowerFarmButton" to="." method="_on_flower_farm_button_pressed"]

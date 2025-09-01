@@ -1,4 +1,4 @@
-[gd_scene load_steps=114 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=113 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
@@ -90,22 +90,6 @@
 [ext_resource type="Script" uid="uid://di8wjflimodb0" path="res://GameManager/DayNightSystem.gd" id="73_6fhdl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_adtqp"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n03md"]
-bg_color = Color(0.85, 0.95, 0.88, 0.85)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6, 0.8, 0.65, 0.9)
-corner_radius_top_left = 35
-corner_radius_top_right = 35
-corner_radius_bottom_right = 35
-corner_radius_bottom_left = 35
-corner_detail = 20
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 12
-shadow_offset = Vector2(3, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dfxu8"]
 border_width_left = 5
@@ -816,14 +800,6 @@ offset_top = 28.0
 offset_right = 1473.0
 offset_bottom = 748.0
 
-[node name="ItemStorePanel" parent="UI/BigPanel" instance=ExtResource("21_uhubb")]
-visible = false
-offset_left = 80.0
-offset_top = 77.0
-offset_right = 1620.0
-offset_bottom = 797.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_n03md")
-
 [node name="ItemBagPanel" parent="UI/BigPanel" instance=ExtResource("20_n03md")]
 visible = false
 theme_override_styles/panel = SubResource("StyleBoxFlat_dfxu8")
@@ -923,6 +899,7 @@ text = "购买商品摊位"
 visible = false
 
 [node name="PetStorePanel" parent="UI/BigPanel" instance=ExtResource("24_uc6q1")]
+visible = false
 
 [node name="DailyCheckInPanel" parent="UI/BigPanel" instance=ExtResource("18_m6fch")]
 visible = false
@@ -940,9 +917,11 @@ visible = false
 visible = false
 
 [node name="PlayGamePanel" parent="UI/BigPanel" instance=ExtResource("30_rawle")]
-visible = false
 
 [node name="SpecialFarmPanel" parent="UI/BigPanel" instance=ExtResource("31_ww70k")]
+visible = false
+
+[node name="ItemStorePanel" parent="UI/BigPanel" instance=ExtResource("21_uhubb")]
 visible = false
 
 [node name="SmallPanel" type="CanvasLayer" parent="UI"]
@@ -1770,6 +1749,39 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 35
 text = "结束占卜"
+
+[node name="PetLadderListPanel" type="Panel" parent="UI/SmallPanel"]
+visible = false
+offset_left = 212.0
+offset_right = 1100.0
+offset_bottom = 716.0
+
+[node name="Label" type="Label" parent="UI/SmallPanel/PetLadderListPanel"]
+layout_mode = 0
+offset_right = 889.0
+offset_bottom = 55.0
+theme_override_colors/font_color = Color(0.909804, 1, 0.415686, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 40
+text = "宠物天梯赛"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="UI/SmallPanel/PetLadderListPanel"]
+modulate = Color(1, 0, 0, 1)
+self_modulate = Color(1, 0, 0, 1)
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 0
+offset_left = 825.0
+offset_right = 885.0
+offset_bottom = 63.0
+theme_override_colors/icon_normal_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 40
+text = "X"
 
 [node name="DiaLog" type="CanvasLayer" parent="UI"]
 

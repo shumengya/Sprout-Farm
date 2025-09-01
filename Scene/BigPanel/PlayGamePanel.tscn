@@ -1,15 +1,80 @@
-[gd_scene load_steps=4 format=3 uid="uid://jjlgdnoo8e52"]
+[gd_scene load_steps=9 format=3 uid="uid://jjlgdnoo8e52"]
 
 [ext_resource type="Script" uid="uid://dvaah0n1ia1a3" path="res://Script/BigPanel/PlayGamePanel.gd" id="1_i6cj7"]
 [ext_resource type="Texture2D" uid="uid://ywdg7xgq7hm8" path="res://assets/装饰物图片/道具背包.webp" id="2_wlugc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7i23t"]
-border_width_left = 15
-border_width_top = 15
-border_width_right = 15
-border_width_bottom = 15
+bg_color = Color(0.752836, 0.587098, 0.400951, 0.9)
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0.364706, 0.254902, 0.156863, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 25
+corner_radius_bottom_right = 25
+corner_radius_bottom_left = 25
 corner_detail = 20
-shadow_size = 20
+shadow_color = Color(0.2, 0.15, 0.1, 0.5)
+shadow_size = 25
+shadow_offset = Vector2(5, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ScrollContainer"]
+bg_color = Color(0.945056, 0.846293, 0.608526, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 20
+shadow_color = Color(0.0823529, 0.0823529, 0.0823529, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Button_Hover"]
+bg_color = Color(0.8, 0.65098, 0.470588, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.45098, 0.364706, 0.254902, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Button_Pressed"]
+bg_color = Color(0.564706, 0.45098, 0.317647, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.364706, 0.294118, 0.203922, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Button_Normal"]
+bg_color = Color(0.678431, 0.54902, 0.392157, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.45098, 0.364706, 0.254902, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_CloseButton"]
+bg_color = Color(0.8, 0.2, 0.2, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.15, 0.15, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="PlayGamePanel" type="Panel"]
 offset_right = 1399.0
@@ -22,24 +87,25 @@ layout_mode = 0
 offset_top = 17.0
 offset_right = 1401.0
 offset_bottom = 86.0
-theme_override_colors/font_color = Color(0.560784, 1, 0, 1)
+theme_override_colors/font_color = Color(1, 0.901961, 0.498039, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 20
 theme_override_font_sizes/font_size = 50
-text = "玩玩小游戏"
+text = "🎮 休闲小游戏 🕹️"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 0
-offset_left = 15.0
-offset_top = 88.0
-offset_right = 1384.0
-offset_bottom = 707.0
+offset_left = 48.0
+offset_top = 116.0
+offset_right = 1352.0
+offset_bottom = 674.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_ScrollContainer")
 horizontal_scroll_mode = 0
 
 [node name="Grid" type="GridContainer" parent="ScrollContainer"]
@@ -54,14 +120,15 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/2048Game"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "2048"
+text = "🧮 2048 🔢"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -71,8 +138,12 @@ texture = ExtResource("2_wlugc")
 
 [node name="2048GameButton" type="Button" parent="ScrollContainer/Grid/2048Game"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击游玩"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🎯 开始挑战"
 
 [node name="PushBox" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
@@ -80,14 +151,15 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/PushBox"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "推箱子"
+text = "📦 推箱子 🚚"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -97,8 +169,12 @@ texture = ExtResource("2_wlugc")
 
 [node name="PushBoxButton" type="Button" parent="ScrollContainer/Grid/PushBox"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击游玩"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "💪 智力考验"
 
 [node name="SnakeGame" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
@@ -106,14 +182,15 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/SnakeGame"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "贪吃蛇"
+text = "🐍 贪吃蛇 🍎"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -123,8 +200,12 @@ texture = ExtResource("2_wlugc")
 
 [node name="SnakeGameButton" type="Button" parent="ScrollContainer/Grid/SnakeGame"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击游玩"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🏃 反应游戏"
 
 [node name="Tetris" type="VBoxContainer" parent="ScrollContainer/Grid"]
 layout_mode = 2
@@ -132,14 +213,15 @@ alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/Tetris"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "俄罗斯方块"
+text = "🧩 俄罗斯方块 🟦"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -149,23 +231,29 @@ texture = ExtResource("2_wlugc")
 
 [node name="TetrisButton" type="Button" parent="ScrollContainer/Grid/Tetris"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击游玩"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🎮 经典游戏"
 
 [node name="VBox5" type="VBoxContainer" parent="ScrollContainer/Grid"]
+visible = false
 layout_mode = 2
 alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox5"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "敬请期待"
+text = "🔮 神秘游戏 ✨"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -175,23 +263,29 @@ texture = ExtResource("2_wlugc")
 
 [node name="Button" type="Button" parent="ScrollContainer/Grid/VBox5"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击游玩"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🚧 敬请期待"
 
 [node name="VBox6" type="VBoxContainer" parent="ScrollContainer/Grid"]
+visible = false
 layout_mode = 2
 alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox6"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "敬请期待"
+text = "🎲 桌游世界 🃏"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -201,23 +295,29 @@ texture = ExtResource("2_wlugc")
 
 [node name="Button" type="Button" parent="ScrollContainer/Grid/VBox6"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击游玩"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🚧 敬请期待"
 
 [node name="VBox7" type="VBoxContainer" parent="ScrollContainer/Grid"]
+visible = false
 layout_mode = 2
 alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox7"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "敬请期待"
+text = "🎯 射击游戏 🏹"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -227,23 +327,29 @@ texture = ExtResource("2_wlugc")
 
 [node name="Button" type="Button" parent="ScrollContainer/Grid/VBox7"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击游玩"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🚧 敬请期待"
 
 [node name="VBox8" type="VBoxContainer" parent="ScrollContainer/Grid"]
+visible = false
 layout_mode = 2
 alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox8"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "敬请期待"
+text = "🧠 益智游戏 💡"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -253,23 +359,29 @@ texture = ExtResource("2_wlugc")
 
 [node name="Button" type="Button" parent="ScrollContainer/Grid/VBox8"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击游玩"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🚧 敬请期待"
 
 [node name="VBox9" type="VBoxContainer" parent="ScrollContainer/Grid"]
+visible = false
 layout_mode = 2
 alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox9"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "敬请期待"
+text = "🏆 竞技游戏 ⚔️"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -279,23 +391,29 @@ texture = ExtResource("2_wlugc")
 
 [node name="Button" type="Button" parent="ScrollContainer/Grid/VBox9"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击游玩"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🚧 敬请期待"
 
 [node name="VBox10" type="VBoxContainer" parent="ScrollContainer/Grid"]
+visible = false
 layout_mode = 2
 alignment = 1
 
 [node name="GameTitle" type="Label" parent="ScrollContainer/Grid/VBox10"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.6, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0.180392, 0.121569, 0.0745098, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 15
 theme_override_font_sizes/font_size = 35
-text = "敬请期待"
+text = "🎨 创意游戏 ✨"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -305,13 +423,26 @@ texture = ExtResource("2_wlugc")
 
 [node name="Button" type="Button" parent="ScrollContainer/Grid/VBox10"]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 30
-text = "点击游玩"
+theme_override_styles/hover = SubResource("StyleBoxFlat_Button_Hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_Button_Pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button_Normal")
+text = "🚧 敬请期待"
 
 [node name="QuitButton" type="Button" parent="."]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+offset_left = 1297.0
+offset_top = 20.0
+offset_right = 1377.0
+offset_bottom = 100.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 40
+theme_override_styles/hover = SubResource("StyleBoxFlat_CloseButton")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_CloseButton")
+theme_override_styles/normal = SubResource("StyleBoxFlat_CloseButton")
+text = "X"
 
 [connection signal="pressed" from="ScrollContainer/Grid/2048Game/2048GameButton" to="." method="_on_game_button_pressed"]
 [connection signal="pressed" from="ScrollContainer/Grid/PushBox/PushBoxButton" to="." method="_on_push_box_button_pressed"]

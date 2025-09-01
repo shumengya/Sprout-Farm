@@ -85,7 +85,7 @@ offset_top = 676.0
 offset_right = 188.0
 offset_bottom = 718.0
 theme_override_font_sizes/font_size = 30
-text = "版本号：v1.0.1"
+text = "版本号：v1.0"
 
 [node name="GameVersionLabel2" type="Label" parent="GUI"]
 layout_mode = 0
@@ -94,7 +94,9 @@ offset_top = 676.0
 offset_right = 875.0
 offset_bottom = 718.0
 theme_override_font_sizes/font_size = 30
-text = "学习项目，偏休闲娱乐"
+text = "学习项目"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Developer" type="RichTextLabel" parent="GUI"]
 layout_mode = 0
@@ -109,6 +111,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="AddGroupLabel" type="Label" parent="GUI"]
+visible = false
 self_modulate = Color(1, 1, 0, 1)
 layout_mode = 0
 offset_left = 896.0
@@ -125,6 +128,7 @@ theme_override_font_sizes/font_size = 30
 text = "加群获取最新开发动态！"
 
 [node name="QQGroupImage" type="TextureRect" parent="GUI/AddGroupLabel"]
+visible = false
 layout_mode = 0
 offset_left = 17.0
 offset_top = 43.0
@@ -134,6 +138,7 @@ scale = Vector2(0.3, 0.3)
 texture = ExtResource("4_eghpk")
 
 [node name="QQGroupImage2" type="TextureRect" parent="GUI/AddGroupLabel"]
+visible = false
 layout_mode = 0
 offset_left = -832.0
 offset_right = 103.0
@@ -142,6 +147,7 @@ scale = Vector2(0.3, 0.3)
 texture = ExtResource("5_m77al")
 
 [node name="YouXiaoQing" type="TextureRect" parent="GUI/AddGroupLabel"]
+visible = false
 layout_mode = 0
 offset_left = 298.0
 offset_top = 82.0
@@ -151,6 +157,7 @@ scale = Vector2(0.14, 0.14)
 texture = ExtResource("5_6jmhb")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="GUI/AddGroupLabel"]
+visible = false
 self_modulate = Color(0.580392, 1, 0, 1)
 layout_mode = 0
 offset_left = -896.0
@@ -215,6 +222,7 @@ theme_override_font_sizes/font_size = 40
 text = "退出游戏"
 
 [node name="GameAboutPanel" type="Panel" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 138.0
 offset_top = 80.0

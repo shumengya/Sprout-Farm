@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dbfqu87627yg6"]
+[gd_scene load_steps=8 format=3 uid="uid://dbfqu87627yg6"]
 
 [ext_resource type="Script" uid="uid://fk4q3x6uqydd" path="res://Script/BigPanel/PlayerRankingPanel.gd" id="1_efhd6"]
 [ext_resource type="PackedScene" uid="uid://crd28qnymob7" path="res://GUI/PlayerRankingItem.tscn" id="1_xwp76"]
@@ -16,23 +16,8 @@ corner_radius_bottom_right = 25
 corner_radius_bottom_left = 25
 corner_detail = 20
 shadow_color = Color(0.8, 0.6, 0.2, 0.4)
-shadow_size = 20
+shadow_size = 30
 shadow_offset = Vector2(5, 5)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Button"]
-bg_color = Color(0.2, 0.25, 0.4, 0.9)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6, 0.45, 0.15, 0.8)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
-shadow_color = Color(0.8, 0.6, 0.2, 0.3)
-shadow_size = 8
-shadow_offset = Vector2(3, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ButtonHover"]
 bg_color = Color(0.3, 0.35, 0.55, 1)
@@ -48,6 +33,21 @@ corner_radius_bottom_left = 15
 shadow_color = Color(0.9, 0.7, 0.3, 0.5)
 shadow_size = 12
 shadow_offset = Vector2(4, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_Button"]
+bg_color = Color(0.2, 0.25, 0.4, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.45, 0.15, 0.8)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+shadow_color = Color(0.8, 0.6, 0.2, 0.3)
+shadow_size = 8
+shadow_offset = Vector2(3, 3)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ButtonPressed"]
 bg_color = Color(0.15, 0.2, 0.35, 1)
@@ -91,20 +91,20 @@ offset_left = -171.0
 offset_top = -109.0
 offset_right = 1582.0
 offset_bottom = 792.0
-color = Color(0.05, 0.08, 0.15, 0.4)
+color = Color(0.839723, 0.846103, 0.999009, 0.298039)
 
 [node name="RegisterPlayerNum" type="Label" parent="."]
 self_modulate = Color(0.9, 0.7, 0.3, 1)
 layout_mode = 0
-offset_left = 841.25
-offset_top = 18.75
-offset_right = 991.25
-offset_bottom = 60.75
-theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.2, 1)
+offset_left = 841.111
+offset_top = 32.2222
+offset_right = 991.111
+offset_bottom = 74.2222
 theme_override_colors/font_shadow_color = Color(0.8, 0.6, 0.2, 0.6)
-theme_override_constants/outline_size = 8
+theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.2, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 30
 text = "注册人数："
 
@@ -133,11 +133,11 @@ offset_left = 95.0
 offset_top = 21.25
 offset_right = 378.0
 offset_bottom = 78.25
-theme_override_colors/font_color = Color(0.9, 0.8, 0.5, 1)
 theme_override_colors/font_placeholder_color = Color(0.6, 0.5, 0.3, 0.8)
+theme_override_colors/font_color = Color(0.9, 0.8, 0.5, 1)
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/focus = SubResource("StyleBoxFlat_ButtonHover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 placeholder_text = "输入要搜索的人"
 
 [node name="RefreshButton" type="Button" parent="."]
@@ -148,13 +148,10 @@ offset_top = 21.25
 offset_right = 94.25
 offset_bottom = 78.25
 theme_override_colors/font_color = Color(0.95, 0.8, 0.4, 1)
-theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 text = "刷新"
 
 [node name="SearchButton" type="Button" parent="."]
@@ -165,13 +162,10 @@ offset_top = 21.25
 offset_right = 455.5
 offset_bottom = 78.25
 theme_override_colors/font_color = Color(0.95, 0.8, 0.4, 1)
-theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 text = "搜索"
 
 [node name="QuitButton" type="Button" parent="."]
@@ -181,14 +175,11 @@ offset_left = 1326.25
 offset_top = 16.25
 offset_right = 1383.25
 offset_bottom = 73.25
-theme_override_colors/font_color = Color(1, 0.7, 0.3, 1)
-theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
+theme_override_colors/font_color = Color(1, 0, 0.301961, 1)
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 text = "X"
 
 [node name="FiterAndSortHBox" type="HBoxContainer" parent="."]
@@ -214,14 +205,11 @@ vertical_alignment = 1
 self_modulate = Color(1, 0.9, 0.3, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.15, 0.05, 1)
-theme_override_colors/font_shadow_color = Color(1, 0.8, 0.2, 0.6)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
+theme_override_colors/font_color = Color(1, 0.823529, 0.0627451, 1)
 theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 text = "钱币"
 
 [node name="SeedSortBtn" type="Button" parent="FiterAndSortHBox"]
@@ -229,27 +217,21 @@ self_modulate = Color(0.4, 0.8, 0.5, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
-theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
 theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 text = "种子数"
 
 [node name="LevelSortBtn" type="Button" parent="FiterAndSortHBox"]
 self_modulate = Color(0.3, 0.7, 0.9, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
-theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
+theme_override_colors/font_color = Color(0.211765, 0.713726, 1, 1)
 theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 text = "等级"
 
 [node name="OnlineTimeSortBtn" type="Button" parent="FiterAndSortHBox"]
@@ -257,27 +239,21 @@ self_modulate = Color(0.8, 0.5, 0.3, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
-theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
 theme_override_font_sizes/font_size = 26
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 text = "在线时长"
 
 [node name="LoginTimeSortBtn" type="Button" parent="FiterAndSortHBox"]
 self_modulate = Color(0.5, 0.8, 0.4, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
-theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
+theme_override_colors/font_color = Color(0.340704, 0.882235, 1, 1)
 theme_override_font_sizes/font_size = 26
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 text = "登录时间"
 
 [node name="LikeNumSortBtn" type="Button" parent="FiterAndSortHBox"]
@@ -285,27 +261,21 @@ self_modulate = Color(0.9, 0.4, 0.7, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
-theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
 theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 text = "点赞数"
 
 [node name="IsOnlineSortBtn" type="Button" parent="FiterAndSortHBox"]
 self_modulate = Color(0.6, 0.6, 0.6, 1)
 custom_minimum_size = Vector2(158, 57)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
-theme_override_colors/font_shadow_color = Color(0.1, 0.1, 0.2, 0.8)
-theme_override_constants/shadow_offset_x = 1
-theme_override_constants/shadow_offset_y = 1
+theme_override_colors/font_color = Color(0.961312, 0.707781, 0.906286, 1)
 theme_override_font_sizes/font_size = 26
-theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ButtonHover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ButtonPressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_Button")
 text = "在线情况"
 
 [node name="Scroll" type="ScrollContainer" parent="."]
