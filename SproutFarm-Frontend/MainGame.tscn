@@ -917,6 +917,7 @@ visible = false
 visible = false
 
 [node name="PlayGamePanel" parent="UI/BigPanel" instance=ExtResource("30_rawle")]
+visible = false
 
 [node name="SpecialFarmPanel" parent="UI/BigPanel" instance=ExtResource("31_ww70k")]
 visible = false
