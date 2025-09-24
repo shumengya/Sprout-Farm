@@ -17,6 +17,8 @@ extends Panel
 
 @onready var accept_dialog: AcceptDialog = $'../../DiaLog/AcceptDialog'
 @onready var tcp_network_manager_panel: Panel = $'../../BigPanel/TCPNetworkManagerPanel'
+@onready var http_texture_rect: HTTPTextureRect = $VBox1/HBox1/HTTPTextureRect
+
 
 # 存储待执行的操作类型
 var pending_action = ""
@@ -188,11 +190,14 @@ func _refresh_player_info():
 	user_password_input.text = main_game.user_password if main_game.user_password != "" else ""
 	
 	# 优先从 login_data 获取数据，如果没有则从 data 获取
-	var player_data = main_game.login_data #if main_game.login_data.size() > 0 else main_game.data
+	var player_data = main_game.login_data 
 	
 	player_name_input.text = player_data.get("玩家昵称", "")
 	farm_name_input.text = player_data.get("农场名称", "")
 	personal_profile_input.text = player_data.get("个人简介", "")
+	# 尝试加载玩家头像（使用用户名/QQ号加载头像，而不是显示名）
+	if user_name_input.text.is_valid_int():
+		http_texture_rect.load_from_url("http://q1.qlogo.cn/g?b=qq&nk=" + user_name_input.text + "&s=100")
 	
 
 #显示消息提示

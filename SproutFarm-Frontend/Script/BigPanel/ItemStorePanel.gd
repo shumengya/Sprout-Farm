@@ -252,7 +252,7 @@ func _update_button_item_image(button: Button, item_name: String):
 		# CropImage是Sprite2D，直接设置texture属性
 		item_image.texture = texture
 		item_image.visible = true
-		print("道具商店更新道具图片：", item_name)
+		#print("道具商店更新道具图片：", item_name)
 	else:
 		# 如果没有图片，隐藏图片节点
 		item_image.visible = false

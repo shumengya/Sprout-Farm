@@ -644,7 +644,7 @@ func _load_stock_data():
 		if file:
 			var json_string = file.get_as_text()
 			file.close()
-			print("读取到的JSON数据：", json_string)
+			#print("读取到的JSON数据：", json_string)
 			
 			var json = JSON.new()
 			var parse_result = json.parse(json_string)
@@ -653,7 +653,7 @@ func _load_stock_data():
 				crop_stock_data = data.get("stock", {})
 				last_refresh_date = data.get("last_refresh_date", "")
 				print("库存数据加载成功，库存条目数：", crop_stock_data.size())
-				print("加载的库存数据：", crop_stock_data)
+				#print("加载的库存数据：", crop_stock_data)
 				print("上次刷新日期：", last_refresh_date)
 				
 				# 如果库存数据为空，重新生成
@@ -678,7 +678,7 @@ func _save_stock_data():
 	}
 	
 	print("准备保存库存数据到：", stock_file_path)
-	print("保存的数据：", data)
+	#print("保存的数据：", data)
 	
 	var file = FileAccess.open(stock_file_path, FileAccess.WRITE)
 	if file:
@@ -710,7 +710,7 @@ func _generate_initial_stock():
 		var stock_amount = _get_stock_amount_by_quality(crop["品质"])
 		crop_stock_data[crop_name] = stock_amount
 		generated_count += 1
-		print("生成库存：", crop_name, " - ", crop["品质"], " - ", stock_amount, "个")
+		#print("生成库存：", crop_name, " - ", crop["品质"], " - ", stock_amount, "个")
 	
 	# 设置当前日期为刷新日期
 	last_refresh_date = _get_current_date()
@@ -760,7 +760,7 @@ func _check_daily_refresh():
 # 每日刷新库存
 func _refresh_daily_stock():
 	_generate_initial_stock()
-	Toast.show("种子商店库存已刷新！", Color.GREEN, 3.0, 1.0)
+	#Toast.show("种子商店库存已刷新！", Color.GREEN, 3.0, 1.0)
 
 # 获取作物当前库存
 func _get_crop_stock(crop_name: String) -> int:

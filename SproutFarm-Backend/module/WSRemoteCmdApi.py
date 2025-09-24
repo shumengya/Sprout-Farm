@@ -12,7 +12,8 @@ import json
 import threading
 import time
 from typing import Dict, Any, Optional
-from ConsoleCommandsAPI import ConsoleCommandsAPI
+#自定义包
+from .ConsoleCommandsAPI import ConsoleCommandsAPI
 
 class WSRemoteCmdApi:
     """WebSocket远程命令API服务器"""

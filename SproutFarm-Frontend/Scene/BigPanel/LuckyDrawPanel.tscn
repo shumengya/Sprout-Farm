@@ -3,26 +3,35 @@
 [ext_resource type="Script" uid="uid://65e0rl31fx0i" path="res://Script/BigPanel/LuckyDrawPanel.gd" id="1_dcmen"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ynokl"]
+bg_color = Color(0.9, 0.85, 0.7, 0.95)
 border_width_left = 15
 border_width_top = 15
 border_width_right = 15
 border_width_bottom = 15
+border_color = Color(0.6, 0.4, 0.2, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
 corner_detail = 20
+shadow_color = Color(0.3, 0.2, 0.1, 0.3)
+shadow_size = 8
 
 [node name="LuckyDrawPanel" type="Panel"]
-offset_left = 373.0
+offset_left = 149.0
 offset_top = 1.0
-offset_right = 1045.0
+offset_right = 1230.0
 offset_bottom = 721.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_ynokl")
 script = ExtResource("1_dcmen")
 
 [node name="Title" type="Label" parent="."]
 layout_mode = 0
+offset_left = 16.0
 offset_top = 19.0
-offset_right = 669.0
+offset_right = 1062.0
 offset_bottom = 78.0
-theme_override_colors/font_color = Color(0.624759, 0.8051, 0.828302, 1)
+theme_override_colors/font_color = Color(0.2, 0.6, 0.2, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 3
@@ -30,28 +39,29 @@ theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
 theme_override_font_sizes/font_size = 35
-text = "幸运抽奖"
+text = "🎰 幸运大抽奖 🎁"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Label" type="Label" parent="."]
-modulate = Color(0.642982, 0.510828, 1, 1)
+modulate = Color(0.8, 0.6, 0.3, 1)
 layout_mode = 0
 offset_top = 419.0
-offset_right = 671.0
+offset_right = 1081.0
 offset_bottom = 468.0
 theme_override_font_sizes/font_size = 30
-text = "🎉获得奖励🎉"
+text = "🎁 抽奖获得奖励 🌾"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="QuitButton" type="Button" parent="."]
+modulate = Color(1, 0, 0, 1)
 custom_minimum_size = Vector2(57, 57)
 layout_mode = 0
-offset_left = 595.0
-offset_top = 21.0
-offset_right = 652.0
-offset_bottom = 78.0
+offset_left = 993.0
+offset_top = 30.0
+offset_right = 1050.0
+offset_bottom = 87.0
 theme_override_font_sizes/font_size = 35
 text = "X"
 
@@ -59,20 +69,20 @@ text = "X"
 layout_mode = 0
 offset_left = 16.0
 offset_top = 481.0
-offset_right = 671.0
+offset_right = 1062.0
 offset_bottom = 633.0
 theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
-text = "+500 经验，+400 钱币，+5 普通-番茄种子，+1 传奇-火龙果种子 "
+text = "🌟 +500 农场经验，💰 +400 金币，🍅 +5 优质番茄种子，🐉 +1 传奇火龙果种子，🚜 +2 农具强化石 "
 horizontal_alignment = 1
 
 [node name="Grid" type="GridContainer" parent="."]
 layout_mode = 0
 offset_left = 16.0
 offset_top = 85.0
-offset_right = 657.0
+offset_right = 1062.0
 offset_bottom = 419.0
-columns = 5
+columns = 8
 
 [node name="RewardItem" type="RichTextLabel" parent="Grid"]
 custom_minimum_size = Vector2(120, 120)
@@ -80,10 +90,12 @@ layout_mode = 2
 theme_override_constants/outline_size = 15
 theme_override_font_sizes/normal_font_size = 17
 bbcode_enabled = true
-text = "+50钱币
-+100经验
-+4番茄种子
-+3火龙果种子"
+text = "💰 +50金币
+🌟 +100农场经验
+🍅 +4番茄种子
+🐉 +3火龙果种子
+🚜 +1农具"
+fit_content = true
 horizontal_alignment = 1
 vertical_alignment = 1
 threaded = true
@@ -92,7 +104,7 @@ threaded = true
 layout_mode = 0
 offset_left = -2.0
 offset_top = 633.0
-offset_right = 671.0
+offset_right = 1081.0
 offset_bottom = 703.0
 alignment = 1
 
@@ -101,29 +113,34 @@ modulate = Color(0.623529, 1, 0.996078, 1)
 custom_minimum_size = Vector2(150, 70)
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-text = "五连抽"
+text = "🌱 五连抽 🌱"
 
 [node name="TenLuckyDrawButton" type="Button" parent="HBox"]
 modulate = Color(0.690196, 1, 0.52549, 1)
 custom_minimum_size = Vector2(150, 70)
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-text = "十连抽"
+text = "🌾 十连抽 🌾"
 
 [node name="LuckyDrawButton" type="Button" parent="HBox"]
 modulate = Color(1, 1, 0.52549, 1)
 custom_minimum_size = Vector2(150, 70)
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-text = "抽奖"
+text = "🎰 单抽 🍀"
 
 [node name="ConfirmDialog" type="ConfirmationDialog" parent="."]
-title = "标题"
+title = "🎰 农场幸运转盘 🌾"
 initial_position = 3
 size = Vector2i(450, 350)
 current_screen = 0
 ok_button_text = "🎲 确定抽奖"
-dialog_text = "弹窗内容"
+dialog_text = "🌱 欢迎来到萌芽农场的幸运转盘！
+
+🎁 在这里您可以获得珍贵的农场奖励：
+💰 金币、🌟 经验、🌾 种子、🚜 农具等
+
+🍀 准备好开始您的幸运之旅了吗？"
 dialog_autowrap = true
 cancel_button_text = "❌ 取消"
 

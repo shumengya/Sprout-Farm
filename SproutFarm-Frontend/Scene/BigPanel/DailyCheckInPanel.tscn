@@ -3,13 +3,29 @@
 [ext_resource type="Script" uid="uid://c0jfbtkh0mj5b" path="res://Script/BigPanel/DailyCheckInPanel.gd" id="1_fj7a7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_217t6"]
+bg_color = Color(0.9, 0.85, 0.7, 0.95)
 border_width_left = 15
 border_width_top = 15
 border_width_right = 15
 border_width_bottom = 15
+border_color = Color(0.6, 0.4, 0.2, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 corner_detail = 20
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4gvib"]
+bg_color = Color(0.95, 0.9, 0.8, 0.8)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.7, 0.5, 0.3, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="DailyCheckInPanel" type="Panel"]
 offset_left = 441.0
@@ -23,7 +39,7 @@ layout_mode = 0
 offset_top = 20.0
 offset_right = 600.0
 offset_bottom = 69.0
-theme_override_colors/font_color = Color(0.624759, 0.8051, 0.828302, 1)
+theme_override_colors/font_color = Color(0.2, 0.6, 0.2, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 3
@@ -31,7 +47,7 @@ theme_override_constants/shadow_offset_y = 3
 theme_override_constants/outline_size = 10
 theme_override_constants/shadow_outline_size = 10
 theme_override_font_sizes/font_size = 35
-text = "📅每日签到📅"
+text = "🌾 每日签到 🌽"
 horizontal_alignment = 1
 
 [node name="Label" type="Label" parent="."]
@@ -40,6 +56,7 @@ offset_left = 23.0
 offset_top = 360.0
 offset_right = 585.0
 offset_bottom = 409.0
+theme_override_colors/font_color = Color(0.3, 0.5, 0.2, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
@@ -48,30 +65,32 @@ theme_override_constants/outline_size = 15
 theme_override_constants/shadow_outline_size = 10
 theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_4gvib")
-text = "🎉签到奖励🎉"
+text = "🎁今日签到收获🎁"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="QuitButton" type="Button" parent="."]
+modulate = Color(1, 0, 0, 1)
 custom_minimum_size = Vector2(57, 57)
 layout_mode = 0
 offset_left = 520.0
 offset_top = 22.0
 offset_right = 577.0
 offset_bottom = 79.0
+theme_override_colors/font_disabled_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/font_size = 35
 text = "X"
 
 [node name="DailyCheckInButton" type="Button" parent="."]
-modulate = Color(1, 1, 0.52549, 1)
+modulate = Color(0.7, 0.9, 0.5, 1)
 custom_minimum_size = Vector2(150, 70)
 layout_mode = 0
-offset_left = 239.0
-offset_top = 630.0
-offset_right = 389.0
-offset_bottom = 700.0
+offset_left = 181.0
+offset_top = 618.0
+offset_right = 443.0
+offset_bottom = 688.0
 theme_override_font_sizes/font_size = 35
-text = "签到"
+text = "🌱 今日签到 🌱"
 
 [node name="Scroll" type="ScrollContainer" parent="."]
 layout_mode = 0
@@ -84,6 +103,13 @@ offset_bottom = 360.0
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/bold_italics_font_size = 15
+theme_override_font_sizes/italics_font_size = 15
+theme_override_font_sizes/mono_font_size = 15
+theme_override_font_sizes/normal_font_size = 15
+theme_override_font_sizes/bold_font_size = 15
 bbcode_enabled = true
 threaded = true
 
@@ -95,7 +121,12 @@ offset_right = 577.0
 offset_bottom = 630.0
 theme_override_font_sizes/normal_font_size = 20
 bbcode_enabled = true
-text = "+500 经验，+400 钱币，+5 普通-番茄种子，+1 传奇-火龙果种子 "
+text = "🌟 +500 农场经验
+💰 +400 金币
+🍅 +5 普通番茄种子
+🐉🍎 +1 传奇火龙果种子
+🌾 额外收获：新鲜农产品！
+🐄 农场动物好感度 +10"
 horizontal_alignment = 1
 
 [node name="ConfirmDialog" type="ConfirmationDialog" parent="."]

@@ -128,10 +128,10 @@ func _update_button_pet_image(button: Button, pet_name: String):
 	if pet_config.has(pet_name):
 		var pet_info = pet_config[pet_name]
 		var scene_path = pet_info.get("pet_image", "")  # 使用服务器数据的pet_image字段
-		print("宠物背包 ", pet_name, " 的图片路径：", scene_path)
+		#print("宠物背包 ", pet_name, " 的图片路径：", scene_path)
 		
 		if scene_path != "" and ResourceLoader.exists(scene_path):
-			print("宠物背包开始加载宠物场景：", scene_path)
+			#print("宠物背包开始加载宠物场景：", scene_path)
 			# 加载宠物场景并获取PetImage的纹理
 			var pet_scene = load(scene_path)
 			if pet_scene:
@@ -145,7 +145,7 @@ func _update_button_pet_image(button: Button, pet_name: String):
 						var frame_count = pet_instance.sprite_frames.get_frame_count(default_animation)
 						if frame_count > 0:
 							texture = pet_instance.sprite_frames.get_frame_texture(default_animation, 0)
-							print("宠物背包成功获取宠物纹理：", pet_name)
+							#print("宠物背包成功获取宠物纹理：", pet_name)
 					else:
 						print("宠物背包场景没有动画：", pet_name)
 				else:
@@ -155,8 +155,7 @@ func _update_button_pet_image(button: Button, pet_name: String):
 				print("宠物背包无法加载宠物场景：", scene_path)
 		else:
 			print("宠物背包图片路径无效或文件不存在：", scene_path)
-	else:
-		print("宠物背包配置中没有找到：", pet_name)
+
 	
 	# 设置图片
 	if texture:
@@ -165,26 +164,10 @@ func _update_button_pet_image(button: Button, pet_name: String):
 		pet_image.scale = Vector2(10, 10)
 		# 确保图片居中显示
 		pet_image.centered = true
-		print("宠物背包成功设置宠物图片：", pet_name)
+		#print("宠物背包成功设置宠物图片：", pet_name)
 	else:
 		pet_image.visible = false
-		print("宠物背包无法获取宠物图片：", pet_name)
 
-# 加载宠物配置数据
-func _load_pet_config() -> Dictionary:
-	var file = FileAccess.open("res://Data/pet_data.json", FileAccess.READ)
-	if file == null:
-		return {}
-	
-	var json = JSON.new()
-	var json_string = file.get_as_text()
-	file.close()
-	
-	var parse_result = json.parse(json_string)
-	if parse_result != OK:
-		return {}
-	
-	return json.data
 
 # 计算宠物年龄（以天为单位）
 func _calculate_pet_age(birthday: String) -> int:

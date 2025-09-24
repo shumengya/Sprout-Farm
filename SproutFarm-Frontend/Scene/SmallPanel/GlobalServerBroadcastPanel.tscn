@@ -1,0 +1,95 @@
+[gd_scene load_steps=3 format=3 uid="uid://djh8bnauphg8v"]
+
+[ext_resource type="Script" uid="uid://bakeq8tm6r4j4" path="res://Script/SmallPanel/GlobalServerBroadcastPanel.gd" id="1_r7t0y"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k1sw4"]
+bg_color = Color(0.9, 0.85, 0.7, 0.95)
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.6, 0.4, 0.2, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+corner_detail = 20
+shadow_color = Color(0.3, 0.2, 0.1, 0.3)
+shadow_size = 20
+shadow_offset = Vector2(5, 5)
+
+[node name="GlobalServerBroadcastPanel" type="Panel"]
+offset_left = 322.0
+offset_right = 985.0
+offset_bottom = 721.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_k1sw4")
+script = ExtResource("1_r7t0y")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 12.0
+offset_right = 653.0
+offset_bottom = 63.0
+theme_override_colors/font_color = Color(0.2, 0.6, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 35
+text = "📢  全服广播  📻"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MessageContents" type="RichTextLabel" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 72.0
+offset_right = 653.0
+offset_bottom = 642.0
+theme_override_font_sizes/bold_italics_font_size = 15
+theme_override_font_sizes/italics_font_size = 15
+theme_override_font_sizes/mono_font_size = 15
+theme_override_font_sizes/normal_font_size = 15
+theme_override_font_sizes/bold_font_size = 15
+bbcode_enabled = true
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 649.0
+offset_right = 653.0
+offset_bottom = 709.0
+
+[node name="InputMessage" type="LineEdit" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "🌱 分享您的农场故事和心得..."
+
+[node name="SendMessageButton" type="Button" parent="HBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "📤 发送消息"
+
+[node name="QuitButton" type="Button" parent="."]
+modulate = Color(1, 0, 0, 1)
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 601.0
+offset_top = 12.0
+offset_right = 651.0
+offset_bottom = 62.0
+theme_override_font_sizes/font_size = 30
+text = "X"
+
+[node name="WatchMoreButton" type="Button" parent="."]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 13.0
+offset_top = 12.0
+offset_right = 141.0
+offset_bottom = 62.0
+theme_override_font_sizes/font_size = 30
+text = "📜 查看更多"

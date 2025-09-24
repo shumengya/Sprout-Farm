@@ -47,7 +47,7 @@ func _on_request_completed(result, response_code, headers, body):
 	for header in headers:
 		if header.to_lower().begins_with("content-type:"):
 			content_type = header.substr(13).strip_edges().to_lower()
-			print("HTTPTextureRect: 内容类型: ", content_type)
+			#print("HTTPTextureRect: 内容类型: ", content_type)
 			break
 	
 	# 创建图像
@@ -82,7 +82,7 @@ func _on_request_completed(result, response_code, headers, body):
 	# 创建纹理并应用
 	var texture = ImageTexture.create_from_image(image)
 	self.texture = texture
-	print("HTTPTextureRect: 图像加载成功，尺寸: ", image.get_width(), "x", image.get_height())
+	#print("HTTPTextureRect: 图像加载成功，尺寸: ", image.get_width(), "x", image.get_height())
 	loading_finished.emit(true)
 
 # 加载QQ头像的便捷方法

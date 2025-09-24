@@ -9,11 +9,13 @@ import datetime
 import re
 import random
 #导入服务器外置插件模块
-from SMYMongoDBAPI import SMYMongoDBAPI #导入MongoDB数据库模块
-from QQEmailSendAPI import EmailVerification#导入QQ邮箱发送模块
-from ConsoleCommandsAPI import ConsoleCommandsAPI #导入控制台命令API模块
-from SpecialFarm import SpecialFarmManager #导入特殊农场管理系统
-from WSRemoteCmdApi import WSRemoteCmdApi #导入WebSocket远程命令API
+from module.SMYMongoDBAPI import SMYMongoDBAPI #导入MongoDB数据库模块
+from module.QQEmailSendAPI import EmailVerification#导入QQ邮箱发送模块
+from module import ConsoleCommandsAPI #导入控制台命令API模块
+from module.SpecialFarm import SpecialFarmManager #导入特殊农场管理系统
+from module import WSRemoteCmdApi #导入WebSocket远程命令API
+from module.NetworkCore import MessageHandler
+from module.WisdomTreeSystem import WisdomTreeMixin #导入网络通信核心模块
 
 """
 萌芽农场TCP游戏服务器
@@ -28,7 +30,7 @@ server_port: int = 7070
 buffer_size: int = 4096
 server_version: str = "2.2.0"
 
-class TCPGameServer(TCPServer):
+class TCPGameServer(WisdomTreeMixin, TCPServer):
 
     """
     萌芽农场TCP游戏服务器
@@ -37,7 +39,6 @@ class TCPGameServer(TCPServer):
 #==========================初始化和生命周期管理==========================
     #初始化操作
     def __init__(self, server_host=server_host, server_port=server_port, buffer_size=buffer_size):
-        """初始化TCP游戏服务器"""
         super().__init__(server_host, server_port, buffer_size)
         
         # 基础数据存储
@@ -65,6 +66,9 @@ class TCPGameServer(TCPServer):
         # 偷菜免被发现临时计数器 {玩家名: {目标玩家名: 剩余免被发现次数}}
         self.steal_immunity_counters = {}
         
+        # 初始化消息处理器
+        self.message_handler = MessageHandler(self)
+        
         self.log('INFO', f"萌芽农场TCP游戏服务器初始化完成 - 版本: {server_version}", 'SERVER')
         
         # 清理配置缓存，确保使用最新的配置数据
@@ -85,7 +89,6 @@ class TCPGameServer(TCPServer):
     
     #初始化MongoDB API
     def _init_mongodb_api(self):
-        """初始化MongoDB API连接"""
         try:
             # 根据配置决定使用测试环境还是生产环境
             # 检查是否在Docker容器中或生产环境
@@ -114,7 +117,6 @@ class TCPGameServer(TCPServer):
     
     #初始化杂草系统配置
     def _init_weed_settings(self):
-        """初始化杂草生长配置"""
         # 杂草生长相关配置
         self.weed_check_interval = 86400  # 杂草检查间隔（24小时）
         self.offline_threshold_days = 3  # 离线多少天后开始长杂草
@@ -124,7 +126,6 @@ class TCPGameServer(TCPServer):
     
     #初始化特殊农场管理系统
     def _init_special_farm_manager(self):
-        """初始化特殊农场管理系统"""
         try:
             # 使用自动环境检测，确保与游戏服务器环境一致
             self.special_farm_manager = SpecialFarmManager()
@@ -140,7 +141,6 @@ class TCPGameServer(TCPServer):
     
     #初始化WebSocket远程命令API
     def _init_websocket_remote_api(self):
-        """初始化WebSocket远程命令API服务器"""
         try:
             # 创建WebSocket远程命令API实例
             ws_host = "0.0.0.0"
@@ -165,14 +165,12 @@ class TCPGameServer(TCPServer):
     
     #设置游戏服务器日志配置
     def _setup_game_server_logging(self):
-        """设置游戏服务器日志配置，禁用父类重复输出"""
         # 禁用父类logger的传播，避免重复输出
         if hasattr(self, 'logger') and self.logger:
             self.logger.propagate = False
     
     #启动作物生长计时器
     def start_crop_growth_timer(self):
-        """启动作物生长计时器，每秒更新一次"""
         try:
             self.update_crops_growth()
         except Exception as e:
@@ -185,7 +183,6 @@ class TCPGameServer(TCPServer):
     
     #启动杂草生长计时器
     def start_weed_growth_timer(self):
-        """启动杂草生长计时器，每天检查一次"""
         try:
             current_time = time.time()
             # 检查是否到了杂草检查时间
@@ -199,9 +196,9 @@ class TCPGameServer(TCPServer):
         self.weed_timer = threading.Timer(3600, self.start_weed_growth_timer)  # 每小时检查一次
         self.weed_timer.daemon = True
         self.weed_timer.start()
-    
+
+    #启动智慧树生命值衰减计时器
     def start_wisdom_tree_health_decay_timer(self):
-        """启动智慧树生命值衰减定时器"""
         try:
             self.check_wisdom_tree_health_decay()
         except Exception as e:
@@ -211,9 +208,9 @@ class TCPGameServer(TCPServer):
         self.wisdom_tree_decay_timer = threading.Timer(86400, self.start_wisdom_tree_health_decay_timer)  # 每24小时检查一次
         self.wisdom_tree_decay_timer.daemon = True
         self.wisdom_tree_decay_timer.start()
-    
+
+    #启动验证码清理定时器
     def start_verification_code_cleanup_timer(self):
-        """启动验证码清理定时器"""
         try:
 
             EmailVerification.clean_expired_codes()
@@ -225,9 +222,9 @@ class TCPGameServer(TCPServer):
         self.verification_cleanup_timer = threading.Timer(1800, self.start_verification_code_cleanup_timer)  # 每30分钟清理一次
         self.verification_cleanup_timer.daemon = True
         self.verification_cleanup_timer.start()
-    
+
+    #启动离线玩家作物更新定时器
     def start_offline_crop_update_timer(self):
-        """启动离线玩家作物更新定时器"""
         try:
             self.update_offline_players_crops()
         except Exception as e:
@@ -240,7 +237,6 @@ class TCPGameServer(TCPServer):
     
     #获取服务器统计信息
     def get_server_stats(self):
-        """获取服务器统计信息"""
         online_players = len([cid for cid in self.user_data if self.user_data[cid].get("logged_in", False)])
         return {
             "online_players": online_players,
@@ -249,7 +245,6 @@ class TCPGameServer(TCPServer):
     
     #停止服务器
     def stop(self):
-        """停止服务器"""
         self.log('INFO', "正在停止服务器...", 'SERVER')
         
         # 停止作物生长计时器
@@ -317,7 +312,6 @@ class TCPGameServer(TCPServer):
 #==========================客户端连接管理==========================
     #移除客户端
     def _remove_client(self, client_id):
-        """覆盖客户端移除方法，添加用户离开通知和数据保存"""
         if client_id in self.clients:
             username = self.user_data.get(client_id, {}).get("username", client_id)
             
@@ -355,7 +349,6 @@ class TCPGameServer(TCPServer):
 #==========================验证和检查方法==========================
     #检查用户是否已登录的通用方法
     def _check_user_logged_in(self, client_id, action_name, action_type=None):
-        """检查用户是否已登录的通用方法"""
         if client_id not in self.user_data or not self.user_data[client_id].get("logged_in", False):
             self.log('WARNING', f"未登录用户 {client_id} 尝试{action_name}", 'SERVER')
             
@@ -381,7 +374,6 @@ class TCPGameServer(TCPServer):
 #=================================数据管理方法====================================
     #加载玩家数据
     def load_player_data(self, account_id):
-        """从MongoDB加载玩家数据"""
         try:
             if not self.use_mongodb or not self.mongo_api:
                 self.log('ERROR', 'MongoDB未配置或不可用，无法加载玩家数据', 'SERVER')
@@ -400,7 +392,6 @@ class TCPGameServer(TCPServer):
     
     #保存玩家数据
     def save_player_data(self, account_id, player_data):
-        """保存玩家数据到MongoDB"""
         try:
             if not self.use_mongodb or not self.mongo_api:
                 self.log('ERROR', 'MongoDB未配置或不可用，无法保存玩家数据', 'SERVER')
@@ -419,7 +410,6 @@ class TCPGameServer(TCPServer):
         
     #加载玩家数据
     def _load_player_data_with_check(self, client_id, action_type=None):
-        """加载玩家数据并进行错误检查的通用方法"""
         username = self.user_data[client_id]["username"]
         player_data = self.load_player_data(username)
         
@@ -443,13 +433,12 @@ class TCPGameServer(TCPServer):
     
     #加载作物配置数据（优化版本）
     def _clear_config_cache(self):
-        """清理配置缓存，强制重新加载"""
         self.crop_data_cache = None
         self.crop_data_cache_time = 0
         self.log('INFO', "配置缓存已清理", 'SERVER')
-    
+
+    #加载作物配置数据（优化版本）
     def _load_crop_data(self):
-        """加载作物配置数据（从MongoDB，带缓存优化）"""
         current_time = time.time()
         
         # 检查缓存是否有效
@@ -478,7 +467,6 @@ class TCPGameServer(TCPServer):
     
     #更新玩家登录时间
     def _update_player_logout_time(self, client_id, username):
-        """更新玩家登出时间和总游玩时间"""
         login_timestamp = self.user_data[client_id].get("login_timestamp", time.time())
         play_time_seconds = int(time.time() - login_timestamp)
         
@@ -499,7 +487,6 @@ class TCPGameServer(TCPServer):
     
     #更新总游玩时间
     def _update_total_play_time(self, player_data, play_time_seconds):
-        """更新总游玩时间"""
         total_time_str = player_data.get("总游玩时间", "0时0分0秒")
         time_parts = re.match(r"(?:(\d+)时)?(?:(\d+)分)?(?:(\d+)秒)?", total_time_str)
         
@@ -519,7 +506,6 @@ class TCPGameServer(TCPServer):
     
     # 检查玩家是否享受新玩家注册奖励
     def _is_new_player_bonus_active(self, player_data):
-        """检查玩家是否在新玩家奖励期内（注册后3天内享受10倍生长速度）"""
         register_time_str = player_data.get("注册时间", "")
         
         # 如果没有注册时间或者是默认的老玩家时间，则不享受奖励
@@ -544,9 +530,9 @@ class TCPGameServer(TCPServer):
         except ValueError as e:
             self.log('WARNING', f"解析注册时间格式错误: {register_time_str}, 错误: {str(e)}", 'SERVER')
             return False
-    
+
+    #更新离线玩家的作物生长
     def update_offline_players_crops(self):
-        """更新离线玩家的作物生长"""
         try:
             if not self.use_mongodb or not self.mongo_api:
                 self.log('WARNING', 'MongoDB未配置或不可用，无法更新离线玩家作物', 'SERVER')
@@ -593,7 +579,6 @@ class TCPGameServer(TCPServer):
 #================================作物系统管理=========================================
     #作物生长更新系统
     def update_crops_growth(self):
-        """更新所有玩家的作物生长"""
         # 收集所有需要更新的玩家（在线玩家 + 被访问的玩家）
         players_to_update = set()
         
@@ -628,7 +613,6 @@ class TCPGameServer(TCPServer):
     
     #更新单个玩家的作物
     def update_player_crops(self, player_data, account_id):
-        """更新单个玩家的作物"""
         growth_updated = False
         
         for farm_lot in player_data.get("农场土地", []):
@@ -691,7 +675,6 @@ class TCPGameServer(TCPServer):
     
     #向在线玩家推送作物生长更新
     def _push_crop_update_to_player(self, account_id, player_data):
-        """向在线玩家推送作物生长更新"""
         client_id = self._find_client_by_username(account_id)
         
         if client_id:
@@ -708,7 +691,6 @@ class TCPGameServer(TCPServer):
     
     #根据用户名查找客户端ID
     def _find_client_by_username(self, username):
-        """根据用户名查找客户端ID"""
         for cid, user_info in self.user_data.items():
             if user_info.get("username") == username and user_info.get("logged_in", False):
                 return cid
@@ -716,7 +698,6 @@ class TCPGameServer(TCPServer):
     
     #发送访问模式的更新
     def _send_visiting_update(self, client_id, visiting_target):
-        """发送访问模式的更新"""
         target_player_data = self.load_player_data(visiting_target)
         if target_player_data:
             target_client_id = self._find_client_by_username(visiting_target)
@@ -733,7 +714,6 @@ class TCPGameServer(TCPServer):
     
     #发送正常模式的更新
     def _send_normal_update(self, client_id, player_data):
-        """发送正常模式的更新"""
         update_message = {
             "type": "crop_update",
             "农场土地": player_data.get("农场土地", []),
@@ -744,7 +724,6 @@ class TCPGameServer(TCPServer):
     
     #向正在访问某个玩家农场的其他玩家推送更新
     def _push_update_to_visitors(self, target_username, target_player_data):
-        """向正在访问某个玩家农场的其他玩家推送更新"""
         for visitor_client_id, visitor_info in self.user_data.items():
             if not visitor_info.get("logged_in", False):
                 continue
@@ -775,153 +754,8 @@ class TCPGameServer(TCPServer):
 # =======================服务端与客户端通信注册==========================================
     #服务端与客户端通用消息处理-这个是服务端与客户端通信的核心中的核心
     def _handle_message(self, client_id, message):
-        """接收客户端消息并路由到对应处理函数"""
-        message_type = message.get("type", "")
-        
-        # 用户认证相关
-        if message_type == "greeting":#默认欢迎
-            return self._handle_greeting(client_id, message)
-        elif message_type == "login":#玩家登录
-            return self._handle_login(client_id, message)
-        elif message_type == "register":#玩家注册
-            return self._handle_register(client_id, message)
-        elif message_type == "request_verification_code":#验证码请求
-            return self._handle_verification_code_request(client_id, message)
-        elif message_type == "request_forget_password_verification_code":#忘记密码验证码请求
-            return self._handle_forget_password_verification_code_request(client_id, message)
-        elif message_type == "reset_password":#重置密码
-            return self._handle_reset_password_request(client_id, message)
-        elif message_type == "verify_code":#验证码
-            return self._handle_verify_code(client_id, message)
-        
-        #---------------------------------------------------------------------------
-        # 游戏操作相关 
-        elif message_type == "harvest_crop":#收获作物
-            return self._handle_harvest_crop(client_id, message)
-        elif message_type == "plant_crop":#种植作物
-            return self._handle_plant_crop(client_id, message)
-        elif message_type == "buy_seed":#购买种子
-            return self._handle_buy_seed(client_id, message)
-        elif message_type == "buy_item":#购买道具
-            return self._handle_buy_item(client_id, message)
-        elif message_type == "buy_pet":#购买宠物
-            return self._handle_buy_pet(client_id, message)
-        elif message_type == "rename_pet":#重命名宠物
-            return self._handle_rename_pet(client_id, message)
-        elif message_type == "set_patrol_pet":#设置巡逻宠物
-            return self._handle_set_patrol_pet(client_id, message)
-        elif message_type == "set_battle_pet":#设置出战宠物
-            return self._handle_set_battle_pet(client_id, message)
-        elif message_type == "update_battle_pet_data":#更新宠物对战数据
-            return self._handle_update_battle_pet_data(client_id, message)
-        elif message_type == "feed_pet":#喂食宠物
-            return self._handle_feed_pet(client_id, message)
-        elif message_type == "dig_ground":#开垦土地
-            return self._handle_dig_ground(client_id, message)
-        elif message_type == "remove_crop":#铲除作物
-            return self._handle_remove_crop(client_id, message)
-        elif message_type == "water_crop":#浇水
-            return self._handle_water_crop(client_id, message)
-        elif message_type == "fertilize_crop":#施肥
-            return self._handle_fertilize_crop(client_id, message)
-        elif message_type == "use_item":#使用道具
-            return self._handle_use_item(client_id, message)
-        elif message_type == "upgrade_land":#升级土地
-            return self._handle_upgrade_land(client_id, message)
-        elif message_type == "buy_new_ground":#添加新的土地
-            return self._handle_buy_new_ground(client_id, message)
-        elif message_type == "like_player":#点赞玩家
-            return self._handle_like_player(client_id, message)
-        elif message_type == "request_online_players":#请求在线玩家
-            return self._handle_online_players_request(client_id, message)
-        elif message_type == "get_play_time":#获取游玩时间
-            return self._handle_get_play_time(client_id)
-        elif message_type == "update_play_time":#更新游玩时间
-            return self._handle_update_play_time(client_id)
-        elif message_type == "request_player_rankings":#请求玩家排行榜
-            return self._handle_player_rankings_request(client_id, message)
-        elif message_type == "request_crop_data":#请求作物数据
-            return self._handle_crop_data_request(client_id)
-        elif message_type == "request_item_config":#请求道具配置数据
-            return self._handle_item_config_request(client_id)
-        elif message_type == "request_pet_config":#请求宠物配置数据
-            return self._handle_pet_config_request(client_id)
-        elif message_type == "request_game_tips_config":#请求游戏小提示配置数据
-            return self._handle_game_tips_config_request(client_id)
-        elif message_type == "visit_player":#拜访其他玩家农场
-            return self._handle_visit_player_request(client_id, message)
-        elif message_type == "return_my_farm":#返回我的农场
-            return self._handle_return_my_farm_request(client_id, message)
-        elif message_type == "daily_check_in":#每日签到
-            return self._handle_daily_check_in_request(client_id, message)
-        elif message_type == "get_check_in_data":#获取签到数据
-            return self._handle_get_check_in_data_request(client_id, message)
-        elif message_type == "lucky_draw":#幸运抽奖
-            return self._handle_lucky_draw_request(client_id, message)
-        elif message_type == "claim_new_player_gift":#领取新手大礼包
-            return self._handle_new_player_gift_request(client_id, message)
-        elif message_type == "get_online_gift_data":#获取在线礼包数据
-            return self._handle_get_online_gift_data_request(client_id, message)
-        elif message_type == "claim_online_gift":#领取在线礼包
-            return self._handle_claim_online_gift_request(client_id, message)
-        elif message_type == "ping":#客户端ping请求
-            return self._handle_ping_request(client_id, message)
-        elif message_type == "modify_account_info":#修改账号信息
-            return self._handle_modify_account_info_request(client_id, message)
-        elif message_type == "delete_account":#删除账号
-            return self._handle_delete_account_request(client_id, message)
-        elif message_type == "refresh_player_info":#刷新玩家信息
-            return self._handle_refresh_player_info_request(client_id, message)
-        elif message_type == "global_broadcast":#全服大喇叭消息
-            return self._handle_global_broadcast_message(client_id, message)
-        elif message_type == "request_broadcast_history":#请求全服大喇叭历史消息
-            return self._handle_request_broadcast_history(client_id, message)
-        elif message_type == "use_pet_item":#宠物使用道具
-            return self._handle_use_pet_item(client_id, message)
-        elif message_type == "use_farm_item":#农场道具使用
-            return self._handle_use_farm_item(client_id, message)
-        elif message_type == "buy_scare_crow":#购买稻草人
-            return self._handle_buy_scare_crow(client_id, message)
-        elif message_type == "modify_scare_crow_config":#修改稻草人配置
-            return self._handle_modify_scare_crow_config(client_id, message)
-        elif message_type == "get_scare_crow_config":#获取稻草人配置
-            return self._handle_get_scare_crow_config(client_id, message)
-        elif message_type == "wisdom_tree_operation":#智慧树操作
-            return self._handle_wisdom_tree_operation(client_id, message)
-        elif message_type == "wisdom_tree_message":#智慧树消息
-            return self._handle_wisdom_tree_message(client_id, message)
-        elif message_type == "get_wisdom_tree_config":#获取智慧树配置
-            return self._handle_get_wisdom_tree_config(client_id, message)
-        elif message_type == "sell_crop":#出售作物
-            return self._handle_sell_crop(client_id, message)
-        elif message_type == "add_product_to_store":#添加商品到小卖部
-            return self._handle_add_product_to_store(client_id, message)
-        elif message_type == "remove_store_product":#下架小卖部商品
-            return self._handle_remove_store_product(client_id, message)
-        elif message_type == "buy_store_product":#购买小卖部商品
-            return self._handle_buy_store_product(client_id, message)
-        elif message_type == "buy_store_booth":#购买小卖部格子
-            return self._handle_buy_store_booth(client_id, message)
-        elif message_type == "save_game_settings":#保存游戏设置
-            return self._handle_save_game_settings(client_id, message)
-        elif message_type == "pet_battle_result":#宠物对战结果
-            return self._handle_pet_battle_result(client_id, message)
-        elif message_type == "today_divination":#今日占卜
-            return self._handle_today_divination(client_id, message)
-        elif message_type == "give_money":#送金币
-            return self._handle_give_money_request(client_id, message)
-        elif message_type == "sync_bag_data":#同步背包数据
-            return self._handle_sync_bag_data(client_id, message)
-        #---------------------------------------------------------------------------
-        
-        # 管理员操作相关
-        elif message_type == "kick_player":#踢出玩家
-            return self._handle_kick_player(client_id, message)
-
-        elif message_type == "message":#处理聊天消息（暂未实现）
-            return self._handle_chat_message(client_id, message)
-        else:
-            return super()._handle_message(client_id, message)
+        # 使用NetworkCore模块的MessageHandler处理消息
+        return self.message_handler.handle_message(client_id, message)
 # =======================服务端与客户端通信注册==========================================
 
 
@@ -930,7 +764,6 @@ class TCPGameServer(TCPServer):
 #==========================用户认证相关==========================
     #处理问候消息
     def _handle_greeting(self, client_id, message):
-        """处理问候消息"""
         content = message.get("content", "")
         self.log('INFO', f"收到来自客户端 {client_id} 的问候: {content}", 'CLIENT')
         
@@ -964,7 +797,6 @@ class TCPGameServer(TCPServer):
     
     #处理玩家登录
     def _handle_login(self, client_id, message):
-        """处理登录消息"""
         username = message.get("username", "")
         password = message.get("password", "")
         client_version = message.get("client_version", "")
@@ -1056,7 +888,7 @@ class TCPGameServer(TCPServer):
                 self.log('INFO', f"玩家 {username} 每日点赞次数已重置：{remaining_likes}", 'SERVER')
             
             # 检查并清理在线礼包历史数据
-            self._cleanup_online_gift_history(player_data)
+            self._cleanup_online_gift_history(player_data )
             
             # 检查并清理新手礼包历史数据
             self._cleanup_new_player_gift_history(player_data)
@@ -1115,8 +947,7 @@ class TCPGameServer(TCPServer):
         return self.send_data(client_id, response)
     
     #辅助函数-发送登录后初始数据
-    def _send_initial_login_data(self, client_id, player_data):
-        """发送登录后的初始数据"""
+    def _send_initial_login_data(self, client_id, player_data ):
         # 立即向客户端发送一次作物状态
         farm_lots = player_data.get("农场土地", [])
         initial_crop_update = {
@@ -1147,7 +978,6 @@ class TCPGameServer(TCPServer):
             }
             self.send_data(client_id, item_config_message)
             self.log('INFO', f"已向登录用户发送道具配置数据，道具种类：{len(item_config)}", 'SERVER')
-    
 
     #处理注册消息
     def _handle_register(self, client_id, message):
@@ -1205,7 +1035,6 @@ class TCPGameServer(TCPServer):
             "status": "failed",
             "message": message
         })
-    
 
     #辅助函数-创建新用户
     def _create_new_user(self, client_id, username, password, farm_name, player_name):
@@ -1257,7 +1086,8 @@ class TCPGameServer(TCPServer):
         except Exception as e:
             self.log('ERROR', f"注册用户 {username} 时出错: {str(e)}", 'SERVER')
             return self._send_register_error(client_id, f"注册过程中出现错误: {str(e)}")
-    
+
+    #辅助函数-确保玩家数据包含所有必要字段
     def _ensure_player_data_fields(self, player_data):
         """确保玩家数据包含所有必要字段"""
         # 确保农场地块存在
@@ -1976,7 +1806,8 @@ class TCPGameServer(TCPServer):
                 "quality": quality,
                 "count": seed_count
             })
-    
+
+    # 添加成熟物到玩家作物仓库
     def _add_crop_to_warehouse(self, player_data, crop_harvest):
         """将成熟物添加到玩家作物仓库"""
         if not crop_harvest:
@@ -2053,7 +1884,8 @@ class TCPGameServer(TCPServer):
             "quality": quality,
             "count": seed_count
         })
-    
+
+    # 添加成熟物到玩家作物仓库（优化版本）
     def _add_crop_to_warehouse_optimized(self, player_data, crop_harvest, warehouse_item_name, quality="普通"):
         """将成熟物添加到玩家作物仓库（优化版本）"""
         if not crop_harvest:
@@ -2083,6 +1915,7 @@ class TCPGameServer(TCPServer):
 
 
 #==========================杂草生长处理==========================
+    # 定期检查并生长杂草
     def check_and_grow_weeds(self):
         """检查所有玩家的离线时间，并在长时间离线玩家的空地上随机生长杂草"""
         try:
@@ -2170,7 +2003,8 @@ class TCPGameServer(TCPServer):
             
         except Exception as e:
             self.log('ERROR', f"杂草生长检查过程中出错: {str(e)}", 'SERVER')
-    
+
+    #检查玩家是否长时间不在线
     def _is_player_long_offline(self, player_data, current_time):
         """检查玩家是否长时间离线"""
         # 获取玩家最后登录时间
@@ -2193,7 +2027,8 @@ class TCPGameServer(TCPServer):
         except Exception as e:
             self.log('ERROR', f"解析玩家登录时间时出错: {str(e)}", 'SERVER')
             return False
-    
+
+    #为指定玩家的空地生长杂草
     def _grow_weeds_for_player(self, player_data, account_id, available_weeds):
         """为指定玩家的空地生长杂草"""
         import random
@@ -2251,10 +2086,12 @@ class TCPGameServer(TCPServer):
 
 
 #==========================偷菜免被发现计数器管理==========================
+    # 玩家免被发现计数器结构：{player_name: {target_player_name: count, ...}, ...}
     def _get_steal_immunity_count(self, player_name, target_player_name):
         """获取玩家对目标玩家的免被发现次数"""
         return self.steal_immunity_counters.get(player_name, {}).get(target_player_name, 0)
-    
+
+    #消耗一次免被发现次数
     def _consume_steal_immunity(self, player_name, target_player_name):
         """消耗一次免被发现次数"""
         if player_name not in self.steal_immunity_counters:
@@ -2277,7 +2114,8 @@ class TCPGameServer(TCPServer):
             return True
         
         return False
-    
+
+    #设置免被发现次数（默认3次）
     def _set_steal_immunity(self, player_name, target_player_name, count=3):
         """设置玩家对目标玩家的免被发现次数"""
         if player_name not in self.steal_immunity_counters:
@@ -2285,13 +2123,15 @@ class TCPGameServer(TCPServer):
         
         self.steal_immunity_counters[player_name][target_player_name] = count
         self.log('INFO', f"为玩家 {player_name} 设置对 {target_player_name} 的免被发现次数: {count}", 'SERVER')
-    
+
+    #清理免被发现计数器
     def _clear_player_steal_immunity(self, player_name):
         """清理玩家的所有免被发现计数器"""
         if player_name in self.steal_immunity_counters:
             del self.steal_immunity_counters[player_name]
             self.log('INFO', f"清理玩家 {player_name} 的所有免被发现计数器", 'SERVER')
-    
+
+    #清理特定目标的免被发现计数器
     def _clear_target_steal_immunity(self, player_name, target_player_name):
         """清理玩家对特定目标的免被发现计数器"""
         if player_name in self.steal_immunity_counters:
@@ -2523,7 +2363,8 @@ class TCPGameServer(TCPServer):
         
         # 处理宠物购买
         return self._process_pet_purchase(client_id, player_data, username, pet_name, validation_result["pet_info"])
-    
+
+    #验证宠物购买条件
     def _validate_pet_purchase(self, pet_name, pet_cost, player_data):
         """验证宠物购买条件"""
         # 加载宠物配置
@@ -2581,7 +2422,8 @@ class TCPGameServer(TCPServer):
                 "宠物背包": player_data["宠物背包"]
             }
         })
-    
+
+    #创建宠物实例
     def _create_pet_instance(self, pet_info, username, pet_name):
         """创建宠物实例"""
         import copy
@@ -2639,7 +2481,8 @@ class TCPGameServer(TCPServer):
         except Exception as e:
             self.log('ERROR', f"从MongoDB加载宠物配置失败: {str(e)}", 'SERVER')
             return {}
-    
+
+    #加载游戏小提示配置数据
     def _load_game_tips_config(self):
         """从MongoDB加载游戏小提示配置数据"""
         try:
@@ -4164,7 +4007,8 @@ class TCPGameServer(TCPServer):
                 "道具背包": player_data["道具背包"]
             }
         })
-    
+
+    #辅助函数-将道具添加到背包
     def _add_item_to_inventory(self, player_data, item_name, quantity):
         """将道具添加到玩家背包"""
         if "道具背包" not in player_data:
@@ -4205,6 +4049,7 @@ class TCPGameServer(TCPServer):
 
 
 #==========================道具使用处理==========================
+    #处理使用道具请求
     def _handle_use_item(self, client_id, message):
         """处理使用道具请求"""
         # 检查用户是否已登录
@@ -4238,7 +4083,8 @@ class TCPGameServer(TCPServer):
         else:
             # 正常模式：对自己的作物使用道具
             return self._handle_normal_item_use(client_id, player_data, username, lot_index, item_name, use_type)
-    
+
+    #辅助函数-处理道具使用逻辑
     def _handle_normal_item_use(self, client_id, player_data, username, lot_index, item_name, use_type):
         """处理正常模式下的道具使用"""
         if lot_index < 0 or lot_index >= len(player_data.get("农场土地", [])):
@@ -4246,7 +4092,8 @@ class TCPGameServer(TCPServer):
         
         lot = player_data["农场土地"][lot_index]
         return self._process_item_use_normal(client_id, player_data, username, lot, lot_index, item_name, use_type)
-    
+
+    #辅助函数-处理访问模式道具使用逻辑
     def _handle_visiting_item_use(self, client_id, player_data, username, target_username, lot_index, item_name, use_type):
         """处理访问模式下的道具使用"""
         target_player_data = self.load_player_data(target_username)
@@ -4258,7 +4105,8 @@ class TCPGameServer(TCPServer):
         
         target_lot = target_player_data["农场土地"][lot_index]
         return self._process_item_use_visiting(client_id, player_data, username, target_player_data, target_username, target_lot, lot_index, item_name, use_type)
-    
+
+    #辅助函数-检查玩家是否拥有指定道具
     def _has_item_in_inventory(self, player_data, item_name):
         """检查玩家是否拥有指定道具"""
         item_bag = player_data.get("道具背包", [])
@@ -4266,7 +4114,8 @@ class TCPGameServer(TCPServer):
             if item.get("name", "") == item_name and item.get("count", 0) > 0:
                 return True
         return False
-    
+
+    #辅助函数-从玩家背包中移除指定道具
     def _remove_item_from_inventory(self, player_data, item_name, count=1):
         """从玩家道具背包中移除指定数量的道具"""
         item_bag = player_data.get("道具背包", [])
@@ -4277,7 +4126,8 @@ class TCPGameServer(TCPServer):
                     item_bag.pop(i)
                 return True
         return False
-    
+
+    #处理正常模式下的道具使用逻辑
     def _process_item_use_normal(self, client_id, player_data, username, lot, lot_index, item_name, use_type):
         """处理正常模式下的道具使用"""
         # 检查地块状态
@@ -4312,7 +4162,8 @@ class TCPGameServer(TCPServer):
             return self._use_harvest_item(client_id, player_data, username, lot, lot_index, item_name)
         else:
             return self._send_action_error(client_id, "use_item", f"不支持的使用类型: {use_type}")
-    
+
+    #处理访问模式下的道具使用逻辑
     def _process_item_use_visiting(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name, use_type):
         """处理访问模式下的道具使用"""
         # 检查地块状态
@@ -4347,7 +4198,8 @@ class TCPGameServer(TCPServer):
             return self._use_harvest_item_visiting(client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name)
         else:
             return self._send_action_error(client_id, "use_item", f"不支持的使用类型: {use_type}")
-    
+
+    #使用施肥类道具
     def _use_fertilizer_item(self, client_id, player_data, username, lot, lot_index, item_name):
         """使用施肥类道具"""
         # 检查是否已经施过肥
@@ -4416,7 +4268,8 @@ class TCPGameServer(TCPServer):
                 "道具背包": player_data["道具背包"]
             }
         })
-    
+
+    #使用浇水类道具
     def _use_watering_item(self, client_id, player_data, username, lot, lot_index, item_name):
         """使用浇水类道具"""
         # 移除道具
@@ -4481,7 +4334,8 @@ class TCPGameServer(TCPServer):
                 "道具背包": player_data["道具背包"]
             }
         })
-    
+
+    #访问模式下使用施肥类道具
     def _use_fertilizer_item_visiting(self, client_id, current_player_data, current_username, target_player_data, target_username, target_lot, lot_index, item_name):
         """访问模式下使用施肥类道具"""
         # 检查是否已经施过肥
@@ -6590,7 +6444,7 @@ class TCPGameServer(TCPServer):
         })
 #==========================访问其他玩家农场处理==========================
 
-    #==========================访问系统处理==========================
+# ==========================返回自己农场处理==========================
     def _update_visit_system(self, target_username, visitor_username):
         """更新被访问玩家的访问系统数据"""
         try:
@@ -7437,39 +7291,39 @@ class TCPGameServer(TCPServer):
 
 
 
-#==========================聊天消息处理==========================
-    #处理聊天消息（暂未完成）
-    def _handle_chat_message(self, client_id, message):
-        """处理聊天消息"""
-        # 检查用户是否已登录
-        logged_in, response = self._check_user_logged_in(client_id, "发送聊天消息")
-        if not logged_in:
-            return self.send_data(client_id, response)
+# #==========================聊天消息处理==========================
+#     #处理聊天消息（暂未完成）
+#     def _handle_chat_message(self, client_id, message):
+#         """处理聊天消息"""
+#         # 检查用户是否已登录
+#         logged_in, response = self._check_user_logged_in(client_id, "发送聊天消息")
+#         if not logged_in:
+#             return self.send_data(client_id, response)
         
-        content = message.get("content", "")
-        if not content.strip():
-            return self.send_data(client_id, {
-                "type": "chat_response",
-                "success": False,
-                "message": "消息内容不能为空"
-            })
+#         content = message.get("content", "")
+#         if not content.strip():
+#             return self.send_data(client_id, {
+#                 "type": "chat_response",
+#                 "success": False,
+#                 "message": "消息内容不能为空"
+#             })
         
-        username = self.user_data[client_id]["username"]
+#         username = self.user_data[client_id]["username"]
         
-        # 广播聊天消息给所有在线用户
-        chat_message = {
-            "type": "chat_message",
-            "username": username,
-            "content": content,
-            "timestamp": time.time()
-        }
+#         # 广播聊天消息给所有在线用户
+#         chat_message = {
+#             "type": "chat_message",
+#             "username": username,
+#             "content": content,
+#             "timestamp": time.time()
+#         }
         
-        self.broadcast(chat_message)
-        self.log('INFO', f"用户 {username} 发送聊天消息: {content}", 'SERVER')
+#         self.broadcast(chat_message)
+#         self.log('INFO', f"用户 {username} 发送聊天消息: {content}", 'SERVER')
         
-        return True
+#         return True
     
-#==========================聊天消息处理==========================
+# #==========================聊天消息处理==========================
 
 
 
@@ -8256,7 +8110,6 @@ class TCPGameServer(TCPServer):
     #生成幸运抽奖奖励
     def _generate_lucky_draw_rewards(self, count: int, draw_type: str, config: dict):
         """生成幸运抽奖奖励"""
-        import random
         
         # 加载作物配置
         crop_data = self._load_crop_data()
@@ -9001,711 +8854,7 @@ class TCPGameServer(TCPServer):
 #==========================稻草人系统处理==========================
 
 
-#==========================智慧树系统处理==========================
-    def _handle_wisdom_tree_operation(self, client_id, message):
-        """处理智慧树操作请求"""
-        # 检查用户是否已登录
-        logged_in, response = self._check_user_logged_in(client_id, "智慧树操作", "wisdom_tree_operation")
-        if not logged_in:
-            return self.send_data(client_id, response)
-        
-        # 获取玩家数据
-        player_data, username, response = self._load_player_data_with_check(client_id, "wisdom_tree_operation")
-        if not player_data:
-            return self.send_data(client_id, response)
-        
-        operation_type = message.get("operation_type", "")
-        
-        # 检查并修复智慧树配置格式
-        self._check_and_fix_wisdom_tree_config(player_data, username)
-        
-        # 获取修复后的智慧树配置
-        wisdom_tree_config = player_data["智慧树配置"]
-        
-        # 处理不同的操作类型
-        if operation_type == "water":
-            return self._process_wisdom_tree_water(client_id, player_data, username, wisdom_tree_config)
-        elif operation_type == "fertilize":
-            return self._process_wisdom_tree_fertilize(client_id, player_data, username, wisdom_tree_config)
-        elif operation_type == "kill_grass":
-            return self._process_wisdom_tree_kill_grass(client_id, player_data, username, wisdom_tree_config)
-        elif operation_type == "kill_bug":
-            return self._process_wisdom_tree_kill_bug(client_id, player_data, username, wisdom_tree_config)
-        elif operation_type == "play_music":
-            return self._process_wisdom_tree_play_music(client_id, player_data, username, wisdom_tree_config)
-        elif operation_type == "revive":
-            return self._process_wisdom_tree_revive(client_id, player_data, username, wisdom_tree_config)
-        elif operation_type == "get_random_message":
-            return self._process_wisdom_tree_get_random_message(client_id, player_data, username, wisdom_tree_config)
-        else:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": "未知的智慧树操作类型",
-                "operation_type": operation_type
-            })
-    
-    def _process_wisdom_tree_water(self, client_id, player_data, username, wisdom_tree_config):
-        """处理智慧树浇水"""
-        # 检查智慧树是否死亡
-        if wisdom_tree_config["当前生命值"] <= 0:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": "智慧树已死亡，请先复活！",
-                "operation_type": "water"
-            })
-        
-        # 浇水费用
-        water_cost = 100
-        
-        # 检查金钱是否足够
-        if player_data["钱币"] < water_cost:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": f"金钱不足，浇水需要 {water_cost} 金币",
-                "operation_type": "water"
-            })
-        
-        # 执行浇水
-        player_data["钱币"] -= water_cost
-        
-        # 浇水经验：50-150随机
-        import random
-        exp_gained = random.randint(50, 150)
-        wisdom_tree_config["当前经验值"] += exp_gained
-        
-        # 浇水高度：40%概率增加1-2高度
-        height_gained = 0
-        if random.random() < 0.4:  # 40%概率
-            height_gained = random.randint(1, 2)
-            wisdom_tree_config["高度"] = min(100, wisdom_tree_config["高度"] + height_gained)
-        
-        # 检查等级提升
-        level_up_occurred = self._check_wisdom_tree_level_up(wisdom_tree_config)
-        
-        # 保存数据
-        self.save_player_data(username, player_data)
-        
-        height_msg = f"，高度+{height_gained}" if height_gained > 0 else ""
-        self.log('INFO', f"玩家 {username} 给智慧树浇水，花费 {water_cost} 金币，经验+{exp_gained}{height_msg}", 'SERVER')
-        
-        return self.send_data(client_id, {
-            "type": "wisdom_tree_operation_response",
-            "success": True,
-            "message": f"浇水成功！经验+{exp_gained}{height_msg}",
-            "operation_type": "water",
-            "updated_data": {
-                "钱币": player_data["钱币"],
-                "智慧树配置": wisdom_tree_config
-            }
-        })
-    
-    def _process_wisdom_tree_fertilize(self, client_id, player_data, username, wisdom_tree_config):
-        """处理智慧树施肥"""
-        # 检查智慧树是否死亡
-        if wisdom_tree_config["当前生命值"] <= 0:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": "智慧树已死亡，请先复活！",
-                "operation_type": "fertilize"
-            })
-        
-        # 施肥费用
-        fertilize_cost = 200
-        
-        # 检查金钱是否足够
-        if player_data["钱币"] < fertilize_cost:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": f"金钱不足，施肥需要 {fertilize_cost} 金币",
-                "operation_type": "fertilize"
-            })
-        
-        # 执行施肥
-        player_data["钱币"] -= fertilize_cost
-        
-        # 施肥经验：10-40随机
-        import random
-        exp_gained = random.randint(10, 40)
-        wisdom_tree_config["当前经验值"] += exp_gained
-        
-        # 施肥高度：80%概率增加1-7高度
-        height_gained = 0
-        if random.random() < 0.8:  # 80%概率
-            height_gained = random.randint(1, 7)
-            wisdom_tree_config["高度"] = min(100, wisdom_tree_config["高度"] + height_gained)
-        
-        # 检查等级提升
-        level_up_occurred = self._check_wisdom_tree_level_up(wisdom_tree_config)
-        
-        # 保存数据
-        self.save_player_data(username, player_data)
-        
-        height_msg = f"，高度+{height_gained}" if height_gained > 0 else ""
-        self.log('INFO', f"玩家 {username} 给智慧树施肥，花费 {fertilize_cost} 金币，经验+{exp_gained}{height_msg}", 'SERVER')
-        
-        return self.send_data(client_id, {
-            "type": "wisdom_tree_operation_response",
-            "success": True,
-            "message": f"施肥成功！经验+{exp_gained}{height_msg}",
-            "operation_type": "fertilize",
-            "updated_data": {
-                "钱币": player_data["钱币"],
-                "智慧树配置": wisdom_tree_config
-            }
-        })
-    
-    def _process_wisdom_tree_kill_grass(self, client_id, player_data, username, wisdom_tree_config):
-        """处理智慧树除草"""
-        # 检查智慧树是否死亡
-        if wisdom_tree_config["当前生命值"] <= 0:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": "智慧树已死亡，请先复活！",
-                "operation_type": "kill_grass"
-            })
-        
-        # 除草费用
-        kill_grass_cost = 150
-        
-        # 检查金钱是否足够
-        if player_data["钱币"] < kill_grass_cost:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": f"金钱不足，除草需要 {kill_grass_cost} 金币",
-                "operation_type": "kill_grass"
-            })
-        
-        # 执行除草
-        import time
-        player_data["钱币"] -= kill_grass_cost
-        max_health = wisdom_tree_config["最大生命值"]
-        wisdom_tree_config["当前生命值"] = min(max_health, wisdom_tree_config["当前生命值"] + 10)
-        wisdom_tree_config["距离上一次除草时间"] = int(time.time())
-        
-        # 保存数据
-        self.save_player_data(username, player_data)
-        
-        self.log('INFO', f"玩家 {username} 给智慧树除草，花费 {kill_grass_cost} 金币，生命值+10", 'SERVER')
-        
-        return self.send_data(client_id, {
-            "type": "wisdom_tree_operation_response",
-            "success": True,
-            "message": "除草成功！生命值+10",
-            "operation_type": "kill_grass",
-            "updated_data": {
-                "钱币": player_data["钱币"],
-                "智慧树配置": wisdom_tree_config
-            }
-        })
-    
-    def _process_wisdom_tree_kill_bug(self, client_id, player_data, username, wisdom_tree_config):
-        """处理智慧树杀虫"""
-        # 检查智慧树是否死亡
-        if wisdom_tree_config["当前生命值"] <= 0:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": "智慧树已死亡，请先复活！",
-                "operation_type": "kill_bug"
-            })
-        
-        # 杀虫费用
-        kill_bug_cost = 150
-        
-        # 检查金钱是否足够
-        if player_data["钱币"] < kill_bug_cost:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": f"金钱不足，杀虫需要 {kill_bug_cost} 金币",
-                "operation_type": "kill_bug"
-            })
-        
-                # 执行杀虫
-        player_data["钱币"] -= kill_bug_cost
-        max_health = wisdom_tree_config["最大生命值"]
-        wisdom_tree_config["当前生命值"] = min(max_health, wisdom_tree_config["当前生命值"] + 15)
-        wisdom_tree_config["距离上一次杀虫时间"] = int(time.time())
-        
-        # 保存数据
-        self.save_player_data(username, player_data)
-        
-        self.log('INFO', f"玩家 {username} 给智慧树杀虫，花费 {kill_bug_cost} 金币，生命值+15", 'SERVER')
-        
-        return self.send_data(client_id, {
-            "type": "wisdom_tree_operation_response",
-            "success": True,
-            "message": "杀虫成功！生命值+15",
-            "operation_type": "kill_bug",
-            "updated_data": {
-                "钱币": player_data["钱币"],
-                "智慧树配置": wisdom_tree_config
-            }
-        })
-    
-    def _process_wisdom_tree_play_music(self, client_id, player_data, username, wisdom_tree_config):
-        """处理智慧树放音乐"""
-        # 检查智慧树是否死亡
-        if wisdom_tree_config["当前生命值"] <= 0:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": "智慧树已死亡，请先复活！",
-                "operation_type": "play_music"
-            })
-        
-        # 放音乐费用
-        play_music_cost = 100
-        
-        # 检查金钱是否足够
-        if player_data["钱币"] < play_music_cost:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": f"金钱不足，放音乐需要 {play_music_cost} 金币",
-                "operation_type": "play_music"
-            })
-        
-        # 执行放音乐
-        player_data["钱币"] -= play_music_cost
-        
-        # 从智慧树消息库中随机获取一条消息
-        random_message = self._get_random_wisdom_tree_message()
-        if random_message:
-            wisdom_tree_config["智慧树显示的话"] = random_message.get("content", "")
-        
-        # 保存数据
-        self.save_player_data(username, player_data)
-        
-        self.log('INFO', f"玩家 {username} 给智慧树放音乐，花费 {play_music_cost} 金币，获得随机消息", 'SERVER')
-        
-        return self.send_data(client_id, {
-            "type": "wisdom_tree_operation_response",
-            "success": True,
-            "message": "放音乐成功！获得了一条神秘消息",
-            "operation_type": "play_music",
-            "random_message": random_message,
-            "updated_data": {
-                "钱币": player_data["钱币"],
-                "智慧树配置": wisdom_tree_config
-            }
-        })
-    
-    def _process_wisdom_tree_revive(self, client_id, player_data, username, wisdom_tree_config):
-        """处理智慧树复活"""
-        # 检查智慧树是否真的死亡
-        if wisdom_tree_config["当前生命值"] > 0:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": "智慧树还活着，不需要复活！",
-                "operation_type": "revive"
-            })
-        
-        # 复活费用
-        revive_cost = 1000
-        
-        # 检查金钱是否足够
-        if player_data["钱币"] < revive_cost:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": f"金钱不足，复活智慧树需要 {revive_cost} 金币",
-                "operation_type": "revive"
-            })
-        
-        # 执行复活
-        player_data["钱币"] -= revive_cost
-        wisdom_tree_config["当前生命值"] = wisdom_tree_config["最大生命值"]
-        
-        # 保存数据
-        self.save_player_data(username, player_data)
-        
-        self.log('INFO', f"玩家 {username} 复活了智慧树，花费 {revive_cost} 金币", 'SERVER')
-        
-        return self.send_data(client_id, {
-            "type": "wisdom_tree_operation_response",
-            "success": True,
-            "message": "智慧树复活成功！",
-            "operation_type": "revive",
-            "updated_data": {
-                "钱币": player_data["钱币"],
-                "智慧树配置": wisdom_tree_config
-            }
-        })
-    
-    def _process_wisdom_tree_get_random_message(self, client_id, player_data, username, wisdom_tree_config):
-        """处理获取随机智慧树消息"""
-        # 从智慧树消息库中随机获取一条消息
-        random_message = self._get_random_wisdom_tree_message()
-        
-        if random_message:
-            wisdom_tree_config["智慧树显示的话"] = random_message.get("content", "")
-            
-            # 保存数据
-            self.save_player_data(username, player_data)
-            
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": True,
-                "message": "获得了一条神秘消息",
-                "operation_type": "get_random_message",
-                "random_message": random_message,
-                "updated_data": {
-                    "智慧树配置": wisdom_tree_config
-                }
-            })
-        else:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_operation_response",
-                "success": False,
-                "message": "暂时没有新消息",
-                "operation_type": "get_random_message"
-            })
-    
-    def _handle_wisdom_tree_message(self, client_id, message):
-        """处理智慧树消息发送请求"""
-        # 检查用户是否已登录
-        logged_in, response = self._check_user_logged_in(client_id, "发送智慧树消息", "wisdom_tree_message")
-        if not logged_in:
-            return self.send_data(client_id, response)
-        
-        # 获取玩家数据
-        player_data, username, response = self._load_player_data_with_check(client_id, "wisdom_tree_message")
-        if not player_data:
-            return self.send_data(client_id, response)
-        
-        message_content = message.get("message", "").strip()
-        
-        # 验证消息内容
-        if not message_content:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_message_response",
-                "success": False,
-                "message": "消息内容不能为空"
-            })
-        
-        if len(message_content) > 100:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_message_response",
-                "success": False,
-                "message": "消息长度不能超过100个字符"
-            })
-        
-        # 发送消息费用
-        send_cost = 50
-        
-        # 检查金钱是否足够
-        if player_data["钱币"] < send_cost:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_message_response",
-                "success": False,
-                "message": f"金钱不足，发送消息需要 {send_cost} 金币"
-            })
-        
-        # 扣除费用
-        player_data["钱币"] -= send_cost
-        
-        # 保存消息到智慧树消息库
-        success = self._save_wisdom_tree_message(username, message_content)
-        
-        if success:
-            # 保存玩家数据
-            self.save_player_data(username, player_data)
-            
-            self.log('INFO', f"玩家 {username} 发送智慧树消息，花费 {send_cost} 金币：{message_content}", 'SERVER')
-            
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_message_response",
-                "success": True,
-                "message": "消息发送成功！",
-                "updated_data": {
-                    "钱币": player_data["钱币"]
-                }
-            })
-        else:
-            return self.send_data(client_id, {
-                "type": "wisdom_tree_message_response",
-                "success": False,
-                "message": "消息发送失败，请重试"
-            })
-    
-    def _handle_get_wisdom_tree_config(self, client_id, message):
-        """处理获取智慧树配置请求"""
-        # 检查用户是否已登录
-        logged_in, response = self._check_user_logged_in(client_id, "获取智慧树配置", "get_wisdom_tree_config")
-        if not logged_in:
-            return self.send_data(client_id, response)
-        
-        # 获取玩家数据
-        player_data, username, response = self._load_player_data_with_check(client_id, "get_wisdom_tree_config")
-        if not player_data:
-            return self.send_data(client_id, response)
-        
-        # 检查并修复智慧树配置
-        self._check_and_fix_wisdom_tree_config(player_data, username)
-        
-        # 保存修复后的数据
-        self.save_player_data(username, player_data)
-        
-        # 返回智慧树配置
-        wisdom_tree_config = player_data.get("智慧树配置", {})
-        
-        self.log('INFO', f"玩家 {username} 请求智慧树配置", 'SERVER')
-        
-        return self.send_data(client_id, {
-            "type": "wisdom_tree_config_response",
-            "success": True,
-            "config": wisdom_tree_config
-        })
-    
-    def _check_wisdom_tree_level_up(self, wisdom_tree_config):
-        """检查智慧树等级提升"""
-        current_level = wisdom_tree_config["等级"]
-        current_experience = wisdom_tree_config["当前经验值"]
-        max_experience = wisdom_tree_config["最大经验值"]
-        level_ups = 0
-        
-        # 检查是否可以升级（最高等级20）
-        while current_level < 20 and current_experience >= max_experience:
-            # 升级
-            current_level += 1
-            current_experience -= max_experience  # 扣除升级所需经验
-            level_ups += 1
-            
-            # 计算新等级的最大经验值
-            max_experience = self._calculate_wisdom_tree_max_exp(current_level)
-            
-            self.log('INFO', f"智慧树等级提升到 {current_level} 级，新的最大经验值: {max_experience}", 'SERVER')
-        
-        # 每升一级，最大生命值+2，当前生命值也+2
-        if level_ups > 0:
-            health_bonus = level_ups * 2
-            wisdom_tree_config["最大生命值"] = min(200, wisdom_tree_config["最大生命值"] + health_bonus)
-            wisdom_tree_config["当前生命值"] = min(wisdom_tree_config["最大生命值"], wisdom_tree_config["当前生命值"] + health_bonus)
-            self.log('INFO', f"智慧树升级 {level_ups} 级，最大生命值+{health_bonus}", 'SERVER')
-        
-        # 更新配置
-        wisdom_tree_config["等级"] = current_level
-        wisdom_tree_config["当前经验值"] = current_experience
-        wisdom_tree_config["最大经验值"] = max_experience
-        
-        return level_ups > 0
-    
-    def _get_random_wisdom_tree_message(self):
-        """从智慧树消息库中随机获取一条消息"""
-        import os
-        import json
-        import random
-        
-        # 优先从MongoDB读取
-        if hasattr(self, 'mongo_api') and self.mongo_api and self.mongo_api.is_connected():
-            try:
-                wisdom_tree_data = self.mongo_api.get_wisdom_tree_config()
-                if wisdom_tree_data:
-                    messages = wisdom_tree_data.get("messages", [])
-                    if messages:
-                        selected_message = random.choice(messages)
-                        self.log('INFO', f"成功从MongoDB获取智慧树消息", 'SERVER')
-                        return selected_message
-                    else:
-                        return None
-            except Exception as e:
-                self.log('ERROR', f"从MongoDB读取智慧树消息失败: {e}", 'SERVER')
-        
-        # 回退到JSON文件
-        wisdom_tree_data_path = os.path.join(os.path.dirname(__file__), "config", "wisdom_tree_data.json")
-        
-        try:
-            with open(wisdom_tree_data_path, 'r', encoding='utf-8') as f:
-                wisdom_tree_data = json.load(f)
-            
-            messages = wisdom_tree_data.get("messages", [])
-            if messages:
-                selected_message = random.choice(messages)
-                self.log('INFO', f"成功从JSON文件获取智慧树消息", 'SERVER')
-                return selected_message
-            else:
-                return None
-        except Exception as e:
-            self.log('ERROR', f"从JSON文件读取智慧树消息失败: {e}", 'SERVER')
-            return None
-    
-    def _save_wisdom_tree_message(self, username, message_content):
-        """保存智慧树消息到消息库"""
-        import os
-        import json
-        import time
-        import uuid
-        
-        # 创建新消息
-        new_message = {
-            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
-            "sender": username,
-            "content": message_content,
-            "id": str(uuid.uuid4())
-        }
-        
-        # 优先保存到MongoDB
-        if hasattr(self, 'mongo_api') and self.mongo_api and self.mongo_api.is_connected():
-            try:
-                # 获取现有数据
-                wisdom_tree_data = self.mongo_api.get_wisdom_tree_config()
-                if not wisdom_tree_data:
-                    wisdom_tree_data = {
-                        "messages": [],
-                        "total_messages": 0,
-                        "last_update": ""
-                    }
-                
-                # 添加新消息
-                wisdom_tree_data["messages"].append(new_message)
-                wisdom_tree_data["total_messages"] = len(wisdom_tree_data["messages"])
-                wisdom_tree_data["last_update"] = new_message["timestamp"]
-                
-                # 保持最多1000条消息
-                if len(wisdom_tree_data["messages"]) > 1000:
-                    wisdom_tree_data["messages"] = wisdom_tree_data["messages"][-1000:]
-                    wisdom_tree_data["total_messages"] = len(wisdom_tree_data["messages"])
-                
-                # 保存到MongoDB
-                if self.mongo_api.update_wisdom_tree_config(wisdom_tree_data):
-                    self.log('INFO', f"成功保存智慧树消息到MongoDB: {username}", 'SERVER')
-                    return True
-                else:
-                    self.log('ERROR', f"保存智慧树消息到MongoDB失败: {username}", 'SERVER')
-            except Exception as e:
-                self.log('ERROR', f"MongoDB保存智慧树消息异常: {e}", 'SERVER')
-        
-        # 回退到JSON文件
-        wisdom_tree_data_path = os.path.join(os.path.dirname(__file__), "config", "wisdom_tree_data.json")
-        
-        try:
-            # 读取现有数据
-            if os.path.exists(wisdom_tree_data_path):
-                with open(wisdom_tree_data_path, 'r', encoding='utf-8') as f:
-                    wisdom_tree_data = json.load(f)
-            else:
-                wisdom_tree_data = {
-                    "messages": [],
-                    "total_messages": 0,
-                    "last_update": ""
-                }
-            
-            # 添加到消息列表
-            wisdom_tree_data["messages"].append(new_message)
-            wisdom_tree_data["total_messages"] = len(wisdom_tree_data["messages"])
-            wisdom_tree_data["last_update"] = new_message["timestamp"]
-            
-            # 保持最多1000条消息
-            if len(wisdom_tree_data["messages"]) > 1000:
-                wisdom_tree_data["messages"] = wisdom_tree_data["messages"][-1000:]
-                wisdom_tree_data["total_messages"] = len(wisdom_tree_data["messages"])
-            
-            # 保存数据
-            with open(wisdom_tree_data_path, 'w', encoding='utf-8') as f:
-                json.dump(wisdom_tree_data, f, ensure_ascii=False, indent=4)
-            
-            self.log('INFO', f"成功保存智慧树消息到JSON文件: {username}", 'SERVER')
-            return True
-        except Exception as e:
-            self.log('ERROR', f"保存智慧树消息到JSON文件失败: {e}", 'SERVER')
-            return False
-    
-    def check_wisdom_tree_health_decay(self):
-        """检查智慧树生命值衰减"""
-        import time
-        import random
-        
-        current_time = int(time.time())
-        processed_count = 0
-        
-        # 检查所有在线玩家
-        for client_id in self.user_data:
-            if self.user_data[client_id].get("logged_in", False):
-                username = self.user_data[client_id]["username"]
-                player_data = self.load_player_data(username)
-                if player_data and "智慧树配置" in player_data:
-                    self._process_wisdom_tree_decay(player_data["智慧树配置"], username)
-                    self.save_player_data(username, player_data)
-                    processed_count += 1
-        
-        # 注释：缓存机制已移除，只处理在线玩家的智慧树衰减
-        
-        if processed_count > 0:
-            self.log('INFO', f"已处理 {processed_count} 个玩家的智慧树生命值衰减", 'SERVER')
-    
-    def _process_wisdom_tree_decay(self, wisdom_tree_config, username):
-        """处理单个玩家的智慧树生命值衰减"""
-        import time
-        import random
-        
-        current_time = int(time.time())
-        
-        # 获取上次除草和杀虫时间，处理空字符串和无效值
-        last_grass_time_raw = wisdom_tree_config.get("距离上一次除草时间", current_time)
-        last_bug_time_raw = wisdom_tree_config.get("距离上一次杀虫时间", current_time)
-        
-        # 处理空字符串和无效时间戳
-        try:
-            last_grass_time = int(last_grass_time_raw) if last_grass_time_raw and str(last_grass_time_raw).strip() else current_time
-        except (ValueError, TypeError):
-            last_grass_time = current_time
-            
-        try:
-            last_bug_time = int(last_bug_time_raw) if last_bug_time_raw and str(last_bug_time_raw).strip() else current_time
-        except (ValueError, TypeError):
-            last_bug_time = current_time
-        
-        # 如果时间戳无效（为0或负数），设置为当前时间
-        if last_grass_time <= 0:
-            last_grass_time = current_time
-        if last_bug_time <= 0:
-            last_bug_time = current_time
-        
-        # 检查是否3天没有除草
-        days_since_grass = (current_time - last_grass_time) / 86400  # 转换为天数
-        if days_since_grass >= 3:
-            # 计算应该衰减的天数
-            decay_days = int(days_since_grass)
-            if decay_days > 0:
-                # 每天减少1-3血量
-                total_decay = 0
-                for _ in range(decay_days):
-                    daily_decay = random.randint(1, 3)
-                    total_decay += daily_decay
-                
-                wisdom_tree_config["当前生命值"] = max(0, wisdom_tree_config["当前生命值"] - total_decay)
-                self.log('INFO', f"玩家 {username} 的智慧树因{decay_days}天未除草，生命值减少{total_decay}", 'SERVER')
-                
-                # 更新除草时间为当前时间，避免重复扣血
-                wisdom_tree_config["距离上一次除草时间"] = current_time
-        
-        # 检查是否3天没有杀虫
-        days_since_bug = (current_time - last_bug_time) / 86400  # 转换为天数
-        if days_since_bug >= 3:
-            # 计算应该衰减的天数
-            decay_days = int(days_since_bug)
-            if decay_days > 0:
-                # 每天减少1-3血量
-                total_decay = 0
-                for _ in range(decay_days):
-                    daily_decay = random.randint(1, 3)
-                    total_decay += daily_decay
-                
-                wisdom_tree_config["当前生命值"] = max(0, wisdom_tree_config["当前生命值"] - total_decay)
-                self.log('INFO', f"玩家 {username} 的智慧树因{decay_days}天未杀虫，生命值减少{total_decay}", 'SERVER')
-                
-                # 更新杀虫时间为当前时间，避免重复扣血
-                wisdom_tree_config["距离上一次杀虫时间"] = current_time
-#==========================智慧树系统处理==========================
+
 
 
 #==========================作物出售处理==========================
@@ -10344,8 +9493,7 @@ class TCPGameServer(TCPServer):
 
 def console_input_thread(server):
     """控制台输入处理线程"""
-    import threading
-    import sys
+
     
     # 等待服务器完全启动
     time.sleep(0.5)
@@ -10394,7 +9542,6 @@ if __name__ == "__main__":
         print("=" * 60)
         print(f"📡 服务器地址: {server_host}:{server_port}")
         print(f"📦 缓冲区大小: {buffer_size} bytes")
-        print(f"🔧 性能优化: 已启用")
         print("=" * 60)
         
         # 创建并启动游戏服务器

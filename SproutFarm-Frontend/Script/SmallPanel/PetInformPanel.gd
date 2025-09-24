@@ -88,10 +88,10 @@ func _get_pet_texture(pet_name: String) -> Texture2D:
 	if pet_config.has(pet_name):
 		var pet_info = pet_config[pet_name]
 		var scene_path = pet_info.get("pet_image", "")  # 使用服务器数据的pet_image字段
-		print("宠物信息面板 ", pet_name, " 的图片路径：", scene_path)
+		#print("宠物信息面板 ", pet_name, " 的图片路径：", scene_path)
 		
 		if scene_path != "" and ResourceLoader.exists(scene_path):
-			print("宠物信息面板开始加载宠物场景：", scene_path)
+			#print("宠物信息面板开始加载宠物场景：", scene_path)
 			var pet_scene = load(scene_path)
 			if pet_scene:
 				var pet_instance = pet_scene.instantiate()
@@ -103,7 +103,7 @@ func _get_pet_texture(pet_name: String) -> Texture2D:
 						var frame_count = pet_instance.sprite_frames.get_frame_count(default_animation)
 						if frame_count > 0:
 							var texture = pet_instance.sprite_frames.get_frame_texture(default_animation, 0)
-							print("宠物信息面板成功获取宠物纹理：", pet_name)
+							#print("宠物信息面板成功获取宠物纹理：", pet_name)
 							pet_instance.queue_free()
 							return texture
 					else:
@@ -118,22 +118,6 @@ func _get_pet_texture(pet_name: String) -> Texture2D:
 	else:
 		print("宠物信息面板配置中没有找到：", pet_name)
 	return null
-
-# 加载宠物配置数据
-func _load_pet_config() -> Dictionary:
-	var file = FileAccess.open("res://Data/pet_data.json", FileAccess.READ)
-	if file == null:
-		return {}
-	
-	var json = JSON.new()
-	var json_string = file.get_as_text()
-	file.close()
-	
-	var parse_result = json.parse(json_string)
-	if parse_result != OK:
-		return {}
-	
-	return json.data
 
 # 设置宠物详细信息（使用bbcode美化）- 新格式
 func _set_pet_detailed_info(pet_name: String, pet_data: Dictionary):

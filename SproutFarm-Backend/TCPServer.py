@@ -242,7 +242,7 @@ class TCPServer:
                 try:
                     # 解析JSON消息
                     message = json.loads(message_text)
-                    self.log('INFO', f"从客户端 {client_id} 接收JSON: {message}", 'CLIENT')
+                    #self.log('INFO', f"从客户端 {client_id} 接收JSON: {message}", 'CLIENT')
                     
                     # 处理消息 - 实现自定义逻辑
                     self._handle_message(client_id, message)

@@ -216,7 +216,7 @@ class EmailVerification:
         
         # 优先尝试使用MongoDB
         try:
-            from SMYMongoDBAPI import SMYMongoDBAPI
+            from .SMYMongoDBAPI import SMYMongoDBAPI
             import os
             # 根据环境动态选择MongoDB配置
             if os.path.exists('/.dockerenv') or os.environ.get('PRODUCTION', '').lower() == 'true':
@@ -291,7 +291,7 @@ class EmailVerification:
         
         # 优先尝试使用MongoDB
         try:
-            from SMYMongoDBAPI import SMYMongoDBAPI
+            from .SMYMongoDBAPI import SMYMongoDBAPI
             import os
             # 根据环境动态选择MongoDB配置
             if os.path.exists('/.dockerenv') or os.environ.get('PRODUCTION', '').lower() == 'true':
@@ -383,7 +383,7 @@ class EmailVerification:
         
         # 优先尝试使用MongoDB
         try:
-            from SMYMongoDBAPI import SMYMongoDBAPI
+            from .SMYMongoDBAPI import SMYMongoDBAPI
             import os
             # 根据环境动态选择MongoDB配置
             if os.path.exists('/.dockerenv') or os.environ.get('PRODUCTION', '').lower() == 'true':
@@ -459,7 +459,7 @@ class EmailVerification:
         
         # 优先尝试使用MongoDB
         try:
-            from SMYMongoDBAPI import SMYMongoDBAPI
+            from .SMYMongoDBAPI import SMYMongoDBAPI
             import os
             # 根据环境动态选择MongoDB配置
             if os.path.exists('/.dockerenv') or os.environ.get('PRODUCTION', '').lower() == 'true':

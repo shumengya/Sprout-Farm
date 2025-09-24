@@ -81,9 +81,6 @@ func send_broadcast_message():
 	if success:
 		# 清空输入框
 		input_message.text = ""
-		Toast.show("消息发送成功", Color.GREEN, 2.0, 1.0)
-	else:
-		Toast.show("消息发送失败", Color.RED, 2.0, 1.0)
 
 # 统一的消息处理函数
 func _add_message_to_history(data: Dictionary):
@@ -241,9 +238,6 @@ func receive_history_messages(data: Dictionary):
 		# 保存到本地
 		save_chat_history()
 		
-		Toast.show("历史消息加载完成，共%d条消息" % messages.size(), Color.GREEN, 2.0, 1.0)
-	else:
-		Toast.show("没有找到历史消息", Color.YELLOW, 2.0, 1.0)
 
 # 保存聊天历史记录
 func save_chat_history():
@@ -278,7 +272,7 @@ func clear_message_history():
 
 # 获取最新消息用于主界面显示
 func get_latest_message() -> String:
-	print("get_latest_message 被调用，消息历史大小: ", message_history.size())
+	#print("get_latest_message 被调用，消息历史大小: ", message_history.size())
 	if message_history.size() > 0:
 		# 确保消息按时间排序
 		message_history.sort_custom(func(a, b): return a.get("timestamp", 0) < b.get("timestamp", 0))
@@ -286,5 +280,5 @@ func get_latest_message() -> String:
 		var result = latest.get("display_name", "匿名") + ": " + latest.get("content", "")
 		print("返回最新消息: ", result)
 		return result
-	print("没有消息历史，返回'暂无消息'")
+	#print("没有消息历史，返回'暂无消息'")
 	return "暂无消息"

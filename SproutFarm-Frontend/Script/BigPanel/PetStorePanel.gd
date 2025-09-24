@@ -59,12 +59,11 @@ func update_pet_store_ui():
 		child.queue_free()
 	
 	print("更新宠物商店UI，宠物种类：", pet_config.size())
-	print("宠物配置数据：", pet_config)
 	
 	# 为每个宠物配置创建按钮
 	for pet_name in pet_config.keys():
 		var pet_info = pet_config[pet_name]
-		print("处理宠物：", pet_name, "，数据：", pet_info)
+		#print("处理宠物：", pet_name, "，数据：", pet_info)
 		
 		# 适配扁平化数据格式
 		var can_buy = pet_info.get("can_purchase", false)
@@ -93,7 +92,7 @@ func update_pet_store_ui():
 			button.pressed.connect(func(): _on_store_pet_selected(pet_name, pet_cost, pet_desc))
 		
 		store_grid.add_child(button)
-		print("已添加宠物按钮：", pet_name)
+		#print("已添加宠物按钮：", pet_name)
 
 # 检查玩家是否已拥有某种宠物
 func _check_pet_owned(pet_name: String) -> bool:
@@ -157,10 +156,10 @@ func _update_button_pet_image(button: Button, pet_name: String):
 	if pet_config.has(pet_name):
 		var pet_info = pet_config[pet_name]
 		var scene_path = pet_info.get("pet_image", "")
-		print("宠物 ", pet_name, " 的图片路径：", scene_path)
+		#print("宠物 ", pet_name, " 的图片路径：", scene_path)
 		
 		if scene_path != "" and ResourceLoader.exists(scene_path):
-			print("开始加载宠物场景：", scene_path)
+			#print("开始加载宠物场景：", scene_path)
 			# 加载宠物场景并获取PetImage的纹理
 			var pet_scene = load(scene_path)
 			if pet_scene:
@@ -175,7 +174,7 @@ func _update_button_pet_image(button: Button, pet_name: String):
 						var frame_count = pet_image_node.sprite_frames.get_frame_count(default_animation)
 						if frame_count > 0:
 							texture = pet_image_node.sprite_frames.get_frame_texture(default_animation, 0)
-							print("成功获取宠物纹理：", pet_name)
+							#print("成功获取宠物纹理：", pet_name)
 					else:
 						print("宠物场景没有动画：", pet_name)
 				else:
@@ -195,7 +194,7 @@ func _update_button_pet_image(button: Button, pet_name: String):
 		pet_image.scale = Vector2(10, 10)
 		# 确保图片居中显示
 		pet_image.centered = true
-		print("成功设置宠物图片：", pet_name)
+		#print("成功设置宠物图片：", pet_name)
 	else:
 		# 如果无法获取图片，隐藏图片节点但保留按钮
 		pet_image.visible = false

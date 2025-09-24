@@ -11,7 +11,8 @@ import json
 import sys
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-from SMYMongoDBAPI import SMYMongoDBAPI
+#自定义包
+from .SMYMongoDBAPI import SMYMongoDBAPI
 
 class ConsoleCommandsAPI:
     """控制台命令处理类"""

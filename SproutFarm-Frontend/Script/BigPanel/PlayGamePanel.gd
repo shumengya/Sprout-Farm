@@ -9,19 +9,24 @@ var TETRIS = preload('res://Scene/SmallGame/Tetris.tscn').instantiate()
 
 func _on_game_button_pressed() -> void:
 	self.add_child(_2048_GAME)
-	pass # Replace with function body.
+	pass 
 
 
 func _on_push_box_button_pressed() -> void:
 	self.add_child(PUSH_BOX)
-	pass # Replace with function body.
+	pass 
 
 
 func _on_snake_game_button_pressed() -> void:
 	self.add_child(SNAKE_GAME)
-	pass # Replace with function body.
+	pass 
 
 
 func _on_tetris_button_pressed() -> void:
 	self.add_child(TETRIS)
-	pass # Replace with function body.
+	pass 
+
+
+func _on_quit_button_pressed() -> void:
+	self.hide()
+	pass 

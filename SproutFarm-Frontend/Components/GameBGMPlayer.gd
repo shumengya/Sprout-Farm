@@ -82,7 +82,7 @@ func _load_from_preset_list():
 	for file_path in music_files_list:
 		if ResourceLoader.exists(file_path):
 			music_files.append(file_path)
-			print("预设加载音乐: ", file_path.get_file())
+			#print("预设加载音乐: ", file_path.get_file())
 		else:
 			print("音乐文件不存在: ", file_path)
 	
@@ -181,7 +181,7 @@ func set_volume(volume: float):
 	current_volume = clamp(volume, 0.0, 1.0)
 	if not is_muted:
 		audio_player.volume_db = linear_to_db(current_volume)
-	print("背景音乐音量设置为: ", current_volume)
+	#print("背景音乐音量设置为: ", current_volume)
 
 func get_volume() -> float:
 	"""获取当前音量"""

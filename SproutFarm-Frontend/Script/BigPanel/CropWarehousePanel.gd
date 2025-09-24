@@ -530,7 +530,7 @@ func _get_crop_harvest_texture(crop_name: String) -> Texture2D:
 	if ResourceLoader.exists(harvest_texture_path):
 		var texture = load(harvest_texture_path)
 		if texture:
-			print("仓库加载作物收获物图片：", crop_name)
+			#print("仓库加载作物收获物图片：", crop_name)
 			return texture
 	
 	# 如果没有找到，使用默认的收获物图片

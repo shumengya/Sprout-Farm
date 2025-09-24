@@ -10,8 +10,9 @@ import time
 import random
 import logging
 from datetime import datetime
-from SMYMongoDBAPI import SMYMongoDBAPI
 from bson import ObjectId
+#自定义包
+from .SMYMongoDBAPI import SMYMongoDBAPI
 
 #杂交农场666-种植杂交树1，杂交树2-每天0点种植
 #花卉农场520-随机种植各种花卉-星期一，星期三，星期五，星期日零点种植

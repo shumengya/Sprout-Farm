@@ -95,7 +95,6 @@ func _ready():
 	
 	# 延迟一帧后设置演示数据，确保所有节点都已准备好
 	await get_tree().process_frame
-	#setup_farm_battle()
 	# 可以调用测试函数进行本地测试
 	#setup_test_battle()
 
@@ -139,8 +138,6 @@ func _process(delta):
 #=====================本地测试函数===========================
 # 本地测试对战函数 - 方便调试各种宠物属性
 func setup_test_battle():
-	"""设置本地测试对战，可以快速测试各种宠物配置和属性"""
-	print("[测试] 开始设置本地测试对战")
 	
 	# 清理现有战斗
 	clear_all_pets()
@@ -190,9 +187,6 @@ func setup_test_battle():
 		redman_pet.enable_damage_reflection_skill = true
 		redman_pet.damage_reflection_percentage = 0.8  # 反弹80%伤害
 		redman_pet.damage_reflection_cooldown = 5.0    # 5秒冷却
-		print("[测试] 烈焰鸟开启反弹伤害技能")
-	
-	
 	
 	print("[测试] 本地测试对战设置完成，可以观察宠物战斗效果")
 	
@@ -205,9 +199,7 @@ func setup_test_battle():
 #=====================UI显示===========================
 #更新时间显示
 func update_time_display():
-	"""更新时间显示"""
 	var remaining_time: float
-	
 	if current_battle_state == BattleState.BATTLING:
 		remaining_time = max_battle_time - battle_time
 	else:
@@ -234,7 +226,6 @@ func update_time_display():
 
 #显示战斗结果
 func show_battle_result(winner: String):
-	"""显示战斗结果"""
 	battle_end_panel.visible = true
 	
 	var title_label = battle_end_panel.get_node("Title")
@@ -255,7 +246,6 @@ func show_battle_result(winner: String):
 
 #生成战斗统计信息
 func generate_battle_stats() -> String:
-	"""生成战斗统计信息"""
 	var stats = "战斗时间: %.1f秒\n\n" % battle_time
 	
 	# MVP统计
@@ -291,7 +281,6 @@ func add_battle_log(message: String):
 
 #返回农场按钮
 func _on_return_farm_pressed():
-	"""返回农场按钮"""
 	# 清理战斗场景
 	clear_all_pets()
 	
@@ -305,7 +294,6 @@ func _on_return_farm_pressed():
 
 #获取战斗总结数据
 func get_battle_summary() -> Dictionary:
-	"""获取战斗总结数据"""
 	return {
 		"battle_time": battle_time,
 		"damage_dealt": damage_dealt,
@@ -360,7 +348,6 @@ func _on_visibility_changed():
 
 #开始战斗
 func start_battle(team_a_data: Array, team_b_data: Array):
-	"""开始战斗"""
 	current_battle_state = BattleState.PREPARING
 	battle_time = 0.0
 	battle_log.clear()
@@ -383,7 +370,6 @@ func start_battle(team_a_data: Array, team_b_data: Array):
 
 #生成队伍宠物
 func spawn_team(team_data: Array, team_name: String, team_node: Node2D):
-	"""生成队伍宠物"""
 	var positions = get_team_positions(team_node)
 	
 	for i in range(min(team_data.size(), positions.size())):
@@ -398,7 +384,6 @@ func spawn_team(team_data: Array, team_name: String, team_node: Node2D):
 
 #获取队伍位置点
 func get_team_positions(team_node: Node2D) -> Array[Vector2]:
-	"""获取队伍位置点"""
 	var positions: Array[Vector2] = []
 	for child in team_node.get_children():
 		if child is Marker2D:
@@ -407,7 +392,6 @@ func get_team_positions(team_node: Node2D) -> Array[Vector2]:
 
 #生成单个宠物
 func spawn_pet(pet_info: Dictionary, team: String, pos: Vector2) -> NewPetBase:
-	"""生成单个宠物"""
 	var pet_scene = preload("res://Scene/NewPet/NewPetBase.tscn")
 	var pet = pet_scene.instantiate()
 	
@@ -456,7 +440,6 @@ func spawn_pet(pet_info: Dictionary, team: String, pos: Vector2) -> NewPetBase:
 
 #应用服务器返回的宠物数据
 func apply_server_pet_data(pet: NewPetBase, pet_data: Dictionary):
-	"""应用服务器返回的完整宠物数据"""
 	if pet_data.is_empty():
 		return
 	
@@ -560,7 +543,6 @@ func apply_server_pet_data(pet: NewPetBase, pet_data: Dictionary):
 
 #字符串转元素类型枚举
 func string_to_element_type(element_string: String) -> NewPetBase.ElementType:
-	"""将字符串转换为元素类型枚举"""
 	match element_string.to_upper():
 		"FIRE":
 			return NewPetBase.ElementType.FIRE
@@ -579,7 +561,6 @@ func string_to_element_type(element_string: String) -> NewPetBase.ElementType:
 
 #将配置应用到宠物上
 func apply_pet_config(pet: NewPetBase, config: Dictionary):
-	"""将配置应用到宠物上"""
 	if not config.is_empty():
 		# 基本属性
 		if config.has("pet_name"):
@@ -671,7 +652,6 @@ func apply_pet_config(pet: NewPetBase, config: Dictionary):
 	
 #应用宠物外观图片
 func apply_pet_image(pet: NewPetBase, image_path: String):
-	"""应用宠物外观图片"""
 	if image_path == "" or not ResourceLoader.exists(image_path):
 		return
 	
@@ -711,9 +691,6 @@ func apply_pet_image(pet: NewPetBase, image_path: String):
 			pet.right_tool_image.show_behind_parent = new_right_tool.show_behind_parent
 			pet.right_tool_image.visible = true
 			
-		# 外观应用成功
-	else:
-		pass  # 静默处理错误
 	
 	# 清理临时实例
 	temp_instance.queue_free()
@@ -738,7 +715,6 @@ var level_bonus_config = {
 
 #应用等级缩放
 func apply_level_scaling(pet: NewPetBase):
-	"""应用等级缩放"""
 	# 每级+2基本属性
 	var level_bonus = (pet.pet_level - 1) * 2.0
 	
@@ -783,7 +759,6 @@ func apply_level_scaling(pet: NewPetBase):
 
 #更新战斗状态
 func update_battle_state():
-	"""更新战斗状态"""
 	# 先清理无效的宠物引用
 	cleanup_invalid_pet_references()
 	
@@ -803,7 +778,6 @@ func update_battle_state():
 #=================即时清理防止游戏卡死=====================
 #清理无效的宠物引用
 func cleanup_invalid_pet_references():
-	"""清理数组中的无效宠物引用"""
 	# 清理all_pets数组中的无效引用
 	var valid_all_pets: Array[NewPetBase] = []
 	for pet in all_pets:
@@ -825,8 +799,8 @@ func cleanup_invalid_pet_references():
 			valid_team_b_pets.append(pet)
 	team_b_pets = valid_team_b_pets
 
+#清理死亡对象以优化性能
 func cleanup_dead_objects():
-	"""清理死亡对象以优化性能"""
 	# 更严格的死亡宠物清理逻辑
 	var dead_pets = []
 	for pet in all_pets:
@@ -870,7 +844,6 @@ func cleanup_dead_objects():
 
 #结束战斗
 func end_battle(winner: String):
-	"""结束战斗"""
 	if current_battle_state == BattleState.ENDED:
 		return
 	
@@ -923,7 +896,6 @@ func end_battle(winner: String):
 
 #清理所有宠物
 func clear_all_pets():
-	"""清理所有宠物"""
 	for pet in all_pets:
 		if is_instance_valid(pet):
 			pet.queue_free()
@@ -937,7 +909,6 @@ func clear_all_pets():
 
 #清理所有召唤的仆从小弟
 func clear_all_minions():
-	"""清理所有召唤的仆从小弟"""
 	# 获取所有pets组中的节点
 	var all_pets_in_group = get_tree().get_nodes_in_group("pets")
 	var minions_cleared = 0
@@ -959,7 +930,6 @@ func clear_all_minions():
 
 #立即清理所有宠物
 func clear_all_pets_immediately():
-	"""立即清理所有宠物（用于时间到时的平局处理）"""
 	for pet in all_pets:
 		if is_instance_valid(pet):
 			# 立即设置为死亡状态
@@ -990,14 +960,12 @@ func clear_all_pets_immediately():
 
 #宠物死亡事件
 func _on_pet_died(pet: NewPetBase):
-	"""宠物死亡事件"""
 	# 简化死亡处理，减少不必要的计算
 	if battle_log.size() < 30:  # 限制死亡日志数量
 		add_battle_log("[color=red]%s 死亡[/color]" % pet.pet_name)
 
 #宠物攻击事件
 func _on_pet_attacked(attacker: NewPetBase, target: NewPetBase, damage: float):
-	"""宠物攻击事件"""
 	# 简化统计更新
 	damage_dealt[attacker.pet_id] = damage_dealt.get(attacker.pet_id, 0.0) + damage
 	damage_taken[target.pet_id] = damage_taken.get(target.pet_id, 0.0) + damage
@@ -1008,7 +976,6 @@ func _on_pet_attacked(attacker: NewPetBase, target: NewPetBase, damage: float):
 
 #宠物技能使用事件
 func _on_pet_skill_used(pet: NewPetBase, skill_name: String):
-	"""宠物技能使用事件"""
 	# 减少技能日志，只记录重要技能
 	if skill_name in ["狂暴模式", "自爆", "召唤小弟", "死亡重生"]:
 		add_battle_log("[color=cyan]%s:%s[/color]" % [pet.pet_name, skill_name])
@@ -1017,7 +984,6 @@ func _on_pet_skill_used(pet: NewPetBase, skill_name: String):
 #================偷菜对战设置===========================
 # 设置偷菜对战
 func setup_steal_battle(attacker_pets: Array, defender_pets: Array, attacker_name: String, defender_name: String):
-	"""设置偷菜对战"""
 	print("[PetBattlePanel] 设置偷菜对战: 攻击者=%s, 防守者=%s" % [attacker_name, defender_name])
 	print("[PetBattlePanel] 攻击方宠物数量: %d, 防守方宠物数量: %d" % [attacker_pets.size(), defender_pets.size()])
 	
@@ -1044,9 +1010,6 @@ func setup_steal_battle(attacker_pets: Array, defender_pets: Array, attacker_nam
 	# 限制出战宠物数量最多4个
 	var limited_attacker_pets = attacker_pets.slice(0, min(4, attacker_pets.size()))
 	var limited_defender_pets = defender_pets.slice(0, min(4, defender_pets.size()))
-	
-	print("[PetBattlePanel] 限制后攻击方宠物数量: %d, 防守方宠物数量: %d" % [limited_attacker_pets.size(), limited_defender_pets.size()])
-	
 	# 显示对战面板
 	show()
 	
@@ -1079,8 +1042,6 @@ func setup_steal_battle(attacker_pets: Array, defender_pets: Array, attacker_nam
 			team_b_pets.append(pet)
 			all_pets.append(pet)
 	
-	print("[PetBattlePanel] 对战设置完成，攻击方: %d只，防守方: %d只" % [team_a_pets.size(), team_b_pets.size()])
-	
 	# 添加战斗日志
 	add_battle_log("[color=yellow]偷菜对战开始！[/color]")
 	add_battle_log("[color=cyan]%s VS %s[/color]" % [team_a_name, team_b_name])
@@ -1096,7 +1057,6 @@ func setup_steal_battle(attacker_pets: Array, defender_pets: Array, attacker_nam
 
 #美化确认弹窗
 func setup_confirm_dialog():
-	"""设置和美化确认弹窗"""
 	confirm_dialog.title = "辅助功能确认"
 	confirm_dialog.ok_button_text = "确认使用"
 	confirm_dialog.cancel_button_text = "取消"
@@ -1122,7 +1082,6 @@ func setup_confirm_dialog():
 
 #更新辅助功能冷却计时器
 func update_assist_cooldowns(delta: float):
-	"""更新辅助功能冷却计时器"""
 	# 更新冷却计时器
 	if heal_cooldown_timer > 0:
 		heal_cooldown_timer -= delta
@@ -1150,7 +1109,6 @@ func update_assist_cooldowns(delta: float):
 
 #显示辅助功能确认弹窗
 func show_assist_confirm(operation_type: String, description: String, effect: String):
-	"""显示辅助功能确认弹窗"""
 	current_assist_operation = operation_type
 	
 	# 设置弹窗内容（纯文本格式）
@@ -1164,25 +1122,22 @@ func show_assist_confirm(operation_type: String, description: String, effect: St
 
 #确认使用辅助功能
 func _on_assist_confirmed():
-	"""确认使用辅助功能"""
 	match current_assist_operation:
-		"heal":
+		"heal": # 团队治疗
 			execute_team_heal()
-		"rage":
+		"rage": # 团队狂暴
 			execute_team_rage()
-		"shield":
+		"shield": # 团队护盾
 			execute_team_shield()
 	
 	current_assist_operation = ""
 
 #取消使用辅助功能
 func _on_assist_canceled():
-	"""取消使用辅助功能"""
 	current_assist_operation = ""
 
 #执行团队治疗
 func execute_team_heal():
-	"""执行团队治疗功能"""
 	var healed_count = 0
 	# 只对teamA（attacker队伍）的宠物生效
 	for pet in all_pets:
@@ -1215,7 +1170,6 @@ func execute_team_heal():
 
 #执行团队狂暴
 func execute_team_rage():
-	"""执行团队狂暴功能"""
 	var raged_count = 0
 	# 只对teamA（attacker队伍）的宠物生效
 	for pet in all_pets:
@@ -1246,7 +1200,6 @@ func execute_team_rage():
 
 #执行团队护盾
 func execute_team_shield():
-	"""执行团队护盾功能"""
 	var shielded_count = 0
 	# 只对teamA（attacker队伍）的宠物生效
 	for pet in all_pets:

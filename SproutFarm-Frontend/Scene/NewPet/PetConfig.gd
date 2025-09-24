@@ -266,39 +266,26 @@ var pet_configs: Dictionary = {
 
 # 初始化函数
 func _ready():
-	"""节点准备就绪时自动加载JSON配置"""
 	load_configs_from_json()
 
-# 手动初始化配置的函数
-func initialize_configs():
-	"""手动初始化宠物配置，优先从JSON加载"""
-	if not load_configs_from_json():
-		print("JSON加载失败，使用默认配置")
-		# 如果JSON加载失败，保持使用代码中的默认配置
-
-
-# 获取宠物配置的函数
+# 根据宠物键值获取配置
 func get_pet_config(pet_key: String) -> Dictionary:
-	"""根据宠物键值获取配置"""
 	if pet_configs.has(pet_key):
 		return pet_configs[pet_key]
 	else:
 		print("未找到宠物配置: ", pet_key, "，使用默认配置")
 		return get_default_config()
 
-# 获取所有宠物配置键值的函数
+# 获取所有宠物配置键值
 func get_all_pet_keys() -> Array:
-	"""获取所有可用的宠物配置键值"""
 	return pet_configs.keys()
 
-# 检查宠物配置是否存在的函数
+# 检查宠物配置是否存在
 func has_pet_config(pet_key: String) -> bool:
-	"""检查指定的宠物配置是否存在"""
 	return pet_configs.has(pet_key)
 
-# 获取默认配置的函数
+# 获取默认配置
 func get_default_config() -> Dictionary:
-	"""获取默认宠物配置"""
 	return {
 		"pet_name": pet_name,
 		"pet_id": pet_id,
@@ -343,9 +330,8 @@ func get_default_config() -> Dictionary:
 		"right_weapon": right_weapon
 	}
 
-# 字符串转换为ElementType枚举的函数
+# 字符串转换为ElementType枚举
 func string_to_element_type(element_str: String) -> ElementType:
-	"""将字符串转换为ElementType枚举"""
 	match element_str.to_upper():
 		"NONE":#没有元素类型
 			return ElementType.NONE
@@ -364,9 +350,8 @@ func string_to_element_type(element_str: String) -> ElementType:
 		_:
 			return ElementType.NONE
 
-# 从JSON文件加载宠物配置的函数
+# 从JSON文件加载宠物配置
 func load_configs_from_json(file_path: String = "res://Scene/NewPet/Pet_data.json") -> bool:
-	"""从JSON文件加载宠物配置"""
 	if not FileAccess.file_exists(file_path):
 		print("宠物配置文件不存在: ", file_path)
 		return false

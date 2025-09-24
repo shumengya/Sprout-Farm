@@ -1,0 +1,91 @@
+[gd_scene load_steps=4 format=3 uid="uid://yc4ag7vxsrfv"]
+
+[ext_resource type="Script" uid="uid://bkel88rscubov" path="res://Script/SmallPanel/TodayDivinationPanel.gd" id="1_b6743"]
+[ext_resource type="FontFile" uid="uid://b81msdfp2ym2g" path="res://assets/字体/MapleMono-NF-CN-BoldItalic.ttf" id="2_823yi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bpbm8"]
+bg_color = Color(0.9, 0.85, 0.7, 0.95)
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+border_color = Color(0.6, 0.4, 0.2, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+corner_detail = 20
+shadow_color = Color(0.3, 0.2, 0.1, 0.3)
+shadow_size = 8
+
+[node name="TodayDivinationPanel" type="PanelContainer"]
+offset_left = 345.0
+offset_right = 1050.0
+offset_bottom = 713.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bpbm8")
+script = ExtResource("1_b6743")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(0.2, 0.6, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 20
+theme_override_font_sizes/font_size = 40
+text = "🌾 今日占卜 🚜"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Contents" type="RichTextLabel" parent="VBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/normal_font = ExtResource("2_823yi")
+theme_override_fonts/mono_font = ExtResource("2_823yi")
+theme_override_fonts/italics_font = ExtResource("2_823yi")
+theme_override_fonts/bold_italics_font = ExtResource("2_823yi")
+theme_override_fonts/bold_font = ExtResource("2_823yi")
+theme_override_font_sizes/bold_italics_font_size = 25
+theme_override_font_sizes/italics_font_size = 25
+theme_override_font_sizes/mono_font_size = 25
+theme_override_font_sizes/normal_font_size = 25
+theme_override_font_sizes/bold_font_size = 25
+bbcode_enabled = true
+text = "🌟 欢迎来到萌芽农场的神秘占卜屋！🌟
+
+🔮 在这里，古老的农场智慧将为您揭示今日的农运：
+
+🌱 作物生长运势
+🐄 牲畜健康指数  
+💰 农场收益预测
+🌤️ 天气变化提醒
+🎯 种植建议指导
+
+点击下方按钮，开启您的农场运势之旅！✨"
+horizontal_alignment = 1
+threaded = true
+
+[node name="StartButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 35
+text = "🌱 开启预测 🔮"
+
+[node name="QuitButton" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 35
+text = "🚪 返回农场 🏡"

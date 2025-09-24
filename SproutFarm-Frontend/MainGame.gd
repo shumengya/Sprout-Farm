@@ -389,9 +389,6 @@ func _input(event):
 				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 			else:
 				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-		elif key_code == KEY_F12:
-			# 截图
-			print("截图功能暂未实现")
 
 #=======================脚本基础方法=======================
 
@@ -491,10 +488,10 @@ func _handle_visit_player_response(data):
 			pet_bag_panel.update_pet_bag_ui()
 		
 		# 初始化巡逻宠物（访问模式）
-		print("[访问模式] 准备初始化巡逻宠物，数据量: ", patrol_pets.size())
+		#print("[访问模式] 准备初始化巡逻宠物，数据量: ", patrol_pets.size())
 		for i in range(patrol_pets.size()):
 			var pet_data = patrol_pets[i]
-			print("[访问模式] 巡逻宠物", i, ": ", pet_data.get("pet_name", "未知"), " ID:", pet_data.get("pet_id", "无ID"))
+			#print("[访问模式] 巡逻宠物", i, ": ", pet_data.get("pet_name", "未知"), " ID:", pet_data.get("pet_id", "无ID"))
 		if has_method("init_patrol_pets"):
 			init_patrol_pets()
 		
@@ -510,19 +507,12 @@ func _handle_visit_player_response(data):
 				
 				# 更新智慧树显示
 				_update_wisdom_tree_display(target_wisdom_config)
-			else:
-				print("智慧树配置不是Dictionary类型：", typeof(target_wisdom_config))
-		else:
-			print("目标玩家没有智慧树配置或配置为空")
 		
 		# 隐藏排行榜面板
 		if player_ranking_panel:
 			player_ranking_panel.hide()
 		
 		Toast.show("正在访问 " + target_player_data.get("玩家昵称", "未知") + " 的农场", Color.CYAN)
-	else:
-		Toast.show("访问失败：" + message, Color.RED)
-		print("访问玩家失败：", message)
 
 # 处理返回自己农场响应
 func _handle_return_my_farm_response(data):
@@ -583,10 +573,10 @@ func _handle_return_my_farm_response(data):
 			pet_bag_panel.update_pet_bag_ui()
 		
 		# 初始化巡逻宠物（返回自己农场）
-		print("[返回农场] 准备初始化巡逻宠物，数据量: ", patrol_pets.size())
+		#print("[返回农场] 准备初始化巡逻宠物，数据量: ", patrol_pets.size())
 		for i in range(patrol_pets.size()):
 			var pet_data = patrol_pets[i]
-			print("[返回农场] 巡逻宠物", i, ": ", pet_data.get("pet_name", "未知"), " ID:", pet_data.get("pet_id", "无ID"))
+			#print("[返回农场] 巡逻宠物", i, ": ", pet_data.get("pet_name", "未知"), " ID:", pet_data.get("pet_id", "无ID"))
 		if has_method("init_patrol_pets"):
 			init_patrol_pets()
 		
@@ -604,18 +594,12 @@ func _handle_return_my_farm_response(data):
 				update_wisdom_tree_display()
 		
 		Toast.show("已返回自己的农场", Color.GREEN)
-	else:
-		Toast.show("返回农场失败：" + message, Color.RED)
-		print("返回农场失败：", message)
 
 #访客模式下返回我的农场
 func _on_return_my_farm_button_pressed() -> void:
 	# 如果当前处于访问模式，返回自己的农场
 	if is_visiting_mode:
 		return_to_my_farm()
-	else:
-		# 如果不在访问模式，这个按钮可能用于其他功能或者不做任何操作
-		print("当前已在自己的农场")
 
 # 返回自己的农场
 func return_to_my_farm():
@@ -626,13 +610,11 @@ func return_to_my_farm():
 	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendReturnMyFarm"):
 		var success = tcp_network_manager_panel.sendReturnMyFarm()
 		if success:
-			print("已发送返回自己农场的请求")
+			#print("已发送返回自己农场的请求")
+			pass
 		else:
 			Toast.show("网络未连接，无法返回农场", Color.RED)
-			print("发送返回农场请求失败，网络未连接")
-	else:
-		Toast.show("网络管理器不可用", Color.RED)
-		print("网络管理器不可用")
+			#print("发送返回农场请求失败，网络未连接")
 
 #==========================玩家排行榜+访问模式处理============================
 
@@ -665,9 +647,7 @@ func _on_item_selected(index):
 # 游戏小提示相关变量
 var game_tips_config = {}  # 服务端游戏小提示配置
 var current_tip_index = 0  # 当前小提示索引（用于顺序模式）
-#OS
-#DisplayServer
-#获取游戏提示
+
 func _random_small_game_tips() -> String:
 	# 默认游戏小提示（作为备用）
 	const default_game_tips = [
@@ -751,21 +731,20 @@ func handle_login_success(player_data: Dictionary):
 	# 立即请求在线人数
 	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
 		tcp_network_manager_panel.sendGetOnlinePlayers()
-		print("登录成功后请求在线人数更新")
+		#print("登录成功后请求在线人数更新")
 	
 	# 登录成功后请求宠物配置数据
 	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendGetPetConfig"):
 		if tcp_network_manager_panel.sendGetPetConfig():
-			print("登录成功后请求宠物配置数据")
-		else:
-			print("登录成功后请求宠物配置数据失败")
+			#print("登录成功后请求宠物配置数据")
+			pass
 	
 	# 登录成功后请求游戏小提示配置数据
 	if tcp_network_manager_panel and tcp_network_manager_panel.has_method("sendGetGameTipsConfig"):
 		if tcp_network_manager_panel.sendGetGameTipsConfig():
-			print("登录成功后请求游戏小提示配置数据")
-		else:
-			print("登录成功后请求游戏小提示配置数据失败")
+			#print("登录成功后请求游戏小提示配置数据")
+			pass
+
 	
 	# 其他登录成功后的初始化逻辑可以在这里添加
 	start_game = true
@@ -1868,9 +1847,7 @@ func _check_loading_stuck(progress: int):
 	
 	# 如果进度没有变化
 	if progress == last_progress_value:
-		var stuck_time = current_time - last_progress_time
-		if stuck_time > 5.0:  # 5秒没有进度变化
-			print("⚠ 加载卡顿检测: 在 %d%% 停留了 %.1f 秒" % [progress, stuck_time])
+		pass
 	else:
 		# 进度有变化，更新记录
 		last_progress_value = progress
@@ -2031,10 +2008,7 @@ func _handle_daily_check_in_response(response: Dictionary) -> void:
 	# 显示签到结果通知
 	var success = response.get("success", false)
 	if success:
-		var rewards = response.get("rewards", {})
-		var consecutive_days = response.get("consecutive_days", 1)
-		var message = "签到成功！连续签到 %d 天" % consecutive_days
-		Toast.show(message, Color.GREEN)
+		pass
 	else:
 		var error_message = response.get("message", "签到失败")
 		Toast.show(error_message, Color.RED)
@@ -2313,7 +2287,8 @@ func _request_online_players():
 	if tcp_network_manager_panel and tcp_network_manager_panel.is_connected_to_server():
 		var success = tcp_network_manager_panel.sendGetOnlinePlayers()
 		if success:
-			print("已发送在线人数请求")
+			#print("已发送在线人数请求")
+			pass
 		else:
 			print("发送在线人数请求失败")
 			_update_online_players_display(0, false, false)
@@ -2443,13 +2418,8 @@ func _handle_global_broadcast_message(data: Dictionary):
 
 # 处理全服大喇叭发送响应
 func _handle_global_broadcast_response(data: Dictionary):
-	var success = data.get("success", false)
-	var message = data.get("message", "")
+	pass
 	
-	if success:
-		Toast.show("大喇叭消息发送成功", Color.GREEN, 2.0, 1.0)
-	else:
-		Toast.show("大喇叭消息发送失败：" + message, Color.RED, 3.0, 1.0)
 
 # 处理全服大喇叭历史消息响应
 func _handle_broadcast_history_response(data: Dictionary):
@@ -3247,8 +3217,8 @@ func _create_single_patrol_pet(pet_data: Dictionary, position_index: int):
 
 # 获取宠物图片路径
 func _get_pet_image_path(pet_type: String) -> String:
-	print("[调试] 获取宠物图片路径，宠物类型: " + pet_type)
-	print("[调试] 服务器pet_config大小: " + str(pet_config.size()))
+	#print("[调试] 获取宠物图片路径，宠物类型: " + pet_type)
+	#print("[调试] 服务器pet_config大小: " + str(pet_config.size()))
 	
 	# 类型映射表
 	var type_mapping = {
@@ -3298,8 +3268,8 @@ func update_patrol_pets(patrol_pets_data: Array):
 	# 清除现有巡逻宠物
 	clear_patrol_pets()
 	
-	print("[update_patrol_pets] 开始更新巡逻宠物，输入数据量: ", patrol_pets_data.size())
-	print("[update_patrol_pets] 当前访问模式: ", is_visiting_mode)
+	#print("[update_patrol_pets] 开始更新巡逻宠物，输入数据量: ", patrol_pets_data.size())
+	#print("[update_patrol_pets] 当前访问模式: ", is_visiting_mode)
 	
 	# 限制最多4个巡逻宠物
 	var max_pets = min(patrol_pets_data.size(), 4)
@@ -3307,7 +3277,7 @@ func update_patrol_pets(patrol_pets_data: Array):
 	# 为每个巡逻宠物创建实例
 	for i in range(max_pets):
 		var pet_data = patrol_pets_data[i]
-		print("[update_patrol_pets] 处理宠物", i, ": ", pet_data.get("pet_name", "未知") if pet_data else "空数据")
+		#print("[update_patrol_pets] 处理宠物", i, ": ", pet_data.get("pet_name", "未知") if pet_data else "空数据")
 		if pet_data and pet_data.has("pet_id"):
 			_create_single_patrol_pet(pet_data, i)
 		else:

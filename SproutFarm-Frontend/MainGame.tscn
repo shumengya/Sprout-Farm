@@ -1,4 +1,4 @@
-[gd_scene load_steps=113 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=110 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
@@ -45,19 +45,18 @@
 [ext_resource type="Texture2D" uid="uid://2sdfbvf1isif" path="res://icon.svg" id="31_uc6q1"]
 [ext_resource type="Script" uid="uid://doo34ll0yb078" path="res://Script/SmallPanel/PetInformPanel.gd" id="31_vygm6"]
 [ext_resource type="PackedScene" uid="uid://byxhjyyaahs6q" path="res://Scene/BigPanel/SpecialFarmPanel.tscn" id="31_ww70k"]
-[ext_resource type="Script" uid="uid://bakeq8tm6r4j4" path="res://Script/SmallPanel/GlobalServerBroadcastPanel.gd" id="34_k1sw4"]
 [ext_resource type="Script" uid="uid://dobao5y5s2dij" path="res://Script/SmallPanel/ScareCrowPanel.gd" id="35_6ylhg"]
 [ext_resource type="Texture2D" uid="uid://d06uaoowmcvxj" path="res://assets/稻草人图片/稻草人2.webp" id="36_jyxgm"]
 [ext_resource type="Texture2D" uid="uid://cbe0f8ex17csy" path="res://assets/稻草人图片/稻草人3.webp" id="37_6ylhg"]
+[ext_resource type="PackedScene" uid="uid://djh8bnauphg8v" path="res://Scene/SmallPanel/GlobalServerBroadcastPanel.tscn" id="37_rawle"]
 [ext_resource type="PackedScene" uid="uid://ibl5wbbw3pwc" path="res://CopyItems/item_button.tscn" id="39_cdkxt"]
 [ext_resource type="Script" uid="uid://dwf28j01ckg3y" path="res://Script/SmallPanel/WisdomTreePanel.gd" id="39_np7ck"]
 [ext_resource type="Script" uid="uid://b185o1hjnlrv5" path="res://Script/SmallPanel/CropInformPanel.gd" id="41_iluto"]
 [ext_resource type="Texture2D" uid="uid://3ff2lnbc0op7" path="res://assets/稻草人图片/稻草人1.webp" id="43_6rkns"]
 [ext_resource type="Script" uid="uid://dsmmxivba06ab" path="res://Script/Dialog/BatchSellPopup.gd" id="44_av1bx"]
-[ext_resource type="Script" uid="uid://bkel88rscubov" path="res://Script/SmallPanel/TodayDivinationPanel.gd" id="44_mw3xw"]
-[ext_resource type="FontFile" uid="uid://b81msdfp2ym2g" path="res://assets/字体/MapleMono-NF-CN-BoldItalic.ttf" id="45_vexnj"]
 [ext_resource type="Texture2D" uid="uid://cbdm5e6s8bf6l" path="res://assets/智慧树图片/智慧树4.webp" id="45_xvovi"]
 [ext_resource type="Script" uid="uid://cha0uw4ra1trr" path="res://Script/Dialog/AddProduct2StorePopup.gd" id="46_8d602"]
+[ext_resource type="PackedScene" uid="uid://yc4ag7vxsrfv" path="res://Scene/SmallPanel/TodayDivinationPanel.tscn" id="47_rawle"]
 [ext_resource type="Texture2D" uid="uid://dilipbs0lncpd" path="res://assets/草地图片/草地10.webp" id="48_2i8fe"]
 [ext_resource type="Texture2D" uid="uid://du34yctd8bd8m" path="res://assets/灌木丛图片/灌木丛1.webp" id="49_xjiif"]
 [ext_resource type="Texture2D" uid="uid://dk4yl4ghmxaa2" path="res://assets/天气系统图片/雪花.webp" id="53_4ka7t"]
@@ -124,16 +123,6 @@ corner_detail = 20
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2i8fe"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k1sw4"]
-bg_color = Color(0.6, 0.6, 0.6, 0.984314)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-corner_detail = 20
-shadow_size = 20
-shadow_offset = Vector2(5, 5)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jyxgm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_np7ck"]
@@ -149,13 +138,6 @@ corner_detail = 20
 shadow_size = 30
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xyeuq"]
-border_width_left = 15
-border_width_top = 15
-border_width_right = 15
-border_width_bottom = 15
-corner_detail = 20
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bpbm8"]
 border_width_left = 15
 border_width_top = 15
 border_width_right = 15
@@ -930,6 +912,7 @@ visible = false
 [node name="LoadProgressPanel" parent="UI/SmallPanel" instance=ExtResource("27_vygm6")]
 
 [node name="AccountSettingPanel" parent="UI/SmallPanel" instance=ExtResource("26_uc6q1")]
+visible = false
 offset_left = 219.0
 offset_top = 45.0
 offset_right = 1130.0
@@ -1099,80 +1082,7 @@ offset_bottom = 8.0
 theme_override_font_sizes/font_size = 30
 text = "刷新"
 
-[node name="GlobalServerBroadcastPanel" type="Panel" parent="UI/SmallPanel"]
-visible = false
-offset_left = 322.0
-offset_right = 985.0
-offset_bottom = 721.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_k1sw4")
-script = ExtResource("34_k1sw4")
-
-[node name="Title" type="Label" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
-layout_mode = 0
-offset_left = 13.0
-offset_top = 12.0
-offset_right = 653.0
-offset_bottom = 63.0
-theme_override_colors/font_color = Color(0.821789, 0.821789, 0.821789, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 4
-theme_override_constants/shadow_offset_y = 4
-theme_override_constants/outline_size = 15
-theme_override_constants/shadow_outline_size = 15
-theme_override_font_sizes/font_size = 35
-text = "全服大喇叭"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="MessageContents" type="RichTextLabel" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 72.0
-offset_right = 653.0
-offset_bottom = 642.0
-theme_override_font_sizes/bold_italics_font_size = 15
-theme_override_font_sizes/italics_font_size = 15
-theme_override_font_sizes/mono_font_size = 15
-theme_override_font_sizes/normal_font_size = 15
-theme_override_font_sizes/bold_font_size = 15
-bbcode_enabled = true
-
-[node name="HBox" type="HBoxContainer" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 649.0
-offset_right = 653.0
-offset_bottom = 709.0
-
-[node name="InputMessage" type="LineEdit" parent="UI/SmallPanel/GlobalServerBroadcastPanel/HBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="SendMessageButton" type="Button" parent="UI/SmallPanel/GlobalServerBroadcastPanel/HBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 30
-text = " 发送 "
-
-[node name="QuitButton" type="Button" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 0
-offset_left = 601.0
-offset_top = 12.0
-offset_right = 651.0
-offset_bottom = 62.0
-theme_override_font_sizes/font_size = 30
-text = "X"
-
-[node name="WatchMoreButton" type="Button" parent="UI/SmallPanel/GlobalServerBroadcastPanel"]
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 0
-offset_left = 13.0
-offset_top = 12.0
-offset_right = 141.0
-offset_bottom = 62.0
-theme_override_font_sizes/font_size = 30
-text = "查看更多"
+[node name="GlobalServerBroadcastPanel" parent="UI/SmallPanel" instance=ExtResource("37_rawle")]
 
 [node name="ScareCrowPanel" type="Panel" parent="UI/SmallPanel"]
 visible = false
@@ -1688,68 +1598,8 @@ size_flags_vertical = 10
 theme_override_font_sizes/font_size = 30
 text = "放入小卖部"
 
-[node name="TodayDivinationPanel" type="PanelContainer" parent="UI/SmallPanel"]
+[node name="TodayDivinationPanel" parent="UI/SmallPanel" instance=ExtResource("47_rawle")]
 visible = false
-offset_left = 345.0
-offset_right = 1050.0
-offset_bottom = 713.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_bpbm8")
-script = ExtResource("44_mw3xw")
-
-[node name="VBox" type="VBoxContainer" parent="UI/SmallPanel/TodayDivinationPanel"]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
-layout_mode = 2
-size_flags_vertical = 0
-theme_override_colors/font_color = Color(0.807843, 1, 0, 1)
-theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/shadow_offset_x = 4
-theme_override_constants/shadow_offset_y = 4
-theme_override_constants/outline_size = 20
-theme_override_constants/shadow_outline_size = 20
-theme_override_font_sizes/font_size = 40
-text = "今日占卜"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Scroll" type="ScrollContainer" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Contents" type="RichTextLabel" parent="UI/SmallPanel/TodayDivinationPanel/VBox/Scroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_fonts/normal_font = ExtResource("45_vexnj")
-theme_override_fonts/mono_font = ExtResource("45_vexnj")
-theme_override_fonts/italics_font = ExtResource("45_vexnj")
-theme_override_fonts/bold_italics_font = ExtResource("45_vexnj")
-theme_override_fonts/bold_font = ExtResource("45_vexnj")
-theme_override_font_sizes/bold_italics_font_size = 25
-theme_override_font_sizes/italics_font_size = 25
-theme_override_font_sizes/mono_font_size = 25
-theme_override_font_sizes/normal_font_size = 25
-theme_override_font_sizes/bold_font_size = 25
-bbcode_enabled = true
-text = "这是占卜内容"
-horizontal_alignment = 1
-threaded = true
-
-[node name="StartButton" type="Button" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 35
-text = "开始占卜"
-
-[node name="QuitButton" type="Button" parent="UI/SmallPanel/TodayDivinationPanel/VBox"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 35
-text = "结束占卜"
 
 [node name="PetLadderListPanel" type="Panel" parent="UI/SmallPanel"]
 visible = false

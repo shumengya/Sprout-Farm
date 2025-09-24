@@ -448,3 +448,4 @@ text = "X"
 [connection signal="pressed" from="ScrollContainer/Grid/PushBox/PushBoxButton" to="." method="_on_push_box_button_pressed"]
 [connection signal="pressed" from="ScrollContainer/Grid/SnakeGame/SnakeGameButton" to="." method="_on_snake_game_button_pressed"]
 [connection signal="pressed" from="ScrollContainer/Grid/Tetris/TetrisButton" to="." method="_on_tetris_button_pressed"]
+[connection signal="pressed" from="QuitButton" to="." method="_on_quit_button_pressed"]

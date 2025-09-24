@@ -5,20 +5,24 @@
 [ext_resource type="Script" uid="uid://0d2j5m6j2ema" path="res://Components/HTTPTextureRect.gd" id="3_wibl7"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y1hsh"]
-border_color = Color(2.98411e-06, 0.95982, 0.386903, 1)
+bg_color = Color(0.9, 0.85, 0.7, 0.95)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.6, 0.4, 0.2, 1)
 border_blend = true
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 corner_detail = 20
+shadow_color = Color(0.3, 0.2, 0.1, 0.5)
 shadow_size = 20
 shadow_offset = Vector2(10, 10)
-anti_aliasing = false
 anti_aliasing_size = 5.0
 
 [node name="AccountSettingPanel" type="Panel"]
-visible = false
 offset_left = 243.0
 offset_top = 42.0
 offset_right = 1154.0
@@ -27,7 +31,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_y1hsh")
 script = ExtResource("1_xfiot")
 
 [node name="Title" type="RichTextLabel" parent="."]
-modulate = Color(1, 0.745098, 0.54902, 1)
+modulate = Color(0.2, 0.6, 0.2, 1)
 layout_mode = 0
 offset_left = 2.0
 offset_right = 911.0
@@ -41,27 +45,31 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_outline_size = 10
 theme_override_font_sizes/normal_font_size = 40
 bbcode_enabled = true
-text = "玩家信息设置"
+text = "🌾 萌芽农场 - 农场主信息 🚜"
 horizontal_alignment = 1
 threaded = true
 
 [node name="QuitButton" type="Button" parent="."]
+modulate = Color(0.984314, 0, 0, 1)
 custom_minimum_size = Vector2(55, 55)
 layout_mode = 0
-offset_left = 854.0
-offset_right = 911.0
-offset_bottom = 57.0
+offset_left = 833.0
+offset_top = 19.0
+offset_right = 890.0
+offset_bottom = 76.0
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 35
 text = "X"
 
 [node name="RefreshButton" type="Button" parent="."]
 custom_minimum_size = Vector2(55, 55)
 layout_mode = 0
-offset_left = 2.0
-offset_right = 80.0
-offset_bottom = 57.0
+offset_left = 25.0
+offset_top = 19.0
+offset_right = 160.0
+offset_bottom = 76.0
 theme_override_font_sizes/font_size = 35
-text = "刷新"
+text = "🔄 刷新"
 
 [node name="VBox1" type="VBoxContainer" parent="."]
 layout_mode = 0
@@ -86,7 +94,7 @@ columns = 2
 [node name="User_Name" type="Label" parent="VBox1/Grid"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "账户："
+text = "🔑 农场账户："
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -99,7 +107,7 @@ vertical_alignment = 1
 [node name="User_Password" type="Label" parent="VBox1/Grid"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "密码："
+text = "🔒 农场密钥："
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -107,40 +115,40 @@ vertical_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
-placeholder_text = "请输入密码"
+placeholder_text = "请输入您的农场密钥"
 
 [node name="Player_Name" type="Label" parent="VBox1/Grid"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "玩家昵称："
+text = "👨‍🌾 农场主昵称："
 
 [node name="Player_Name_Input" type="LineEdit" parent="VBox1/Grid"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
-placeholder_text = "请输入玩家昵称"
+placeholder_text = "请输入您的农场主昵称"
 
 [node name="Farm_Name" type="Label" parent="VBox1/Grid"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "农场名称："
+text = "🏡 我的农场名："
 
 [node name="Farm_Name_Input" type="LineEdit" parent="VBox1/Grid"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
-placeholder_text = "请输入农场名称"
+placeholder_text = "为您的萌芽农场起个好听的名字"
 
 [node name="Personal_Profile" type="Label" parent="VBox1/Grid"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "个人简介："
+text = "📝 农场故事："
 
 [node name="Personal_Profile_Input" type="LineEdit" parent="VBox1/Grid"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
-placeholder_text = "请输入个人简介"
+placeholder_text = "讲述您的农场故事和种植计划"
 
 [node name="HBox2" type="HBoxContainer" parent="VBox1"]
 layout_mode = 2
@@ -149,9 +157,9 @@ alignment = 1
 [node name="Remove_Account_Btn" type="Button" parent="VBox1/HBox2"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "删除账号"
+text = "❌ 注销农场"
 
 [node name="Confirm_Btn" type="Button" parent="VBox1/HBox2"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
-text = "确认修改"
+text = "✅ 保存信息"

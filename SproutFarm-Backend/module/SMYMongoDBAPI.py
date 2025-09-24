@@ -110,7 +110,7 @@ class SMYMongoDBAPI:
             self.db = self.client[current_config['database']]
             self.connected = True
             
-            self.logger.info(f"成功连接到MongoDB数据库 [{self.environment}]: {connection_string}")
+            #self.logger.info(f"成功连接到MongoDB数据库 [{self.environment}]: {connection_string}")
             return True
             
         except Exception as e:
@@ -775,7 +775,7 @@ class SMYMongoDBAPI:
                 # 转换datetime对象为字符串，避免JSON序列化错误
                 result = self._convert_datetime_to_string(result)
                     
-                self.logger.info(f"成功获取玩家数据: {account_id}")
+                #self.logger.info(f"成功获取玩家数据: {account_id}")
                 return result
             else:
                 self.logger.warning(f"未找到玩家数据: {account_id}")
