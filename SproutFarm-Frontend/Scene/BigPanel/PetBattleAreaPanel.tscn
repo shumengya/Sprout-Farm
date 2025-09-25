@@ -1,0 +1,69 @@
+[gd_scene load_steps=2 format=3 uid="uid://cl51oc54hlhnc"]
+
+[ext_resource type="Texture2D" uid="uid://bh8xusk6w4rjt" path="res://assets/道具图片/1753696817884_nobg.webp" id="1_1eb8i"]
+
+[node name="PetBattleAreaPanel" type="Panel"]
+offset_right = 1402.0
+offset_bottom = 721.0
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 0
+offset_right = 1402.0
+offset_bottom = 60.0
+theme_override_colors/font_color = Color(0.98485, 0.788893, 0.540049, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_constants/shadow_outline_size = 15
+theme_override_font_sizes/font_size = 40
+text = "宠物星辰塔"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Description" type="Label" parent="."]
+layout_mode = 0
+offset_top = 60.0
+offset_right = 1402.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 25
+text = "在这里和各种宠物进行各式各样的PVP PVE，展现您的宠物的强大实力！"
+
+[node name="QuitButton" type="Button" parent="."]
+self_modulate = Color(1, 0, 0, 1)
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 0
+offset_left = 1308.0
+offset_top = 26.0
+offset_right = 1378.0
+offset_bottom = 97.0
+theme_override_font_sizes/font_size = 45
+text = "X"
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_top = 130.0
+offset_right = 1399.0
+offset_bottom = 722.0
+horizontal_scroll_mode = 0
+
+[node name="BattleType" type="GridContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 5
+
+[node name="Button" type="Button" parent="Scroll/BattleType"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 7
+theme_override_font_sizes/font_size = 35
+text = "小怪联盟"
+icon = ExtResource("1_1eb8i")
+icon_alignment = 1
+
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
+title = "小怪联盟"
+initial_position = 1
+size = Vector2i(500, 300)
+visible = true
+content_scale_aspect = 1
+ok_button_text = "确认"
+cancel_button_text = "取消"

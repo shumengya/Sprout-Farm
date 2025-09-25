@@ -1,4 +1,4 @@
-[gd_scene load_steps=110 format=3 uid="uid://dgh61dttaas5a"]
+[gd_scene load_steps=111 format=3 uid="uid://dgh61dttaas5a"]
 
 [ext_resource type="Script" uid="uid://2pt11sfcaxf7" path="res://MainGame.gd" id="1_v3yaj"]
 [ext_resource type="Texture2D" uid="uid://du2pyiojliasy" path="res://assets/游戏UI/经验球.webp" id="2_6jgly"]
@@ -45,6 +45,7 @@
 [ext_resource type="Texture2D" uid="uid://2sdfbvf1isif" path="res://icon.svg" id="31_uc6q1"]
 [ext_resource type="Script" uid="uid://doo34ll0yb078" path="res://Script/SmallPanel/PetInformPanel.gd" id="31_vygm6"]
 [ext_resource type="PackedScene" uid="uid://byxhjyyaahs6q" path="res://Scene/BigPanel/SpecialFarmPanel.tscn" id="31_ww70k"]
+[ext_resource type="PackedScene" uid="uid://cl51oc54hlhnc" path="res://Scene/BigPanel/PetBattleAreaPanel.tscn" id="32_ww70k"]
 [ext_resource type="Script" uid="uid://dobao5y5s2dij" path="res://Script/SmallPanel/ScareCrowPanel.gd" id="35_6ylhg"]
 [ext_resource type="Texture2D" uid="uid://d06uaoowmcvxj" path="res://assets/稻草人图片/稻草人2.webp" id="36_jyxgm"]
 [ext_resource type="Texture2D" uid="uid://cbe0f8ex17csy" path="res://assets/稻草人图片/稻草人3.webp" id="37_6ylhg"]
@@ -907,6 +908,8 @@ visible = false
 [node name="ItemStorePanel" parent="UI/BigPanel" instance=ExtResource("21_uhubb")]
 visible = false
 
+[node name="PetBattleAreaPanel" parent="UI/BigPanel" instance=ExtResource("32_ww70k")]
+
 [node name="SmallPanel" type="CanvasLayer" parent="UI"]
 
 [node name="LoadProgressPanel" parent="UI/SmallPanel" instance=ExtResource("27_vygm6")]
@@ -1083,6 +1086,7 @@ theme_override_font_sizes/font_size = 30
 text = "刷新"
 
 [node name="GlobalServerBroadcastPanel" parent="UI/SmallPanel" instance=ExtResource("37_rawle")]
+visible = false
 
 [node name="ScareCrowPanel" type="Panel" parent="UI/SmallPanel"]
 visible = false

@@ -1,0 +1,41 @@
+{
+    "name": "小怪联盟",
+    "icon": "1_1eb8i",
+    "description": "一个基础的对战场景，适合新手来训练\n敌方出战宠物：\n烈焰鸟x1，大懒虫x1，小懒虫x1",
+    "enemy": {
+        "烈焰鸟": {
+            "pet_name": "树萌芽の烈焰鸟",
+            "pet_id": "0001",
+            "pet_type": "烈焰鸟",
+            "pet_level": 1,
+            "max_health": 300,
+            "max_shield": 150,
+            "max_armor": 120,
+            "left_weapon": "",
+            "right_weapon": ""
+        },
+        "大懒虫": {
+            "pet_name": "树萌芽の大懒虫",
+            "pet_id": "0002",
+            "pet_type": "大懒虫",
+            "pet_level": 1,
+            "max_health": 200,
+            "max_shield": 100,
+            "max_armor": 80,
+            "left_weapon": "",
+            "right_weapon": ""
+        },
+        "小懒虫": {
+            "pet_name": "树萌芽の小懒虫",
+            "pet_id": "0003",
+            "pet_type": "小懒虫",
+            "pet_level": 1,
+            "max_health": 100,
+            "max_shield": 50,
+            "max_armor": 40,
+            "left_weapon": "",
+            "right_weapon": ""
+        }
+
+    }
+}
